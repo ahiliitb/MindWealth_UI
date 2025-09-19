@@ -1,297 +1,305 @@
 # Best Buy and Sell Signals Analysis
 
-After analyzing the signals according to the specified criteria, I've identified the most promising buy and sell signals. Below are the top signals ranked by quality, with detailed information for each.
+After analyzing the signals using the specified criteria, I've identified the most promising buy and sell opportunities, ranking them according to their performance metrics, confirmation status, and potential risk/reward profiles.
 
 ## Best Buy Signals
 
-### 1. **NIFTY_MIDCAP_100.NS (NIFTY MIDCAP 100 Index)**
-   - Function: TRENDPULSE Quarterly
-   - Signal Date: 2024-06-30
+### 1. **BYDDY (BYD Company)**
+   - Function: FRACTAL TRACK Weekly
+   - Signal Date: 2025-09-19
    - Signal: Long
-   - Win Rate: 100%, 7 trades over 20 years
-   - CAGR of strategy - CAGR buy and hold = 11.86% - 14.27% = -2.41%
-   - Latest Performance Win Rate: 100%
-   - Average of Historical Winning Trades: 27.0%
+   - Win Rate: 100%, 21 trades
+   - CAGR of strategy - CAGR buy and hold = 28.6% - 10.09% = 18.51%
+   - Latest Performance Win Rate: 83.33%
+   - Average of Historical Winning Trades: 148.41%
    - Max single trade loss historically: 0%
-   - Potential Upside: 18.6% to 36.8%
-   - Current Price: 59,050.30
-   - Target Prices: 69,877.35/70,785.86/80,568.17/69,983.52/76,335.26 based on Historic Rise/Avg % Gain/Exit Rule/Fib Ext 1/Fib Ext 2
-   - Support Levels: 51,648.17/44,465.22/11,703.75/24,894.30 based on Fib Ext 1/Fib Ext 2/Recent Minima/Horizontal
-   - **Recommended Stop Loss:** 51,600 (approximately 12.6% below current price)
-   - **Recommended Take Profit:** 69,877 (first target level, representing approximately 18.3% upside)
-   - P/E Ratio = Not available
-   - PEG Ratio = Not available
+   - Potential Upside: 5.8% to 28.1%
+   - Current Price: 14.49
+   - Target Prices: 15.38/35.99/25.68/17.47/18.55 based on Historic Rise/Avg % Gain/Exit Rule/Fib Ext 1/Fib Ext 2
+   - Support Levels: 13.34/7.11/10.29/7.02/13.66/12.15 based on Recent Minima/Horizontal/Fib Ext 1/Fib Ext 2/Fib Ret 1/Fib Ret 2
+   - **Recommended Stop Loss:** 12.15 (approximately 16% below current price, at Fibonacci retracement level)
+   - **Recommended Take Profit:** 17.47 (Fibonacci extension 1, representing approximately 20.6% upside)
+   - P/E Ratio = 13.67 which is reasonable compared to industry peers
+   - PEG Ratio = 0.76, indicating potentially undervalued growth
+   - Potential Downside: -16.2% to -51.6%
 
-### 2. **GLD (SPDR Gold Trust)**
-   - Function: ALTITUDE ALPHA Monthly
+### 2. **BABA (Alibaba Group)**
+   - Function: TRENDPULSE Weekly
+   - Signal Date: 2025-08-31
+   - Signal: Long
+   - Win Rate: 87.5%
+   - CAGR of strategy - CAGR buy and hold = 11.91% - 4.65% = 7.26%
+   - Latest Performance Win Rate: 72.81%
+   - Average of Historical Winning Trades: 21.45%
+   - Max single trade loss historically: 22.43%
+   - Potential Upside: 145.67% to 222.66%
+   - Current Price: 162.48
+   - Target Prices: 159.56/163.96/138.66/137.21/399.16/524.25 based on Historic Rise/Avg % Gain/Exit Rule/Horizontal/Fib Ext 1/Fib Ext 2
+   - Support Levels: 106.72/67.50 based on Recent Minima/Horizontal
+   - **Recommended Stop Loss:** 145.00 (approximately 10.8% below current price)
+   - **Recommended Take Profit:** 399.16 (first Fibonacci extension, representing approximately 145.67% upside)
+   - P/E Ratio = 18.72 which is reasonable for a growth company
+   - PEG Ratio = 1.83 which indicates fair value relative to growth
+   - Potential Downside: -34.32% to -58.46%
+
+### 3. **LYFT (Lyft)**
+   - Function: TRENDPULSE Daily
+   - Signal Date: 2025-09-09
+   - Signal: Long
+   - Win Rate: 92.31% (Past 4 years, 13 trades)
+   - CAGR of strategy - CAGR buy and hold = 15.75% - (-13.96%) = 29.71%
+   - Latest Performance Win Rate: 85.1%
+   - Average of Historical Winning Trades: 13.07%
+   - Max single trade loss historically: 52.91%
+   - Potential Upside: 13.07% to 340.0%
+   - Current Price: 21.96
+   - Target Prices: 19.50/20.79/23.19/57.19/81.04 based on Historic Rise/Avg % Gain/Exit Rule/Horizontal/Fib Ext 1
+   - Support Levels: 13.41/8.89 based on Recent Minima/Horizontal
+   - **Recommended Stop Loss:** 18.67 (15% below current price, just above nearest support level)
+   - **Recommended Take Profit:** 23.19 (first target level, representing approximately 5.6% upside)
+   - P/E Ratio = 95.48 which is extremely high compared to industry average
+   - PEG Ratio = 0.29 which indicates potential undervaluation relative to growth
+   - Potential Downside: -38.9% to -59.5%
+
+### 4. **BTC-USD (Bitcoin)**
+   - Function: ALTITUDE ALPHA Quarterly
    - Signal Date: 2024-03-31
    - Signal: Long
-   - Win Rate: 80%, 5 trades over 20 years
-   - CAGR of strategy - CAGR buy and hold = 8.99% - 9.88% = -0.89%
-   - Latest Performance Win Rate: 75%
-   - Average of Historical Winning Trades: 61.17%
-   - Max single trade loss historically: 22.52%
-   - Potential Upside: 12.7% to 36.9%
-   - Current Price: 336.97
-   - Target Prices: 331.56/381.71/206.15/224.85 based on Avg % Gain/Exit Rule/Fib Ext 1/Fib Ext 2
-   - Support Levels: 176.56/136.37/151.91/136.70 based on Fib Ext 1/Fib Ext 2/Recent Minima/Horizontal
-   - **Recommended Stop Loss:** 315.00 (approximately 6.5% below current price)
-   - **Recommended Take Profit:** 381.71 (exit rule target, representing approximately 13.3% upside)
-   - P/E Ratio = Not available
-   - PEG Ratio = Not available
-
-### 3. **BNS.TO (Bank of Nova Scotia)**
-   - Function: TRENDPULSE Monthly
-   - Signal Date: 2024-09-30
-   - Signal: Long
-   - Win Rate: 100.0%, 7 trades over 20 years
-   - CAGR of strategy - CAGR buy and hold = 6.51% - 5.64% = 0.87%
-   - Latest Performance Win Rate: 83.93%
-   - Average of Historical Winning Trades: 14.08%
+   - Win Rate: 100.0% (Past 11 years, 4 trades)
+   - CAGR of strategy - CAGR buy and hold = 51.57% - 66.15% = -14.58%
+   - Latest Performance Win Rate: 62.83%
+   - Average of Historical Winning Trades: 136.87%
    - Max single trade loss historically: 0%
-   - Potential Upside: 14.14% to 36.72%
-   - Current Price: 88.99
-   - Target Prices: 83.68/84.07/74.63/81.03/92.97/100.75 based on Historic Rise/Avg % Gain/Exit Rule/Horizontal/Fib Ext 1/Fib Ext 2
-   - Support Levels: 69.32/61.33/56.15/54.15 based on Fib Ext 1/Fib Ext 2/Recent Minima/Horizontal
-   - **Recommended Stop Loss:** 80.09 (approximately 10% below current price)
-   - **Recommended Take Profit:** 100.75 (Fib Ext 2 target, representing approximately 13.22% upside)
-   - P/E Ratio = 17.05
-   - PEG Ratio = Not available
+   - Potential Upside: 109.85% to 172.30%
+   - Current Price: 116,821.26
+   - Target Prices: 243,558.04/168,968.01/318,148.07/74,553.47 based on Exit Rule/Avg % Gain/Historic Rise/Fib Ext 2
+   - Support Levels: 16,547.50/10,148.86/57,447.22/51,395.95 based on Recent Minima/Horizontal/Fib Ext 1/Fib Ext 2
+   - **Recommended Stop Loss:** 97,910 (approximately 16% below current price, at Fibonacci support level)
+   - **Recommended Take Profit:** 168,968 (Avg % Gain target, representing approximately 44.6% upside)
+   - P/E Ratio: Not applicable for cryptocurrency
+   - PEG Ratio: Not applicable for cryptocurrency
 
-### 4. **BDGI.TO (Badger Infrastructure Solutions)**
+   Multiple BTC-USD signals from different functions confirm this bullish outlook, with both TRENDPULSE Monthly and OSCILLATOR DELTA Daily also showing buy signals recently.
+
+### 5. **BDGI.TO (Badger Infrastructure Solutions)**
    - Function: TRENDPULSE Monthly
    - Signal Date: 2025-07-31
    - Signal: Long
-   - Win Rate: 92.86%, 14 trades over 20 years
+   - Win Rate: 92.86%, Past 20 years, 14 trades
    - CAGR of strategy - CAGR buy and hold = 15.59% - 16.43% = -0.84%
-   - Latest Performance Win Rate: 73.08%
+   - Latest Performance Win Rate: 83.93%
    - Average of Historical Winning Trades: 39.19%
    - Max single trade loss historically: 37.81%
-   - Potential Upside: 9.32% to 90.68%
-   - Current Price: 58.91
-   - Target Prices: 64.4/72.78/112.33 based on Exit Rule/Avg % Gain/Historic Rise to Pivot
-   - Support Levels: 46.03/42.83/35.88/24.32 based on Fib Ext 1/Fib Ext 2/Recent Minima/Horizontal
-   - **Recommended Stop Loss:** 52.50 (approximately 10.9% below current price)
-   - **Recommended Take Profit:** 64.40 (first target level, representing approximately 9.32% upside)
+   - Potential Upside: 40.61% to 89.21%
+   - Current Price: 59.37
+   - Target Prices: 83.48/72.78/64.40/50.75/58.55 based on Historic Rise/Avg % Gain/Exit Rule/Fib Ext 1/Fib Ext 2
+   - Support Levels: 35.88/24.32/46.03/42.83 based on Recent Minima/Horizontal/Fib Ext 1/Fib Ext 2
+   - **Recommended Stop Loss:** 53.40 (approximately 10% below current price)
+   - **Recommended Take Profit:** 72.78 (based on average historical winning trades, representing approximately 22.6% upside)
    - P/E Ratio = 26.50
    - PEG Ratio = Not available
+   - Potential Downside: -39.56% to -27.87%
 
-### 5. **ETH-USD (Ethereum)**
-   - Function: ALTITUDE ALPHA Monthly
+   **Note:** This signal is confirmed by multiple functions - TRENDPULSE Weekly and Monthly, plus ALTITUDE ALPHA Quarterly, all showing strong buy signals for BDGI.TO within recent periods.
+
+## Best Trendline Buy Signals
+
+### 1. **BABA (Alibaba Group)**
+   - Function: TRENDPULSE Weekly
    - Signal Date: 2025-08-31
    - Signal: Long
-   - Win Rate: 71.43%, 7 trades over 10 years
-   - CAGR of strategy - CAGR buy and hold = 45.2% - 33.4% = 11.8%
-   - Latest Performance Win Rate: 75.0%
-   - Average of Historical Winning Trades: 81.22%
-   - Max single trade loss historically: 31.1%
-   - Potential Upside: 10.0% to 147.8%
-   - Current Price: 4437.72
-   - Target Prices: 7955.59/10873.42/13791.24 based on Avg % Gain/Exit Rule/Historic Rise to Pivot
-   - Support Levels: 4185.68/3929.15/1793.78/1370.50 based on Fib Ext 1/Fib Ext 2/Recent Minima/Horizontal
-   - **Recommended Stop Loss:** 3929.15 (approximately 11.5% below current price)
-   - **Recommended Take Profit:** 7955.59 (first target level, representing approximately 79.3% upside)
-   - P/E Ratio = Not applicable
-   - PEG Ratio = Not applicable
+   - Win Rate: 87.5%
+   - Latest Performance Win Rate: 72.81%
+   - Potential Upside: 145.67% to 222.66%
+   - Current Price: 162.48
+   - P/E Ratio = 18.72
+   - PEG Ratio = 1.83
+
+### 2. **LYFT (Lyft)**
+   - Function: TRENDPULSE Daily
+   - Signal Date: 2025-09-09
+   - Signal: Long
+   - Win Rate: 92.31%
+   - CAGR difference: 29.71%
+   - Latest Performance Win Rate: 85.1%
+   - Current Price: 21.96
+   - P/E Ratio = 95.48
+   - PEG Ratio = 0.29
+
+### 3. **BDGI.TO (Badger Infrastructure Solutions)**
+   - Function: TRENDPULSE Monthly
+   - Signal Date: 2025-07-31
+   - Signal: Long
+   - Win Rate: 92.86%, Past 20 years, 14 trades
+   - CAGR difference: -0.84%
+   - Latest Performance Win Rate: 83.93%
+   - Average Historical Winning Trades: 39.19%
+   - Current price: 59.37
+   - P/E Ratio = 26.50
+
+### 4. **GDX (VanEck Gold Miners ETF)**
+   - Function: TRENDPULSE Weekly
+   - Signal Date: 2025-09-07
+   - Signal: Long
+   - Win Rate: 93.33% (Past 10 years, 15 trades)
+   - CAGR difference: 11.18%
+   - Latest Performance Win Rate: 79.17%
+   - Current Price: 68.79
+   - P/E Ratio = 19.48
+
+### 5. **KWEB (KraneShares CSI China Internet ETF)**
+   - Function: TRENDPULSE Weekly
+   - Signal Date: 2025-09-14
+   - Signal: Long
+   - Win Rate: 100.0%
+   - CAGR difference: 9.43%
+   - Latest Performance Win Rate: 72.81%
+   - Current Price: 41.96
+   - P/E Ratio = 18.34
 
 ## Best Sell Signals
 
 ### 1. **^VIX (CBOE Volatility Index)**
    - Function: FRACTAL TRACK Quarterly
-   - Signal Date: 2025-09-18
+   - Signal Date: 2025-09-19
    - Signal: Short
-   - Win Rate: 87.5%, 24 trades over 35 years
+   - Win Rate: 87.5%, Past 35 years, 24 trades
    - CAGR of strategy - CAGR buy and hold = 11.36% - 5.5% = 5.86%
    - Latest Performance Win Rate: 55.56%
    - Average of Historical Winning Trades: 16.23%
    - Max single trade loss historically: 107.76%
-   - Potential Downside: 16.3% to 25.3%
-   - Current Price: 15.72
-   - Target Prices: 13.17/-14.05/11.67/15.55/11.77 based on Avg % Gain/Exit Rule/Horizontal/Fib Stack 1/Fib Stack 2
-   - Resistance Levels: 22.28/11.67/15.55/11.77/45.64/49.76 based on Recent Maxima/Horizontal/Fib Stack 1/Fib Stack 2/Fib Ret 1/Fib Ret 2
-   - **Recommended Stop Loss:** 17.50 (approximately 11.3% above current price)
-   - **Recommended Take Profit:** 13.17 (Avg % Gain target, representing approximately 16.3% downside)
-   - P/E Ratio = Not applicable
-   - PEG Ratio = Not applicable
+   - Potential Downside: -6.9% to -25.0%
+   - Current Price: 15.70
+   - Target Prices: 16.77/13.15/-14.07/11.67/15.55/11.77 based on Historic Rise/Avg % Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+   - Resistance Levels: 22.28/11.67/15.55/11.77/45.64/49.76 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2
+   - **Recommended Stop Loss:** 17.27 (approximately 10% above current price)
+   - **Recommended Take Profit:** 13.15 (representing approximately 16.2% downside)
+   - P/E Ratio: Not applicable
+   - PEG Ratio: Not applicable
+   - Potential Upside Risk: 41.9% to 190.8%
 
-### 2. **RHHBY (Roche Holding AG)**
+### 2. **BTI (British American Tobacco)**
    - Function: FRACTAL TRACK Daily
-   - Signal Date: 2025-09-12
+   - Signal Date: 2025-09-18
    - Signal: Short
-   - Win Rate: 90.2%
-   - CAGR of strategy - CAGR buy and hold = 10.23% - 5.1% = 5.13%
+   - Win Rate: 89.47%, 57 trades
+   - CAGR of strategy - CAGR buy and hold = 13.92% - 5.1% = 8.82%
    - Latest Performance Win Rate: 67.42%
-   - Average of Historical Winning Trades: 3.23%
-   - Max single trade loss historically: 7.19%
-   - Potential Downside: -2.2% to -24.6%
-   - Current Price: 41.17
-   - Target Prices: 41.01/40.01/38.64/34.52/31.05/202.89 based on Historic Rise/Avg % Gain/Exit Rule/Horizontal/Fib Ext 1/Fib Ext 2
-   - Resistance Levels: 43.0/34.52/31.05/202.89 based on Recent Maxima/Horizontal/Fib Ext 1/Fib Ext 2
-   - **Recommended Stop Loss:** 45.29 (approximately 10% above current price)
-   - **Recommended Take Profit:** 38.64 (third target level, representing approximately -6.1% downside)
-   - P/E Ratio = 22.39
-   - PEG Ratio = 0.65
+   - Average of Historical Winning Trades: 3.61%
+   - Max single trade loss historically: 10.15%
+   - Potential Downside: -1.1% to -5.2%
+   - Current Price: 54.92
+   - Target Prices: 54.29/52.94/52.04/52.44/49.37 based on Historic Fall/Avg % Loss/Exit Rule/Fib Ext 1/Fib Ext 2
+   - Resistance Levels: 57.31/28.51/52.44/49.37 based on Recent Maxima/Horizontal/Fib Ext 1/Fib Ext 2
+   - **Recommended Stop Loss:** 57.31 (approximately 4.4% above current price, at recent maxima)
+   - **Recommended Take Profit:** 52.04 (exit rule target, representing approximately 5.2% downside)
+   - P/E Ratio = 28.91
+   - PEG Ratio = 0.42
+   - Potential Upside Risk: 4.4% to 5.0%
 
 ### 3. **MFT.NZ (Mainfreight Limited)**
-   - Function: OSCILLATOR DELTA Daily
-   - Signal Date: 2025-09-11
-   - Signal: Short
-   - Win Rate: 85.0%, 20 trades over 2 years
-   - CAGR of strategy - CAGR buy and hold = 6.0% - 5.1% = 0.9%
-   - Latest Performance Win Rate: 92.31%
-   - Average of Historical Winning Trades: 1.14%
-   - Max single trade loss historically: 3.92%
-   - Potential Downside: 1.7% to 26.7%
-   - Current Price: 62.61
-   - Target Prices: 59.42/59.09/55.19/54.72/45.90 based on Avg % Gain/Exit Rule/Horizontal/Fib Stack 1/Fib Stack 2
-   - Resistance Levels: 55.19/54.72/45.90 based on Horizontal/Fib Stack 1/Fib Stack 2
-   - **Recommended Stop Loss:** 64.50 (approximately 3.0% above current price)
-   - **Recommended Take Profit:** 59.42 (Avg % Gain target, representing approximately 5.1% downside)
-   - P/E Ratio = 23.02
-   - PEG Ratio = Not available
-
-### 4. **CNR.TO (Canadian National Railway)**
    - Function: FRACTAL TRACK Daily
    - Signal Date: 2025-09-12
    - Signal: Short
-   - Win Rate: 87.5%, 40 trades over 4 years
-   - CAGR of strategy - CAGR buy and hold = 6.01% - 5.1% = 0.91%
-   - Latest Performance Win Rate: 29.94%
-   - Average of Historical Winning Trades: 2.83%
-   - Max single trade loss historically: 2.07%
-   - Potential Downside: 2.7% to 57.2%
-   - Current Price: 130.32
-   - Target Prices: 125.73/117.00/128.83/86.82/55.81 based on Avg % Gain/Exit Rule/Horizontal/Fib Stack 1/Fib Stack 2
-   - Resistance Levels: 134.14/128.83/86.82/55.81 based on Recent Maxima/Horizontal/Fib Stack 1/Fib Stack 2
-   - **Recommended Stop Loss:** 134.00 (approximately 2.8% above current price)
-   - **Recommended Take Profit:** 125.73 (Avg % Gain target, representing approximately 3.5% downside)
-   - P/E Ratio = 17.79
-   - PEG Ratio = Not available
+   - Win Rate: 89.13%, Past 4 years, 46 trades
+   - CAGR of strategy - CAGR buy and hold = 10.01% - 5.1% = 4.91%
+   - Latest Performance Win Rate: 67.42%
+   - Average of Historical Winning Trades: 2.89%
+   - Max single trade loss historically: 11.6%
+   - Potential Downside: -4.5% to -27.6%
+   - Current Price: 63.40
+   - Target Prices: 60.54/60.21/50.82/55.19/54.72/45.90 based on Historic Fall/Avg % Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+   - Resistance Levels: 64.20/55.19/54.72/45.90 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2
+   - **Recommended Stop Loss:** 69.74 (approximately 10% above current price)
+   - **Recommended Take Profit:** 60.21 (representing approximately 5.0% downside)
+   - P/E Ratio: 23.60
+   - PEG Ratio: Not available
+   - Potential Upside Risk: 1.3% to 20.0%
 
-### 5. **FPH.NZ (Fisher & Paykel Healthcare)**
-   - Function: TRENDPULSE Daily
-   - Signal Date: 2025-09-09
+### 4. **RHHBY (Roche Holding)**
+   - Function: FRACTAL TRACK Daily
+   - Signal Date: 2025-09-12
    - Signal: Short
-   - Win Rate: 78.26%
-   - Latest Performance Win Rate: 78.09%
-   - Current Mark to Market: -2.14% (7 days)
-   - Current Price: 37.48
-   - Resistance Levels: 40.79/40.0/40.16/39.19/40.93/48.57
-   - Support Levels: 36.6/22.52/30.98/26.19
-   - **Recommended Stop Loss:** 39.35 (approximately 5% above current price)
-   - **Recommended Take Profit:** 34.0 (approximately 9.3% downside)
-   - P/E Ratio = 58.56
-   - PEG Ratio = Not available
+   - Win Rate: 90.2%, 51 trades
+   - CAGR difference: 5.13%
+   - Latest Performance Win Rate: 67.42%
+   - Average of Historical Winning Trades: 3.23%
+   - Current Price: 41.19 (0.39% below signal price of 41.35)
+   - **Recommended Stop Loss:** 43.00 (approximately 4.4% above current price)
+   - **Recommended Take Profit:** 38.64 (approximately 6.2% downside)
+   - P/E Ratio = 22.03
+   - PEG Ratio = 0.65
 
-## Best Trendline Buy Signals
-
-### 1. **NIFTY_MIDCAP_100.NS (NIFTY MIDCAP 100 Index)**
-   - Function: TRENDPULSE Quarterly
-   - Signal Date: 2024-06-30
-   - Signal: Long
-   - Win Rate: 100%, 7 trades over 20 years
-   - Latest Performance Win Rate: 100%
-   - Current Price: 59,050.30
-   - Price vs Signal: 5.94% above
-   - **Recommended Stop Loss:** 51,600
-   - **Recommended Take Profit:** 69,877
-
-### 2. **BNS.TO (Bank of Nova Scotia)**
+### 5. **AMD (Advanced Micro Devices)**
    - Function: TRENDPULSE Monthly
-   - Signal Date: 2024-09-30
-   - Signal: Long
-   - Win Rate: 100.0%, 7 trades over 20 years
-   - Latest Performance Win Rate: 83.93%
-   - Sharpe Ratio: 2.46
-   - CAGR difference: 0.87%
-   - Current Price: 88.99
-   - **Recommended Stop Loss:** 80.09
-   - **Recommended Take Profit:** 100.75
-
-### 3. **CEN.NZ (Contact Energy Limited)**
-   - Function: TRENDPULSE Weekly
-   - Signal Date: 2025-06-01
-   - Signal: Long
-   - Win Rate: 100.0%, 9 trades over 10 years
-   - Latest Performance Win Rate: 72.81%
-   - Sharpe Ratio: 2.56
-   - Current Price: 9.2
-   - **Recommended Stop Loss:** 8.50
-   - **Recommended Take Profit:** 9.58
-
-### 4. **^BVSP (Bovespa Index)**
-   - Function: TRENDPULSE Weekly
-   - Signal Date: 2025-08-17
-   - Signal: Long
-   - Win Rate: 91.67%, 12 trades over 10 years
-   - Latest Performance Win Rate: 72.81%
-   - Average of Historical Winning Trades: 5.42%
-   - Current Price: 145594.0
-   - **Recommended Stop Loss:** 132437.0
-   - **Recommended Take Profit:** 173653.97
-
-### 5. **ASML (ASML Holding)**
-   - Function: TRENDPULSE Monthly
-   - Signal Date: 2024-01-31
-   - Signal: Long
-   - Win Rate: 81.82%, 11 trades over 20 years
-   - Latest Performance Win Rate: 83.93%
-   - Current Price: 872.27
-   - Price vs Signal: 0.28% above
-   - **Recommended Stop Loss:** 830.00
-   - **Recommended Take Profit:** 1081.10
+   - Signal Date: 2025-07-31
+   - Signal: Sell (based on price being 10.43% below signal price)
+   - Win Rate: 81.82%, Past 20 years, 11 trades
+   - CAGR difference: 12.38%
+   - Latest Performance Win Rate: 0% (Monthly short signals)
+   - Average of Historical Winning Trades: 87.28% (for long signals, indicates potential volatility)
+   - Max single trade loss historically: 11.47%
+   - Potential Downside: 10.94% to 27.23%
+   - Current Price: 157.92
+   - Target Prices (Downside): 140.63/116.48 based on Fib Ext 1/Fib Ext 2
+   - Resistance Levels: 178.82/219.06/251.35 based on Exit Rule/Fib Ext 1/Fib Ext 2
+   - **Recommended Stop Loss:** 173.71 (approximately 10% above current price)
+   - **Recommended Take Profit:** 140.63 (Fibonacci extension level 1, representing approximately 10.94% downside)
+   - P/E Ratio = 94.56
+   - PEG Ratio = 0.49
+   - Potential Upside (Risk): 13.23% to 59.16%
 
 ## Best Trendline Sell Signals
 
 ### 1. **^VIX (CBOE Volatility Index)**
    - Function: FRACTAL TRACK Quarterly
-   - Signal Date: 2025-09-18
+   - Signal Date: 2025-09-19
    - Signal: Short
-   - Win Rate: 87.5%, 24 trades over 35 years
+   - Win Rate: 87.5%, Past 35 years, 24 trades
+   - CAGR difference: 5.86%
    - Latest Performance Win Rate: 55.56%
-   - Current Price: 15.72
-   - **Recommended Stop Loss:** 17.50
-   - **Recommended Take Profit:** 13.17
+   - Current Price: 15.70
+   - Recommended Stop Loss: 17.27
+   - Recommended Take Profit: 13.15
 
-### 2. **FPH.NZ (Fisher & Paykel Healthcare)**
-   - Function: TRENDPULSE Daily
-   - Signal Date: 2025-09-09
-   - Signal: Short
-   - Win Rate: 78.26%
-   - Latest Performance Win Rate: 78.09%
-   - Current Price: 37.48
-   - **Recommended Stop Loss:** 39.35
-   - **Recommended Take Profit:** 34.0
+### 2. **AMD (Advanced Micro Devices)**
+   - Function: TRENDPULSE Monthly
+   - Signal Date: 2025-07-31
+   - Signal: Sell
+   - Win Rate: 81.82%, Past 20 years, 11 trades
+   - CAGR difference: 12.38%
+   - Latest Performance Win Rate: 0% (Monthly short signals)
+   - Current price is 10.43% below signal price
+   - P/E Ratio = 94.56
+   - PEG Ratio = 0.49
 
-### 3. **MFT.NZ (Mainfreight Limited)**
-   - Function: OSCILLATOR DELTA Daily
-   - Signal Date: 2025-09-11
-   - Signal: Short
-   - Win Rate: 85.0%, 20 trades over 2 years
-   - Latest Performance Win Rate: 92.31%
-   - Current Price: 62.61
-   - Price vs Signal: 4.16% above
-   - **Recommended Stop Loss:** 64.50
-   - **Recommended Take Profit:** 59.42
+### 3. **PFE (Pfizer)**
+   - Function: TRENDPULSE Weekly
+   - Signal Date: 2025-07-13
+   - Signal: Sell
+   - Win Rate: 85.71%, Past 10 years, 14 trades
+   - CAGR difference: 5.84%
+   - Latest Performance Win Rate: 50% (Weekly short signals)
+   - Current price is 5.85% below signal price
+   - P/E Ratio = 12.78
+   - PEG Ratio = 0.97
 
 ### 4. **CNR.TO (Canadian National Railway)**
    - Function: FRACTAL TRACK Daily
    - Signal Date: 2025-09-12
    - Signal: Short
-   - Win Rate: 87.5%, 40 trades over 4 years
+   - Win Rate: 87.5%, Past 4 years, 40 trades
+   - CAGR difference: 0.91%
    - Latest Performance Win Rate: 67.42%
-   - Current Price: 130.32
-   - Price vs Signal: 0.72% above
-   - **Recommended Stop Loss:** 134.00
-   - **Recommended Take Profit:** 125.73
+   - Current Price: 129.00
+   - P/E Ratio = 17.79
 
-### 5. **IHI (iShares U.S. Medical Devices ETF)**
-   - Function: TRENDPULSE Daily
-   - Signal Date: 2025-09-08
+### 5. **MFT.NZ (Mainfreight Limited)**
+   - Function: FRACTAL TRACK Daily
+   - Signal Date: 2025-09-12
    - Signal: Short
-   - Win Rate: 71.43%
-   - Latest Performance Win Rate: 78.09%
-   - Current Mark to Market: -3.49% (7 days)
-   - Current Price: 60.35
-   - **Recommended Stop Loss:** 63.37
-   - **Recommended Take Profit:** 56.09
+   - Win Rate: 89.13%, Past 4 years, 46 trades
+   - CAGR difference: 4.91%
+   - Latest Performance Win Rate: 67.42%
+   - Current Price: 63.40
+   - P/E Ratio = 23.60
