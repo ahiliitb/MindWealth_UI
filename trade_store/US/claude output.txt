@@ -1,0 +1,405 @@
+# Best Buy Signals Analysis
+
+After analyzing all the signals based on the specified criteria, here are the best buy signals:
+
+## Best Overall Buy Signals
+
+**1. TSLA (Tesla)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-07-09
+   - Signal: Long
+   - Win Rate: 100%
+   - CAGR of strategy - CAGR buy and hold = 101.75% - 34.23% = 67.52%
+   - Sharpe Ratio: 0.95
+   - Latest Performance Win Rate: 87.06%
+   - Average of Historical Winning Trades: 39.12%
+   - Max single trade loss historically: 0%
+   - Potential Upside: 15.09% to 41.93%
+   - Current Price: 425.86
+   - Target Prices: 490.132 (F-Stack 2)
+   - Support Levels: 408.5817 (Horizontal)/413.6779 (F-Stack 1)
+   - Recommended Stop Loss: 395.05 (approximately 7.2% below current price)
+   - Recommended Take Profit: 490.13 (F-Stack 2 target, representing approximately 15.09% upside)
+   - P/E Ratio: 251.11
+   - PEG Ratio: 7.58
+   - Note: This signal comes from multiple functions (FRACTAL TRACK Daily and Weekly) with very high win rates and consistent targets. The stock has already achieved multiple target levels, showing strong momentum.
+
+**2. SOXX (Semiconductor ETF)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-04-27
+   - Signal: Long
+   - Win Rate: 93.33%
+   - CAGR of strategy - CAGR buy and hold = 13.01% - 3.58% = 9.43%
+   - Sharpe Ratio: 1.54
+   - Latest Performance Win Rate: 83.33%
+   - Average of Historical Winning Trades: 44.59%
+   - Max single trade loss historically: 14.31%
+   - Potential Upside: 16.57% to 27.87%
+   - Current Price: 258.53
+   - Target Prices: 301.36 (F-Stack 2)/330.58 (Exit Rule)
+   - Support Levels: 254.997 (F-Stack 1)
+   - Recommended Stop Loss: 242.00 (approximately 6.4% below current price)
+   - Recommended Take Profit: 301.36 (F-Stack 2 target, representing approximately 16.57% upside)
+   - P/E Ratio: 34.48
+   - PEG Ratio: N/A
+   - Note: This signal appears across multiple timeframes (Daily, Weekly) with consistently high win rates.
+
+**3. GS (Goldman Sachs)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-05-28
+   - Signal: Long
+   - Win Rate: 100%
+   - CAGR of strategy - CAGR buy and hold = 7.83% - 9.31% = -1.48%
+   - Sharpe Ratio: 0.7
+   - Latest Performance Win Rate: 87.06%
+   - Average of Historical Winning Trades: 31.26%
+   - Max single trade loss historically: 0.35%
+   - Potential Upside: 8.06% to 9.31%
+   - Current Price: 794.22
+   - Target Prices: 868.18 (Exit Rule)/858.21 (F-Stack 2)
+   - Support Levels: 794.58 (F-Stack 1)
+   - Recommended Stop Loss: 754.50 (approximately 5% below current price)
+   - Recommended Take Profit: 858.21 (F-Stack 2 target, representing approximately 8.06% upside)
+   - P/E Ratio: 17.71
+   - PEG Ratio: 2.98
+   - Note: Multiple FRACTAL TRACK signals across different timeframes with exceptional consistency. Target already reached for the early signals, showing strong momentum.
+
+**4. KWEB (China Internet ETF)**
+   - Function: TRENDPULSE
+   - Signal Date: 2025-09-09
+   - Signal: Long
+   - Win Rate: 100%
+   - CAGR of strategy - CAGR buy and hold = 13.01% - 3.58% = 9.43%
+   - Sharpe Ratio: 1.54
+   - Latest Performance Win Rate: 78.09%
+   - Average of Historical Winning Trades: 6.06%
+   - Max single trade loss historically: 1.83%
+   - Potential Upside: 2.91% to 69.12%
+   - Current Price: 42.59
+   - Target Prices: 44.58 (Historic Rise)/43.83 (Exit Rule)/71.73 (Horizontal)
+   - Support Levels: 30.21 (Recent Minima)
+   - Recommended Stop Loss: 39.45 (approximately 7.4% below current price)
+   - Recommended Take Profit: 44.58 (first target level, representing approximately 4.67% upside)
+   - P/E Ratio: 18.34
+   - PEG Ratio: N/A
+   - Note: Recent signal with target already achieved, indicating strong momentum. Multiple confirmations from TRENDPULSE across different timeframes.
+
+**5. JD (JD.com)**
+   - Function: TRENDPULSE
+   - Signal Date: 2025-09-09
+   - Signal: Long
+   - Win Rate: 78.57%
+   - CAGR of strategy - CAGR buy and hold = 4.1% - 1.6% = 2.5%
+   - Sharpe Ratio: 0.09
+   - Latest Performance Win Rate: 78.09%
+   - Average of Historical Winning Trades: 4.03%
+   - Max single trade loss historically: 0.59%
+   - Potential Upside: 5.16% to 161.32%
+   - Current Price: 35.24
+   - Target Prices: 37.42 (Historic Rise)/37.06 (Exit Rule)/92.73 (Horizontal)/97.26 (F-Stack 1)/102.26 (F-Stack 2)
+   - Support Levels: 30.39 (Recent Minima)/24.07 (Horizontal)
+   - Recommended Stop Loss: 33.48 (approximately 5% below current price)
+   - Recommended Take Profit: 37.42 (first target level, representing approximately 6.19% upside)
+   - P/E Ratio: 9.86
+   - PEG Ratio: 1.87
+   - Note: Multiple confirmations from different timeframes and already achieved its target, showing momentum.
+
+## Best Trendline Buy Signals
+
+**1. TSLA (Tesla)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-06-30
+   - Signal: Long
+   - Win Rate: 70%
+   - CAGR of strategy - CAGR buy and hold = 9.81% - 8.16% = 1.65%
+   - Sharpe Ratio: 0.44
+   - Latest Performance Win Rate: 82.26%
+   - Average of Historical Winning Trades: 168.11%
+   - Max single trade loss historically: 25.7%
+   - Potential Upside: 15.09% to 48.38%
+   - Current Price: 425.86
+   - Target Prices: 490.13 (F-Stack 2)/527.5 (Exit Rule)/556.22 (Avg % Gain)
+   - Support Levels: 413.68 (F-Stack 1)
+   - Recommended Stop Loss: 395.05 (approximately 7.2% below current price)
+   - Recommended Take Profit: 490.13 (F-Stack 2 target, representing approximately 15.09% upside)
+   - P/E Ratio: 251.11
+   - PEG Ratio: 7.58
+
+**2. SOXX (Semiconductor ETF)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-04-02
+   - Signal: Long
+   - Win Rate: 96.88%
+   - CAGR of strategy - CAGR buy and hold = 7.3% - 22.81% = -15.51%
+   - Sharpe Ratio: 0.26
+   - Latest Performance Win Rate: 87.06%
+   - Average of Historical Winning Trades: 19.96%
+   - Max single trade loss historically: 2.41%
+   - Potential Upside: 9.37% to 23.44%
+   - Current Price: 258.53
+   - Target Prices: 282.76 (F-Stack 2)/319.14 (Exit Rule)
+   - Support Levels: 254.997 (F-Stack 1)
+   - Recommended Stop Loss: 242.00 (approximately 6.4% below current price)
+   - Recommended Take Profit: 282.76 (F-Stack 2 target, representing approximately 9.37% upside)
+   - P/E Ratio: 34.48
+   - PEG Ratio: N/A
+
+**3. TD.TO (TD Bank)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-04-27
+   - Signal: Long
+   - Win Rate: 93.1%
+   - CAGR of strategy - CAGR buy and hold = 12.4% - 6.66% = 5.74%
+   - Sharpe Ratio: 0.42
+   - Latest Performance Win Rate: 83.33%
+   - Average of Historical Winning Trades: 36.05%
+   - Max single trade loss historically: 1.23%
+   - Potential Upside: 19.16% to 40.8%
+   - Current Price: 107.98
+   - Target Prices: 128.67 (F-Stack 1)/152.04 (F-Stack 2)
+   - Support Levels: 83.35 (Fib Ext 2)/69.63 (Fib Ext 1)
+   - Recommended Stop Loss: 102.58 (approximately 5% below current price)
+   - Recommended Take Profit: 128.67 (F-Stack 1 target, representing approximately 19.16% upside)
+   - P/E Ratio: 9.26
+   - PEG Ratio: N/A
+
+**4. ^NZ50 (New Zealand 50 Index)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-02-05
+   - Signal: Long
+   - Win Rate: 100%
+   - CAGR of strategy - CAGR buy and hold = 4.54% - 2.56% = 1.98%
+   - Sharpe Ratio: 0.42
+   - Latest Performance Win Rate: 87.06%
+   - Average of Historical Winning Trades: 3.61%
+   - Max single trade loss historically: 0.64%
+   - Potential Upside: 4.22% to 30.87%
+   - Current Price: 13120.03
+   - Target Prices: 13492.30 (Horizontal)/14773.88 (F-Stack 1)/17170.38 (F-Stack 2)
+   - Support Levels: 12589.08 (Fib Ret)
+   - Recommended Stop Loss: 12464.03 (approximately 5% below current price)
+   - Recommended Take Profit: 13492.30 (Horizontal target, representing approximately 2.84% upside)
+   - P/E Ratio: N/A
+   - PEG Ratio: N/A
+
+**5. GOOG (Alphabet)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-04-27
+   - Signal: Long
+   - Win Rate: 87.5%
+   - CAGR of strategy - CAGR buy and hold = 13.32% - 11.39% = 1.93%
+   - Sharpe Ratio: 0.91
+   - Latest Performance Win Rate: 83.33%
+   - Average of Historical Winning Trades: 31.92%
+   - Max single trade loss historically: 1.61%
+   - Potential Upside: 11.43% to 13.9%
+   - Current Price: 249.85
+   - Target Prices: 278.4 (Exit Rule)/240.36 (F-Stack 2)
+   - Support Levels: 226.83 (Fib Ext 1)/198.50 (Fib Ext 2)
+   - Recommended Stop Loss: 237.36 (approximately 5% below current price)
+   - Recommended Take Profit: 278.4 (Exit Rule target, representing approximately 11.43% upside)
+   - P/E Ratio: 26.93
+   - PEG Ratio: 1.70
+
+# Best Sell Signals Analysis
+
+After analyzing all the signals based on the specified criteria, here are the best sell signals:
+
+## Best Overall Sell Signals
+
+**1. ^VIX (Volatility Index)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-09-18
+   - Signal: Short
+   - Win Rate: 87.5%
+   - CAGR of strategy - CAGR buy and hold = 11.36% - 5.5% = 5.86%
+   - Sharpe Ratio: 0.09
+   - Latest Performance Win Rate: 55.56%
+   - Average of Historical Winning Trades: 16.23%
+   - Max single trade loss historically: 3.51%
+   - Potential Downside: 3.35% to 25.42%
+   - Current Price: 15.72
+   - Target Prices: 11.67 (Horizontal)/15.55 (Fib Ret 1)/11.77 (Fib Ret 2)
+   - Resistance Levels: 16.26 (Fib Ret)/22.28 (Recent Maxima)
+   - Recommended Stop Loss: 16.51 (approximately 5% above current price)
+   - Recommended Take Profit: 11.67 (Horizontal target, representing approximately 25.77% downside)
+   - P/E Ratio: N/A
+   - PEG Ratio: N/A
+   - Note: This is a short on volatility, which is a bet on market stability. The signal has strong historical performance.
+
+**2. RHHBY (Roche Holding)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-09-12
+   - Signal: Short
+   - Win Rate: 90.2%
+   - CAGR of strategy - CAGR buy and hold = 10.23% - 5.1% = 5.13%
+   - Sharpe Ratio: 0.23
+   - Latest Performance Win Rate: 29.94%
+   - Average of Historical Winning Trades: 3.23%
+   - Max single trade loss historically: 0.57%
+   - Potential Downside: 0.81% to 25.34%
+   - Current Price: 41.17
+   - Target Prices: 38.64 (Exit Rule)/34.52 (Horizontal)/31.05 (Fib Ext 1)
+   - Resistance Levels: 41.51 (Fib Ret)/43.0 (Recent Maxima)
+   - Recommended Stop Loss: 43.23 (approximately 5% above current price)
+   - Recommended Take Profit: 38.64 (Exit Rule target, representing approximately 6.15% downside)
+   - P/E Ratio: 22.39
+   - PEG Ratio: 0.65
+   - Note: Recent signal with strong historical win rate. Price is already below the target level, indicating momentum.
+
+**3. CNR.TO (Canadian National Railway)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-09-12
+   - Signal: Short
+   - Win Rate: 87.5%
+   - CAGR of strategy - CAGR buy and hold = 6.01% - 5.1% = 0.91%
+   - Sharpe Ratio: 0.15
+   - Latest Performance Win Rate: 29.94%
+   - Average of Historical Winning Trades: 2.83%
+   - Max single trade loss historically: 0.57%
+   - Potential Downside: 2.75% to 57.65%
+   - Current Price: 130.32
+   - Target Prices: 116.99 (Exit Rule)/128.83 (Horizontal)/86.82 (Fib Ext 1)/55.81 (Fib Ext 2)
+   - Resistance Levels: 134.00 (Fib Ret)/134.14 (Recent Maxima)
+   - Recommended Stop Loss: 136.84 (approximately 5% above current price)
+   - Recommended Take Profit: 116.99 (Exit Rule target, representing approximately 10.23% downside)
+   - P/E Ratio: 17.79
+   - PEG Ratio: N/A
+   - Note: Recent signal with high historical win rate. The company faces headwinds from slowing economic growth.
+
+**4. MFT.NZ (Mainfreight)**
+   - Function: OSCILLATOR DELTA
+   - Signal Date: 2025-09-11
+   - Signal: Short
+   - Win Rate: 85%
+   - CAGR of strategy - CAGR buy and hold = 6.0% - 5.1% = 0.9%
+   - Sharpe Ratio: 0.23
+   - Latest Performance Win Rate: 62.5%
+   - Average of Historical Winning Trades: 1.14%
+   - Max single trade loss historically: 0.12%
+   - Potential Downside: 9.85% to 26.51%
+   - Current Price: 62.61
+   - Target Prices: 59.09 (Exit Rule)/55.19 (Horizontal)/54.72 (Fib Ret 1)/45.90 (Fib Ret 2)
+   - Resistance Levels: N/A (No Recent Maxima)
+   - Recommended Stop Loss: 65.74 (approximately 5% above current price)
+   - Recommended Take Profit: 59.09 (Exit Rule target, representing approximately 5.62% downside)
+   - P/E Ratio: 23.02
+   - PEG Ratio: N/A
+   - Note: Recent signal with good win rate and multiple confirmations from different functions.
+
+**5. MFT.NZ (Mainfreight) - Second Signal**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-08-28
+   - Signal: Short
+   - Win Rate: 89.13%
+   - CAGR of strategy - CAGR buy and hold = 10.01% - 5.1% = 4.91%
+   - Sharpe Ratio: 0.24
+   - Latest Performance Win Rate: 29.94%
+   - Average of Historical Winning Trades: 2.89%
+   - Max single trade loss historically: 0.13%
+   - Potential Downside: 1.76% to 26.71%
+   - Current Price: 62.61
+   - Target Prices: 52.96 (Exit Rule)/55.19 (Horizontal)/54.72 (Fib Ret 1)/45.90 (Fib Ret 2)
+   - Resistance Levels: 61.53 (Fib Ret)/61.0 (Recent Maxima)
+   - Recommended Stop Loss: 65.74 (approximately 5% above current price)
+   - Recommended Take Profit: 54.72 (Fib Ret 1 target, representing approximately 12.60% downside)
+   - P/E Ratio: 23.02
+   - PEG Ratio: N/A
+   - Note: Confirms the previous MFT.NZ signal, strengthening the case for a short position.
+
+## Best Trendline Sell Signals
+
+**1. ^VIX (Volatility Index)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-09-18
+   - Signal: Short
+   - Win Rate: 87.5%
+   - CAGR of strategy - CAGR buy and hold = 11.36% - 5.5% = 5.86%
+   - Sharpe Ratio: 0.09
+   - Latest Performance Win Rate: 55.56%
+   - Average of Historical Winning Trades: 16.23%
+   - Max single trade loss historically: 3.51%
+   - Potential Downside: 3.35% to 25.42%
+   - Current Price: 15.72
+   - Target Prices: 11.67 (Horizontal)/15.55 (Fib Ret 1)/11.77 (Fib Ret 2)
+   - Resistance Levels: 16.26 (Fib Ret)/22.28 (Recent Maxima)
+   - Recommended Stop Loss: 16.51 (approximately 5% above current price)
+   - Recommended Take Profit: 11.67 (Horizontal target, representing approximately 25.77% downside)
+   - P/E Ratio: N/A
+   - PEG Ratio: N/A
+
+**2. RHHBY (Roche Holding)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-09-12
+   - Signal: Short
+   - Win Rate: 90.2%
+   - CAGR of strategy - CAGR buy and hold = 10.23% - 5.1% = 5.13%
+   - Sharpe Ratio: 0.23
+   - Latest Performance Win Rate: 29.94%
+   - Average of Historical Winning Trades: 3.23%
+   - Max single trade loss historically: 0.57%
+   - Potential Downside: 0.81% to 25.34%
+   - Current Price: 41.17
+   - Target Prices: 38.64 (Exit Rule)/34.52 (Horizontal)/31.05 (Fib Ext 1)
+   - Resistance Levels: 41.51 (Fib Ret)/43.0 (Recent Maxima)
+   - Recommended Stop Loss: 43.23 (approximately 5% above current price)
+   - Recommended Take Profit: 38.64 (Exit Rule target, representing approximately 6.15% downside)
+   - P/E Ratio: 22.39
+   - PEG Ratio: 0.65
+
+**3. CNR.TO (Canadian National Railway)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-09-12
+   - Signal: Short
+   - Win Rate: 87.5%
+   - CAGR of strategy - CAGR buy and hold = 6.01% - 5.1% = 0.91%
+   - Sharpe Ratio: 0.15
+   - Latest Performance Win Rate: 29.94%
+   - Average of Historical Winning Trades: 2.83%
+   - Max single trade loss historically: 0.57%
+   - Potential Downside: 2.75% to 57.65%
+   - Current Price: 130.32
+   - Target Prices: 116.99 (Exit Rule)/128.83 (Horizontal)/86.82 (Fib Ext 1)/55.81 (Fib Ext 2)
+   - Resistance Levels: 134.00 (Fib Ret)/134.14 (Recent Maxima)
+   - Recommended Stop Loss: 136.84 (approximately 5% above current price)
+   - Recommended Take Profit: 116.99 (Exit Rule target, representing approximately 10.23% downside)
+   - P/E Ratio: 17.79
+   - PEG Ratio: N/A
+
+**4. IHI (iShares U.S. Medical Devices ETF)**
+   - Function: TRENDPULSE
+   - Signal Date: 2025-09-08
+   - Signal: Short (based on negative performance)
+   - Win Rate: 71.43%
+   - CAGR of strategy - CAGR buy and hold = 2.48% - 6.61% = -4.13%
+   - Sharpe Ratio: -0.16
+   - Latest Performance Win Rate: 78.09%
+   - Average of Historical Winning Trades: 1.68%
+   - Max single trade loss historically: 0.37%
+   - Potential Downside: 3.49% to 22.93%
+   - Current Price: 60.35
+   - Target Prices: 61.28 (Recent Minima)/46.73 (Horizontal)/56.09 (Fib Ext 1)/46.19 (Fib Ext 2)
+   - Resistance Levels: 70.85 (Exit Rule)/66.34 (Horizontal)/68.93 (F-Stack 1)/76.39 (F-Stack 2)
+   - Recommended Stop Loss: 63.37 (approximately 5% above current price)
+   - Recommended Take Profit: 56.09 (Fib Ext 1 target, representing approximately 7.06% downside)
+   - P/E Ratio: 29.99
+   - PEG Ratio: N/A
+
+**5. UPS (United Parcel Service)**
+   - Function: TRENDPULSE
+   - Signal Date: 2024-07-21
+   - Signal: Short (based on severe price decline)
+   - Win Rate: 72.73%
+   - CAGR of strategy - CAGR buy and hold = -7.73% - 1.5% = -9.23%
+   - Sharpe Ratio: -0.31
+   - Latest Performance Win Rate: 72.81%
+   - Average of Historical Winning Trades: 4.29%
+   - Max single trade loss historically: 2.75%
+   - Potential Downside: 42.02% to 55.03%
+   - Current Price: 84.18
+   - Target Prices: 135.65 (Recent Minima)/124.47 (Horizontal)/112.83 (Fib Ext 1)/669.75 (Fib Ext 2)
+   - Resistance Levels: 169.48 (Exit Rule)/221.27 (Horizontal)/228.75 (F-Stack 1)/262.65 (F-Stack 2)
+   - Recommended Stop Loss: 88.39 (approximately 5% above current price)
+   - Recommended Take Profit: 79.97 (approximately 5% below current price)
+   - P/E Ratio: 12.65
+   - PEG Ratio: 1.22
