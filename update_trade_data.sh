@@ -23,30 +23,10 @@ if [ ! -d "$TARGET_DIR" ]; then
 fi
 
 # Copy all files from source to target
-echo "📋 Copying files from $SOURCE_DIR to $TARGET_DIR..."
 cp -r "$SOURCE_DIR"/* "$TARGET_DIR"/
 
-echo "✅ Files copied successfully!"
-
-# Check git status
-echo "🔍 Checking git status..."
-git status
-
-# Add all changes
-echo "➕ Adding all changes to git..."
 git add .
 
 # Commit changes
-echo "💾 Committing changes..."
-git commit -m "Update trade data files from MindWealth/trade_store/US
-
-- Copied latest trade data files
-- Updated all CSV files in trade_store/US directory
-- Automated update via update_trade_data.sh script"
-
-# Push to GitHub
-echo "🚀 Pushing changes to GitHub..."
+git commit -m "Update trade data files from MindWealth/trade_store/US"
 git push origin main
-
-echo "✅ Trade data update completed successfully!"
-echo "📊 All files have been copied, committed, and pushed to GitHub."
