@@ -197,8 +197,10 @@ def display_strategy_cards_page(df):
                         # Extract date (between the last comma and the opening parenthesis)
                         parts = str(signal_info).split(',')
                         if len(parts) >= 3:
+                            signal_type = parts[1].strip()  # Get signal type (Long or Short)
                             date_part = parts[2].strip().split('(')[0].strip()  # Get date before (Price:
                             price_part = str(signal_info).split('(Price:')[1].replace(')', '').strip()  # Get price
+                            st.write(f"**Signal:** {signal_type}")
                             st.write(f"**Signal Date:** {date_part}")
                             st.write(f"**Signal Price:** ${price_part}")
                         else:
@@ -271,7 +273,7 @@ def create_top_signals_dashboard():
         st.markdown("**Signal & Performance Pages:**")
         signal_pages = [
             "Outstanding Signals", "Outstanding Target", "Outstanding Signals Exit",
-            "New Signals", "Latest Performance", "Forward Backtesting Performance"
+            "New Signals", "Latest Performance", "Forward Testing Performance"
         ]
         for page in signal_pages:
             if page in csv_files:
@@ -1566,7 +1568,7 @@ def discover_csv_files():
         'Outstanding Signals Exit',
         'New Signals',
         'Latest Performance',
-        'Forward Backtesting Performance'
+        'Forward Testing Performance'
     ]
     
     # Map file names to model function names
@@ -1585,7 +1587,7 @@ def discover_csv_files():
         'Outstanding Exit Signal': 'Outstanding Signals Exit',
         'New Signal': 'New Signals',
         'Latest Performance': 'Latest Performance',
-        'Forward Backtesting': 'Forward Backtesting Performance',
+        'Forward Testing': 'Forward Testing Performance',
         'Target Signal': 'Outstanding Target'
     }
     
