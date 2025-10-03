@@ -1,297 +1,271 @@
-# Best Buy Signals Analysis
+# Best Buy Signals
 
-Based on the provided entry signals data and applying the filtering criteria, here are the top buy signals in ranked order:
+## Top Overall Buy Signals
 
-## Top Buy Signals
+### 1. **NVDA (NVIDIA Corporation)**
+- Function: TRENDPULSE Weekly
+- Signal Date: 2025-09-21
+- Signal: Long
+- Win Rate: 81.82% (11 trades)
+- CAGR Difference: Strategy CAGR 10.33% - Buy & Hold CAGR 51.48% = -41.15%
+- Sharpe Ratio: 0.86 (Strategy) vs 1.44 (Buy & Hold)
+- Latest Performance Win Rate: 81.13%
+- Average of Historical Winning Trades: 15.86%
+- Max Single Trade Loss: 7.69%
+- Potential Upside: 6.42% to 27.0%
+- Current Price: 188.89
+- Target Prices: 201.02/269.31 based on Avg % Gain/Exit Rule
+- Support Levels: 167.02/152.9 based on Recent Minima/F-Stack support
+- Recommended Stop Loss: 169.00 (approximately 10% below current price)
+- Recommended Take Profit: 201.02 (first target level, 6.42% upside)
+- P/E Ratio: 53.51
+- PEG Ratio: 0.99
 
-### 1. **BTC-USD (Bitcoin)**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2025-10-02
-- **Signal**: Long
-- **Win Rate**: 95.65%
-- **CAGR of strategy - CAGR buy and hold** = 22.05% - 48.46% = -26.41%
-- **TrendPulse Daily Latest Performance Win Rate**: 84.74%
-- **Average of Historical Winning Trades**: 6.8%
-- **Max single trade loss historically**: 27.98%
-- **Potential Upside**: 11.09% to 48.83%
-- **Current Price**: 119,225.70
-- **Target Prices**: 132,447.83/127,333.05/119,687.53/123,774.36/117,228.52/177,451.61 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
-- **Support Levels**: 109,049.29/18,304.42/80,007.82/12,294.88/106,632.65/95,678.81 based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2/Fractal Track 1/Fractal Track 2
-- **Recommended Stop Loss**: 106,632 (approximately 10.6% below current price, at Fractal Track 1 support)
-- **Recommended Take Profit**: 132,447 (first target level, representing approximately 11.09% upside)
-- **Sharpe Ratio**: 0.59 (Strategy) vs 0.91 (Buy and Hold)
-- **P/E Ratio**: Not Applicable
-- **PEG Ratio**: Not Applicable
+Note: Multiple confirmation signals from different timeframes. Signal reached Historic Rise target of 188.06, showing strong momentum.
 
-**Analysis**: Despite having a negative CAGR difference compared to buy-and-hold, Bitcoin shows strong momentum with 95.65% win rate based on 23 historical trades. The TrendPulse function has demonstrated excellent recent performance with 84.74% win rate across 642 trades. Price is currently 0.49% above the breakout level, indicating the signal is timely. Multiple support levels provide protection against downside risk.
+### 2. **JD (JD.com, Inc.)**
+- Function: TRENDPULSE Weekly 
+- Signal Date: 2025-09-14
+- Signal: Long
+- Win Rate: 80.0% (5 trades)
+- CAGR Difference: Strategy CAGR 7.46% - Buy & Hold CAGR 4.70% = 2.76%
+- Sharpe Ratio: 0.46 (Strategy) vs 0.26 (Buy & Hold)
+- Latest Performance Win Rate: 81.13%
+- Average of Historical Winning Trades: 15.22%
+- Max Single Trade Loss: 14.29%
+- Potential Upside: 7.31% to 102%
+- Current Price: 35.98
+- Target Prices: 38.79/38.61/92.73/97.26/102.26 based on Avg % Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- Support Levels: 30.91/24.07 based on Recent Minima/Horizontal
+- Recommended Stop Loss: 32.40 (approximately 10% below current price)
+- Recommended Take Profit: 38.79 (first target level, 7.31% upside)
+- P/E Ratio: 10.08
+- PEG Ratio: N/A
 
-### 2. **HDFC Bank (HDFCBANK.NS)**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2025-10-01
-- **Signal**: Long
-- **Win Rate**: 89.47%
-- **CAGR of strategy - CAGR buy and hold** = 7.12% - 12.6% = -5.48%
-- **Fractal Track Daily Latest Performance Win Rate**: 71.95%
-- **Average of Historical Winning Trades**: 6.78%
-- **Max single trade loss historically**: 2.52%
-- **Potential Upside**: 1.71% to 35.28%
-- **Current Price**: 965.25
-- **Target Prices**: 981.76/1030.69/1120.85/1004.15/1098.06/1305.79 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
-- **Support Levels**: 945.05/640.90/962.80/765.11/No Fib Ret Level/No Fib Ret Level based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2/Fractal Track 1/Fractal Track 2
-- **Recommended Stop Loss**: 945.05 (approximately 2.1% below current price, at Recent Minima support)
-- **Recommended Take Profit**: 1030.69 (second target level, representing approximately 6.78% upside)
-- **Sharpe Ratio**: 0.29 (Strategy) vs 0.52 (Buy and Hold)
-- **P/E Ratio**: 21.75
-- **PEG Ratio**: Not Available
+Note: Signal has reached Historic Rise target of 35.84, showing strong momentum and the price is holding above this level.
 
-**Analysis**: HDFC Bank demonstrates strong historical performance with 89.47% win rate across 38 trades. The current price is 4.0% above the Fractal Track level, indicating the signal is timely and within our 10% threshold. The price has bounced back from a previous upmove, suggesting potential continuation. The stock also has strong support levels very close to current price, minimizing downside risk.
+### 3. **KWEB (KraneShares CSI China Internet ETF)**
+- Function: TRENDPULSE Weekly
+- Signal Date: 2025-09-14
+- Signal: Long
+- Win Rate: 100.0% (9 trades)
+- CAGR Difference: Strategy CAGR 13.01% - Buy & Hold CAGR 3.58% = 9.43%
+- Sharpe Ratio: 1.54 (Strategy) vs 0.17 (Buy & Hold)
+- Latest Performance Win Rate: 81.13%
+- Average of Historical Winning Trades: 10.48%
+- Max Single Trade Loss: 0% (no losing trades)
+- Potential Upside: 2.42% to 67%
+- Current Price: 42.94
+- Target Prices: 44.89/43.98/71.73 based on Avg % Gain/Exit Rule/Horizontal
+- Support Levels: 30.21/24.51 based on Recent Minima/Horizontal
+- Recommended Stop Loss: 38.65 (approximately 10% below current price)
+- Recommended Take Profit: 44.89 (first target level, 4.54% upside)
+- P/E Ratio: 18.77
+- PEG Ratio: N/A
 
-### 3. **TD (Toronto-Dominion Bank)**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2025-10-01
-- **Signal**: Long
-- **Win Rate**: 95.83%
-- **CAGR of strategy - CAGR buy and hold** = 20.1% - 10.16% = 9.94%
-- **Fractal Track Daily Latest Performance Win Rate**: 71.95%
-- **Average of Historical Winning Trades**: 11.52%
-- **Max single trade loss historically**: 0.88%
-- **Potential Upside**: 1.12% to 20.95%
-- **Current Price**: 80.44
-- **Target Prices**: 81.34/89.71/96.77/No Horizontal Resistance/91.62/97.30 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
-- **Support Levels**: 72.85/54.53/74.61/62.35/No Fib Ret Level/No Fib Ret Level based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2/Fractal Track 1/Fractal Track 2
-- **Recommended Stop Loss**: 74.61 (approximately 7.2% below current price, at F-Stack 1 support)
-- **Recommended Take Profit**: 91.62 (F-Stack 1 target, representing approximately 13.9% upside)
-- **Sharpe Ratio**: 0.53 (Strategy) vs 0.41 (Buy and Hold)
-- **P/E Ratio**: 9.38
-- **PEG Ratio**: Not Available
+Note: Signal has reached Historic Rise target of 43.13, showing momentum. 100% win rate and strong CAGR difference.
 
-**Analysis**: TD Bank shows excellent historical performance with 95.83% win rate based on 24 trades and has a positive CAGR difference of 9.94%. The Sharpe ratio is better than buy-and-hold, indicating better risk-adjusted returns. The current price is 6.34% above the Fractal Track level (Upmove Bounce Back), suggesting momentum. The stock has good upside potential to multiple target levels with solid support underneath.
+### 4. **PFE (Pfizer Inc.)**
+- Function: TRENDPULSE Weekly
+- Signal Date: 2025-08-17
+- Signal: Long
+- Win Rate: 85.71% (14 trades)
+- CAGR Difference: Strategy CAGR 8.51% - Buy & Hold CAGR 2.67% = 5.84%
+- Sharpe Ratio: 0.88 (Strategy) vs 0.03 (Buy & Hold)
+- Latest Performance Win Rate: 81.13%
+- Average of Historical Winning Trades: 7.46%
+- Max Single Trade Loss: 6.51%
+- Potential Upside: 1.99% to 170%
+- Current Price: 27.08
+- Target Prices: 27.62/55.39/66.47/73.14 based on Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- Support Levels: 23.49/24.95/21.51/20.53 based on Recent Minima/Horizontal/F-Stack support
+- Recommended Stop Loss: 24.40 (approximately 10% below current price)
+- Recommended Take Profit: 27.62 (first target level, 1.99% upside)
+- P/E Ratio: 14.33
+- PEG Ratio: 1.09
 
-### 4. **MSE.PA (MSA Safety Incorporated - Paris)**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2025-10-02
-- **Signal**: Long
-- **Win Rate**: 100%
-- **CAGR of strategy - CAGR buy and hold** = 7.04% - 9.54% = -2.5%
-- **TrendPulse Daily Latest Performance Win Rate**: 84.74%
-- **Average of Historical Winning Trades**: 1.54%
-- **Max single trade loss historically**: 0%
-- **Potential Upside**: 4.01% to 25.77%
-- **Current Price**: 62.98
-- **Target Prices**: 65.51/63.95/66.07/No Horizontal Resistance/62.96/79.21 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
-- **Support Levels**: 58.74/33.67/58.68/48.58/55.93/51.59 based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2/Fractal Track 1/Fractal Track 2
-- **Recommended Stop Loss**: 58.68 (approximately 6.8% below current price, at F-Stack 1 support)
-- **Recommended Take Profit**: 66.07 (Exit Rule target, representing approximately 4.91% upside)
-- **Sharpe Ratio**: 1.24 (Strategy) vs 0.36 (Buy and Hold)
-- **P/E Ratio**: 17.80
-- **PEG Ratio**: Not Available
+Note: Signal has reached both Historic Rise target (27.23) and Average % Gain target (27.02), showing strong momentum. Multiple timeframe confirmations.
 
-**Analysis**: MSE.PA has a perfect 100% win rate based on 7 historical trades, which is extremely impressive. Though the CAGR difference is slightly negative at -2.5%, the Sharpe ratio is exceptionally strong at 1.24, far outperforming the buy-and-hold Sharpe of 0.36. The signal is confirmed and the price is currently 2.59% above the breakout level, indicating the signal is timely. Multiple support levels provide protection against downside risk.
+### 5. **AMD (Advanced Micro Devices)**
+- Function: TRENDPULSE Daily
+- Signal Date: 2025-03-20
+- Signal: Long
+- Win Rate: 81.82% (11 trades)
+- CAGR Difference: Strategy CAGR 19.99% - Buy & Hold CAGR 7.61% = 12.38%
+- Sharpe Ratio: 1.41 (Strategy) vs 0.41 (Buy & Hold)
+- Latest Performance Win Rate: 75.62%
+- Average of Historical Winning Trades: 8.86%
+- Max Single Trade Loss: N/A
+- Potential Upside: 29.07% to 47.17%
+- Current Price: 169.73
+- Target Prices: 219.06/249.80 based on F-Stack 1/F-Stack 2
+- Support Levels: 146.73/127.34/136.98/86.82 based on Recent Minima/Horizontal/F-Stack support
+- Recommended Stop Loss: 153.00 (approximately 10% below current price)
+- Recommended Take Profit: 219.06 (first target level, 29.07% upside)
+- P/E Ratio: 98.11
+- PEG Ratio: 0.51
 
-### 5. **HDFCBANK.NS (HDFC Bank)**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2025-06-29
-- **Signal**: Long
-- **Win Rate**: 92.31%
-- **CAGR of strategy - CAGR buy and hold** = 6.78% - 14.32% = -7.54%
-- **TrendPulse Weekly Latest Performance Win Rate**: 81.13%
-- **Average of Historical Winning Trades**: 4.83%
-- **Max single trade loss historically**: 3.94%
-- **Potential Upside**: 5.35% to 25.39%
-- **Current Price**: 965.25
-- **Target Prices**: 1061.05/1056.11/1152.92/No Horizontal Resistance/1263.32/2016.61 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
-- **Support Levels**: 818.38/640.90/797.76/510.03/No Fib Ret Level/No Fib Ret Level based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2/Fractal Track 1/Fractal Track 2
-- **Recommended Stop Loss**: 818.38 (approximately 15.2% below current price, at Recent Minima support)
-- **Recommended Take Profit**: 1061.05 (first target level, representing approximately 9.92% upside)
-- **Sharpe Ratio**: 1.08 (Strategy) vs 0.59 (Buy and Hold)
-- **P/E Ratio**: 21.75
-- **PEG Ratio**: Not Available
+Note: Multiple confirmations from different functions and timeframes. Horizontal resistance at 174.30 was broken, showing strong upward momentum.
 
-**Analysis**: HDFC Bank appears twice in our top signals, confirming its strength from multiple technical perspectives. This TrendPulse signal shows a 92.31% win rate across 13 trades. Despite a negative CAGR difference, it has an excellent Sharpe ratio of 1.08 vs 0.59 for buy-and-hold. The weekly signal has remained valid for some time, and the daily Fractal Track signal (#2 above) provides additional confirmation.
+## Top 5 TrendPulse Buy Signals
 
-## Top TrendPulse Buy Signals
+### 1. **NVDA (NVIDIA Corporation)** - Already covered above
 
-1. **BTC-USD (Bitcoin)** - Daily TrendPulse - 95.65% Win Rate (already discussed above)
+### 2. **JD (JD.com, Inc.)** - Already covered above
 
-2. **MSE.PA (MSA Safety)** - Daily TrendPulse - 100% Win Rate (already discussed above)
+### 3. **KWEB (KraneShares CSI China Internet ETF)** - Already covered above
 
-3. **RHHBY (Roche Holding)** - Daily TrendPulse
-   - Win Rate: 83.33%
-   - Latest Performance Win Rate: 84.74%
-   - CAGR difference: 1.25%
-   - Sharpe Ratio: -0.02 vs 0.06 Buy-and-Hold
-   - Current Price: 44.83
-   - Signal Date: 2025-09-22
+### 4. **PFE (Pfizer Inc.)** - Already covered above
 
-4. **BPCL.NS (Bharat Petroleum)** - Weekly TrendPulse
-   - Win Rate: 85.71%
-   - Latest Performance Win Rate: 81.13%
-   - CAGR difference: -3.0%
-   - Sharpe Ratio: 0.45 vs 0.39 Buy-and-Hold
-   - Current Price: 339.65
-   - Signal Date: 2025-09-21
+### 5. **GS (Goldman Sachs Group, Inc.)**
+- Function: TRENDPULSE Daily
+- Signal Date: 2025-01-16
+- Signal: Long
+- Win Rate: 88.89% (9 trades)
+- CAGR Difference: Strategy CAGR 7.46% - Buy & Hold CAGR 4.70% = 2.76%
+- Sharpe Ratio: 0.46 (Strategy) vs 0.26 (Buy & Hold)
+- Latest Performance Win Rate: 84.74%
+- Average of Historical Winning Trades: 4.44%
+- Max Single Trade Loss: N/A
+- Potential Upside: 1.95% (to F-Stack 2)
+- Current Price: 779.38
+- Target Prices: 794.58 (F-Stack 1)
+- Support Levels: 650.13/553.99 based on Recent Minima/Previous Support
+- Recommended Stop Loss: 701.00 (approximately 10% below current price)
+- Recommended Take Profit: 794.58 (target level, 1.95% upside)
+- P/E Ratio: 17.17
+- PEG Ratio: 2.94
 
-5. **TSM (Taiwan Semiconductor)** - Weekly TrendPulse
-   - Win Rate: 90.0%
-   - Latest Performance Win Rate: 81.13%
-   - CAGR difference: -8.12%
-   - Sharpe Ratio: 1.14 vs 0.87 Buy-and-Hold
-   - Current Price: 288.47
-   - Signal Date: 2025-09-21
+Note: Signal has reached F-Stack 1 target, showing strong momentum. Multiple timeframe confirmations.
 
-# Best Sell/Short Signals Analysis
+# Best Sell Signals
 
-Based on the filtering criteria, here are the top sell/short signals in ranked order:
+## Top Overall Sell Signals
 
-## Top Sell/Short Signals
+### 1. **USDCHF=X (USD/CHF Currency Pair)**
+- Function: FRACTAL TRACK Daily
+- Signal Date: 2025-10-02
+- Signal: Short
+- Win Rate: 89.19% (37 trades)
+- CAGR Difference: Strategy CAGR 6.22% - Buy & Hold CAGR 5.10% = 1.12%
+- Sharpe Ratio: 0.23 (Strategy) vs -0.84 (Buy & Hold)
+- Latest Performance Win Rate: 32.92% (FRACTAL TRACK Daily Short)
+- Average of Historical Winning Trades: 1.88%
+- Max Single Trade Loss: 2.31%
+- Potential Downside: 0.92% to 1.21%
+- Current Price: 0.7969
+- Target Prices: 0.7895/0.7819/0.79 based on Historic Rise/Avg % Gain/Exit Rule
+- Resistance Levels: 0.8/No Horizontal Support based on Recent Maxima/Horizontal
+- Recommended Stop Loss: 0.8169 (approximately 2.5% above current price)
+- Recommended Take Profit: 0.7895 (first target level, 0.92% downside)
+- P/E Ratio: N/A
+- PEG Ratio: N/A
 
-### 1. **^VIX (Volatility Index)**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2025-09-30
-- **Signal**: Short
-- **Win Rate**: 87.5%
-- **CAGR of strategy - CAGR buy and hold** = 11.36% - 5.5% = 5.86%
-- **Fractal Track Quarterly Latest Performance Win Rate**: 60.0%
-- **Average of Historical Winning Trades**: 16.23%
-- **Max single trade loss historically**: 107.76%
-- **Potential Downside**: -1.73% to -21.38%
-- **Current Price**: 16.0
-- **Target Levels (Downside)**: 17.39/13.64/-13.43/11.67/No Next Fib Ext Support/No Next Fib Ext Support based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
-- **Resistance Levels**: 22.28/11.67/No Next Fib Ext Support/No Next Fib Ext Support/No Fib Ret Level/No Fib Ret Level
-- **Recommended Stop Loss**: 17.60 (approximately 10% above current price)
-- **Recommended Take Profit**: 13.64 (second target level, representing approximately 14.75% downside)
-- **Sharpe Ratio**: 0.09 (Strategy) vs 0.21 (Cash)
-- **P/E Ratio**: Not Applicable
-- **PEG Ratio**: Not Applicable
+Note: Signal is freshly confirmed and has good win rate with relatively low risk.
 
-**Analysis**: The VIX shows excellent potential for a short position with a strong win rate of 87.5% based on 24 historical trades. The strategy has a positive CAGR difference of 5.86% compared to buy-and-hold. The signal is particularly compelling as it's based on a confirmed quarterly signal, which tends to have higher reliability. The Upmove Break Below pattern indicates a likely continued downward movement.
+### 2. **GBPSGD=X (GBP/SGD Currency Pair)**
+- Function: FRACTAL TRACK Monthly
+- Signal Date: 2025-09-30
+- Signal: Short
+- Win Rate: 88.0% (25 trades)
+- CAGR Difference: Strategy CAGR 4.43% - Buy & Hold CAGR 5.40% = -0.97%
+- Sharpe Ratio: 0.52 (Strategy) vs -0.97 (Buy & Hold)
+- Latest Performance Win Rate: 52.17% (FRACTAL TRACK Monthly Short)
+- Average of Historical Winning Trades: 3.94%
+- Max Single Trade Loss: 10.13%
+- Potential Downside: 3.82% to 3.96%
+- Current Price: 1.7356
+- Target Prices: 1.6674/1.6644/1.73 based on Historic Rise/Avg % Gain/Exit Rule
+- Resistance Levels: 1.75/1.6874 based on Recent Maxima/Horizontal
+- Recommended Stop Loss: 1.7790 (approximately 2.5% above current price)
+- Recommended Take Profit: 1.6674 (first target level, 3.82% downside)
+- P/E Ratio: N/A
+- PEG Ratio: N/A
 
-### 2. **EWJ (iShares MSCI Japan ETF)**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2025-09-24
-- **Signal**: Short
-- **Win Rate**: 90.7%
-- **CAGR of strategy - CAGR buy and hold** = 7.81% - 5.1% = 2.71%
-- **Fractal Track Daily Latest Performance Win Rate**: 32.92%
-- **Average of Historical Winning Trades**: 2.9%
-- **Max single trade loss historically**: 7.85%
-- **Potential Downside**: -0.05% to -34.74%
-- **Current Price**: 80.21
-- **Target Levels (Downside)**: 80.25/78.51/80.43/53.92/68.85/52.34 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
-- **Resistance Levels**: 81.49/53.92/68.85/52.34/No Fib Ret Level/No Fib Ret Level
-- **Recommended Stop Loss**: 81.49 (approximately 1.6% above current price, at nearest resistance)
-- **Recommended Take Profit**: 78.51 (second target level, representing approximately 2.12% downside)
-- **Sharpe Ratio**: 0.18 (Strategy) vs 0.21 (Cash)
-- **P/E Ratio**: 17.29
-- **PEG Ratio**: Not Available
+Note: Signal is freshly confirmed from monthly timeframe which gives it more weight.
 
-**Analysis**: EWJ shows extremely strong historical performance for short signals with a 90.7% win rate across 43 trades. The positive CAGR difference of 2.71% indicates better performance than simply holding. The signal is confirmed and the downmove bounce back pattern suggests further downside. While the daily latest performance win rate is low at 32.92%, the historical success rate and positive CAGR difference make this a compelling short candidate.
+### 3. **PLTR (Palantir Technologies)**
+- Function: FRACTAL TRACK Daily
+- Signal Date: 2025-09-30
+- Signal: Short
+- Win Rate: 85.94% (64 trades)
+- CAGR Difference: Strategy CAGR 21.99% - Buy & Hold CAGR 5.10% = 16.89%
+- Sharpe Ratio: 0.26 (Strategy) vs 1.73 (Buy & Hold)
+- Latest Performance Win Rate: 32.92% (FRACTAL TRACK Daily Short)
+- Average of Historical Winning Trades: 5.11%
+- Max Single Trade Loss: 20.75%
+- Potential Downside: 4.58% to 18.35%
+- Current Price: 187.05
+- Target Prices: 174.01/173.10/179.27 based on Historic Rise/Avg % Gain/Exit Rule
+- Resistance Levels: 182.55/7.21/156.11/148.27 based on Recent Maxima/Horizontal/F-Stack support
+- Recommended Stop Loss: 196.40 (approximately 5% above current price)
+- Recommended Take Profit: 174.01 (first target level, 6.97% downside)
+- P/E Ratio: 623.50
+- PEG Ratio: 3.58
 
-### 3. **SONY (Sony Group Corporation)**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2025-09-25
-- **Signal**: Short
-- **Win Rate**: 88.33%
-- **CAGR of strategy - CAGR buy and hold** = 13.73% - 5.1% = 8.63%
-- **Fractal Track Daily Latest Performance Win Rate**: 32.92%
-- **Average of Historical Winning Trades**: 4.06%
-- **Max single trade loss historically**: 11.64%
-- **Potential Downside**: -0.48% to -16.69%
-- **Current Price**: 28.74
-- **Target Levels (Downside)**: 29.61/28.62/29.66/15.0/26.08/24.85 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
-- **Resistance Levels**: 30.07/15.0/26.08/24.85/No Fib Ret Level/No Fib Ret Level
-- **Recommended Stop Loss**: 30.07 (approximately 4.6% above current price, at nearest resistance)
-- **Recommended Take Profit**: 26.08 (F-Stack 1 target, representing approximately 9.26% downside)
-- **Sharpe Ratio**: 0.23 (Strategy) vs 0.47 (Cash)
-- **P/E Ratio**: 21.25
-- **PEG Ratio**: 5.92
+Note: Very high P/E ratio suggests overvaluation. Signal is freshly confirmed with good win rate.
 
-**Analysis**: Sony shows excellent historical performance for short signals with an 88.33% win rate across 60 trades. It has an impressive CAGR difference of 8.63% compared to buy-and-hold. The signal is confirmed and the price action suggests further downside. While the latest performance win rate is low at 32.92%, the historical success and strong CAGR difference make this a compelling short candidate. The high PEG ratio of 5.92 also suggests potential overvaluation.
+### 4. **^VIX (CBOE Volatility Index)**
+- Function: FRACTAL TRACK Quarterly
+- Signal Date: 2025-09-30
+- Signal: Short
+- Win Rate: 87.5% (24 trades)
+- CAGR Difference: Strategy CAGR 11.36% - Buy & Hold CAGR 5.50% = 5.86%
+- Sharpe Ratio: 0.09 (Strategy) vs 0.21 (Buy & Hold)
+- Latest Performance Win Rate: 60.0% (FRACTAL TRACK Quarterly Short)
+- Average of Historical Winning Trades: 16.23%
+- Max Single Trade Loss: 107.76%
+- Potential Downside: 4.57% to 183.16%
+- Current Price: 16.63
+- Target Prices: 17.39/13.64/-13.43 based on Historic Rise/Avg % Gain/Exit Rule
+- Resistance Levels: 22.28/11.67 based on Recent Maxima/Horizontal
+- Recommended Stop Loss: 18.29 (approximately 10% above current price)
+- Recommended Take Profit: 15.00 (about 9.8% downside)
+- P/E Ratio: N/A
+- PEG Ratio: N/A
 
-### 4. **PYPL (PayPal Holdings)**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2025-09-07
-- **Signal**: Short
-- **Win Rate**: 93.75%
-- **CAGR of strategy - CAGR buy and hold** = 9.62% - 5.3% = 4.32%
-- **Fractal Track Weekly Latest Performance Win Rate**: 38.89%
-- **Average of Historical Winning Trades**: 7.56%
-- **Max single trade loss historically**: 8.1%
-- **Potential Downside**: -2.21% to -14.68%
-- **Current Price**: 66.66
-- **Target Levels (Downside)**: 65.03/63.10/65.24/56.97/No Next Fib Ext Support/No Next Fib Ext Support based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
-- **Resistance Levels**: 77.98/56.97/No Next Fib Ext Support/No Next Fib Ext Support/No Fib Ret Level/No Fib Ret Level
-- **Recommended Stop Loss**: 70.0 (approximately 5.0% above current price)
-- **Recommended Take Profit**: 63.10 (second target level, representing approximately 5.34% downside)
-- **Sharpe Ratio**: 0.47 (Strategy) vs 0.26 (Cash)
-- **P/E Ratio**: 14.56
-- **PEG Ratio**: 0.74
+Note: Quarterly timeframe gives this signal more weight. Historical performance shows good returns.
 
-**Analysis**: PayPal shows outstanding historical performance for short signals with a 93.75% win rate across 16 trades. The positive CAGR difference of 4.32% indicates better performance than simply holding. The signal is confirmed and the downmove bounce back pattern at the 61.8% Fibonacci level suggests further downside. The stock also appears in the target report, showing it has reached a resistance level, further confirming the short thesis.
+### 5. **SONY (Sony Group Corporation)**
+- Function: FRACTAL TRACK Daily
+- Signal Date: 2025-09-25
+- Signal: Short
+- Win Rate: 88.33% (60 trades)
+- CAGR Difference: Strategy CAGR 13.73% - Buy & Hold CAGR 5.10% = 8.63%
+- Sharpe Ratio: 0.23 (Strategy) vs 0.47 (Buy & Hold)
+- Latest Performance Win Rate: 32.92% (FRACTAL TRACK Daily Short)
+- Average of Historical Winning Trades: 4.06%
+- Max Single Trade Loss: 11.64%
+- Potential Downside: 0.93% to 12.3%
+- Current Price: 28.08
+- Target Prices: 29.61/28.62/29.62 based on Historic Rise/Avg % Gain/Exit Rule
+- Resistance Levels: 30.07/14.99/26.08/24.85 based on Recent Maxima/Horizontal/F-Stack support
+- Recommended Stop Loss: 30.07 (approximately 7.1% above current price)
+- Recommended Take Profit: 26.00 (about 7.4% downside)
+- P/E Ratio: 21.27
+- PEG Ratio: 5.71
 
-### 5. **GBPSGD=X (British Pound/Singapore Dollar)**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2025-09-30
-- **Signal**: Short
-- **Win Rate**: 88.0%
-- **CAGR of strategy - CAGR buy and hold** = 4.43% - 5.4% = -0.97%
-- **Fractal Track Monthly Latest Performance Win Rate**: 52.17%
-- **Average of Historical Winning Trades**: 3.94%
-- **Max single trade loss historically**: 10.13%
-- **Potential Downside**: -3.77% to -6.32%
-- **Current Price**: 1.7345
-- **Target Levels (Downside)**: 1.6609/1.658/1.72/1.6874/No Next Fib Ext Support/No Next Fib Ext Support based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
-- **Resistance Levels**: 1.75/1.6874/No Next Fib Ext Support/No Next Fib Ext Support/No Fib Ret Level/No Fib Ret Level
-- **Recommended Stop Loss**: 1.75 (approximately 0.9% above current price, at nearest resistance)
-- **Recommended Take Profit**: 1.658 (second target level, representing approximately 4.41% downside)
-- **Sharpe Ratio**: 0.52 (Strategy) vs -0.97 (Cash)
-- **P/E Ratio**: Not Applicable
-- **PEG Ratio**: Not Applicable
+Note: Already showing profit of 5.87% since signal date. High win rate with strong historical performance.
 
-**Analysis**: GBPSGD=X shows strong historical performance with an 88.0% win rate across 25 trades. Despite a slightly negative CAGR difference of -0.97%, the Sharpe ratio is significantly better than cash. The signal is confirmed and the downmove bounce back pattern at the 88.6% Fibonacci level suggests further downside. The currency pair has multiple downside targets with a tight stop-loss level, creating a favorable risk-reward ratio.
+## Top 5 TrendPulse Sell Signals
 
-## Top TrendPulse Sell/Short Signals
+Note: There are very few TrendPulse sell signals in the provided data. Most signals are from FRACTAL TRACK. Here are the available TrendPulse sell signals:
 
-The dataset does not contain many TrendPulse sell/short signals meeting our criteria. Based on the available data, here are the best options:
+### 1. **TRENDPULSE Daily Short (Limited data)**
+- Latest Performance Win Rate: 44.44%
+- Average Holding Period: 7 days
+- Number of Trades Analyzed: 9
 
-1. **NZDUSD=X (New Zealand Dollar/US Dollar)** - Daily TrendPulse (via Oscillator Delta)
-   - Win Rate: 86.67%
-   - Latest Performance Win Rate: 60.98%
-   - CAGR difference: 0.51%
-   - Sharpe Ratio: 0.23 vs -0.47 Cash
-   - Current Price: 0.5827
-   - Signal Date: 2025-09-22
+### 2. **TRENDPULSE Weekly Short**
+- Latest Performance Win Rate: 40.0%
+- Average Holding Period: 29 days
+- Number of Trades Analyzed: 10
 
-2. **BRK-B (Berkshire Hathaway)** - Daily TrendPulse (via Oscillator Delta)
-   - Win Rate: 87.88%
-   - Latest Performance Win Rate: 60.98%
-   - CAGR difference: 3.68%
-   - Sharpe Ratio: 0.35 vs 0.64 Cash
-   - Current Price: 498.20
-   - Signal Date: 2025-09-10
+### 3. **TRENDPULSE Monthly Short**
+- Latest Performance Win Rate: 0.0%
+- Average Holding Period: 125 days
+- Number of Trades Analyzed: 6
 
-3. **XLE (Energy Select Sector SPDR Fund)** - Daily TrendPulse
-   - Win Rate: 75.0%
-   - Latest Performance Win Rate: 84.74%
-   - CAGR difference: -1.08%
-   - Sharpe Ratio: 0.11 vs 0.24 Cash
-   - Current Price: 89.34
-   - Signal Date: 2025-09-17
+There are insufficient specific TrendPulse short signals in the data to provide a detailed list of the top 5. The data suggests that TrendPulse performs significantly better for long signals than short signals.
 
-4. **SONY (Sony Group Corporation)** - Daily TrendPulse
-   - Win Rate: 81.82%
-   - Latest Performance Win Rate: 84.74%
-   - CAGR difference: -11.48%
-   - Sharpe Ratio: 0.11 vs 0.58 Cash
-   - Current Price: 28.74
-   - Signal Date: 2025-09-26
-
-5. **INFY (Infosys)** - Daily TrendPulse
-   - Win Rate: 100%
-   - Latest Performance Win Rate: 84.74%
-   - CAGR difference: 2.6%
-   - Sharpe Ratio: 1.97 vs 0.23 Cash
-   - Current Price: 16.37
-   - Signal Date: 2025-09-17
-
-|||BTC-USD,Daily,TRENDPULSE,2025-10-02,Long|HDFCBANK.NS,Daily,FRACTAL TRACK,2025-10-01,Long|TD,Daily,FRACTAL TRACK,2025-10-01,Long|MSE.PA,Daily,TRENDPULSE,2025-10-02,Long|HDFCBANK.NS,Weekly,TRENDPULSE,2025-06-29,Long|RHHBY,Daily,TRENDPULSE,2025-09-22,Long|BPCL.NS,Weekly,TRENDPULSE,2025-09-21,Long|TSM,Weekly,TRENDPULSE,2025-09-21,Long|^VIX,Quarterly,FRACTAL TRACK,2025-09-30,Short|EWJ,Daily,FRACTAL TRACK,2025-09-24,Short|SONY,Daily,FRACTAL TRACK,2025-09-25,Short|PYPL,Weekly,FRACTAL TRACK,2025-09-07,Short|GBPSGD=X,Monthly,FRACTAL TRACK,2025-09-30,Short|NZDUSD=X,Daily,OSCILLATOR DELTA,2025-09-22,Short|BRK-B,Daily,OSCILLATOR DELTA,2025-09-10,Short|XLE,Daily,TRENDPULSE,2025-09-17,Short|INFY,Daily,TRENDPULSE,2025-09-17,Short|||
+|||NVDA,Weekly,TRENDPULSE,2025-09-21,Long|JD,Weekly,TRENDPULSE,2025-09-14,Long|KWEB,Weekly,TRENDPULSE,2025-09-14,Long|PFE,Weekly,TRENDPULSE,2025-08-17,Long|AMD,Daily,TRENDPULSE,2025-03-20,Long|GS,Daily,TRENDPULSE,2025-01-16,Long|USDCHF=X,Daily,FRACTAL TRACK,2025-10-02,Short|GBPSGD=X,Monthly,FRACTAL TRACK,2025-09-30,Short|PLTR,Daily,FRACTAL TRACK,2025-09-30,Short|^VIX,Quarterly,FRACTAL TRACK,2025-09-30,Short|SONY,Daily,FRACTAL TRACK,2025-09-25,Short|||
