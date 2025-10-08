@@ -161,8 +161,8 @@ def create_analysis_page(data_file, page_title):
             
             st.markdown("---")
             
-            # Strategy cards
-            create_strategy_cards(filtered_df, page_title)
+            # Strategy cards - pass tab context to ensure unique keys across tabs
+            create_strategy_cards(filtered_df, page_title, chart_key)
             
             st.markdown("---")
             

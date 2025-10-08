@@ -11,6 +11,35 @@ from datetime import datetime, timedelta
 from ..utils.data_loader import load_stock_data_file
 
 
+def calculate_retracement_levels(ret_high_low, high_or_low_diff, is_uptrend):
+    """
+    Calculate Fibonacci retracement levels
+    
+    Args:
+        ret_high_low: Reference high (for uptrend) or low (for downtrend)
+        high_or_low_diff: Difference between high and low
+        is_uptrend: True for uptrend (Long), False for downtrend (Short)
+    
+    Returns:
+        Dictionary with level percentages as keys and price levels as values
+    """
+    levels = [23.6, 38.2, 50, 61.8, 78.6, 88.6]
+    retracement_prices = {}
+    
+    if is_uptrend:
+        # For uptrend (Long): retracement goes down from the high
+        for level in levels:
+            price_level = ret_high_low - (level / 100) * high_or_low_diff
+            retracement_prices[level] = price_level
+    else:
+        # For downtrend (Short): retracement goes up from the low
+        for level in levels:
+            price_level = ret_high_low + (level / 100) * high_or_low_diff
+            retracement_prices[level] = price_level
+    
+    return retracement_prices
+
+
 def create_interactive_chart(row_data, raw_data):
     """Create an interactive candlestick chart for Fib-Ret data"""
     try:
@@ -41,18 +70,30 @@ def create_interactive_chart(row_data, raw_data):
             except:
                 pass
         
-        # Extract reference upmove information
+        # Extract reference upmove information (for Fractal Track)
         reference_upmove = raw_data.get('Reference Upmove or Downmove start Date/Price($), end Date/Price($)', 'N/A')
         upmove_start_date = None
         upmove_start_price = None
         upmove_end_date = None
         upmove_end_price = None
         
+        # Check if this is TrendPulse data
+        is_trendpulse = False
+        trendpulse_start_end = raw_data.get('TrendPulse Start/End (Date and Price($))', 'N/A')
+        if trendpulse_start_end and trendpulse_start_end != 'N/A':
+            is_trendpulse = True
+            reference_upmove = trendpulse_start_end  # Use TrendPulse data instead
+        
         if reference_upmove and reference_upmove != 'N/A' and reference_upmove != 'No Information':
             try:
-                # Parse "2025-07-24 (Price: 58.5), 2025-10-02 (Price: 77.76)"
-                if ',' in str(reference_upmove):
-                    parts = str(reference_upmove).split(',')
+                # TrendPulse format: "2020-10-31 (Price: 126.9444)/2025-10-08 (Price: 221.2778)"
+                # Fractal Track format: "2025-07-24 (Price: 58.5), 2025-10-02 (Price: 77.76)"
+                
+                # Determine separator based on format
+                separator = '/' if '/' in str(reference_upmove) and ')/' in str(reference_upmove) else ','
+                
+                if separator in str(reference_upmove):
+                    parts = str(reference_upmove).split(separator)
                     if len(parts) >= 2:
                         start_part = parts[0].strip()
                         end_part = parts[1].strip()
@@ -60,17 +101,26 @@ def create_interactive_chart(row_data, raw_data):
                         # Parse start date and price
                         if '(' in start_part and ')' in start_part:
                             start_date = start_part.split('(')[0].strip()
-                            start_price = start_part.split('(Price:')[1].replace(')', '').strip()
+                            # Handle both "Price:" and "Price " formats
+                            if 'Price:' in start_part:
+                                start_price = start_part.split('(Price:')[1].replace(')', '').strip()
+                            else:
+                                start_price = start_part.split('(Price ')[1].replace(')', '').strip()
                             upmove_start_date = start_date
                             upmove_start_price = float(start_price)
                         
                         # Parse end date and price
                         if '(' in end_part and ')' in end_part:
                             end_date = end_part.split('(')[0].strip()
-                            end_price = end_part.split('(Price:')[1].replace(')', '').strip()
+                            # Handle both "Price:" and "Price " formats
+                            if 'Price:' in end_part:
+                                end_price = end_part.split('(Price:')[1].replace(')', '').strip()
+                            else:
+                                end_price = end_part.split('(Price ')[1].replace(')', '').strip()
                             upmove_end_date = end_date
                             upmove_end_price = float(end_price)
-            except:
+                
+            except Exception as e:
                 pass
         
         # Extract interval from the data
@@ -80,26 +130,26 @@ def create_interactive_chart(row_data, raw_data):
         else:
             interval = 'Daily'
         
-        # Calculate date range: 23 candles back from upmove start date to today
+        # Calculate date range: 100 candles back from upmove start date to today
         start_date_for_data = None
         end_date_for_data = datetime.now()
         
         if upmove_start_date:
             try:
                 upmove_start_dt = datetime.strptime(upmove_start_date, '%Y-%m-%d')
-                # Calculate 23 candles back based on interval
+                # Calculate 100 candles back based on interval
                 if 'Daily' in interval:
-                    start_date_for_data = upmove_start_dt - timedelta(days=23)
+                    start_date_for_data = upmove_start_dt - timedelta(days=100)
                 elif 'Weekly' in interval:
-                    start_date_for_data = upmove_start_dt - timedelta(weeks=23)
+                    start_date_for_data = upmove_start_dt - timedelta(weeks=100)
                 elif 'Monthly' in interval:
-                    start_date_for_data = upmove_start_dt - timedelta(days=23*30)  # Approximate
+                    start_date_for_data = upmove_start_dt - timedelta(days=100*30)  # Approximate
                 elif 'Quarterly' in interval:
-                    start_date_for_data = upmove_start_dt - timedelta(days=23*90)  # Approximate
+                    start_date_for_data = upmove_start_dt - timedelta(days=100*90)  # Approximate
                 elif 'Yearly' in interval:
-                    start_date_for_data = upmove_start_dt - timedelta(days=23*365)  # Approximate
+                    start_date_for_data = upmove_start_dt - timedelta(days=100*365)  # Approximate
                 else:
-                    start_date_for_data = upmove_start_dt - timedelta(days=23)
+                    start_date_for_data = upmove_start_dt - timedelta(days=100)
             except:
                 start_date_for_data = datetime.now() - timedelta(days=365)  # Default to 1 year back
         else:
@@ -108,6 +158,12 @@ def create_interactive_chart(row_data, raw_data):
                 start_date_for_data = datetime.now() - timedelta(days=100)
             elif 'Weekly' in interval:
                 start_date_for_data = datetime.now() - timedelta(weeks=100)
+            elif 'Monthly' in interval:
+                start_date_for_data = datetime.now() - timedelta(days=100*30)  # Approximate
+            elif 'Quarterly' in interval:
+                start_date_for_data = datetime.now() - timedelta(days=100*90)  # Approximate
+            elif 'Yearly' in interval:
+                start_date_for_data = datetime.now() - timedelta(days=100*365)  # Approximate
             else:
                 start_date_for_data = datetime.now() - timedelta(days=365)
         
@@ -170,16 +226,88 @@ def create_interactive_chart(row_data, raw_data):
                 start_dt = datetime.strptime(upmove_start_date, '%Y-%m-%d')
                 end_dt = datetime.strptime(upmove_end_date, '%Y-%m-%d')
                 
+                # Determine line style based on chart type
+                if is_trendpulse:
+                    line_style = dict(dash='solid', color='blue', width=4)  # Bold solid line for TrendPulse
+                    line_name = 'TrendPulse Line'
+                else:
+                    line_style = dict(dash='dash', color='blue', width=2)  # Dashed line for Fractal Track
+                    line_name = 'Reference Upmove'
+                
                 fig.add_trace(go.Scatter(
                     x=[start_dt, end_dt],
                     y=[upmove_start_price, upmove_end_price],
                     mode='lines',
-                    line=dict(dash='dash', color='blue', width=2),
-                    name='Reference Upmove',
+                    line=line_style,
+                    name=line_name,
                     hovertemplate='Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
                 ))
-            except:
-                pass
+                
+                # Calculate and add Fibonacci retracement levels (only for Fractal Track, not TrendPulse)
+                is_uptrend = signal_type and 'Long' in signal_type if signal_type else True
+                
+                # Only add retracement levels for Fractal Track
+                if not is_trendpulse:
+                    high_or_low_diff = abs(upmove_end_price - upmove_start_price)
+                    
+                    # Determine the reference high/low based on trend
+                    if is_uptrend:
+                        ret_high_low = upmove_end_price  # High point for uptrend
+                    else:
+                        ret_high_low = upmove_start_price  # Low point for downtrend
+                    
+                    # Calculate retracement levels
+                    retracement_levels = calculate_retracement_levels(ret_high_low, high_or_low_diff, is_uptrend)
+                    
+                    # Define colors for different retracement levels
+                    level_colors = {
+                        23.6: '#00FF00',  # Bright green
+                        38.2: '#32CD32',  # Lime green
+                        50.0: '#FFD700',  # Gold
+                        61.8: '#FFA500',  # Orange
+                        78.6: '#FF4500',  # Orange red
+                        88.6: '#FF0000'   # Red
+                    }
+                    
+                    # Get the date range for horizontal lines
+                    if not df_ohlc.empty:
+                        chart_start_date = df_ohlc['Date'].min()
+                        chart_end_date = df_ohlc['Date'].max()
+                    else:
+                        chart_start_date = start_dt
+                        chart_end_date = datetime.now()
+                    
+                    # Add horizontal lines for each retracement level
+                    for level, price in retracement_levels.items():
+                        fig.add_trace(go.Scatter(
+                            x=[chart_start_date, chart_end_date],
+                            y=[price, price],
+                            mode='lines',
+                            line=dict(
+                                dash='dot',
+                                color=level_colors.get(level, '#808080'),
+                                width=1.5
+                            ),
+                            name=f'Fib {level}%',
+                            hovertemplate=f'Fibonacci {level}%<br>Price: $%{{y:.2f}}<extra></extra>',
+                            showlegend=True
+                        ))
+                        
+                        # Add text annotation for the level
+                        fig.add_annotation(
+                            x=chart_end_date,
+                            y=price,
+                            text=f'{level}%',
+                            showarrow=False,
+                            xanchor='left',
+                            font=dict(size=10, color=level_colors.get(level, '#808080')),
+                            bgcolor='rgba(255, 255, 255, 0.8)',
+                            bordercolor=level_colors.get(level, '#808080'),
+                            borderwidth=1
+                        )
+                
+            except Exception as e:
+                st.warning(f"Could not calculate retracement levels: {str(e)}")
         
         # Add buy/sell signals
         if signal_date and signal_price:
@@ -209,7 +337,8 @@ def create_interactive_chart(row_data, raw_data):
                     name=signal_name,
                     hovertemplate=f'Signal: {signal_type}<br>Date: %{{x}}<br>Price: $%{{y:.2f}}<extra></extra>'
                 ))
-            except:
+                
+            except Exception as e:
                 pass
         
         # Update layout for better appearance and full width
@@ -280,5 +409,615 @@ def create_interactive_chart(row_data, raw_data):
         
     except Exception as e:
         st.error(f"Error creating interactive chart: {str(e)}")
-        st.info(f"Chart shows data from 23 candles before the reference upmove start date to today. Interval: {interval if 'interval' in locals() else 'Daily'}")
+        st.info(f"Chart shows data from 100 candles before the reference upmove start date to today. Interval: {interval if 'interval' in locals() else 'Daily'}")
+
+
+def create_divergence_chart(row, raw_data):
+    """
+    Create a specialized chart for divergence analysis (Stochastic Divergence, General Divergence)
+    Shows divergence lines and signal points with different colors for long/short signals
+    """
+    try:
+        # Extract symbol from the data
+        symbol_info = raw_data.get('Symbol, Signal, Signal Date/Price[$]', 'Unknown')
+        if ',' in str(symbol_info):
+            symbol = str(symbol_info).split(',')[0].strip().replace('"', '')
+        else:
+            symbol = "Unknown"
+        
+        # Extract signal information
+        signal_date = None
+        signal_price = None
+        signal_type = None
+        
+        if 'Price:' in str(symbol_info):
+            try:
+                # Parse "CVS, Long, 2025-10-02 (Price: 77.45)"
+                parts = str(symbol_info).split(',')
+                if len(parts) >= 3:
+                    signal_type = parts[1].strip()
+                    date_price_part = parts[2].strip()
+                    if '(' in date_price_part and ')' in date_price_part:
+                        date_part = date_price_part.split('(')[0].strip()
+                        price_part = date_price_part.split('(Price:')[1].replace(')', '').strip()
+                        signal_date = date_part
+                        signal_price = float(price_part)
+            except:
+                pass
+        
+        # Extract divergence start/end information from processed data
+        # The data has been processed by the parser, so we need to access the raw CSV data
+        divergence_start_date = None
+        divergence_start_price = None
+        divergence_end_date = None
+        divergence_end_price = None
+        
+        # Try to get divergence info from the raw data
+        if raw_data:
+            # Look for divergence info in the raw CSV row
+            divergence_info = None
+            for key, value in raw_data.items():
+                if 'Divergence Start/End' in str(key):
+                    divergence_info = str(value)
+                    break
+            
+            if divergence_info and '/' in divergence_info:
+                try:
+                    # Parse divergence start/end info - format: "2025-09-10 (Price: 54.37)/2025-09-30 (Price: 55.49)"
+                    parts = divergence_info.split('/')
+                    if len(parts) >= 2:
+                        start_part = parts[0].strip()
+                        end_part = parts[1].strip()
+                        
+                        # Extract start date and price
+                        if '(' in start_part and ')' in start_part:
+                            start_date = start_part.split('(')[0].strip()
+                            start_price_str = start_part.split('(')[1].split(')')[0].replace('Price: ', '')
+                            divergence_start_date = start_date
+                            divergence_start_price = float(start_price_str)
+                        
+                        # Extract end date and price
+                        if '(' in end_part and ')' in end_part:
+                            end_date = end_part.split('(')[0].strip()
+                            end_price_str = end_part.split('(')[1].split(')')[0].replace('Price: ', '')
+                            divergence_end_date = end_date
+                            divergence_end_price = float(end_price_str)
+                                                        
+                except Exception as e:
+                    st.warning(f"Could not parse divergence data: {e}")
+                    st.info(f"Raw divergence info: {divergence_info}")
+            else:
+                st.warning("No divergence information found in the data")
+                st.info(f"Available keys: {list(raw_data.keys()) if raw_data else 'No raw data'}")
+        else:
+            st.warning("No raw data available for divergence extraction")
+        
+        # Load real stock data from CSV files (same as Fractal Track/Fib-Ret)
+        from datetime import datetime, timedelta
+        
+        # Calculate date range: 100 candles back from divergence start date to today
+        start_date_for_data = None
+        end_date_for_data = datetime.now()
+        
+        if divergence_start_date:
+            try:
+                divergence_start_dt = datetime.strptime(divergence_start_date, '%Y-%m-%d')
+                # Calculate 100 days back from divergence start date
+                start_date_for_data = divergence_start_dt - timedelta(days=100)
+            except:
+                start_date_for_data = datetime.now() - timedelta(days=365)  # Default to 1 year back
+        else:
+            # If no divergence date, default to showing last 100 days
+            start_date_for_data = datetime.now() - timedelta(days=100)
+        
+        # Load real data from CSV file (same as other charts)
+        df_ohlc = load_stock_data_file(symbol, start_date_for_data, end_date_for_data, 'Daily')
+        
+        if df_ohlc is None or df_ohlc.empty:
+            st.warning(f"No CSV data available for {symbol}. Using mock data for demonstration.")
+            # Fallback to mock data if CSV file not available
+            dates = pd.date_range(start=start_date_for_data, end=end_date_for_data, freq='D')
+            base_price = signal_price if signal_price else 50
+            
+            np.random.seed(42)
+            price_data = []
+            current_price = base_price
+            
+            for date in dates:
+                # Generate realistic OHLC data
+                change = np.random.normal(0, 0.02)  # 2% daily volatility
+                current_price *= (1 + change)
+                
+                high = current_price * (1 + abs(np.random.normal(0, 0.01)))
+                low = current_price * (1 - abs(np.random.normal(0, 0.01)))
+                open_price = current_price * (1 + np.random.normal(0, 0.005))
+                close_price = current_price
+                volume = np.random.randint(1000000, 10000000)
+                
+                price_data.append({
+                    'Date': date,
+                    'Open': open_price,
+                    'High': high,
+                    'Low': low,
+                    'Close': close_price,
+                    'Volume': volume
+                })
+            
+            df_ohlc = pd.DataFrame(price_data)
+        
+        # Create the chart
+        fig = go.Figure()
+        
+        # Add candlestick chart
+        fig.add_trace(go.Candlestick(
+            x=df_ohlc['Date'],
+            open=df_ohlc['Open'],
+            high=df_ohlc['High'],
+            low=df_ohlc['Low'],
+            close=df_ohlc['Close'],
+            name=symbol,
+            increasing_line_color='green',
+            decreasing_line_color='red'
+        ))
+        
+        # Add divergence line if we have the data
+        if divergence_start_date and divergence_end_date and divergence_start_price and divergence_end_price:
+            try:
+                start_dt = datetime.strptime(divergence_start_date, '%Y-%m-%d')
+                end_dt = datetime.strptime(divergence_end_date, '%Y-%m-%d')
+                
+                # Determine line color based on signal type
+                line_color = 'blue' if 'Long' in signal_type else 'red'
+                line_width = 4  # Bold line
+                
+                fig.add_trace(go.Scatter(
+                    x=[start_dt, end_dt],
+                    y=[divergence_start_price, divergence_end_price],
+                    mode='lines',
+                    line=dict(color=line_color, width=line_width),
+                    name=f'Divergence Line ({signal_type})',
+                    hovertemplate=f'Divergence: {signal_type}<br>Date: %{{x}}<br>Price: $%{{y:.2f}}<extra></extra>'
+                ))
+            except:
+                pass
+        
+        # Add signal point
+        if signal_date and signal_price:
+            try:
+                # Extract signal date
+                signal_date_str = signal_date.split('(')[0].strip()
+                signal_dt = datetime.strptime(signal_date_str, '%Y-%m-%d')
+                
+                # Determine marker color and symbol based on signal type
+                if 'Long' in signal_type:
+                    marker_color = 'green'
+                    marker_symbol = 'triangle-up'
+                else:
+                    marker_color = 'red'
+                    marker_symbol = 'triangle-down'
+                
+                fig.add_trace(go.Scatter(
+                    x=[signal_dt],
+                    y=[signal_price],
+                    mode='markers',
+                    marker=dict(
+                        size=15,
+                        color=marker_color,
+                        symbol=marker_symbol,
+                        line=dict(width=2, color='white')
+                    ),
+                    name=f'Signal Point ({signal_type})',
+                    hovertemplate=f'Signal: {signal_type}<br>Date: %{{x}}<br>Price: $%{{y:.2f}}<extra></extra>'
+                ))
+            except:
+                pass
+        
+        # Update layout
+        fig.update_layout(
+            title=dict(
+                text=f'{symbol} - Divergence Analysis ({signal_type})',
+                x=0.5,
+                xanchor='center',
+                font=dict(size=20, color='#1f77b4')
+            ),
+            xaxis=dict(
+                title=dict(text='Date', font=dict(size=14)),
+                tickfont=dict(size=11),
+                gridcolor='#f0f0f0',
+                gridwidth=1,
+                showgrid=True,
+                zeroline=False
+            ),
+            yaxis=dict(
+                title=dict(text='Price ($)', font=dict(size=14)),
+                tickfont=dict(size=11),
+                gridcolor='#f0f0f0',
+                gridwidth=1,
+                showgrid=True,
+                zeroline=False
+            ),
+            hovermode='closest',
+            showlegend=True,
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            ),
+            height=700,
+            margin=dict(l=50, r=10, t=100, b=60),
+            plot_bgcolor='white',
+            paper_bgcolor='#fafafa',
+            xaxis_rangeslider_visible=False,
+            autosize=True,
+            width=None
+        )
+        
+        # Display the chart
+        st.plotly_chart(
+            fig, 
+            use_container_width=True,
+            config={
+                'displayModeBar': True,
+                'displaylogo': False,
+                'modeBarButtonsToRemove': ['pan2d', 'lasso2d', 'select2d'],
+                'responsive': True
+            }
+        )
+        
+    except Exception as e:
+        st.error(f"Error creating divergence chart: {str(e)}")
+        st.info("Divergence chart shows the divergence pattern and signal points for analysis.")
+
+
+def create_bollinger_band_chart(row, raw_data):
+    """
+    Create a specialized chart for Bollinger Bands analysis
+    Shows Bollinger Bands (20-period) with buy/sell markers
+    """
+    try:
+        # Extract symbol from the data
+        symbol_info = raw_data.get('Symbol, Signal, Signal Date/Price[$]', 'Unknown')
+        if ',' in str(symbol_info):
+            symbol = str(symbol_info).split(',')[0].strip().replace('"', '')
+        else:
+            symbol = "Unknown"
+        
+        # Extract signal information
+        signal_date = None
+        signal_price = None
+        signal_type = None
+        
+        if 'Price:' in str(symbol_info):
+            try:
+                # Parse "GOOG, Long, 2025-10-08 (Price: 247.13)"
+                parts = str(symbol_info).split(',')
+                if len(parts) >= 3:
+                    signal_type = parts[1].strip()
+                    date_price_part = parts[2].strip()
+                    if '(' in date_price_part and ')' in date_price_part:
+                        date_part = date_price_part.split('(')[0].strip()
+                        price_part = date_price_part.split('(Price:')[1].replace(')', '').strip()
+                        signal_date = date_part
+                        signal_price = float(price_part)
+            except:
+                pass
+        
+        # Extract interval from the data
+        interval_info = raw_data.get('Interval, Confirmation Status', 'Daily, Unknown')
+        if ',' in str(interval_info):
+            interval = str(interval_info).split(',')[0].strip()
+        else:
+            interval = 'Daily'
+        
+        # Calculate date range: 100 candles back from signal date to today
+        start_date_for_data = None
+        end_date_for_data = datetime.now()
+        
+        if signal_date:
+            try:
+                signal_dt = datetime.strptime(signal_date, '%Y-%m-%d')
+                # Calculate 100 candles back based on interval
+                if 'Daily' in interval:
+                    start_date_for_data = signal_dt - timedelta(days=100)
+                elif 'Weekly' in interval:
+                    start_date_for_data = signal_dt - timedelta(weeks=100)
+                elif 'Monthly' in interval:
+                    start_date_for_data = signal_dt - timedelta(days=100*30)
+                elif 'Quarterly' in interval:
+                    start_date_for_data = signal_dt - timedelta(days=100*90)
+                elif 'Yearly' in interval:
+                    start_date_for_data = signal_dt - timedelta(days=100*365)
+                else:
+                    start_date_for_data = signal_dt - timedelta(days=100)
+            except:
+                start_date_for_data = datetime.now() - timedelta(days=365)
+        else:
+            start_date_for_data = datetime.now() - timedelta(days=100)
+        
+        # Load real data from CSV file
+        df_ohlc = load_stock_data_file(symbol, start_date_for_data, end_date_for_data, interval)
+        
+        if df_ohlc is None or df_ohlc.empty:
+            st.warning(f"No CSV data available for {symbol}. Cannot display Bollinger Bands chart.")
+            return
+        
+        # Calculate Bollinger Bands (20-period, 2 standard deviations)
+        period = 20
+        df_ohlc['SMA'] = df_ohlc['Close'].rolling(window=period).mean()
+        df_ohlc['STD'] = df_ohlc['Close'].rolling(window=period).std()
+        df_ohlc['Upper_Band'] = df_ohlc['SMA'] + (2 * df_ohlc['STD'])
+        df_ohlc['Lower_Band'] = df_ohlc['SMA'] - (2 * df_ohlc['STD'])
+        
+        # Create the chart
+        fig = go.Figure()
+        
+        # Add candlestick chart
+        fig.add_trace(go.Candlestick(
+            x=df_ohlc['Date'],
+            open=df_ohlc['Open'],
+            high=df_ohlc['High'],
+            low=df_ohlc['Low'],
+            close=df_ohlc['Close'],
+            name=symbol,
+            increasing_line_color='green',
+            decreasing_line_color='red'
+        ))
+        
+        # Add Bollinger Bands
+        # Upper Band
+        fig.add_trace(go.Scatter(
+            x=df_ohlc['Date'],
+            y=df_ohlc['Upper_Band'],
+            mode='lines',
+            line=dict(color='rgba(250, 128, 114, 0.8)', width=2),
+            name='Upper Band (20, 2σ)',
+            hovertemplate='Upper Band<br>Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
+        ))
+        
+        # Middle Band (SMA)
+        fig.add_trace(go.Scatter(
+            x=df_ohlc['Date'],
+            y=df_ohlc['SMA'],
+            mode='lines',
+            line=dict(color='rgba(128, 128, 128, 0.8)', width=2, dash='dot'),
+            name='Middle Band (SMA 20)',
+            hovertemplate='SMA 20<br>Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
+        ))
+        
+        # Lower Band
+        fig.add_trace(go.Scatter(
+            x=df_ohlc['Date'],
+            y=df_ohlc['Lower_Band'],
+            mode='lines',
+            line=dict(color='rgba(135, 206, 250, 0.8)', width=2),
+            name='Lower Band (20, 2σ)',
+            hovertemplate='Lower Band<br>Date: %{x}<br>Price: $%{y:.2f}<extra></extra>'
+        ))
+        
+        # Add buy/sell signal marker
+        if signal_date and signal_price:
+            try:
+                signal_dt = datetime.strptime(signal_date, '%Y-%m-%d')
+                
+                # Determine if it's a buy or sell signal
+                if signal_type and 'Long' in signal_type:
+                    marker_color = 'green'
+                    marker_symbol = 'triangle-up'
+                    signal_name = 'Buy Signal'
+                else:
+                    marker_color = 'red'
+                    marker_symbol = 'triangle-down'
+                    signal_name = 'Sell Signal'
+                
+                fig.add_trace(go.Scatter(
+                    x=[signal_dt],
+                    y=[signal_price],
+                    mode='markers',
+                    marker=dict(
+                        color=marker_color,
+                        size=15,
+                        symbol=marker_symbol,
+                        line=dict(width=2, color='white')
+                    ),
+                    name=signal_name,
+                    hovertemplate=f'Signal: {signal_type}<br>Date: %{{x}}<br>Price: $%{{y:.2f}}<extra></extra>'
+                ))
+            except Exception as e:
+                pass
+        
+        # Update layout
+        fig.update_layout(
+            title=dict(
+                text=f'{symbol} - Bollinger Bands Chart ({interval}) - Period: 20, StdDev: 2',
+                x=0.5,
+                xanchor='center',
+                font=dict(size=20, color='#1f77b4')
+            ),
+            xaxis=dict(
+                title=dict(text='Date', font=dict(size=14)),
+                tickfont=dict(size=11),
+                gridcolor='#f0f0f0',
+                gridwidth=1,
+                showgrid=True,
+                zeroline=False,
+                showspikes=True,
+                spikemode='across',
+                spikesnap='cursor',
+                spikedash='solid',
+                spikecolor='#999999',
+                spikethickness=1
+            ),
+            yaxis=dict(
+                title=dict(text='Price ($)', font=dict(size=14)),
+                tickfont=dict(size=11),
+                gridcolor='#f0f0f0',
+                gridwidth=1,
+                showgrid=True,
+                zeroline=False,
+                showspikes=True,
+                spikemode='across',
+                spikesnap='cursor',
+                spikedash='solid',
+                spikecolor='#999999',
+                spikethickness=1
+            ),
+            hovermode='closest',
+            showlegend=True,
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            ),
+            height=700,
+            margin=dict(l=50, r=10, t=100, b=60),
+            plot_bgcolor='white',
+            paper_bgcolor='#fafafa',
+            xaxis_rangeslider_visible=False,
+            autosize=True,
+            width=None
+        )
+        
+        # Display the chart
+        st.plotly_chart(
+            fig, 
+            use_container_width=True,
+            config={
+                'displayModeBar': True,
+                'displaylogo': False,
+                'modeBarButtonsToRemove': ['pan2d', 'lasso2d', 'select2d'],
+                'responsive': True
+            }
+        )
+        
+    except Exception as e:
+        st.error(f"Error creating Bollinger Bands chart: {str(e)}")
+        st.info("Bollinger Bands chart shows price action with 20-period Bollinger Bands overlay.")
+
+
+def fetch_original_signal_data(function, symbol, signal_date, interval, signal_type):
+    """
+    Fetch original signal data from individual strategy CSV files
+    Used by Outstanding Signals page to get the complete signal data
+    """
+    import pandas as pd
+    import csv
+    
+    # Map function names to CSV file names (case-insensitive)
+    function_to_file = {
+        'FRACTAL TRACK': 'Fib-Ret.csv',
+        'BAND MATRIX': 'bollinger_band.csv',
+        'DELTADRIFT': 'Distance.csv',
+        'BASELINEDIVERGE': 'General-Divergence.csv',
+        'ALTITUDE ALPHA': 'new_high.csv',
+        'OSCILLATOR DELTA': 'Stochastic-Divergence.csv',
+        'SIGMASHELL': 'sigma.csv',
+        'PULSEGAUGE': 'sentiment.csv',
+        'TRENDPULSE': 'Trendline.csv'
+    }
+    
+    # Normalize function name to uppercase for matching
+    function_upper = str(function).upper().strip()
+    csv_file = function_to_file.get(function_upper)
+    if not csv_file:
+        return None
+    
+    file_path = f'./trade_store/US/{csv_file}'
+    
+    try:
+        # Read the CSV file
+        with open(file_path, 'r', encoding='utf-8') as f:
+            # Use csv.Sniffer to detect dialect
+            sample = f.read(4096)
+            f.seek(0)
+            
+            # Read CSV
+            df = pd.read_csv(f, skipinitialspace=True)
+        
+        # Search for matching signal
+        for idx, row in df.iterrows():
+            row_dict = row.to_dict()
+            
+            # Get symbol info from the row
+            symbol_info = row_dict.get('Symbol, Signal, Signal Date/Price[$]', '')
+            
+            # Check if this row matches our criteria
+            if symbol in str(symbol_info) and signal_date in str(symbol_info):
+                # Also check signal type and interval if available
+                if signal_type in str(symbol_info):
+                    interval_info = row_dict.get('Interval, Confirmation Status', '')
+                    if interval in str(interval_info) or interval == 'Daily':
+                        # Found matching signal, return the raw data
+                        return row_dict
+        
+        return None
+    except Exception as e:
+        st.error(f"Error fetching original signal data: {str(e)}")
+        return None
+
+
+def create_outstanding_signal_chart(row, raw_data):
+    """
+    Create chart for Outstanding Signals page by fetching original signal data
+    """
+    try:
+        # Extract function, symbol, signal date, interval, and signal type from outstanding signals data
+        function = raw_data.get('Function', 'Unknown')
+        symbol_info = raw_data.get('Symbol, Signal, Signal Date/Price[$]', '')
+        
+        # Parse symbol info
+        symbol = None
+        signal_type = None
+        signal_date = None
+        
+        if ',' in str(symbol_info):
+            parts = str(symbol_info).split(',')
+            if len(parts) >= 3:
+                symbol = parts[0].strip().replace('"', '')
+                signal_type = parts[1].strip()
+                date_part = parts[2].strip()
+                if '(' in date_part:
+                    signal_date = date_part.split('(')[0].strip()
+        
+        # Extract interval
+        interval_info = raw_data.get('Interval, Confirmation Status', 'Daily, Unknown')
+        if ',' in str(interval_info):
+            interval = str(interval_info).split(',')[0].strip()
+        else:
+            interval = 'Daily'
+        
+        # Fetch original signal data from individual CSV
+        original_data = fetch_original_signal_data(function, symbol, signal_date, interval, signal_type)
+        
+        if original_data:
+            
+            # Create a dummy row with the necessary fields for the chart functions
+            # The chart functions expect row.get() to work, so we'll create a compatible structure
+            original_row = pd.Series(original_data)
+            
+            # Route to appropriate chart based on function (using uppercase for matching)
+            function_upper = str(function).upper().strip()
+            
+            if function_upper == 'OSCILLATOR DELTA':
+                create_divergence_chart(original_row, original_data)
+            elif function_upper == 'BAND MATRIX':
+                create_bollinger_band_chart(original_row, original_data)
+            elif function_upper in ['FRACTAL TRACK']:
+                create_interactive_chart(original_row, original_data)
+            elif function_upper == 'TRENDPULSE':
+                create_interactive_chart(original_row, original_data)
+            else:
+                # For all other functions, use simple interactive chart
+                create_interactive_chart(original_row, original_data)
+        else:
+            # Fallback to using outstanding signals data
+            create_interactive_chart(row, raw_data)
+        
+    except Exception as e:
+        st.error(f"Error creating outstanding signal chart: {str(e)}")
+        # Fallback to simple chart
+        create_interactive_chart(row, raw_data)
 
