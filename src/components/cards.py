@@ -5,7 +5,7 @@ UI Card Components for displaying trading strategy information
 import streamlit as st
 import pandas as pd
 
-from .charts import create_interactive_chart, create_divergence_chart, create_bollinger_band_chart, create_outstanding_signal_chart
+from .charts import create_interactive_chart, create_divergence_chart, create_bollinger_band_chart, create_outstanding_signal_chart, create_outstanding_exit_signal_chart
 
 
 def create_summary_cards(df):
@@ -180,7 +180,7 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                 chart_enabled_pages = [
                     "Band Matrix", "DeltaDrift", "Fractal Track", "BaselineDiverge",
                     "Altitude Alpha", "Oscillator Delta", "SigmaShell", "PulseGauge",
-                    "TrendPulse", "Outstanding Signals", "New Signals"
+                    "TrendPulse", "Outstanding Signals", "Outstanding Signals Exit", "New Signals"
                 ]
                 
                 if page_name in chart_enabled_pages:
@@ -199,7 +199,10 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                     chart_key = f"chart_{unique_hash}_{card_num}"
                     if st.button(f"📊 View Interactive Chart", key=chart_key):
                         # Route to appropriate chart based on page type
-                        if page_name == 'Outstanding Signals':
+                        if page_name == 'Outstanding Signals Exit':
+                            # Fetch original signal data and display chart with exit marker
+                            create_outstanding_exit_signal_chart(row, raw_data)
+                        elif page_name == 'Outstanding Signals':
                             # Fetch original signal data and display appropriate chart
                             create_outstanding_signal_chart(row, raw_data)
                         elif page_name == 'Oscillator Delta':

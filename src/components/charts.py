@@ -40,7 +40,7 @@ def calculate_retracement_levels(ret_high_low, high_or_low_diff, is_uptrend):
     return retracement_prices
 
 
-def create_interactive_chart(row_data, raw_data):
+def create_interactive_chart(row_data, raw_data, exit_date=None, exit_price=None, exit_signal_type=None):
     """Create an interactive candlestick chart for Fib-Ret data"""
     try:
         # Extract symbol from the data
@@ -69,6 +69,23 @@ def create_interactive_chart(row_data, raw_data):
                         signal_price = float(price_part)
             except:
                 pass
+        
+        # Auto-extract exit date and price from CSV if not provided (universal exit marker support)
+        if not exit_date or not exit_price:
+            exit_info = raw_data.get('Exit Signal Date/Price[$]', 'No Exit Yet')
+            if exit_info and str(exit_info) != 'No Exit Yet':
+                # Parse exit date and price (format: "DATE (Price: X)" or "DATE (Price: X) (Today)")
+                exit_str = str(exit_info)
+                if '(Price:' in exit_str:
+                    try:
+                        parts = exit_str.split('(Price:')
+                        exit_date = parts[0].strip()
+                        # Extract price - handle both "X)" and "X) (Today)"
+                        price_part = parts[1].split(')')[0].strip()
+                        exit_price = float(price_part)
+                        exit_signal_type = signal_type  # Use same signal type
+                    except:
+                        pass
         
         # Extract reference upmove information (for Fractal Track)
         reference_upmove = raw_data.get('Reference Upmove or Downmove start Date/Price($), end Date/Price($)', 'N/A')
@@ -130,40 +147,40 @@ def create_interactive_chart(row_data, raw_data):
         else:
             interval = 'Daily'
         
-        # Calculate date range: 100 candles back from upmove start date to today
+        # Calculate date range: 200 candles back from upmove start date to today
         start_date_for_data = None
         end_date_for_data = datetime.now()
         
         if upmove_start_date:
             try:
                 upmove_start_dt = datetime.strptime(upmove_start_date, '%Y-%m-%d')
-                # Calculate 100 candles back based on interval
+                # Calculate 200 candles back based on interval
                 if 'Daily' in interval:
-                    start_date_for_data = upmove_start_dt - timedelta(days=100)
+                    start_date_for_data = upmove_start_dt - timedelta(days=200)
                 elif 'Weekly' in interval:
-                    start_date_for_data = upmove_start_dt - timedelta(weeks=100)
+                    start_date_for_data = upmove_start_dt - timedelta(weeks=200)
                 elif 'Monthly' in interval:
-                    start_date_for_data = upmove_start_dt - timedelta(days=100*30)  # Approximate
+                    start_date_for_data = upmove_start_dt - timedelta(days=200*30)  # Approximate
                 elif 'Quarterly' in interval:
-                    start_date_for_data = upmove_start_dt - timedelta(days=100*90)  # Approximate
+                    start_date_for_data = upmove_start_dt - timedelta(days=200*90)  # Approximate
                 elif 'Yearly' in interval:
-                    start_date_for_data = upmove_start_dt - timedelta(days=100*365)  # Approximate
+                    start_date_for_data = upmove_start_dt - timedelta(days=200*365)  # Approximate
                 else:
-                    start_date_for_data = upmove_start_dt - timedelta(days=100)
+                    start_date_for_data = upmove_start_dt - timedelta(days=200)
             except:
                 start_date_for_data = datetime.now() - timedelta(days=365)  # Default to 1 year back
         else:
-            # If no upmove date, default to showing last 100 candles
+            # If no upmove date, default to showing last 200 candles
             if 'Daily' in interval:
-                start_date_for_data = datetime.now() - timedelta(days=100)
+                start_date_for_data = datetime.now() - timedelta(days=200)
             elif 'Weekly' in interval:
-                start_date_for_data = datetime.now() - timedelta(weeks=100)
+                start_date_for_data = datetime.now() - timedelta(weeks=200)
             elif 'Monthly' in interval:
-                start_date_for_data = datetime.now() - timedelta(days=100*30)  # Approximate
+                start_date_for_data = datetime.now() - timedelta(days=200*30)  # Approximate
             elif 'Quarterly' in interval:
-                start_date_for_data = datetime.now() - timedelta(days=100*90)  # Approximate
+                start_date_for_data = datetime.now() - timedelta(days=200*90)  # Approximate
             elif 'Yearly' in interval:
-                start_date_for_data = datetime.now() - timedelta(days=100*365)  # Approximate
+                start_date_for_data = datetime.now() - timedelta(days=200*365)  # Approximate
             else:
                 start_date_for_data = datetime.now() - timedelta(days=365)
         
@@ -330,12 +347,42 @@ def create_interactive_chart(row_data, raw_data):
                     mode='markers',
                     marker=dict(
                         color=marker_color,
-                        size=15,
+                        size=23 if (exit_date and exit_price) else 30,
                         symbol=marker_symbol,
                         line=dict(width=2, color='white')
                     ),
                     name=signal_name,
                     hovertemplate=f'Signal: {signal_type}<br>Date: %{{x}}<br>Price: $%{{y:.2f}}<extra></extra>'
+                ))
+                
+            except Exception as e:
+                pass
+        
+        # Add EXIT marker if provided (for Outstanding Exit Signals)
+        if exit_date and exit_price:
+            try:
+                exit_dt = datetime.strptime(exit_date, '%Y-%m-%d')
+                
+                # Exit marker is opposite color of entry
+                if exit_signal_type and 'Long' in exit_signal_type:
+                    exit_marker_color = 'red'
+                    exit_marker_symbol = 'triangle-down'
+                else:
+                    exit_marker_color = 'green'
+                    exit_marker_symbol = 'triangle-up'
+                
+                fig.add_trace(go.Scatter(
+                    x=[exit_dt],
+                    y=[exit_price],
+                    mode='markers',
+                    marker=dict(
+                        color=exit_marker_color,
+                        size=23,
+                        symbol=exit_marker_symbol,
+                        line=dict(width=2, color='white')
+                    ),
+                    name='Exit',
+                    hovertemplate=f'Exit<br>Date: %{{x}}<br>Price: $%{{y:.2f}}<extra></extra>'
                 ))
                 
             except Exception as e:
@@ -409,10 +456,10 @@ def create_interactive_chart(row_data, raw_data):
         
     except Exception as e:
         st.error(f"Error creating interactive chart: {str(e)}")
-        st.info(f"Chart shows data from 100 candles before the reference upmove start date to today. Interval: {interval if 'interval' in locals() else 'Daily'}")
+        st.info(f"Chart shows data from 200 candles before the reference upmove start date to today. Interval: {interval if 'interval' in locals() else 'Daily'}")
 
 
-def create_divergence_chart(row, raw_data):
+def create_divergence_chart(row, raw_data, exit_date=None, exit_price=None, exit_signal_type=None):
     """
     Create a specialized chart for divergence analysis (Stochastic Divergence, General Divergence)
     Shows divergence lines and signal points with different colors for long/short signals
@@ -444,6 +491,23 @@ def create_divergence_chart(row, raw_data):
                         signal_price = float(price_part)
             except:
                 pass
+        
+        # Auto-extract exit date and price from CSV if not provided (universal exit marker support)
+        if not exit_date or not exit_price:
+            exit_info = raw_data.get('Exit Signal Date/Price[$]', 'No Exit Yet')
+            if exit_info and str(exit_info) != 'No Exit Yet':
+                # Parse exit date and price (format: "DATE (Price: X)" or "DATE (Price: X) (Today)")
+                exit_str = str(exit_info)
+                if '(Price:' in exit_str:
+                    try:
+                        parts = exit_str.split('(Price:')
+                        exit_date = parts[0].strip()
+                        # Extract price - handle both "X)" and "X) (Today)"
+                        price_part = parts[1].split(')')[0].strip()
+                        exit_price = float(price_part)
+                        exit_signal_type = signal_type  # Use same signal type
+                    except:
+                        pass
         
         # Extract divergence start/end information from processed data
         # The data has been processed by the parser, so we need to access the raw CSV data
@@ -495,20 +559,20 @@ def create_divergence_chart(row, raw_data):
         # Load real stock data from CSV files (same as Fractal Track/Fib-Ret)
         from datetime import datetime, timedelta
         
-        # Calculate date range: 100 candles back from divergence start date to today
+        # Calculate date range: 200 candles back from divergence start date to today
         start_date_for_data = None
         end_date_for_data = datetime.now()
         
         if divergence_start_date:
             try:
                 divergence_start_dt = datetime.strptime(divergence_start_date, '%Y-%m-%d')
-                # Calculate 100 days back from divergence start date
-                start_date_for_data = divergence_start_dt - timedelta(days=100)
+                # Calculate 200 days back from divergence start date
+                start_date_for_data = divergence_start_dt - timedelta(days=200)
             except:
                 start_date_for_data = datetime.now() - timedelta(days=365)  # Default to 1 year back
         else:
-            # If no divergence date, default to showing last 100 days
-            start_date_for_data = datetime.now() - timedelta(days=100)
+            # If no divergence date, default to showing last 200 days
+            start_date_for_data = datetime.now() - timedelta(days=200)
         
         # Load real data from CSV file (same as other charts)
         df_ohlc = load_stock_data_file(symbol, start_date_for_data, end_date_for_data, 'Daily')
@@ -601,13 +665,42 @@ def create_divergence_chart(row, raw_data):
                     y=[signal_price],
                     mode='markers',
                     marker=dict(
-                        size=15,
+                        size=23 if (exit_date and exit_price) else 30,
                         color=marker_color,
                         symbol=marker_symbol,
                         line=dict(width=2, color='white')
                     ),
                     name=f'Signal Point ({signal_type})',
                     hovertemplate=f'Signal: {signal_type}<br>Date: %{{x}}<br>Price: $%{{y:.2f}}<extra></extra>'
+                ))
+            except:
+                pass
+        
+        # Add EXIT marker if available (universal support)
+        if exit_date and exit_price:
+            try:
+                exit_dt = datetime.strptime(exit_date, '%Y-%m-%d')
+                
+                # Exit marker is opposite color of entry
+                if exit_signal_type and 'Long' in exit_signal_type:
+                    exit_marker_color = 'red'
+                    exit_marker_symbol = 'triangle-down'
+                else:
+                    exit_marker_color = 'green'
+                    exit_marker_symbol = 'triangle-up'
+                
+                fig.add_trace(go.Scatter(
+                    x=[exit_dt],
+                    y=[exit_price],
+                    mode='markers',
+                    marker=dict(
+                        size=23,
+                        color=exit_marker_color,
+                        symbol=exit_marker_symbol,
+                        line=dict(width=2, color='white')
+                    ),
+                    name='Exit',
+                    hovertemplate=f'Exit<br>Date: %{{x}}<br>Price: $%{{y:.2f}}<extra></extra>'
                 ))
             except:
                 pass
@@ -671,7 +764,7 @@ def create_divergence_chart(row, raw_data):
         st.info("Divergence chart shows the divergence pattern and signal points for analysis.")
 
 
-def create_bollinger_band_chart(row, raw_data):
+def create_bollinger_band_chart(row, raw_data, exit_date=None, exit_price=None, exit_signal_type=None):
     """
     Create a specialized chart for Bollinger Bands analysis
     Shows Bollinger Bands (20-period) with buy/sell markers
@@ -704,6 +797,23 @@ def create_bollinger_band_chart(row, raw_data):
             except:
                 pass
         
+        # Auto-extract exit date and price from CSV if not provided (universal exit marker support)
+        if not exit_date or not exit_price:
+            exit_info = raw_data.get('Exit Signal Date/Price[$]', 'No Exit Yet')
+            if exit_info and str(exit_info) != 'No Exit Yet':
+                # Parse exit date and price (format: "DATE (Price: X)" or "DATE (Price: X) (Today)")
+                exit_str = str(exit_info)
+                if '(Price:' in exit_str:
+                    try:
+                        parts = exit_str.split('(Price:')
+                        exit_date = parts[0].strip()
+                        # Extract price - handle both "X)" and "X) (Today)"
+                        price_part = parts[1].split(')')[0].strip()
+                        exit_price = float(price_part)
+                        exit_signal_type = signal_type  # Use same signal type
+                    except:
+                        pass
+        
         # Extract interval from the data
         interval_info = raw_data.get('Interval, Confirmation Status', 'Daily, Unknown')
         if ',' in str(interval_info):
@@ -711,30 +821,30 @@ def create_bollinger_band_chart(row, raw_data):
         else:
             interval = 'Daily'
         
-        # Calculate date range: 100 candles back from signal date to today
+        # Calculate date range: 200 candles back from signal date to today
         start_date_for_data = None
         end_date_for_data = datetime.now()
         
         if signal_date:
             try:
                 signal_dt = datetime.strptime(signal_date, '%Y-%m-%d')
-                # Calculate 100 candles back based on interval
+                # Calculate 200 candles back based on interval
                 if 'Daily' in interval:
-                    start_date_for_data = signal_dt - timedelta(days=100)
+                    start_date_for_data = signal_dt - timedelta(days=200)
                 elif 'Weekly' in interval:
-                    start_date_for_data = signal_dt - timedelta(weeks=100)
+                    start_date_for_data = signal_dt - timedelta(weeks=200)
                 elif 'Monthly' in interval:
-                    start_date_for_data = signal_dt - timedelta(days=100*30)
+                    start_date_for_data = signal_dt - timedelta(days=200*30)
                 elif 'Quarterly' in interval:
-                    start_date_for_data = signal_dt - timedelta(days=100*90)
+                    start_date_for_data = signal_dt - timedelta(days=200*90)
                 elif 'Yearly' in interval:
-                    start_date_for_data = signal_dt - timedelta(days=100*365)
+                    start_date_for_data = signal_dt - timedelta(days=200*365)
                 else:
-                    start_date_for_data = signal_dt - timedelta(days=100)
+                    start_date_for_data = signal_dt - timedelta(days=200)
             except:
                 start_date_for_data = datetime.now() - timedelta(days=365)
         else:
-            start_date_for_data = datetime.now() - timedelta(days=100)
+            start_date_for_data = datetime.now() - timedelta(days=200)
         
         # Load real data from CSV file
         df_ohlc = load_stock_data_file(symbol, start_date_for_data, end_date_for_data, interval)
@@ -817,12 +927,41 @@ def create_bollinger_band_chart(row, raw_data):
                     mode='markers',
                     marker=dict(
                         color=marker_color,
-                        size=15,
+                        size=23 if (exit_date and exit_price) else 30,
                         symbol=marker_symbol,
                         line=dict(width=2, color='white')
                     ),
                     name=signal_name,
                     hovertemplate=f'Signal: {signal_type}<br>Date: %{{x}}<br>Price: $%{{y:.2f}}<extra></extra>'
+                ))
+            except Exception as e:
+                pass
+        
+        # Add EXIT marker if provided (for Outstanding Exit Signals)
+        if exit_date and exit_price:
+            try:
+                exit_dt = datetime.strptime(exit_date, '%Y-%m-%d')
+                
+                # Exit marker is opposite color of entry
+                if exit_signal_type and 'Long' in exit_signal_type:
+                    exit_marker_color = 'red'
+                    exit_marker_symbol = 'triangle-down'
+                else:
+                    exit_marker_color = 'green'
+                    exit_marker_symbol = 'triangle-up'
+                
+                fig.add_trace(go.Scatter(
+                    x=[exit_dt],
+                    y=[exit_price],
+                    mode='markers',
+                    marker=dict(
+                        color=exit_marker_color,
+                        size=23,
+                        symbol=exit_marker_symbol,
+                        line=dict(width=2, color='white')
+                    ),
+                    name='Exit',
+                    hovertemplate=f'Exit<br>Date: %{{x}}<br>Price: $%{{y:.2f}}<extra></extra>'
                 ))
             except Exception as e:
                 pass
@@ -1020,4 +1159,300 @@ def create_outstanding_signal_chart(row, raw_data):
         st.error(f"Error creating outstanding signal chart: {str(e)}")
         # Fallback to simple chart
         create_interactive_chart(row, raw_data)
+
+
+def create_outstanding_exit_signal_chart(row, raw_data):
+    """
+    Create chart for Outstanding Exit Signals page by fetching original signal data
+    Extension of create_outstanding_signal_chart with exit marker added
+    """
+    try:
+        # Extract function, symbol, signal date, interval, and signal type from outstanding exit signals data
+        function = raw_data.get('Function', 'Unknown')
+        symbol_info = raw_data.get('Symbol, Signal, Signal Date/Price[$]', '')
+        
+        # Parse symbol info (same as Outstanding Signals)
+        symbol = None
+        signal_type = None
+        signal_date = None
+        
+        if ',' in str(symbol_info):
+            parts = str(symbol_info).split(',')
+            if len(parts) >= 3:
+                symbol = parts[0].strip().replace('"', '')
+                signal_type = parts[1].strip()
+                date_part = parts[2].strip()
+                if '(' in date_part:
+                    signal_date = date_part.split('(')[0].strip()
+        
+        # Extract interval (same as Outstanding Signals)
+        interval_info = raw_data.get('Interval, Confirmation Status', 'Daily, Unknown')
+        if ',' in str(interval_info):
+            interval = str(interval_info).split(',')[0].strip()
+        else:
+            interval = 'Daily'
+        
+        # Extract exit date and price from Outstanding Exit Signal CSV
+        exit_info = raw_data.get('Exit Signal Date/Price[$]', 'No Exit Yet')
+        exit_date = None
+        exit_price = None
+        
+        if exit_info and str(exit_info) != 'No Exit Yet':
+            # Parse exit date and price (format: "DATE (Price: X)" or "DATE (Price: X) (Today)")
+            exit_str = str(exit_info)
+            if '(Price:' in exit_str:
+                parts = exit_str.split('(Price:')
+                exit_date = parts[0].strip()
+                # Extract price - handle both "X)" and "X) (Today)"
+                price_part = parts[1].split(')')[0].strip()
+                try:
+                    exit_price = float(price_part)
+                except:
+                    pass
+        
+        # Fetch original signal data from individual CSV (same as Outstanding Signals)
+        original_data = fetch_original_signal_data(function, symbol, signal_date, interval, signal_type)
+        
+        if original_data:
+            # Create a Series for compatibility with chart functions
+            original_row = pd.Series(original_data)
+            
+            # Add exit marker to the chart by modifying the figure after creation
+            # We'll need to modify the existing chart functions to accept optional exit parameters
+            # For now, route to appropriate chart and then add exit marker info
+            
+            function_upper = str(function).upper().strip()
+            
+            # Display exit information at the top
+            if exit_date and exit_price:
+                st.markdown(f"**🔴 Exit Signal:** {exit_date} @ ${exit_price:.4f}")
+                
+                # Calculate profit/loss if we have signal price
+                signal_price = original_data.get('Signal_Price', None)
+                if signal_price:
+                    if signal_type == 'Long':
+                        profit_pct = ((exit_price - signal_price) / signal_price) * 100
+                    else:
+                        profit_pct = ((signal_price - exit_price) / signal_price) * 100
+                    profit_color = "green" if profit_pct > 0 else "red"
+                    st.markdown(f"**Profit/Loss:** <span style='color: {profit_color}; font-weight: bold;'>{profit_pct:+.2f}%</span>", unsafe_allow_html=True)
+            
+            # Route to appropriate chart based on function (same as Outstanding Signals)
+            if function_upper == 'OSCILLATOR DELTA':
+                create_divergence_chart_with_exit(original_row, original_data, exit_date, exit_price, signal_type)
+            elif function_upper == 'BAND MATRIX':
+                create_bollinger_chart_with_exit(original_row, original_data, exit_date, exit_price, signal_type)
+            elif function_upper in ['FRACTAL TRACK']:
+                create_interactive_chart_with_exit(original_row, original_data, exit_date, exit_price, signal_type)
+            elif function_upper == 'TRENDPULSE':
+                create_interactive_chart_with_exit(original_row, original_data, exit_date, exit_price, signal_type)
+            else:
+                # For all other functions, use simple interactive chart with exit
+                create_interactive_chart_with_exit(original_row, original_data, exit_date, exit_price, signal_type)
+        else:
+            # Fallback
+            st.warning(f"Could not fetch original signal data for {function} - {symbol}")
+            
+    except Exception as e:
+        st.error(f"Error creating outstanding exit signal chart: {str(e)}")
+
+
+def create_divergence_chart_with_exit(original_row, original_data, exit_date, exit_price, signal_type):
+    """Extension of create_divergence_chart with exit marker on chart"""
+    # We need to recreate the divergence chart logic but add exit marker before displaying
+    # For simplicity, call base chart and then add annotation about exit
+    # The proper way would be to modify the figure, but since it's already displayed, we show exit info
+    
+    # Import here to avoid circular dependency
+    import plotly.graph_objects as go
+    from datetime import datetime, timedelta
+    
+    try:
+        # Extract data (same logic as create_divergence_chart)
+        symbol_info = original_data.get('Symbol, Signal, Signal Date/Price[$]', 'Unknown')
+        if ',' in str(symbol_info):
+            symbol = str(symbol_info).split(',')[0].strip().replace('"', '')
+        else:
+            symbol = "Unknown"
+        
+        signal_date = None
+        signal_price = None
+        signal_type_parsed = signal_type
+        
+        if 'Price:' in str(symbol_info):
+            try:
+                parts = str(symbol_info).split(',')
+                if len(parts) >= 3:
+                    signal_type_parsed = parts[1].strip()
+                    date_price_part = parts[2].strip()
+                    if '(' in date_price_part and ')' in date_price_part:
+                        date_part = date_price_part.split('(')[0].strip()
+                        price_part = date_price_part.split('(Price:')[1].replace(')', '').strip()
+                        signal_date = date_part
+                        signal_price = float(price_part)
+            except:
+                pass
+        
+        # Extract divergence info
+        divergence_start_date = None
+        divergence_start_price = None
+        divergence_end_date = None
+        divergence_end_price = None
+        
+        if original_data:
+            divergence_info = None
+            for key, value in original_data.items():
+                if 'Divergence Start/End' in str(key):
+                    divergence_info = str(value)
+                    break
+            
+            if divergence_info and '/' in divergence_info:
+                try:
+                    parts = divergence_info.split('/')
+                    if len(parts) >= 2:
+                        start_part = parts[0].strip()
+                        end_part = parts[1].strip()
+                        
+                        if '(' in start_part and ')' in start_part:
+                            start_date = start_part.split('(')[0].strip()
+                            start_price_str = start_part.split('(')[1].split(')')[0].replace('Price: ', '')
+                            divergence_start_date = start_date
+                            divergence_start_price = float(start_price_str)
+                        
+                        if '(' in end_part and ')' in end_part:
+                            end_date = end_part.split('(')[0].strip()
+                            end_price_str = end_part.split('(')[1].split(')')[0].replace('Price: ', '')
+                            divergence_end_date = end_date
+                            divergence_end_price = float(end_price_str)
+                except:
+                    pass
+        
+        # Load stock data
+        start_date_for_data = None
+        end_date_for_data = datetime.now()
+        
+        if divergence_start_date:
+            try:
+                divergence_start_dt = datetime.strptime(divergence_start_date, '%Y-%m-%d')
+                start_date_for_data = divergence_start_dt - timedelta(days=200)
+            except:
+                start_date_for_data = datetime.now() - timedelta(days=365)
+        else:
+            start_date_for_data = datetime.now() - timedelta(days=200)
+        
+        df_ohlc = load_stock_data_file(symbol, start_date_for_data, end_date_for_data, 'Daily')
+        
+        if df_ohlc is None or df_ohlc.empty:
+            st.warning(f"No data available for {symbol}")
+            return
+        
+        # Create the chart
+        fig = go.Figure()
+        
+        # Add candlestick
+        fig.add_trace(go.Candlestick(
+            x=df_ohlc['Date'] if 'Date' in df_ohlc.columns else df_ohlc.index,
+            open=df_ohlc['Open'],
+            high=df_ohlc['High'],
+            low=df_ohlc['Low'],
+            close=df_ohlc['Close'],
+            name=symbol,
+            increasing_line_color='green',
+            decreasing_line_color='red'
+        ))
+        
+        # Add divergence line
+        if divergence_start_date and divergence_end_date and divergence_start_price and divergence_end_price:
+            try:
+                start_dt = datetime.strptime(divergence_start_date, '%Y-%m-%d')
+                end_dt = datetime.strptime(divergence_end_date, '%Y-%m-%d')
+                
+                line_color = 'blue' if 'Long' in signal_type_parsed else 'red'
+                
+                fig.add_trace(go.Scatter(
+                    x=[start_dt, end_dt],
+                    y=[divergence_start_price, divergence_end_price],
+                    mode='lines',
+                    line=dict(color=line_color, width=4),
+                    name=f'Divergence Line ({signal_type_parsed})'
+                ))
+            except:
+                pass
+        
+        # Add entry signal marker
+        if signal_date and signal_price:
+            try:
+                signal_date_str = signal_date.split('(')[0].strip()
+                signal_dt = datetime.strptime(signal_date_str, '%Y-%m-%d')
+                
+                marker_color = 'green' if 'Long' in signal_type_parsed else 'red'
+                marker_symbol = 'triangle-up' if 'Long' in signal_type_parsed else 'triangle-down'
+                
+                fig.add_trace(go.Scatter(
+                    x=[signal_dt],
+                    y=[signal_price],
+                    mode='markers',
+                    marker=dict(
+                        size=23,
+                        color=marker_color,
+                        symbol=marker_symbol,
+                        line=dict(width=2, color='white')
+                    ),
+                    name=f'Entry ({signal_type_parsed})'
+                ))
+            except:
+                pass
+        
+        # Add EXIT marker (NEW!)
+        if exit_date and exit_price:
+            try:
+                exit_dt = datetime.strptime(exit_date, '%Y-%m-%d')
+                
+                # Exit marker is opposite color of entry
+                exit_marker_color = 'red' if 'Long' in signal_type_parsed else 'green'
+                exit_marker_symbol = 'triangle-down' if 'Long' in signal_type_parsed else 'triangle-up'
+                
+                fig.add_trace(go.Scatter(
+                    x=[exit_dt],
+                    y=[exit_price],
+                    mode='markers',
+                    marker=dict(
+                        size=23,
+                        color=exit_marker_color,
+                        symbol=exit_marker_symbol,
+                        line=dict(width=2, color='white')
+                    ),
+                    name='Exit'
+                ))
+            except:
+                pass
+        
+        # Update layout
+        fig.update_layout(
+            title=f'{symbol} - Divergence Analysis with Exit',
+            xaxis_title='Date',
+            yaxis_title='Price ($)',
+            height=600,
+            hovermode='x unified',
+            xaxis_rangeslider_visible=False
+        )
+        
+        st.plotly_chart(fig, use_container_width=True)
+        
+    except Exception as e:
+        st.error(f"Error creating divergence chart with exit: {str(e)}")
+        # Fallback to base chart
+        create_divergence_chart(original_row, original_data)
+
+
+def create_bollinger_chart_with_exit(original_row, original_data, exit_date, exit_price, signal_type):
+    """Extension of create_bollinger_band_chart with exit marker on chart"""
+    # Call base chart WITH exit parameters to add exit marker on the chart
+    create_bollinger_band_chart(original_row, original_data, exit_date, exit_price, signal_type)
+
+
+def create_interactive_chart_with_exit(original_row, original_data, exit_date, exit_price, signal_type):
+    """Extension of create_interactive_chart with exit marker on chart"""
+    # Call base chart WITH exit parameters to add exit marker on the chart
+    create_interactive_chart(original_row, original_data, exit_date, exit_price, signal_type)
 

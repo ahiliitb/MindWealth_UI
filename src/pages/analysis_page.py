@@ -60,15 +60,10 @@ def create_analysis_page(data_file, page_title):
     # Sidebar filters (same as Signal Analysis)
     st.sidebar.markdown("#### 🔍 Filters")
     
-    # Function filter with select all/none buttons
+    # Function filter with select all button
     st.sidebar.markdown("**Functions:**")
-    col1, col2 = st.sidebar.columns(2)
-    with col1:
-        if st.button("All", key=f"select_all_functions_{page_title}", help="Select all functions", use_container_width=True):
-            st.session_state[f'selected_functions_{page_title}'] = list(df['Function'].unique())
-    with col2:
-        if st.button("None", key=f"deselect_all_functions_{page_title}", help="Deselect all functions", use_container_width=True):
-            st.session_state[f'selected_functions_{page_title}'] = []
+    if st.sidebar.button("All", key=f"select_all_functions_{page_title}", help="Select all functions", use_container_width=True):
+        st.session_state[f'selected_functions_{page_title}'] = list(df['Function'].unique())
     
     # Initialize session state for functions
     if f'selected_functions_{page_title}' not in st.session_state:
@@ -77,8 +72,6 @@ def create_analysis_page(data_file, page_title):
     # Display function selection status
     if len(st.session_state[f'selected_functions_{page_title}']) == len(df['Function'].unique()):
         st.sidebar.markdown("*All functions selected*")
-    elif len(st.session_state[f'selected_functions_{page_title}']) == 0:
-        st.sidebar.markdown("*No functions selected*")
     else:
         st.sidebar.markdown(f"*{len(st.session_state[f'selected_functions_{page_title}'])} of {len(df['Function'].unique())} selected*")
     
@@ -94,15 +87,10 @@ def create_analysis_page(data_file, page_title):
     # Update session state
     st.session_state[f'selected_functions_{page_title}'] = functions
     
-    # Symbol filter with select all/none buttons
+    # Symbol filter with select all button
     st.sidebar.markdown("**Symbols:**")
-    col3, col4 = st.sidebar.columns(2)
-    with col3:
-        if st.button("All", key=f"select_all_symbols_{page_title}", help="Select all symbols", use_container_width=True):
-            st.session_state[f'selected_symbols_{page_title}'] = list(df['Symbol'].unique())
-    with col4:
-        if st.button("None", key=f"deselect_all_symbols_{page_title}", help="Deselect all symbols", use_container_width=True):
-            st.session_state[f'selected_symbols_{page_title}'] = []
+    if st.sidebar.button("All", key=f"select_all_symbols_{page_title}", help="Select all symbols", use_container_width=True):
+        st.session_state[f'selected_symbols_{page_title}'] = list(df['Symbol'].unique())
     
     # Initialize session state for symbols
     if f'selected_symbols_{page_title}' not in st.session_state:
@@ -111,8 +99,6 @@ def create_analysis_page(data_file, page_title):
     # Display symbol selection status
     if len(st.session_state[f'selected_symbols_{page_title}']) == len(df['Symbol'].unique()):
         st.sidebar.markdown("*All symbols selected*")
-    elif len(st.session_state[f'selected_symbols_{page_title}']) == 0:
-        st.sidebar.markdown("*No symbols selected*")
     else:
         st.sidebar.markdown(f"*{len(st.session_state[f'selected_symbols_{page_title}'])} of {len(df['Symbol'].unique())} selected*")
     
