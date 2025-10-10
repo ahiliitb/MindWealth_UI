@@ -36,18 +36,18 @@ cp "$SOURCE_TRADE_DIR"/*.csv "$TARGET_TRADE_DIR"/ 2>/dev/null || echo "⚠️  N
 
 # Copy virtual trading CSV files specifically (from trade_store root, not US subfolder)
 echo "📊 Copying virtual trading CSV files..."
-if [ -f "$SOURCE_VIRTUAL_TRADING_DIR/@virtual_trading_long.csv" ]; then
-    cp "$SOURCE_VIRTUAL_TRADING_DIR/@virtual_trading_long.csv" "$TARGET_TRADE_DIR/virtual_trading_long.csv"
-    echo "✅ Copied @virtual_trading_long.csv → virtual_trading_long.csv"
+if [ -f "$SOURCE_VIRTUAL_TRADING_DIR/virtual_trading_long.csv" ]; then
+    cp "$SOURCE_VIRTUAL_TRADING_DIR/virtual_trading_long.csv" "$TARGET_TRADE_DIR/virtual_trading_long.csv"
+    echo "✅ Copied virtual_trading_long.csv → virtual_trading_long.csv"
 else
-    echo "⚠️  @virtual_trading_long.csv not found in $SOURCE_VIRTUAL_TRADING_DIR"
+    echo "⚠️  virtual_trading_long.csv not found in $SOURCE_VIRTUAL_TRADING_DIR"
 fi
 
-if [ -f "$SOURCE_VIRTUAL_TRADING_DIR/@virtual_trading_short.csv" ]; then
-    cp "$SOURCE_VIRTUAL_TRADING_DIR/@virtual_trading_short.csv" "$TARGET_TRADE_DIR/virtual_trading_short.csv"
-    echo "✅ Copied @virtual_trading_short.csv → virtual_trading_short.csv"
+if [ -f "$SOURCE_VIRTUAL_TRADING_DIR/virtual_trading_short.csv" ]; then
+    cp "$SOURCE_VIRTUAL_TRADING_DIR/virtual_trading_short.csv" "$TARGET_TRADE_DIR/virtual_trading_short.csv"
+    echo "✅ Copied virtual_trading_short.csv → virtual_trading_short.csv"
 else
-    echo "⚠️  @virtual_trading_short.csv not found in $SOURCE_VIRTUAL_TRADING_DIR"
+    echo "⚠️  virtual_trading_short.csv not found in $SOURCE_VIRTUAL_TRADING_DIR"
 fi
 
 
