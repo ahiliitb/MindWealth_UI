@@ -55,37 +55,33 @@ def parse_breadth(df):
 
 
 def parse_target_signals(df, page_name="Unknown"):
-    """Parse target signals CSV (target_signal.csv)"""
+    """Parse target signals CSV (target_signal.csv) - Different column structure"""
     processed_data = []
     
     for _, row in df.iterrows():
-        # Parse symbol and signal info
-        symbol_info = row.get('Symbol, Signal, Signal Date/Price[$]', '')
-        symbol_match = re.search(r'([^,]+),\s*([^,]+),\s*([^(]+)\(Price:\s*([^)]+)\)', str(symbol_info))
+        # Target Signal CSV has different structure with separate columns
+        # Get symbol directly from Symbol column (use direct indexing for pandas Series)
+        symbol = str(row['Symbol']) if 'Symbol' in row.index else 'Unknown'
         
-        if symbol_match:
-            symbol = symbol_match.group(1).strip()
-            signal_type = symbol_match.group(2).strip()
-            signal_date = symbol_match.group(3).strip()
+        # Get function and interval from separate columns
+        function = str(row['Function']) if 'Function' in row.index else 'Unknown'
+        interval = str(row['Interval']) if 'Interval' in row.index else 'Unknown'
+        
+        # Parse entry signal date and price from "Entry Signal Date/Price[$]"
+        entry_info = row['Entry Signal Date/Price[$]'] if 'Entry Signal Date/Price[$]' in row.index else ''
+        entry_match = re.search(r'([^(]+)\(Price:\s*([^)]+)\)', str(entry_info))
+        
+        if entry_match:
+            signal_date = entry_match.group(1).strip()
             try:
-                signal_price = float(symbol_match.group(4).strip())
+                signal_price = float(entry_match.group(2).strip())
             except:
                 signal_price = 0
         else:
-            symbol, signal_type, signal_date, signal_price = "Unknown", "Unknown", "Unknown", 0
+            signal_date, signal_price = "Unknown", 0
         
-        # Parse win rate and number of trades
-        win_rate_info = row.get('Number of Trades/Historic Win Rate [%]', '')
-        win_rate_match = re.search(r'([0-9]+)/([0-9.]+)%', str(win_rate_info))
-        
-        if win_rate_match:
-            try:
-                num_trades = int(win_rate_match.group(1))
-                win_rate = float(win_rate_match.group(2))
-            except:
-                win_rate, num_trades = 0, 0
-        else:
-            win_rate, num_trades = 0, 0
+        # Target signals are always "Long" (targets are for upside)
+        signal_type = "Long"
         
         # Parse current trading date and price
         current_info = row.get('Current Trading Date/Price[$]', '')
@@ -99,18 +95,18 @@ def parse_target_signals(df, page_name="Unknown"):
         else:
             current_date, current_price = "Unknown", 0
         
-        # Parse entry signal date and price
-        entry_info = row.get('Entry Signal Date/Price[$]', '')
-        entry_match = re.search(r'([^(]+)\(Price:\s*([^)]+)\)', str(entry_info))
+        # Parse win rate and number of trades
+        win_rate_info = row.get('Number of Trades/Historic Win Rate [%]', '')
+        win_rate_match = re.search(r'([0-9]+)/([0-9.]+)%', str(win_rate_info))
         
-        if entry_match:
-            entry_date = entry_match.group(1).strip()
+        if win_rate_match:
             try:
-                entry_price = float(entry_match.group(2).strip())
+                num_trades = int(win_rate_match.group(1))
+                win_rate = float(win_rate_match.group(2))
             except:
-                entry_price = 0
+                win_rate, num_trades = 0, 0
         else:
-            entry_date, entry_price = "Unknown", 0
+            win_rate, num_trades = 0, 0
         
         # Parse gain and holding period
         gain_info = row.get('% Gain, Holding Period (days)', '')
@@ -138,10 +134,6 @@ def parse_target_signals(df, page_name="Unknown"):
                 best_return, worst_return, avg_return = 0, 0, 0
         else:
             best_return, worst_return, avg_return = 0, 0, 0
-        
-        # Parse interval and function
-        interval = row.get('Interval', 'Unknown')
-        function = row.get('Function', 'Unknown')
         
         # Parse target information
         target_info = row.get('Target for which Price has achieved over 90 percent of gain %', '')
@@ -187,8 +179,6 @@ def parse_target_signals(df, page_name="Unknown"):
             'Signal_Type': signal_type,
             'Signal_Date': signal_date,
             'Signal_Price': signal_price,
-            'Entry_Date': entry_date,
-            'Entry_Price': entry_price,
             'Current_Date': current_date,
             'Current_Price': current_price,
             'Gain_Percentage': gain_pct,
