@@ -25,34 +25,7 @@ def load_data_from_file(file_path, page_name="Unknown"):
         # Detect CSV structure
         csv_type = detect_csv_structure(file_path)
         
-        # Load the full CSV with special handling for sentiment.csv
-        if 'sentiment.csv' in file_path:
-            # Handle sentiment.csv with complex column names - use manual parsing
-            try:
-                # Read the file and manually parse it
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    content = f.read()
-                
-                # Use csv.Sniffer to detect the dialect
-                sniffer = csv.Sniffer()
-                dialect = sniffer.sniff(content[:1000])
-                
-                # Parse the CSV manually
-                reader = csv.reader(io.StringIO(content), dialect=dialect)
-                rows = list(reader)
-                
-                if len(rows) < 2:
-                    st.warning(f"No data found in {file_path}")
-                    return pd.DataFrame()
-                
-                # Create DataFrame from parsed rows
-                df = pd.DataFrame(rows[1:], columns=rows[0])
-                
-            except Exception as e:
-                st.error(f"Error parsing sentiment.csv: {str(e)}")
-                return pd.DataFrame()
-        else:
-            df = pd.read_csv(file_path)
+        df = pd.read_csv(file_path)
         
         if df.empty:
             st.warning(f"No data found in {file_path}")

@@ -62,6 +62,7 @@ def parse_target_signals(df, page_name="Unknown"):
         # Target Signal CSV has different structure with separate columns
         # Get symbol directly from Symbol column (use direct indexing for pandas Series)
         symbol = str(row['Symbol']) if 'Symbol' in row.index else 'Unknown'
+
         
         # Get function and interval from separate columns
         function = str(row['Function']) if 'Function' in row.index else 'Unknown'

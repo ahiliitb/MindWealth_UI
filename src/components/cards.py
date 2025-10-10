@@ -2,6 +2,7 @@
 UI Card Components for displaying trading strategy information
 """
 
+from curses import raw
 import streamlit as st
 import pandas as pd
 
@@ -60,7 +61,6 @@ def create_strategy_cards(df, page_name="Unknown", tab_context=""):
     if total_signals == 0:
         st.warning("No signals match the current filters.")
         return
-    
     # Display total count
     st.markdown(f"**Total Signals: {total_signals}**")
     
@@ -91,6 +91,7 @@ def create_strategy_cards(df, page_name="Unknown", tab_context=""):
                 st.markdown(f"**Showing signals {start_idx + 1} to {end_idx} of {total_signals}**")
                 # Add pagination context to make keys unique across pagination tabs
                 pagination_context = f"{tab_context}_page{i}"
+
                 display_strategy_cards_page(page_df, page_name, pagination_context)
 
 
@@ -99,7 +100,7 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
     if len(df) == 0:
         st.warning("No data to display on this page.")
         return
-    
+
     # Add custom CSS for scrollable container
     st.markdown("""
     <style>
@@ -133,17 +134,21 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
         for card_num, (idx, row) in enumerate(df.iterrows()):
             # Get raw data for extracting expander info
             raw_data = row['Raw_Data']
-            
+
             # Extract interval
             interval_display = "Unknown"
             if 'Interval' in row and row['Interval'] != 'Unknown':
                 interval_display = row['Interval']
+                if interval_display == 'Unknown':
+                    interval_display = raw_data.get("Interval", "Unknown")
+
             else:
                 interval_info = raw_data.get('Interval, Confirmation Status', 'Unknown')
                 if ',' in str(interval_info):
                     interval_display = str(interval_info).split(',')[0].strip()
                 else:
                     interval_display = str(interval_info).strip()
+
             
             # Extract signal type (Long/Short)
             signal_type_display = "Unknown"

@@ -36,6 +36,8 @@ def create_analysis_page(data_file, page_title):
     # Add interval and position type extraction
     def extract_interval(row):
         interval_info = row['Raw_Data'].get('Interval, Confirmation Status', 'Unknown')
+        if interval_info == 'Unknown':
+            interval_info = row['Raw_Data'].get('Interval', 'Unknown')
         if ',' in str(interval_info):
             interval = str(interval_info).split(',')[0].strip()
         else:
@@ -124,6 +126,17 @@ def create_analysis_page(data_file, page_title):
         key=f"win_rate_slider_{page_title}"
     )
     
+    # Sharpe ratio filter
+    min_sharpe_ratio = st.sidebar.slider(
+        "Min Strategy Sharpe Ratio",
+        min_value=0.0,
+        max_value=5.0,
+        value=0.0,
+        step=0.1,
+        help="Minimum Strategy Sharpe Ratio threshold",
+        key=f"sharpe_ratio_slider_{page_title}"
+    )
+    
     # Use the same display_interval_tabs function but with unique keys
     def display_interval_tabs_for_page(position_df, position_name):
         """Display interval tabs within each position tab for this page"""
@@ -182,7 +195,8 @@ def create_analysis_page(data_file, page_title):
             filtered_df = position_df[
                 (position_df['Function'].isin(functions)) &
                 (position_df['Symbol'].isin(symbols)) &
-                (position_df['Win_Rate'] >= min_win_rate)
+                (position_df['Win_Rate'] >= min_win_rate) &
+                (position_df['Strategy_Sharpe'] >= min_sharpe_ratio)
             ]
             display_tab_content(filtered_df, "ALL Intervals")
         
@@ -192,7 +206,8 @@ def create_analysis_page(data_file, page_title):
             filtered_df = daily_df[
                 (daily_df['Function'].isin(functions)) &
                 (daily_df['Symbol'].isin(symbols)) &
-                (daily_df['Win_Rate'] >= min_win_rate)
+                (daily_df['Win_Rate'] >= min_win_rate) &
+                (daily_df['Strategy_Sharpe'] >= min_sharpe_ratio)
             ]
             display_tab_content(filtered_df, "Daily")
         
@@ -202,7 +217,8 @@ def create_analysis_page(data_file, page_title):
             filtered_df = weekly_df[
                 (weekly_df['Function'].isin(functions)) &
                 (weekly_df['Symbol'].isin(symbols)) &
-                (weekly_df['Win_Rate'] >= min_win_rate)
+                (weekly_df['Win_Rate'] >= min_win_rate) &
+                (weekly_df['Strategy_Sharpe'] >= min_sharpe_ratio)
             ]
             display_tab_content(filtered_df, "Weekly")
         
@@ -212,7 +228,8 @@ def create_analysis_page(data_file, page_title):
             filtered_df = monthly_df[
                 (monthly_df['Function'].isin(functions)) &
                 (monthly_df['Symbol'].isin(symbols)) &
-                (monthly_df['Win_Rate'] >= min_win_rate)
+                (monthly_df['Win_Rate'] >= min_win_rate) &
+                (monthly_df['Strategy_Sharpe'] >= min_sharpe_ratio)
             ]
             display_tab_content(filtered_df, "Monthly")
         
@@ -222,7 +239,8 @@ def create_analysis_page(data_file, page_title):
             filtered_df = quarterly_df[
                 (quarterly_df['Function'].isin(functions)) &
                 (quarterly_df['Symbol'].isin(symbols)) &
-                (quarterly_df['Win_Rate'] >= min_win_rate)
+                (quarterly_df['Win_Rate'] >= min_win_rate) &
+                (quarterly_df['Strategy_Sharpe'] >= min_sharpe_ratio)
             ]
             display_tab_content(filtered_df, "Quarterly")
         
@@ -232,7 +250,8 @@ def create_analysis_page(data_file, page_title):
             filtered_df = yearly_df[
                 (yearly_df['Function'].isin(functions)) &
                 (yearly_df['Symbol'].isin(symbols)) &
-                (yearly_df['Win_Rate'] >= min_win_rate)
+                (yearly_df['Win_Rate'] >= min_win_rate) &
+                (yearly_df['Strategy_Sharpe'] >= min_sharpe_ratio)
             ]
             display_tab_content(filtered_df, "Yearly")
     
