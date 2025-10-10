@@ -11,6 +11,7 @@ echo "🔄 Starting trade data update process..."
 CACHE_DIR="../MindWealth/cache"
 TARGET_STOCK_DATA_DIR="trade_store/stock_data"
 SOURCE_TRADE_DIR="../MindWealth/trade_store/US"
+SOURCE_VIRTUAL_TRADING_DIR="../MindWealth/trade_store"
 TARGET_TRADE_DIR="trade_store/US"
 
 # Check if cache directory exists
@@ -32,6 +33,22 @@ cp "$CACHE_DIR"/*.csv "$TARGET_STOCK_DATA_DIR"/ 2>/dev/null || echo "⚠️  No 
 # Copy all CSV files from trade_store/US
 echo "📊 Copying trade signal CSV files..."
 cp "$SOURCE_TRADE_DIR"/*.csv "$TARGET_TRADE_DIR"/ 2>/dev/null || echo "⚠️  No CSV files found in trade_store/US"
+
+# Copy virtual trading CSV files specifically (from trade_store root, not US subfolder)
+echo "📊 Copying virtual trading CSV files..."
+if [ -f "$SOURCE_VIRTUAL_TRADING_DIR/@virtual_trading_long.csv" ]; then
+    cp "$SOURCE_VIRTUAL_TRADING_DIR/@virtual_trading_long.csv" "$TARGET_TRADE_DIR/virtual_trading_long.csv"
+    echo "✅ Copied @virtual_trading_long.csv → virtual_trading_long.csv"
+else
+    echo "⚠️  @virtual_trading_long.csv not found in $SOURCE_VIRTUAL_TRADING_DIR"
+fi
+
+if [ -f "$SOURCE_VIRTUAL_TRADING_DIR/@virtual_trading_short.csv" ]; then
+    cp "$SOURCE_VIRTUAL_TRADING_DIR/@virtual_trading_short.csv" "$TARGET_TRADE_DIR/virtual_trading_short.csv"
+    echo "✅ Copied @virtual_trading_short.csv → virtual_trading_short.csv"
+else
+    echo "⚠️  @virtual_trading_short.csv not found in $SOURCE_VIRTUAL_TRADING_DIR"
+fi
 
 
 # Git operations
