@@ -1,0 +1,238 @@
+{
+  "metadata": {
+    "session_id": "7b182896-b307-40ec-8ddb-1a4606896681",
+    "created_at": "2025-10-13T04:20:51.661421",
+    "last_updated": "2025-10-13T04:21:15.083734"
+  },
+  "conversation": [
+    {
+      "role": "system",
+      "content": "You are an expert financial trading analyst assistant for MindWealth. \nYou help users analyze stock market data, trading signals, and provide insights based on historical data.\n\nYour capabilities include:\n- Analyzing stock price movements and trends\n- Interpreting trading signals and technical indicators\n- Providing insights on market performance\n- Comparing multiple tickers\n- Identifying patterns and opportunities\n\nWhen analyzing data:\n1. Be precise and data-driven in your analysis\n2. Highlight key trends and patterns\n3. Provide actionable insights when possible\n4. Use technical analysis terminology appropriately\n5. Consider the time period and context of the data\n\nAlways base your responses on the actual data provided and avoid speculation.\n",
+      "timestamp": "2025-10-13T04:20:51.670791"
+    },
+    {
+      "role": "user",
+      "content": "Summarize all trading signals for ETH-USD. What signal types exist?",
+      "timestamp": "2025-10-13T04:20:51.680207",
+      "metadata": {
+        "tickers": [
+          "ETH-USD"
+        ],
+        "from_date": "2025-10-01",
+        "to_date": "2025-10-10",
+        "functions": [
+          "TRENDPULSE"
+        ],
+        "functions_auto_extracted": [],
+        "data_loaded": {
+          "assets": [],
+          "total_records": 0
+        },
+        "model": "gpt-4o",
+        "tokens_used": {
+          "prompt": 168,
+          "completion": 529,
+          "total": 697
+        },
+        "finish_reason": "stop"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "Trading signals for ETH-USD, like other cryptocurrencies or stocks, can be generated using various technical indicators and analysis methods. Here are some common types of trading signals that might be used for ETH-USD:\n\n1. **Moving Averages (MA):**\n   - **Simple Moving Average (SMA):** Signals are generated when the price crosses above or below the moving average line. A crossover above the SMA can indicate a buy signal, while a crossover below can indicate a sell signal.\n   - **Exponential Moving Average (EMA):** Similar to SMA but gives more weight to recent prices. Crossovers between short-term and long-term EMAs (e.g., 12-day EMA crossing above 26-day EMA) can generate buy or sell signals.\n\n2. **Relative Strength Index (RSI):**\n   - RSI measures the speed and change of price movements. An RSI above 70 typically indicates that an asset is overbought (potential sell signal), while an RSI below 30 indicates it is oversold (potential buy signal).\n\n3. **Moving Average Convergence Divergence (MACD):**\n   - MACD is a trend-following momentum indicator. A signal line crossover (MACD line crossing above the signal line) can indicate a buy signal, while crossing below can indicate a sell signal.\n\n4. **Bollinger Bands:**\n   - These bands measure market volatility. When the price touches the upper band, it may be considered overbought (potential sell signal), and when it touches the lower band, it may be considered oversold (potential buy signal).\n\n5. **Stochastic Oscillator:**\n   - This momentum indicator compares a particular closing price to a range of its prices over a certain period. A reading above 80 indicates overbought conditions (potential sell signal), while below 20 indicates oversold conditions (potential buy signal).\n\n6. **Fibonacci Retracement:**\n   - This tool is used to identify potential support and resistance levels. Traders look for price reversals at key Fibonacci levels (e.g., 38.2%, 50%, 61.8%).\n\n7. **Volume Analysis:**\n   - Changes in trading volume can signal potential reversals or the continuation of a trend. High volume on a price increase can confirm a bullish trend, while high volume on a price decrease can confirm a bearish trend.\n\nEach of these signals can be used independently or in combination to provide a more comprehensive analysis of ETH-USD's potential price movements. It's important to consider the context and timeframe when interpreting these signals, as they can vary in significance depending on market conditions.",
+      "timestamp": "2025-10-13T04:20:58.335868",
+      "metadata": {
+        "tickers": [
+          "ETH-USD"
+        ],
+        "from_date": "2025-10-01",
+        "to_date": "2025-10-10",
+        "functions": [
+          "TRENDPULSE"
+        ],
+        "functions_auto_extracted": [],
+        "data_loaded": {
+          "assets": [],
+          "total_records": 0
+        },
+        "model": "gpt-4o",
+        "tokens_used": {
+          "prompt": 168,
+          "completion": 529,
+          "total": 697
+        },
+        "finish_reason": "stop"
+      }
+    },
+    {
+      "role": "user",
+      "content": "User Query: What TRENDPULSE signals exist for HDFCBANK.NS?\n\n=== TRADING DATA ===\n\n\n--- HDFCBANK.NS ---\nDate Range: 2025-10-10 00:00:00 to 2025-10-10 00:00:00\nNumber of Records: 1\nColumns: Function, Symbol, Signal, Signal Date/Price[$], Exit Signal Date/Price[$], Current Mark to Market and Holding Period, Win Rate [%], History Tested, Number of Trades, Interval, Confirmation Status, Cancellation Level/Date, Current Trading Date/Price[$], Current Price vs Signal, Trading Days between Signal and Current Date, Sigmashell, Success Rate of Past Analysis [%], Divergence observed with, Signal Type, Maxima Broken Date/Price[$], Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type, Reference Upmove or Downmove start Date/Price($), end Date/Price($), % Change in Price on Latest Trading day vs Price on Trendpulse Breakout day/Earliest Unconfirmed Signal day/Confirmed Signal day, Backtested Returns(Win Trades) [%] (Best/Worst/Avg), Backtested Max Loss [%], Max Drawdown [%], Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.), Target Exit Date (Farthest./Earliest./Avg.), Backtested Strategy CAGR [%], CAGR of Buy and Hold [%], CAGR difference (Strategy - Buy and Hold) [%], Backtested Strategy Sharpe Ratio, Sharpe Ratio of Buy and Hold, Targets (Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$], Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$], Moving Average (50-days/200-days), Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days) (Across ALL Assets), Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days) (Across ALL Assets), Symbol, Date\n\nSummary Statistics:\n  Backtested Strategy Sharpe Ratio: min=1.61, max=1.61, avg=1.61\n  Sharpe Ratio of Buy and Hold: min=0.36, max=0.36, avg=0.36\n\nData Sample (first 5 and last 5 rows):\n  Function         Symbol, Signal, Signal Date/Price[$]         Exit Signal Date/Price[$] Current Mark to Market and Holding Period Win Rate [%], History Tested, Number of Trades     Interval, Confirmation Status Cancellation Level/Date Current Trading Date/Price[$], Current Price vs Signal Trading Days between Signal and Current Date Sigmashell, Success Rate of Past Analysis [%] Divergence observed with, Signal Type Maxima Broken Date/Price[$] Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type Reference Upmove or Downmove start Date/Price($), end Date/Price($) % Change in Price on Latest Trading day vs Price on Trendpulse Breakout day/Earliest Unconfirmed Signal day/Confirmed Signal day Backtested Returns(Win Trades) [%] (Best/Worst/Avg) Backtested Max Loss [%], Max Drawdown [%] Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.) Target Exit Date (Farthest./Earliest./Avg.) Backtested Strategy CAGR [%] CAGR of Buy and Hold [%] CAGR difference (Strategy - Buy and Hold) [%]  Backtested Strategy Sharpe Ratio  Sharpe Ratio of Buy and Hold Targets (Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$] Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$] Moving Average (50-days/200-days) Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days) (Across ALL Assets) Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days) (Across ALL Assets)      Symbol       Date\nTRENDPULSE HDFCBANK.NS, Long, 2025-10-08 (Price: 978.7) 2025-10-10 (Price: 980.9) (Today)                             0.22%, 2 days                       100.0%, Past 4 years, 12 Daily, is CONFIRMED on 2025-10-08       Already confirmed                 2025-10-10 (Price: 980.9), 0.22% above                                       2 days                                No Information                        No Information              No Information                                                                No Information                                                      No Information                                                                                              0.77% above/0.22% above/0.22% above                                   7.91%/1.92%/3.49%                                 0%, 9.14%                                        67 days/4 days/27 days            2026-01-13/2025-10-13/2025-11-16                       12.92%                    9.77%                                         3.15%                              1.61                          0.36                                                                       997.0996/1012.8566/995.95/1004.15/1098.0619/1305.7899                945.05/640.9/962.8007/765.1075/No Fib Ret Level/No Fib Ret Level                     974.32/932.28                                                                   78.12%/329/31 days (Across ALL Assets)                                                           85.01%/647/27 days (Across ALL Assets) HDFCBANK.NS 2025-10-10\n\n",
+      "timestamp": "2025-10-13T04:20:58.367769",
+      "metadata": {
+        "tickers": [
+          "HDFCBANK.NS"
+        ],
+        "from_date": "2025-10-08",
+        "to_date": "2025-10-10",
+        "functions": [
+          "TRENDPULSE"
+        ],
+        "functions_auto_extracted": [],
+        "data_loaded": {
+          "assets": [
+            "HDFCBANK.NS"
+          ],
+          "total_records": 1
+        },
+        "model": "gpt-4o",
+        "tokens_used": {
+          "prompt": 1958,
+          "completion": 519,
+          "total": 2477
+        },
+        "finish_reason": "stop"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the provided data for HDFCBANK.NS, the TRENDPULSE signal is as follows:\n\n### Signal Details:\n- **Signal Type:** Long\n- **Signal Date/Price:** October 8, 2025, at a price of $978.7\n- **Exit Signal Date/Price:** October 10, 2025, at a price of $980.9 (current trading date)\n- **Current Mark to Market and Holding Period:** 0.22% gain over 2 days\n- **Win Rate:** 100.0% over the past 4 years with 12 trades\n- **Interval:** Daily\n- **Confirmation Status:** Confirmed on October 8, 2025\n- **Current Price vs Signal:** 0.22% above the signal price\n- **Backtested Returns (Win Trades):** Best: 7.91%, Worst: 1.92%, Average: 3.49%\n- **Backtested Max Loss:** 0%\n- **Max Drawdown:** 9.14%\n- **Backtested Holding Period (Win Trades):** Max: 67 days, Min: 4 days, Avg: 27 days\n- **Target Exit Date:** Farthest: January 13, 2026, Earliest: October 13, 2025, Average: November 16, 2025\n- **Backtested Strategy CAGR:** 12.92%\n- **CAGR of Buy and Hold:** 9.77%\n- **CAGR Difference (Strategy - Buy and Hold):** 3.15%\n- **Backtested Strategy Sharpe Ratio:** 1.61\n- **Sharpe Ratio of Buy and Hold:** 0.36\n\n### Insights:\n- The TRENDPULSE signal for HDFCBANK.NS is a confirmed long position, indicating a bullish outlook.\n- The strategy has shown a high win rate of 100% over the past four years, suggesting strong historical performance.\n- The backtested strategy has outperformed a simple buy-and-hold approach, as indicated by a higher CAGR and Sharpe Ratio.\n- The current price is slightly above the signal price, reflecting a small gain since the signal was issued.\n- The strategy's historical performance shows a favorable risk-reward profile, with a significant difference in CAGR compared to buy-and-hold.\n\nThis analysis suggests that the TRENDPULSE signal for HDFCBANK.NS is currently performing well, with a positive outlook based on historical data.",
+      "timestamp": "2025-10-13T04:21:04.469071",
+      "metadata": {
+        "tickers": [
+          "HDFCBANK.NS"
+        ],
+        "from_date": "2025-10-08",
+        "to_date": "2025-10-10",
+        "functions": [
+          "TRENDPULSE"
+        ],
+        "functions_auto_extracted": [],
+        "data_loaded": {
+          "assets": [
+            "HDFCBANK.NS"
+          ],
+          "total_records": 1
+        },
+        "model": "gpt-4o",
+        "tokens_used": {
+          "prompt": 1958,
+          "completion": 519,
+          "total": 2477
+        },
+        "finish_reason": "stop"
+      }
+    },
+    {
+      "role": "user",
+      "content": "User Query: Compare TRENDPULSE and BASELINEDIVERGENCE signals for HDFCBANK.NS\n\n=== TRADING DATA ===\n\n\n--- HDFCBANK.NS ---\nDate Range: 2025-10-10 00:00:00 to 2025-10-10 00:00:00\nNumber of Records: 2\nColumns: Function, Symbol, Signal, Signal Date/Price[$], Exit Signal Date/Price[$], Current Mark to Market and Holding Period, Win Rate [%], History Tested, Number of Trades, Interval, Confirmation Status, Cancellation Level/Date, Current Trading Date/Price[$], Current Price vs Signal, Trading Days between Signal and Current Date, Sigmashell, Success Rate of Past Analysis [%], Divergence observed with, Signal Type, Maxima Broken Date/Price[$], Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type, Reference Upmove or Downmove start Date/Price($), end Date/Price($), % Change in Price on Latest Trading day vs Price on Trendpulse Breakout day/Earliest Unconfirmed Signal day/Confirmed Signal day, Backtested Returns(Win Trades) [%] (Best/Worst/Avg), Backtested Max Loss [%], Max Drawdown [%], Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.), Target Exit Date (Farthest./Earliest./Avg.), Backtested Strategy CAGR [%], CAGR of Buy and Hold [%], CAGR difference (Strategy - Buy and Hold) [%], Backtested Strategy Sharpe Ratio, Sharpe Ratio of Buy and Hold, Targets (Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$], Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$], Moving Average (50-days/200-days), Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days) (Across ALL Assets), Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days) (Across ALL Assets), Symbol, Date\n\nSummary Statistics:\n  Backtested Strategy Sharpe Ratio: min=0.76, max=1.61, avg=1.19\n  Sharpe Ratio of Buy and Hold: min=0.36, max=0.56, avg=0.46\n\nData Sample (first 5 and last 5 rows):\n          Function         Symbol, Signal, Signal Date/Price[$]         Exit Signal Date/Price[$] Current Mark to Market and Holding Period Win Rate [%], History Tested, Number of Trades      Interval, Confirmation Status Cancellation Level/Date Current Trading Date/Price[$], Current Price vs Signal Trading Days between Signal and Current Date Sigmashell, Success Rate of Past Analysis [%] Divergence observed with, Signal Type Maxima Broken Date/Price[$] Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type Reference Upmove or Downmove start Date/Price($), end Date/Price($) % Change in Price on Latest Trading day vs Price on Trendpulse Breakout day/Earliest Unconfirmed Signal day/Confirmed Signal day Backtested Returns(Win Trades) [%] (Best/Worst/Avg) Backtested Max Loss [%], Max Drawdown [%] Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.) Target Exit Date (Farthest./Earliest./Avg.) Backtested Strategy CAGR [%] CAGR of Buy and Hold [%] CAGR difference (Strategy - Buy and Hold) [%]  Backtested Strategy Sharpe Ratio  Sharpe Ratio of Buy and Hold Targets (Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$] Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$] Moving Average (50-days/200-days) Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days) (Across ALL Assets) Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days) (Across ALL Assets)      Symbol       Date\n        TRENDPULSE HDFCBANK.NS, Long, 2025-10-08 (Price: 978.7) 2025-10-10 (Price: 980.9) (Today)                             0.22%, 2 days                       100.0%, Past 4 years, 12  Daily, is CONFIRMED on 2025-10-08       Already confirmed                 2025-10-10 (Price: 980.9), 0.22% above                                       2 days                                No Information                        No Information              No Information                                                                No Information                                                      No Information                                                                                              0.77% above/0.22% above/0.22% above                                   7.91%/1.92%/3.49%                                 0%, 9.14%                                        67 days/4 days/27 days            2026-01-13/2025-10-13/2025-11-16                       12.92%                    9.77%                                         3.15%                              1.61                          0.36                                                                       997.0996/1012.8566/995.95/1004.15/1098.0619/1305.7899                945.05/640.9/962.8007/765.1075/No Fib Ret Level/No Fib Ret Level                     974.32/932.28                                                                   78.12%/329/31 days (Across ALL Assets)                                                           85.01%/647/27 days (Across ALL Assets) HDFCBANK.NS 2025-10-10\nBASELINEDIVERGENCE HDFCBANK.NS, Long, 2025-10-10 (Price: 980.9)                       No Exit Yet                              0.0%, 0 days                     85.44%, Past 10 years, 103 Weekly, is CONFIRMED on 2025-10-10       Already confirmed                  2025-10-10 (Price: 980.9), 0.0% below                                       0 days                                No Information                    ^NSEI, Normal Case              No Information                                                                No Information                                                      No Information                                                                                                                   No Information                                  29.27%/0.05%/7.15%                            17.33%, 37.24%                                      134 days/44 days/69 days            2026-04-22/2025-12-12/2026-01-17                       19.81%                   13.64%                                         6.17%                              0.76                          0.56                                                                    1094.1939/1051.0343/1299.7536/1004.15/1299.7536/1565.406                                945.05/640.9/976.4995/762.8018/939.0981/890.0874                     973.04/933.07                                                                    75.86%/29/94 days (Across ALL Assets)                                                            85.71%/56/77 days (Across ALL Assets) HDFCBANK.NS 2025-10-10\n\n",
+      "timestamp": "2025-10-13T04:21:04.481416",
+      "metadata": {
+        "tickers": [
+          "HDFCBANK.NS"
+        ],
+        "from_date": "2025-10-08",
+        "to_date": "2025-10-10",
+        "functions": [
+          "TRENDPULSE",
+          "BASELINEDIVERGENCE"
+        ],
+        "functions_auto_extracted": [],
+        "data_loaded": {
+          "assets": [
+            "HDFCBANK.NS"
+          ],
+          "total_records": 2
+        },
+        "model": "gpt-4o",
+        "tokens_used": {
+          "prompt": 4075,
+          "completion": 755,
+          "total": 4830
+        },
+        "finish_reason": "stop"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "Here's a comparison of the TRENDPULSE and BASELINEDIVERGENCE signals for HDFCBANK.NS based on the provided data:\n\n### TRENDPULSE Signal:\n- **Signal Type:** Long\n- **Signal Date/Price:** October 8, 2025, at $978.7\n- **Exit Signal Date/Price:** October 10, 2025, at $980.9 (current trading date)\n- **Current Mark to Market and Holding Period:** 0.22% gain over 2 days\n- **Win Rate:** 100.0% over the past 4 years with 12 trades\n- **Interval:** Daily\n- **Confirmation Status:** Confirmed on October 8, 2025\n- **Backtested Returns (Win Trades):** Best: 7.91%, Worst: 1.92%, Average: 3.49%\n- **Max Drawdown:** 9.14%\n- **Backtested Holding Period (Win Trades):** Max: 67 days, Min: 4 days, Avg: 27 days\n- **Backtested Strategy CAGR:** 12.92%\n- **Sharpe Ratio:** 1.61\n\n### BASELINEDIVERGENCE Signal:\n- **Signal Type:** Long\n- **Signal Date/Price:** October 10, 2025, at $980.9\n- **Exit Signal Date/Price:** No exit yet\n- **Current Mark to Market and Holding Period:** 0.0% gain, 0 days\n- **Win Rate:** 85.44% over the past 10 years with 103 trades\n- **Interval:** Weekly\n- **Confirmation Status:** Confirmed on October 10, 2025\n- **Backtested Returns (Win Trades):** Best: 29.27%, Worst: 0.05%, Average: 7.15%\n- **Max Drawdown:** 37.24%\n- **Backtested Holding Period (Win Trades):** Max: 134 days, Min: 44 days, Avg: 69 days\n- **Backtested Strategy CAGR:** 19.81%\n- **Sharpe Ratio:** 0.76\n\n### Comparison Insights:\n- **Signal Confirmation and Duration:** The TRENDPULSE signal is confirmed and has been active for 2 days, while the BASELINEDIVERGENCE signal is newly confirmed with no holding period yet.\n- **Win Rate and Historical Performance:** TRENDPULSE has a higher win rate (100%) compared to BASELINEDIVERGENCE (85.44%). However, BASELINEDIVERGENCE has been tested over a longer period (10 years) and more trades (103).\n- **Returns and Risk:** BASELINEDIVERGENCE shows higher potential returns (best at 29.27%) but also higher risk with a max drawdown of 37.24%. TRENDPULSE has a lower max drawdown (9.14%) and more consistent average returns.\n- **Sharpe Ratio:** TRENDPULSE has a higher Sharpe Ratio (1.61), indicating better risk-adjusted returns compared to BASELINEDIVERGENCE (0.76).\n- **CAGR:** BASELINEDIVERGENCE has a higher CAGR (19.81%) compared to TRENDPULSE (12.92%), suggesting potentially higher long-term growth.\n\n### Conclusion:\nThe TRENDPULSE signal offers a more stable and consistent performance with lower risk, while the BASELINEDIVERGENCE signal provides higher potential returns but with increased volatility and risk. Depending on the investor's risk tolerance and investment horizon, either strategy could be suitable.",
+      "timestamp": "2025-10-13T04:21:13.480052",
+      "metadata": {
+        "tickers": [
+          "HDFCBANK.NS"
+        ],
+        "from_date": "2025-10-08",
+        "to_date": "2025-10-10",
+        "functions": [
+          "TRENDPULSE",
+          "BASELINEDIVERGENCE"
+        ],
+        "functions_auto_extracted": [],
+        "data_loaded": {
+          "assets": [
+            "HDFCBANK.NS"
+          ],
+          "total_records": 2
+        },
+        "model": "gpt-4o",
+        "tokens_used": {
+          "prompt": 4075,
+          "completion": 755,
+          "total": 4830
+        },
+        "finish_reason": "stop"
+      }
+    },
+    {
+      "role": "user",
+      "content": "Which signal has better win rate?",
+      "timestamp": "2025-10-13T04:21:13.482285",
+      "metadata": {
+        "tickers": [
+          "HDFCBANK.NS"
+        ],
+        "from_date": "2025-10-08",
+        "to_date": "2025-10-10",
+        "functions": [
+          "TRENDPULSE",
+          "BASELINEDIVERGENCE"
+        ],
+        "functions_auto_extracted": [],
+        "data_reused_from_history": true,
+        "note": "Using data from previous query in conversation history",
+        "model": "gpt-4o",
+        "tokens_used": {
+          "prompt": 4845,
+          "completion": 81,
+          "total": 4926
+        },
+        "finish_reason": "stop"
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "The TRENDPULSE signal for HDFCBANK.NS has a better win rate compared to the BASELINEDIVERGENCE signal. Specifically:\n\n- **TRENDPULSE Win Rate:** 100.0%\n- **BASELINEDIVERGENCE Win Rate:** 85.44%\n\nThis indicates that historically, the TRENDPULSE signal has been more consistently successful in its trades.",
+      "timestamp": "2025-10-13T04:21:15.083719",
+      "metadata": {
+        "tickers": [
+          "HDFCBANK.NS"
+        ],
+        "from_date": "2025-10-08",
+        "to_date": "2025-10-10",
+        "functions": [
+          "TRENDPULSE",
+          "BASELINEDIVERGENCE"
+        ],
+        "functions_auto_extracted": [],
+        "data_reused_from_history": true,
+        "note": "Using data from previous query in conversation history",
+        "model": "gpt-4o",
+        "tokens_used": {
+          "prompt": 4845,
+          "completion": 81,
+          "total": 4926
+        },
+        "finish_reason": "stop"
+      }
+    }
+  ]
+}

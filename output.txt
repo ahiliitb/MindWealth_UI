@@ -1,0 +1,54 @@
+
+================================================================================
+MINDWEALTH CHATBOT - DEMONSTRATION
+================================================================================
+
+Initializing chatbot...
+✓ Chatbot initialized with session ID: 6dda7adb-3d3b-49cb-a928-c4a6db542167
+
+Available data sources:
+  - Assets: 134 available
+    Examples: AAPL, ABNB, ACWX, AIA.NZ, AMD, AMZN, ARM, ASML, ATD.TO, ATM.NZ...
+  - Functions: 8 available
+    Types: ALTITUDE ALPHA, BAND MATRIX, BASELINEDIVERGENCE, FRACTAL TRACK, OSCILLATOR DELTA, PULSEGAUGE, SIGMASHELL, TRENDPULSE
+
+--------------------------------------------------------------------------------
+DEMO 1: Analyze single stock
+--------------------------------------------------------------------------------
+
+Query: How many TRENDPULSE signals exist for AAPL?
+Assets: ['AAPL']
+Functions: ['TRENDPULSE']
+Date Range: 2025-10-01 to 2025-10-10
+
+Processing...
+
+📊 Response:
+Based on the provided trading data for AAPL, there is one TRENDPULSE signal recorded. This signal is a "Long" signal that was confirmed on August 15, 2025, with the signal date being August 17, 2025, at a price of $231.59. The exit signal date is October 10, 2025, at a price of $245.27.
+
+📈 Metadata:
+  - Tokens used: 1472
+  - Data loaded: {'assets': ['AAPL'], 'total_records': 1}
+--------------------------------------------------------------------------------
+
+Follow-up Query: What was the stretegy sharpe ratio in that whole data for AAPL for TRENDPULSE?
+Processing...
+
+📊 Response:
+The backtested strategy Sharpe Ratio for the TRENDPULSE signal on AAPL, as provided in the data, is 1.20. This value is consistent across the summary statistics, indicating that it is both the minimum and maximum value observed in the dataset.
+
+📈 Tokens used: 2780
+
+================================================================================
+SESSION SUMMARY
+================================================================================
+
+Session ID: 6dda7adb-3d3b-49cb-a928-c4a6db542167
+Total Messages: 5
+User Messages: 2
+Assistant Messages: 2
+
+================================================================================
+✓ DEMONSTRATION COMPLETE
+================================================================================
+
