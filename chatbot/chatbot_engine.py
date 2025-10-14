@@ -165,6 +165,25 @@ class ChatbotEngine:
                     logger.info("No functions extracted from query - will load ALL available functions")
                     # Leave functions as None, which will load all functions in data_processor
             
+            # SMART FILTERING: If we have both tickers and functions extracted,
+            # filter tickers to only those that have the requested function
+            if tickers and functions and len(tickers) > 0:
+                # Check if we used "ALL" tickers (auto-extracted empty list)
+                if extracted_tickers is not None and len(extracted_tickers) == 0:
+                    logger.info(f"Filtering tickers to find those with function(s): {functions}")
+                    tickers_with_function = []
+                    for ticker in self.data_processor.get_available_tickers():
+                        available_functions = self.data_processor.get_available_functions(ticker)
+                        # Check if ticker has any of the requested functions
+                        if any(func in available_functions for func in functions):
+                            tickers_with_function.append(ticker)
+                    
+                    if tickers_with_function:
+                        # Limit to MAX_TICKERS_PER_QUERY
+                        tickers = tickers_with_function[:MAX_TICKERS_PER_QUERY]
+                        logger.info(f"Found {len(tickers_with_function)} tickers with requested function(s), using {len(tickers)}: {tickers}")
+                    else:
+                        logger.warning(f"No tickers found with function(s) {functions}, will try original tickers")
 
             # Build context from data if parameters provided
             data_context = ""
