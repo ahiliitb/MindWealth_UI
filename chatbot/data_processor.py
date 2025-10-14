@@ -83,7 +83,7 @@ class DataProcessor:
     
     def get_available_functions(self, ticker: Optional[str] = None) -> List[str]:
         """
-        Get list of available function names from both signal and target folders.
+        Get list of available function names from entry, exit, and target folders.
         
         Args:
             ticker: Optional ticker to get functions for. If None, gets all unique functions.
@@ -98,8 +98,8 @@ class DataProcessor:
             functions = set()
             
             if ticker:
-                # Get functions for specific ticker from both signal and target
-                for base_dir in [self.signal_data_dir, self.target_data_dir]:
+                # Get functions for specific ticker from entry, exit, and target
+                for base_dir in [self.entry_data_dir, self.exit_data_dir, self.target_data_dir]:
                     if base_dir.exists():
                         ticker_dir = base_dir / ticker
                         if ticker_dir.exists():
@@ -107,8 +107,8 @@ class DataProcessor:
                             functions.update(function_dirs)
                 return sorted(list(functions))
             else:
-                # Get all unique functions across all tickers from both signal and target
-                for base_dir in [self.signal_data_dir, self.target_data_dir]:
+                # Get all unique functions across all tickers from entry, exit, and target
+                for base_dir in [self.entry_data_dir, self.exit_data_dir, self.target_data_dir]:
                     if base_dir.exists():
                         for ticker_dir in base_dir.iterdir():
                             if ticker_dir.is_dir():
@@ -127,7 +127,7 @@ class DataProcessor:
         function: Optional[str] = None
     ) -> List[str]:
         """
-        Get list of available dates for a specific ticker and function from both signal and target.
+        Get list of available dates for a specific ticker and function from entry, exit, and target.
         
         Args:
             ticker: Ticker/asset symbol
@@ -139,8 +139,8 @@ class DataProcessor:
         try:
             dates = set()
             
-            # Check both signal and target directories
-            for base_dir in [self.signal_data_dir, self.target_data_dir]:
+            # Check entry, exit, and target directories
+            for base_dir in [self.entry_data_dir, self.exit_data_dir, self.target_data_dir]:
                 if not base_dir.exists():
                     continue
                     
