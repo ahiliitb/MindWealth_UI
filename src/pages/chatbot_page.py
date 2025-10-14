@@ -31,7 +31,13 @@ def render_chatbot_page():
             st.session_state.chat_history = []
             st.session_state.last_settings = None
         except Exception as e:
-            st.error(f"Failed to initialize chatbot: {e}")
+            st.error(f"❌ Failed to initialize chatbot: {e}")
+            st.error("Please check:")
+            st.error("1. OpenAI API key is set in .streamlit/secrets.toml")
+            st.error("2. API key is valid and active")
+            st.error("3. openai library is properly installed (version 1.12.0+)")
+            import traceback
+            st.code(traceback.format_exc())
             st.stop()
     
     chatbot = st.session_state.chatbot_engine

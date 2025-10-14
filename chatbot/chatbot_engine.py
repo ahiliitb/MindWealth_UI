@@ -55,11 +55,15 @@ class ChatbotEngine:
         
         if not self.api_key:
             raise ValueError(
-                "OpenAI API key not provided. Set OPENAI_API_KEY environment variable "
-                "or pass api_key parameter."
+                "OpenAI API key not provided. Set OPENAI_API_KEY in .streamlit/secrets.toml "
+                "or .env file."
             )
         
-        self.client = OpenAI(api_key=self.api_key)
+        # Initialize OpenAI client with minimal parameters for Streamlit Cloud compatibility
+        try:
+            self.client = OpenAI(api_key=self.api_key)
+        except Exception as e:
+            raise ValueError(f"Failed to initialize OpenAI client: {e}. Check your API key and openai library version.")
         self.data_processor = DataProcessor(use_new_structure=use_new_data_structure)
         self.history_manager = HistoryManager(session_id=session_id)
         self.function_extractor = FunctionExtractor(api_key=self.api_key)
