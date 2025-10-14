@@ -307,39 +307,6 @@ def render_chatbot_page():
                     # Display response
                     st.markdown(response)
                     
-                    # Display batch processing metadata if available
-                    if metadata.get('batch_processing_used'):
-                        batch_mode = metadata.get('batch_mode', 'unknown')
-                        batch_count = metadata.get('batch_count', 0)
-                        tokens_used = metadata.get('tokens_used', {})
-                        finish_reason = metadata.get('finish_reason', '')
-                        
-                        with st.expander("📊 Processing Details", expanded=False):
-                            col1, col2, col3 = st.columns(3)
-                            
-                            with col1:
-                                if batch_mode == 'single':
-                                    st.metric("Batch Mode", "Single 🎯", help="All data processed in one optimized batch")
-                                else:
-                                    if 'synthesis' in finish_reason:
-                                        st.metric("Batch Mode", f"Multi + Synthesis ✨", help=f"{batch_count} batches with AI synthesis for unified response")
-                                    else:
-                                        st.metric("Batch Mode", f"Multi ({batch_count}) 🔄", help="Data split across multiple batches for optimal processing")
-                            
-                            with col2:
-                                total_tokens = tokens_used.get('total', 0)
-                                st.metric("Total Tokens", f"{total_tokens:,}", help="Total tokens used (prompt + completion)")
-                            
-                            with col3:
-                                tickers_processed = len(metadata.get('tickers', []))
-                                st.metric("Tickers Processed", tickers_processed, help="Number of tickers analyzed")
-                            
-                            # Additional info
-                            if 'synthesis' in finish_reason:
-                                st.caption(f"✨ Multi-batch results synthesized into single response | Total: {tokens_used.get('prompt', 0):,} prompt + {tokens_used.get('completion', 0):,} completion tokens")
-                            else:
-                                st.caption(f"💡 Prompt: {tokens_used.get('prompt', 0):,} tokens | Completion: {tokens_used.get('completion', 0):,} tokens")
-                    
                     # Add to history
                     st.session_state.chat_history.append({
                         'role': 'assistant',
