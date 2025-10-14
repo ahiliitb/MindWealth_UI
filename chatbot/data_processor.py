@@ -284,7 +284,7 @@ class DataProcessor:
                         function_dir = ticker_dir / function_name
                         if not function_dir.exists():
                             continue
-                    
+                        
                         # Get available dates for this ticker/function
                         available_dates = self.get_available_dates_for_ticker(ticker, function_name)
                         
