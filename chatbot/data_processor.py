@@ -592,8 +592,9 @@ class DataProcessor:
         formatted_parts = ["=== TRADING DATA (JSON Format) ===\n"]
         current_tokens = 0
         tickers_included = []
-        tickers_skipped = []
         
+        # NO TOKEN LIMITS - Include ALL tickers
+        # Smart batch processing will handle splitting across multiple API calls
         for ticker, df in stock_data.items():
             if df.empty:
                 continue
@@ -613,25 +614,13 @@ class DataProcessor:
             
             ticker_token_estimate = self.estimate_token_count(ticker_json)
             
-            # Check if adding this ticker would exceed limit
-            if current_tokens + ticker_token_estimate > max_tokens:
-                logger.warning(f"Token limit approaching - skipping {ticker} ({ticker_token_estimate} tokens)")
-                tickers_skipped.append(ticker)
-                continue
-            
-            # Add ticker data
+            # Add ALL ticker data - no skipping
             formatted_parts.append(f"\n{ticker_json}")
             current_tokens += ticker_token_estimate
             tickers_included.append(ticker)
         
-        # Add summary
-        if tickers_skipped:
-            formatted_parts.append(f"\n\n// Note: {len(tickers_skipped)} assets skipped due to token limits: {', '.join(tickers_skipped[:5])}")
-            if len(tickers_skipped) > 5:
-                formatted_parts.append(f" ... and {len(tickers_skipped) - 5} more")
-        
         result = "\n".join(formatted_parts)
-        logger.info(f"Formatted data as JSON: ~{current_tokens} tokens, {len(tickers_included)} assets included, {len(tickers_skipped)} skipped")
+        logger.info(f"Formatted ALL data as JSON: ~{current_tokens} tokens, {len(tickers_included)} assets included (NO LIMITS)")
         
         return result
     

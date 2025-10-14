@@ -557,12 +557,8 @@ class ChatbotEngine:
             tickers_per_batch = max(1, int(available_tokens_per_batch / tokens_per_ticker))
             num_batches = max(1, (num_tickers + tickers_per_batch - 1) // tickers_per_batch)  # Ceiling division
             
-            # Cap at MAX_SEQUENTIAL_BATCHES
-            if num_batches > MAX_SEQUENTIAL_BATCHES:
-                num_batches = MAX_SEQUENTIAL_BATCHES
-                tickers_per_batch = max(1, (num_tickers + num_batches - 1) // num_batches)
-            
-            logger.info(f"Calculated strategy: {num_batches} batches, ~{tickers_per_batch} tickers per batch")
+            # NO LIMIT on number of batches - process ALL data
+            logger.info(f"Calculated strategy: {num_batches} batches, ~{tickers_per_batch} tickers per batch (NO LIMITS - processing ALL data)")
             
             return self._execute_multi_batch(base_messages, user_query, stock_data, tickers_per_batch, num_batches)
     

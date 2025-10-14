@@ -80,8 +80,8 @@ TEMPERATURE = float(os.getenv("TEMPERATURE", "0.7"))
 
 # Token limits - Smart batch processing automatically handles any data size
 MAX_INPUT_TOKENS_PER_CALL = int(os.getenv("MAX_INPUT_TOKENS_PER_CALL", "22000"))  # Token limit per batch
-MAX_SEQUENTIAL_BATCHES = int(os.getenv("MAX_SEQUENTIAL_BATCHES", "10"))  # Max batches for large queries
-BATCH_DELAY_SECONDS = float(os.getenv("BATCH_DELAY_SECONDS", "65.0"))  # Delay between batches to avoid rate limits
+MAX_SEQUENTIAL_BATCHES = int(os.getenv("MAX_SEQUENTIAL_BATCHES", "999"))  # NO LIMIT - Process as many batches as needed
+BATCH_DELAY_SECONDS = float(os.getenv("BATCH_DELAY_SECONDS", "5.0"))  # Delay between batches to avoid rate limits
 ESTIMATED_CHARS_PER_TOKEN = 4  # Rough estimate: 1 token ≈ 4 characters
 MIN_HISTORY_MESSAGES = 2  # Minimum messages to keep in history
 ENABLE_BATCH_PROCESSING = True  # Smart batch processing always enabled for optimal performance
