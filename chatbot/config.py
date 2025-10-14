@@ -78,15 +78,20 @@ OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4-turbo")  # GPT-4 Turbo has 128K 
 MAX_TOKENS = int(os.getenv("MAX_TOKENS", "4096"))  # Output tokens (response length)
 TEMPERATURE = float(os.getenv("TEMPERATURE", "0.7"))
 
-# Token limits - Optimized for SPEED (single calls by default)
-# Org limited to 30K TPM - we stay under this for fast responses
-MAX_INPUT_TOKENS_PER_CALL = int(os.getenv("MAX_INPUT_TOKENS_PER_CALL", "22000"))  # Safe single-call limit
-MAX_TICKERS_PER_QUERY = int(os.getenv("MAX_TICKERS_PER_QUERY", "15"))  # Limit tickers for fast response
-MAX_SEQUENTIAL_BATCHES = int(os.getenv("MAX_SEQUENTIAL_BATCHES", "5"))  # Reduced batches (only for large queries)
-BATCH_DELAY_SECONDS = float(os.getenv("BATCH_DELAY_SECONDS", "65.0"))  # Delay between batches
+# Token limits - Smart batch processing automatically handles any data size
+MAX_INPUT_TOKENS_PER_CALL = int(os.getenv("MAX_INPUT_TOKENS_PER_CALL", "22000"))  # Token limit per batch
+MAX_SEQUENTIAL_BATCHES = int(os.getenv("MAX_SEQUENTIAL_BATCHES", "10"))  # Max batches for large queries
+BATCH_DELAY_SECONDS = float(os.getenv("BATCH_DELAY_SECONDS", "65.0"))  # Delay between batches to avoid rate limits
 ESTIMATED_CHARS_PER_TOKEN = 4  # Rough estimate: 1 token ≈ 4 characters
-MIN_HISTORY_MESSAGES = 2  # Minimum messages to keep
-ENABLE_BATCH_PROCESSING = os.getenv("ENABLE_BATCH_PROCESSING", "false").lower() == "true"  # DISABLED by default for speed
+MIN_HISTORY_MESSAGES = 2  # Minimum messages to keep in history
+ENABLE_BATCH_PROCESSING = True  # Smart batch processing always enabled for optimal performance
+
+# Smart Filtering Settings
+# When smart filtering is enabled, the system automatically determines which tickers to process:
+# - If function(s) specified: ALL tickers with that function (no limit)
+# - If ticker(s) specified: Only those tickers
+# - If both specified: Intersection of tickers that have the function
+# - Batch processing automatically handles any number of tickers efficiently
 
 # System prompt for the chatbot
 SYSTEM_PROMPT = """You are an expert financial trading analyst assistant for MindWealth. 

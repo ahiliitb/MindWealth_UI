@@ -15,12 +15,10 @@ from .config import (
     SYSTEM_PROMPT,
     MAX_HISTORY_LENGTH,
     MAX_INPUT_TOKENS_PER_CALL,
-    MAX_TICKERS_PER_QUERY,
     MAX_SEQUENTIAL_BATCHES,
     BATCH_DELAY_SECONDS,
     ESTIMATED_CHARS_PER_TOKEN,
-    MIN_HISTORY_MESSAGES,
-    ENABLE_BATCH_PROCESSING
+    MIN_HISTORY_MESSAGES
 )
 from .data_processor import DataProcessor
 from .history_manager import HistoryManager
@@ -135,26 +133,18 @@ class ChatbotEngine:
                 logger.info("Auto-extracting tickers from user query...")
                 extracted_tickers = self.ticker_extractor.extract_tickers(user_message)
                 
-                if extracted_tickers:
-                    # Empty list means ALL tickers (no specific ones mentioned)
-                    if len(extracted_tickers) == 0:
-                        logger.info(f"No specific tickers mentioned - limiting to top {MAX_TICKERS_PER_QUERY} for speed")
-                        all_tickers = self.data_processor.get_available_tickers()
-                        # Take first N tickers for fast response
-                        tickers = all_tickers[:MAX_TICKERS_PER_QUERY]
-                        logger.info(f"Using {len(tickers)} tickers for fast response: {tickers[:5]}...")
-                    else:
-                        logger.info(f"Auto-extracted specific tickers: {extracted_tickers}")
-                        tickers = extracted_tickers
+                # Empty list means no specific tickers mentioned - will use smart filtering
+                if len(extracted_tickers) == 0:
+                    logger.info("No specific tickers mentioned - will use smart filtering based on functions")
+                    # Set to None initially, will be filtered by function later
+                    tickers = None
                 else:
-                    # None returned = error or no extraction, use limited set
-                    logger.info(f"Using top {MAX_TICKERS_PER_QUERY} tickers (fallback)")
-                    all_tickers = self.data_processor.get_available_tickers()
-                    tickers = all_tickers[:MAX_TICKERS_PER_QUERY]
+                    logger.info(f"Auto-extracted specific tickers: {extracted_tickers}")
+                    tickers = extracted_tickers
             
             # Auto-extract functions from user message if not provided
             extracted_functions = None
-            if functions is None and auto_extract_functions and tickers:
+            if functions is None and auto_extract_functions:
                 logger.info("Auto-extracting functions from user query...")
                 extracted_functions = self.function_extractor.extract_functions(user_message)
                 
@@ -165,12 +155,13 @@ class ChatbotEngine:
                     logger.info("No functions extracted from query - will load ALL available functions")
                     # Leave functions as None, which will load all functions in data_processor
             
-            # SMART FILTERING: If we have both tickers and functions extracted,
-            # filter tickers to only those that have the requested function
-            if tickers and functions and len(tickers) > 0:
-                # Check if we used "ALL" tickers (auto-extracted empty list)
-                if extracted_tickers is not None and len(extracted_tickers) == 0:
-                    logger.info(f"Filtering tickers to find those with function(s): {functions}")
+            # SMART FILTERING: Intelligently determine which tickers to use
+            if tickers is None and auto_extract_tickers:
+                # No specific tickers mentioned - use smart filtering
+                if functions:
+                    # CASE 1: Function(s) specified, no specific tickers
+                    # Get ALL tickers that have the requested function(s)
+                    logger.info(f"Smart filtering: Finding ALL tickers with function(s): {functions}")
                     tickers_with_function = []
                     for ticker in self.data_processor.get_available_tickers():
                         available_functions = self.data_processor.get_available_functions(ticker)
@@ -179,11 +170,34 @@ class ChatbotEngine:
                             tickers_with_function.append(ticker)
                     
                     if tickers_with_function:
-                        # Limit to MAX_TICKERS_PER_QUERY
-                        tickers = tickers_with_function[:MAX_TICKERS_PER_QUERY]
-                        logger.info(f"Found {len(tickers_with_function)} tickers with requested function(s), using {len(tickers)}: {tickers}")
+                        tickers = tickers_with_function
+                        logger.info(f"Smart filtering: Found {len(tickers)} tickers with function(s) {functions}")
+                        logger.info(f"Tickers: {tickers[:10]}{'...' if len(tickers) > 10 else ''}")
                     else:
-                        logger.warning(f"No tickers found with function(s) {functions}, will try original tickers")
+                        logger.warning(f"No tickers found with function(s) {functions}")
+                        tickers = []
+                else:
+                    # CASE 2: No specific tickers or functions mentioned
+                    # Use ALL available tickers - batch processing will handle it
+                    tickers = self.data_processor.get_available_tickers()
+                    logger.info(f"Smart filtering: No specific tickers/functions - using ALL {len(tickers)} tickers")
+                    logger.info(f"Batch processing will handle the load efficiently")
+            elif tickers and functions and len(tickers) > 0:
+                # CASE 3: Both tickers and functions specified
+                # Filter to only those tickers that have the requested functions
+                if extracted_tickers is not None and len(extracted_tickers) == 0:
+                    logger.info(f"Smart filtering: Filtering tickers for function(s): {functions}")
+                    tickers_with_function = []
+                    for ticker in tickers:
+                        available_functions = self.data_processor.get_available_functions(ticker)
+                        if any(func in available_functions for func in functions):
+                            tickers_with_function.append(ticker)
+                    
+                    if tickers_with_function:
+                        tickers = tickers_with_function
+                        logger.info(f"Smart filtering: {len(tickers)} tickers have the requested function(s)")
+                    else:
+                        logger.warning(f"No tickers found with function(s) {functions}, using all tickers")
 
             # Build context from data if parameters provided
             data_context = ""
@@ -270,57 +284,37 @@ class ChatbotEngine:
             
             logger.info(f"Estimated input tokens: {estimated_tokens}")
             
-            # Check if we should use batch processing
-            use_batching = ENABLE_BATCH_PROCESSING and estimated_tokens > MAX_INPUT_TOKENS_PER_CALL
-            
-            if use_batching:
-                logger.info(f"Input too large ({estimated_tokens} tokens) - using SEQUENTIAL BATCH processing with rate limiting")
-                assistant_message = self._batch_query(messages, user_message, stock_data if tickers else {})
-                
-                # Create mock response object for metadata
-                metadata["model"] = OPENAI_MODEL
-                metadata["tokens_used"] = {
-                    "prompt": estimated_tokens,
-                    "completion": len(assistant_message) // ESTIMATED_CHARS_PER_TOKEN,
-                    "total": estimated_tokens + (len(assistant_message) // ESTIMATED_CHARS_PER_TOKEN)
-                }
-                metadata["finish_reason"] = "batch_aggregation"
-                metadata["batch_processing_used"] = True
-            else:
-                # Single API call - trim if needed
-                trimmed_count = 0
-                while estimated_tokens > MAX_INPUT_TOKENS_PER_CALL and len(messages) > MIN_HISTORY_MESSAGES:
-                    if len(messages) > 2:
-                        removed_msg = messages.pop(1)
-                        trimmed_count += 1
-                        logger.warning(f"Trimmed old message (role: {removed_msg.get('role', 'unknown')})")
-                        
-                        total_chars = sum(len(str(msg.get('content', ''))) for msg in messages)
-                        estimated_tokens = total_chars // ESTIMATED_CHARS_PER_TOKEN
-                    else:
-                        break
-                
-                if trimmed_count > 0:
-                    logger.warning(f"Trimmed {trimmed_count} old messages to stay under token limit")
-                
-                # Call GPT
-                logger.info(f"Calling {OPENAI_MODEL} with {len(messages)} messages, ~{estimated_tokens} tokens")
-                response = self.client.chat.completions.create(
-                    model=OPENAI_MODEL,
-                    messages=messages,
-                    max_tokens=MAX_TOKENS,
-                    temperature=TEMPERATURE
+            # ALWAYS USE SMART BATCH PROCESSING
+            # Automatically handles small datasets (1 API call) vs large datasets (multiple API calls)
+            # Number of API calls is proportional to input token count
+            if stock_data and tickers:
+                logger.info(f"Using smart batch processing for {len(stock_data)} tickers")
+                assistant_message, batch_metadata = self._smart_batch_query(
+                    messages, user_message, stock_data, estimated_tokens
                 )
-                assistant_message = response.choices[0].message.content
                 
-                # Add response metadata
+                # Update metadata with batch info
                 metadata["model"] = OPENAI_MODEL
-                metadata["tokens_used"] = {
-                    "prompt": response.usage.prompt_tokens,
-                    "completion": response.usage.completion_tokens,
-                    "total": response.usage.total_tokens
-                }
-                metadata["finish_reason"] = response.choices[0].finish_reason
+                metadata["tokens_used"] = batch_metadata["tokens_used"]
+                metadata["finish_reason"] = batch_metadata["finish_reason"]
+                metadata["batch_processing_used"] = True
+                metadata["batch_count"] = batch_metadata["batch_count"]
+                metadata["batch_mode"] = batch_metadata["batch_mode"]
+            else:
+                # For non-ticker queries (breadth only, CSV text, etc.)
+                # Use simple batch method with automatic single/multi decision
+                logger.info("Using simple batch processing for non-ticker query")
+                assistant_message, batch_metadata = self._simple_batch_query(
+                    messages, estimated_tokens
+                )
+                
+                # Update metadata
+                metadata["model"] = OPENAI_MODEL
+                metadata["tokens_used"] = batch_metadata["tokens_used"]
+                metadata["finish_reason"] = batch_metadata["finish_reason"]
+                metadata["batch_processing_used"] = True
+                metadata["batch_count"] = batch_metadata.get("batch_count", 1)
+                metadata["batch_mode"] = batch_metadata.get("batch_mode", "single")
             
             # Add assistant response to history
             self.history_manager.add_message("assistant", assistant_message, metadata)
@@ -368,25 +362,21 @@ class ChatbotEngine:
         messages = self.history_manager.get_messages_for_api()
         
         try:
-            # Call GPT-4o
-            logger.info("Calling GPT-4o with CSV text input")
-            response = self.client.chat.completions.create(
-                model=OPENAI_MODEL,
-                messages=messages,
-                max_tokens=MAX_TOKENS,
-                temperature=TEMPERATURE
-            )
+            # Estimate tokens
+            total_chars = sum(len(str(msg.get('content', ''))) for msg in messages)
+            estimated_tokens = total_chars // ESTIMATED_CHARS_PER_TOKEN
             
-            # Extract response
-            assistant_message = response.choices[0].message.content
+            # Use simple batch processing for CSV text queries
+            logger.info(f"Processing CSV text query with batch method (~{estimated_tokens} tokens)")
+            assistant_message, batch_metadata = self._simple_batch_query(messages, estimated_tokens)
             
             # Add response metadata
             metadata["model"] = OPENAI_MODEL
-            metadata["tokens_used"] = {
-                "prompt": response.usage.prompt_tokens,
-                "completion": response.usage.completion_tokens,
-                "total": response.usage.total_tokens
-            }
+            metadata["tokens_used"] = batch_metadata["tokens_used"]
+            metadata["finish_reason"] = batch_metadata["finish_reason"]
+            metadata["batch_processing_used"] = True
+            metadata["batch_count"] = batch_metadata.get("batch_count", 1)
+            metadata["batch_mode"] = batch_metadata.get("batch_mode", "single")
             
             # Add assistant response to history
             self.history_manager.add_message("assistant", assistant_message, metadata)
@@ -416,32 +406,164 @@ class ChatbotEngine:
         self.history_manager.add_message("system", SYSTEM_PROMPT)
         logger.info("Conversation history cleared")
     
-    def _batch_query(
+    def _smart_batch_query(
         self,
         base_messages: List[Dict],
         user_query: str,
-        stock_data: Dict
-    ) -> str:
+        stock_data: Dict,
+        estimated_tokens: int
+    ) -> Tuple[str, Dict]:
         """
-        Execute SEQUENTIAL batch API calls for large data sets with rate limiting.
-        Splits data by ticker groups and makes sequential calls with delays to avoid TPM limits.
+        Smart batch processing that automatically adjusts batch size based on token count.
+        
+        Features:
+        - Single batch if tokens fit within limit
+        - Multiple batches if tokens exceed limit
+        - Intelligent batch size calculation based on token distribution
+        - Sequential processing with rate limiting for multi-batch
         
         Args:
             base_messages: Base conversation messages
             user_query: User's query text
             stock_data: Dictionary of stock DataFrames by ticker
+            estimated_tokens: Estimated total tokens for full data
             
         Returns:
-            Aggregated response text
+            Tuple of (response_text, metadata_dict)
         """
         import pandas as pd
         
-        logger.info(f"Starting batch query with {len(stock_data)} tickers")
+        ticker_list = list(stock_data.keys())
+        num_tickers = len(ticker_list)
+        
+        logger.info(f"Smart batch processing: {num_tickers} tickers, ~{estimated_tokens} tokens")
+        
+        # Calculate optimal batch strategy
+        if estimated_tokens <= MAX_INPUT_TOKENS_PER_CALL:
+            # SINGLE BATCH MODE: All data fits in one call
+            logger.info("Token count within limit - using SINGLE BATCH mode")
+            return self._execute_single_batch(base_messages, user_query, stock_data, estimated_tokens)
+        else:
+            # MULTI-BATCH MODE: Split intelligently based on token budget
+            logger.info(f"Token count exceeds limit ({estimated_tokens} > {MAX_INPUT_TOKENS_PER_CALL}) - using MULTI-BATCH mode")
+            
+            # Calculate optimal number of batches
+            # Reserve some tokens for base messages and overhead
+            base_message_tokens = sum(len(str(msg.get('content', ''))) for msg in base_messages[:-1]) // ESTIMATED_CHARS_PER_TOKEN
+            available_tokens_per_batch = MAX_INPUT_TOKENS_PER_CALL - base_message_tokens - 500  # 500 token buffer
+            
+            # Estimate tokens per ticker (average)
+            tokens_per_ticker = estimated_tokens / num_tickers if num_tickers > 0 else estimated_tokens
+            
+            # Calculate tickers per batch
+            tickers_per_batch = max(1, int(available_tokens_per_batch / tokens_per_ticker))
+            num_batches = max(1, (num_tickers + tickers_per_batch - 1) // tickers_per_batch)  # Ceiling division
+            
+            # Cap at MAX_SEQUENTIAL_BATCHES
+            if num_batches > MAX_SEQUENTIAL_BATCHES:
+                num_batches = MAX_SEQUENTIAL_BATCHES
+                tickers_per_batch = max(1, (num_tickers + num_batches - 1) // num_batches)
+            
+            logger.info(f"Calculated strategy: {num_batches} batches, ~{tickers_per_batch} tickers per batch")
+            
+            return self._execute_multi_batch(base_messages, user_query, stock_data, tickers_per_batch, num_batches)
+    
+    def _execute_single_batch(
+        self,
+        base_messages: List[Dict],
+        user_query: str,
+        stock_data: Dict,
+        estimated_tokens: int
+    ) -> Tuple[str, Dict]:
+        """
+        Execute a single batch API call with all data.
+        
+        Args:
+            base_messages: Base conversation messages
+            user_query: User's query text
+            stock_data: Dictionary of stock DataFrames by ticker
+            estimated_tokens: Estimated tokens
+            
+        Returns:
+            Tuple of (response_text, metadata_dict)
+        """
+        try:
+            # Create data context for all tickers
+            data_context = self.data_processor.format_data_for_prompt(stock_data)
+            
+            # Create complete message
+            complete_message = f"""User Query: {user_query}
+
+{data_context}"""
+            
+            # Create messages for API call
+            messages = base_messages[:-1]  # All except last message
+            messages.append({"role": "user", "content": complete_message})
+            
+            # Call API
+            logger.info(f"Calling API with single batch ({len(stock_data)} tickers)")
+            response = self.client.chat.completions.create(
+                model=OPENAI_MODEL,
+                messages=messages,
+                max_tokens=MAX_TOKENS,
+                temperature=TEMPERATURE
+            )
+            
+            assistant_message = response.choices[0].message.content
+            
+            metadata = {
+                "tokens_used": {
+                    "prompt": response.usage.prompt_tokens,
+                    "completion": response.usage.completion_tokens,
+                    "total": response.usage.total_tokens
+                },
+                "finish_reason": response.choices[0].finish_reason,
+                "batch_count": 1,
+                "batch_mode": "single"
+            }
+            
+            logger.info(f"Single batch completed: {response.usage.total_tokens} tokens")
+            
+            return assistant_message, metadata
+            
+        except Exception as e:
+            logger.error(f"Error in single batch processing: {e}")
+            error_msg = f"Error processing query: {str(e)}"
+            metadata = {
+                "tokens_used": {"prompt": estimated_tokens, "completion": 0, "total": estimated_tokens},
+                "finish_reason": "error",
+                "batch_count": 1,
+                "batch_mode": "single",
+                "error": str(e)
+            }
+            return error_msg, metadata
+    
+    def _execute_multi_batch(
+        self,
+        base_messages: List[Dict],
+        user_query: str,
+        stock_data: Dict,
+        tickers_per_batch: int,
+        num_batches: int
+    ) -> Tuple[str, Dict]:
+        """
+        Execute multiple sequential batch API calls with rate limiting.
+        
+        Args:
+            base_messages: Base conversation messages
+            user_query: User's query text
+            stock_data: Dictionary of stock DataFrames by ticker
+            tickers_per_batch: Number of tickers per batch
+            num_batches: Total number of batches
+            
+        Returns:
+            Tuple of (response_text, metadata_dict)
+        """
+        import pandas as pd
+        
+        ticker_list = list(stock_data.keys())
         
         # Split tickers into groups
-        ticker_list = list(stock_data.keys())
-        tickers_per_batch = max(1, len(ticker_list) // MAX_SEQUENTIAL_BATCHES)
-        
         ticker_groups = []
         for i in range(0, len(ticker_list), tickers_per_batch):
             ticker_groups.append(ticker_list[i:i + tickers_per_batch])
@@ -450,6 +572,8 @@ class ChatbotEngine:
         
         # Execute SEQUENTIAL batch calls with delays
         results = []
+        total_prompt_tokens = 0
+        total_completion_tokens = 0
         
         for group_idx, group_tickers in enumerate(ticker_groups):
             try:
@@ -486,14 +610,16 @@ Note: This is batch {group_idx + 1} of {len(ticker_groups)} analyzing assets: {'
                 )
                 
                 result_text = response.choices[0].message.content
-                tokens = response.usage.total_tokens
                 
-                logger.info(f"Batch {group_idx + 1} completed: {tokens} tokens")
+                total_prompt_tokens += response.usage.prompt_tokens
+                total_completion_tokens += response.usage.completion_tokens
+                
+                logger.info(f"Batch {group_idx + 1} completed: {response.usage.total_tokens} tokens")
                 results.append({
                     'group_idx': group_idx,
                     'tickers': group_tickers,
                     'response': result_text,
-                    'tokens': tokens
+                    'tokens': response.usage.total_tokens
                 })
                 
             except Exception as e:
@@ -505,26 +631,173 @@ Note: This is batch {group_idx + 1} of {len(ticker_groups)} analyzing assets: {'
                     'tokens': 0
                 })
         
-        # Aggregate responses
-        total_tokens = sum(r['tokens'] for r in results)
-        logger.info(f"Batch processing complete: {len(results)} batches, {total_tokens} total tokens")
+        # Aggregate responses with final synthesis API call
+        total_tokens = total_prompt_tokens + total_completion_tokens
+        logger.info(f"Multi-batch processing complete: {len(results)} batches, {total_tokens} total tokens")
         
-        # Combine responses
-        combined_response = f"""# Comprehensive Analysis ({len(ticker_list)} assets analyzed in {len(results)} batches)
-
-"""
-        
+        # Combine all batch responses for synthesis
+        batch_responses_text = ""
         for result in results:
             if result['response']:
-                combined_response += f"\n## Batch {result['group_idx'] + 1}: {', '.join(result['tickers'][:5])}"
-                if len(result['tickers']) > 5:
-                    combined_response += f" ... and {len(result['tickers']) - 5} more"
-                combined_response += f"\n\n{result['response']}\n\n---\n"
+                batch_responses_text += f"\n### Batch {result['group_idx'] + 1} Results ({', '.join(result['tickers'][:5])}{'...' if len(result['tickers']) > 5 else ''}):\n"
+                batch_responses_text += f"{result['response']}\n\n"
         
-        # Add overall note
-        combined_response += f"\n\n**Analysis Complete**: Processed {len(ticker_list)} assets using sequential batch processing with rate limiting."
+        # FINAL AGGREGATION: Use one more API call to synthesize all batch results
+        logger.info("Making final aggregation API call to synthesize multi-batch results...")
         
-        return combined_response
+        try:
+            aggregation_prompt = f"""You are analyzing data from {len(ticker_list)} assets that were processed in {len(results)} batches. 
+
+**Original User Query:** {user_query}
+
+**Batch Results:**
+{batch_responses_text}
+
+**Your Task:**
+Synthesize the above batch results into a single, coherent, comprehensive answer to the user's original query. 
+
+Requirements:
+1. Combine all information into a unified response (don't mention batches)
+2. Remove duplicate information
+3. Organize the data logically (by asset, function, date, or relevance)
+4. Use proper Markdown formatting with clear sections
+5. Provide summary statistics if relevant
+6. Answer the user's original question directly and completely
+
+Create a professional, well-structured response that reads as one cohesive analysis."""
+
+            synthesis_messages = [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": aggregation_prompt}
+            ]
+            
+            # Add delay before final API call
+            logger.info(f"Waiting {BATCH_DELAY_SECONDS}s before aggregation call...")
+            time.sleep(BATCH_DELAY_SECONDS)
+            
+            # Make aggregation API call
+            logger.info("Calling API for final aggregation")
+            aggregation_response = self.client.chat.completions.create(
+                model=OPENAI_MODEL,
+                messages=synthesis_messages,
+                max_tokens=MAX_TOKENS,
+                temperature=TEMPERATURE
+            )
+            
+            final_response = aggregation_response.choices[0].message.content
+            
+            # Update token counts with aggregation call
+            total_prompt_tokens += aggregation_response.usage.prompt_tokens
+            total_completion_tokens += aggregation_response.usage.completion_tokens
+            total_tokens = total_prompt_tokens + total_completion_tokens
+            
+            logger.info(f"Aggregation complete: {aggregation_response.usage.total_tokens} tokens")
+            logger.info(f"Total tokens (including aggregation): {total_tokens}")
+            
+        except Exception as e:
+            logger.error(f"Error in aggregation API call: {e}")
+            # Fallback to manual combination if aggregation fails
+            final_response = f"""# Comprehensive Analysis ({len(ticker_list)} assets analyzed)
+
+"""
+            for result in results:
+                if result['response']:
+                    final_response += f"\n## Batch {result['group_idx'] + 1}: {', '.join(result['tickers'][:5])}"
+                    if len(result['tickers']) > 5:
+                        final_response += f" ... and {len(result['tickers']) - 5} more"
+                    final_response += f"\n\n{result['response']}\n\n---\n"
+            
+            final_response += f"\n\n**Note**: Processed {len(ticker_list)} assets in {len(results)} batches. Automatic synthesis failed, showing batch results."
+        
+        metadata = {
+            "tokens_used": {
+                "prompt": total_prompt_tokens,
+                "completion": total_completion_tokens,
+                "total": total_tokens
+            },
+            "finish_reason": "batch_aggregation_with_synthesis",
+            "batch_count": len(results) + 1,  # +1 for aggregation call
+            "batch_mode": "multi"
+        }
+        
+        return final_response, metadata
+    
+    def _simple_batch_query(
+        self,
+        messages: List[Dict],
+        estimated_tokens: int
+    ) -> Tuple[str, Dict]:
+        """
+        Simple batch processing for non-ticker queries (breadth, CSV text, etc.).
+        Automatically uses single API call for small data, no splitting needed.
+        
+        Args:
+            messages: Complete conversation messages
+            estimated_tokens: Estimated total tokens
+            
+        Returns:
+            Tuple of (response_text, metadata_dict)
+        """
+        try:
+            # For non-ticker queries, we just make a single API call
+            # These queries typically don't have the massive data volume of ticker-based queries
+            logger.info(f"Processing non-ticker query with ~{estimated_tokens} tokens")
+            
+            # Trim history if needed to stay under token limit
+            trimmed_messages = list(messages)
+            trimmed_count = 0
+            
+            while estimated_tokens > MAX_INPUT_TOKENS_PER_CALL and len(trimmed_messages) > MIN_HISTORY_MESSAGES:
+                if len(trimmed_messages) > 2:
+                    removed_msg = trimmed_messages.pop(1)
+                    trimmed_count += 1
+                    logger.warning(f"Trimmed old message (role: {removed_msg.get('role', 'unknown')})")
+                    
+                    total_chars = sum(len(str(msg.get('content', ''))) for msg in trimmed_messages)
+                    estimated_tokens = total_chars // ESTIMATED_CHARS_PER_TOKEN
+                else:
+                    break
+            
+            if trimmed_count > 0:
+                logger.warning(f"Trimmed {trimmed_count} old messages to stay under token limit")
+            
+            # Make single API call
+            logger.info(f"Calling {OPENAI_MODEL} with {len(trimmed_messages)} messages, ~{estimated_tokens} tokens")
+            response = self.client.chat.completions.create(
+                model=OPENAI_MODEL,
+                messages=trimmed_messages,
+                max_tokens=MAX_TOKENS,
+                temperature=TEMPERATURE
+            )
+            
+            assistant_message = response.choices[0].message.content
+            
+            metadata = {
+                "tokens_used": {
+                    "prompt": response.usage.prompt_tokens,
+                    "completion": response.usage.completion_tokens,
+                    "total": response.usage.total_tokens
+                },
+                "finish_reason": response.choices[0].finish_reason,
+                "batch_count": 1,
+                "batch_mode": "single"
+            }
+            
+            logger.info(f"Simple batch completed: {response.usage.total_tokens} tokens")
+            
+            return assistant_message, metadata
+            
+        except Exception as e:
+            logger.error(f"Error in simple batch processing: {e}")
+            error_msg = f"Error processing query: {str(e)}"
+            metadata = {
+                "tokens_used": {"prompt": estimated_tokens, "completion": 0, "total": estimated_tokens},
+                "finish_reason": "error",
+                "batch_count": 1,
+                "batch_mode": "single",
+                "error": str(e)
+            }
+            return error_msg, metadata
     
     def get_available_tickers(self) -> List[str]:
         """Get list of available ticker/asset symbols from both signal and target."""

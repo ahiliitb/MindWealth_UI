@@ -63,7 +63,7 @@ def render_chatbot_page():
             help="Select the assets you want to analyze"
         )
     else:
-        st.sidebar.info("🤖 Tickers will be extracted from your query automatically")
+        pass
     
     # Date range selection
     st.sidebar.subheader("Select Date Range")
@@ -71,7 +71,7 @@ def render_chatbot_page():
     col1, col2 = st.sidebar.columns(2)
     
     # Set default dates (last 10 days)
-    default_from_date = datetime.now() - timedelta(days=10)
+    default_from_date = datetime.now() - timedelta(days=5)
     default_to_date = datetime.now()
     
     with col1:
@@ -95,24 +95,24 @@ def render_chatbot_page():
     
     with col_sig1:
         include_entry = st.checkbox(
-            "🔵 Entry Signals",
+            "Entry Signals",
             value=True,
             help="Open positions (no exit yet)"
         )
         include_exit = st.checkbox(
-            "🟢 Exit Signals",
-            value=True,
+            "Exit Signals",
+            value=False,
             help="Completed trades (with exit dates)"
         )
     
     with col_sig2:
         include_target = st.checkbox(
-            "🎯 Target Achievements",
-            value=True,
+            "Target Achieved",
+            value=False,
             help="Target price achievements (90%+ gains)"
         )
         include_breadth = st.checkbox(
-            "📊 Market Breadth",
+            "Bullish Breadth Index",
             value=False,
             help="Market-wide sentiment analysis"
         )
@@ -153,24 +153,9 @@ def render_chatbot_page():
         if not selected_functions:
             selected_functions = None
     
-    # Advanced settings
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("⚙️ Advanced Settings")
-    
-    enable_batch = st.sidebar.checkbox(
-        "🔄 Enable batch processing for large queries",
-        value=False,
-        help="Enable for comprehensive analysis of many tickers (slower but more complete)"
-    )
-    
-    # Update chatbot's batch processing setting
+    # Smart batch processing is always enabled
     import chatbot.config as config
-    config.ENABLE_BATCH_PROCESSING = enable_batch
-    
-    if enable_batch:
-        st.sidebar.warning("⏱️ Batch mode: Queries may take several minutes for comprehensive analysis")
-    else:
-        st.sidebar.info("⚡ Fast mode: Limited to 15 tickers for quick responses")
+    config.ENABLE_BATCH_PROCESSING = True
     
     # Check if settings have changed - if yes, clear history
     current_settings = {
@@ -199,22 +184,6 @@ def render_chatbot_page():
         st.session_state.last_settings = current_settings
         st.rerun()
     
-    # Main chat area
-    st.markdown("---")
-    
-    # Display current configuration
-    with st.expander("📋 Current Configuration", expanded=False):
-        st.write(f"**Mode:** {'🔄 Batch Processing (Comprehensive)' if enable_batch else '⚡ Fast Mode (Limited to 15 tickers)'}")
-        st.write(f"**Auto Ticker Extraction:** {'Enabled 🤖' if use_auto_extract_tickers else 'Disabled'}")
-        if not use_auto_extract_tickers:
-            st.write(f"**Selected Tickers:** {', '.join(selected_tickers) if selected_tickers else 'None'}")
-        st.write(f"**Date Range:** {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}")
-        st.write(f"**Signal Types:** {', '.join(selected_signal_types) if selected_signal_types else 'All'}")
-        st.write(f"**Auto Function Extraction:** {'Enabled 🤖' if use_auto_extract else 'Disabled'}")
-        if selected_functions and not use_auto_extract:
-            st.write(f"**Selected Functions:** {', '.join(selected_functions)}")
-        st.write(f"**Session ID:** {chatbot.get_session_id()}")
-    
     # Chat history display
     st.markdown("### 💬 Conversation")
     
@@ -228,6 +197,40 @@ def render_chatbot_page():
             else:
                 with st.chat_message("assistant"):
                     st.markdown(message['content'])
+                    
+                    # Show batch processing metadata for historical messages too
+                    msg_metadata = message.get('metadata', {})
+                    if msg_metadata.get('batch_processing_used'):
+                        batch_mode = msg_metadata.get('batch_mode', 'unknown')
+                        batch_count = msg_metadata.get('batch_count', 0)
+                        tokens_used = msg_metadata.get('tokens_used', {})
+                        finish_reason = msg_metadata.get('finish_reason', '')
+                        
+                        with st.expander("📊 Processing Details", expanded=False):
+                            col1, col2, col3 = st.columns(3)
+                            
+                            with col1:
+                                if batch_mode == 'single':
+                                    st.metric("Batch Mode", "Single 🎯", help="All data processed in one optimized batch")
+                                else:
+                                    if 'synthesis' in finish_reason:
+                                        st.metric("Batch Mode", f"Multi + Synthesis ✨", help=f"{batch_count} batches with AI synthesis for unified response")
+                                    else:
+                                        st.metric("Batch Mode", f"Multi ({batch_count}) 🔄", help="Data split across multiple batches for optimal processing")
+                            
+                            with col2:
+                                total_tokens = tokens_used.get('total', 0)
+                                st.metric("Total Tokens", f"{total_tokens:,}", help="Total tokens used (prompt + completion)")
+                            
+                            with col3:
+                                tickers_processed = len(msg_metadata.get('tickers', []))
+                                st.metric("Tickers Processed", tickers_processed, help="Number of tickers analyzed")
+                            
+                            # Additional info
+                            if 'synthesis' in finish_reason:
+                                st.caption(f"✨ Multi-batch results synthesized into single response | Total: {tokens_used.get('prompt', 0):,} prompt + {tokens_used.get('completion', 0):,} completion tokens")
+                            else:
+                                st.caption(f"💡 Prompt: {tokens_used.get('prompt', 0):,} tokens | Completion: {tokens_used.get('completion', 0):,} tokens")
     
     # Chat input
     user_input = st.chat_input("Ask a question about your trading signals...")
@@ -252,7 +255,7 @@ def render_chatbot_page():
         
         # Get AI response
         with st.chat_message("assistant"):
-            with st.spinner("🤔 Thinking..."):
+            with st.spinner("🤔 Analyzing your query..."):
                 try:
                     response, metadata = chatbot.query(
                         user_message=user_input,
@@ -267,6 +270,39 @@ def render_chatbot_page():
                     
                     # Display response
                     st.markdown(response)
+                    
+                    # Display batch processing metadata if available
+                    if metadata.get('batch_processing_used'):
+                        batch_mode = metadata.get('batch_mode', 'unknown')
+                        batch_count = metadata.get('batch_count', 0)
+                        tokens_used = metadata.get('tokens_used', {})
+                        finish_reason = metadata.get('finish_reason', '')
+                        
+                        with st.expander("📊 Processing Details", expanded=False):
+                            col1, col2, col3 = st.columns(3)
+                            
+                            with col1:
+                                if batch_mode == 'single':
+                                    st.metric("Batch Mode", "Single 🎯", help="All data processed in one optimized batch")
+                                else:
+                                    if 'synthesis' in finish_reason:
+                                        st.metric("Batch Mode", f"Multi + Synthesis ✨", help=f"{batch_count} batches with AI synthesis for unified response")
+                                    else:
+                                        st.metric("Batch Mode", f"Multi ({batch_count}) 🔄", help="Data split across multiple batches for optimal processing")
+                            
+                            with col2:
+                                total_tokens = tokens_used.get('total', 0)
+                                st.metric("Total Tokens", f"{total_tokens:,}", help="Total tokens used (prompt + completion)")
+                            
+                            with col3:
+                                tickers_processed = len(metadata.get('tickers', []))
+                                st.metric("Tickers Processed", tickers_processed, help="Number of tickers analyzed")
+                            
+                            # Additional info
+                            if 'synthesis' in finish_reason:
+                                st.caption(f"✨ Multi-batch results synthesized into single response | Total: {tokens_used.get('prompt', 0):,} prompt + {tokens_used.get('completion', 0):,} completion tokens")
+                            else:
+                                st.caption(f"💡 Prompt: {tokens_used.get('prompt', 0):,} tokens | Completion: {tokens_used.get('completion', 0):,} tokens")
                     
                     # Add to history
                     st.session_state.chat_history.append({
@@ -285,18 +321,6 @@ def render_chatbot_page():
     
     # Footer
     st.markdown("---")
-    st.markdown("""
-    <div style='text-align: center; color: #666; font-size: 0.9em;'>
-        <p>💡 <b>Tips:</b></p>
-        <ul style='list-style: none; padding: 0;'>
-            <li>• Enable auto-extraction for full natural language: "What signals exist for AAPL?"</li>
-            <li>• Ask about specific signals: "What TRENDPULSE signals exist for AAPL?"</li>
-            <li>• Compare functions: "Compare FRACTAL TRACK and BASELINEDIVERGENCE for MSFT"</li>
-            <li>• Ask follow-up questions - the chatbot remembers context!</li>
-            <li>• 🤖 Auto-extraction uses GPT-4o-mini to understand your intent</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
 
 
 if __name__ == "__main__":
