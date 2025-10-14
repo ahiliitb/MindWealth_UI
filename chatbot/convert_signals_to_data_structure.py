@@ -331,18 +331,25 @@ def convert_signal_file_to_data_structure(
             exit_data = row[exit_column]
             exit_date, exit_price = parse_exit_signal_column(exit_data)
         
-        # Determine which date to use for file naming
+        # Determine which date to use for file naming and set SignalType
+        # Only TWO signal types: entry_exit and potential_achievement
         if signal_type == "target":
             # For targets, always use current date
             date_to_use = datetime.now().strftime("%Y-%m-%d")
+            row_signal_type = "potential_achievement"  # Targets
         elif exit_date:
             # For signals with exit, use exit date
             date_to_use = exit_date
             signals_with_exit += 1
+            row_signal_type = "entry_exit"  # Completed trade
         else:
-            # For signals without exit, use signal date
+            # For signals without exit, use signal date - ALSO potential_achievement
             date_to_use = signal_date
             signals_no_exit += 1
+            row_signal_type = "potential_achievement"  # Open position/potential target
+        
+        # Add SignalType column to the row
+        row['SignalType'] = row_signal_type
         
         # Create asset/function directory structure
         # Structure: data/{asset}/{function}/YYYY-MM-DD.csv
@@ -414,15 +421,73 @@ def convert_signal_file_to_data_structure(
     return processed, skipped, created_symbols
 
 
+def convert_breadth_report(
+    input_file,
+    output_base_dir="chatbot/data"
+):
+    """
+    Convert breadth report to data folder structure.
+    Breadth is market-wide, so structure is: chatbot/data/breadth/YYYY-MM-DD.csv
+    
+    Args:
+        input_file: Path to breadth.csv file
+        output_base_dir: Base directory for output (default: chatbot/data)
+    """
+    print("\n" + "="*80)
+    print(f"CONVERTING BREADTH REPORT: {input_file}")
+    print("="*80 + "\n")
+    
+    # Read the breadth CSV file
+    try:
+        df = pd.read_csv(input_file)
+        print(f"✓ Loaded {len(df)} rows from {input_file}")
+    except Exception as e:
+        print(f"✗ Error reading file: {e}")
+        return 0, 0
+    
+    # Create breadth directory
+    breadth_dir = Path(output_base_dir) / "breadth"
+    breadth_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Use current date for filename
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    output_file = breadth_dir / f"{current_date}.csv"
+    
+    # Save breadth report with current date
+    try:
+        df.to_csv(output_file, index=False)
+        print(f"✓ Saved breadth report to: {output_file}")
+        print(f"✓ Functions in report: {len(df)}")
+        print(f"✓ Columns: {', '.join(df.columns.tolist())}")
+        processed = 1
+        skipped = 0
+    except Exception as e:
+        print(f"✗ Error saving breadth report: {e}")
+        processed = 0
+        skipped = 1
+    
+    print("\n" + "-"*80)
+    print("BREADTH CONVERSION SUMMARY")
+    print("-"*80)
+    print(f"✓ Report saved: {output_file.name}")
+    print(f"✓ Total functions: {len(df)}")
+    print("="*80 + "\n")
+    
+    return processed, skipped
+
+
 def main():
     """Main function with examples."""
     
     print("\n" + "="*80)
-    print("TRADING SIGNAL & TARGET DATA CONVERTER")
+    print("TRADING SIGNAL, TARGET & BREADTH DATA CONVERTER")
     print("="*80 + "\n")
     
     print("This script converts trading CSV files to the chatbot data structure.")
-    print("Structure: chatbot/data/{signal|target}/{asset}/{function}/YYYY-MM-DD.csv\n")
+    print("Structure:")
+    print("  - chatbot/data/signal/{asset}/{function}/YYYY-MM-DD.csv")
+    print("  - chatbot/data/target/{asset}/{function}/YYYY-MM-DD.csv")
+    print("  - chatbot/data/breadth/YYYY-MM-DD.csv\n")
     
     # Convert outstanding_signal.csv (signals)
     print("-" * 80)
@@ -458,12 +523,28 @@ def main():
     else:
         print(f"⚠ File not found: {target_file}")
     
+    # Convert breadth.csv (market-wide breadth report)
+    print("\n" + "-" * 80)
+    print("Converting BREADTH data (breadth.csv)")
+    print("-" * 80)
+    
+    breadth_file = Path("trade_store/US/breadth.csv")
+    
+    if breadth_file.exists():
+        convert_breadth_report(
+            input_file=breadth_file,
+            output_base_dir="chatbot/data"
+        )
+    else:
+        print(f"⚠ File not found: {breadth_file}")
+    
     print("\n" + "="*80)
     print("✓ Conversion Complete!")
     print("="*80)
     print("\nData structure created:")
     print("  chatbot/data/signal/{asset}/{function}/YYYY-MM-DD.csv")
     print("  chatbot/data/target/{asset}/{function}/YYYY-MM-DD.csv")
+    print("  chatbot/data/breadth/YYYY-MM-DD.csv")
     print("  chatbot/data/target/all_targets.csv (master file)")
     print()
 

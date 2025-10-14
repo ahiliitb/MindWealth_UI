@@ -1,616 +1,356 @@
-# Signal Analysis and Selection Summary
-
-Based on my analysis of the provided trading signals, I've identified the most promising buy and sell opportunities according to the specified criteria. Below is a summary of the top signals, followed by detailed analysis for each.
-
-## Top Buy Signals Summary:
-1. **AMD** (TRENDPULSE Monthly) - Strong performance with 81.82% win rate, 157.84% best return
-2. **ETH-USD** (FRACTAL TRACK Weekly) - 83.33% win rate with high upside potential
-3. **QQQ** (BASELINEDIVERGENCE Weekly) - 86.49% win rate with positive CAGR difference
-4. **ARM** (BASELINEDIVERGENCE Weekly) - 85.71% win rate with exceptional CAGR of 85.29%
-5. **C6L.SI** (FRACTAL TRACK Weekly) - 88.89% win rate with positive CAGR difference
-
-## Top Sell/Short Signals Summary:
-1. **NZDUSD=X** (FRACTAL TRACK Daily) - 87.93% win rate with excellent risk/reward profile
-2. **LYFT** (FRACTAL TRACK Daily) - 88.73% win rate with substantial downside potential
-3. **BRK-B** (OSCILLATOR DELTA Daily) - 87.88% win rate with positive CAGR difference
-4. **^VIX** (FRACTAL TRACK Quarterly) - 87.5% win rate with strong potential in volatile markets
-5. **BTI** (FRACTAL TRACK Daily) - 89.47% win rate with promising downside potential
-
-## Top TrendPulse Buy Signals Summary:
-1. **AMD** (TRENDPULSE Monthly) - 81.82% win rate with excellent historical performance
-2. **TSM** (TRENDPULSE Weekly) - 90% win rate with strong semiconductor sector exposure
-3. **RHHBY** (TRENDPULSE Weekly) - 83.33% win rate with defensive healthcare positioning
-4. **BDGI.TO** (TRENDPULSE Monthly) - 92.86% win rate with excellent CAGR performance
-5. **GNE.NZ** (TRENDPULSE Weekly) - 81.82% win rate with stable utility sector exposure
-
-Now let's examine each signal in detail:
-
-# Detailed Analysis of Top Buy Signals
-
-## **AMD (Advanced Micro Devices)**
-   Function: TRENDPULSE Monthly
-
-   **SIGNAL INFORMATION**
-   - Symbol, Signal, Signal Date/Price[$]: AMD, Long, 2025-07-31 (Price: 176.31)
-   - Exit Signal Date/Price[$]: No Exit Yet
-   - Interval, Confirmation Status: Monthly, is CONFIRMED on 2025-07-31
-   - Cancellation Level/Date: Already confirmed
-
-   **CURRENT POSITION**
-   - Current Trading Date/Price[$], Current Price vs Signal: 2025-10-10 (Price: 214.9), 21.89% above
-   - Trading Days between Signal and Current Date: 51 days
-   - Current Mark to Market and Holding Period: 21.89%, 51 days
-
-   **STRATEGY PERFORMANCE METRICS**
-   - Win Rate [%], History Tested, Number of Trades: 81.82%, Past 20 years, 11
-   - Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days): 72.34%/94/220 days (Across ALL Assets)
-   - Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days): 78.1%/105/179 days (Across ALL Assets)
-
-   **BACKTESTED RETURNS**
-   - Backtested Returns(Win Trades) [%] (Best/Worst/Avg): 157.84%/42.09%/87.28%
-   - Backtested Max Loss [%], Max Drawdown [%]: 11.47%, 58.95%
-   - Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.): 653 days/109 days/231 days
-   - Target Exit Date (Farthest./Earliest./Avg.): 2027-08-26/2025-11-04/2026-04-16
-
-   **COMPARATIVE PERFORMANCE**
-   - Backtested Strategy CAGR [%]: 19.99%
-   - CAGR of Buy and Hold [%]: 7.61%
-   - CAGR difference (Strategy - Buy and Hold) [%]: 12.38%
-   - Backtested Strategy Sharpe Ratio: 1.41
-   - Sharpe Ratio of Buy and Hold: 0.41
-
-   **PRICE TARGETS & SUPPORT LEVELS**
-   - Targets (Historic Rise/Avg Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$]: 337.6689/330.1934/178.82/No Horizontal Resistance/219.0648/251.3512
-   - Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$]: 97.35/73.114/170.075/140.6278/No Fib Ret Level/No Fib Ret Level
-   - Moving Average (50-days/200-days): 136.59/123.49
-
-   **TRADING RECOMMENDATIONS**
-   - Recommended Stop Loss: $170.08 (based on F-Stack 1 support level)
-   - Recommended Take Profit: $251.35 (based on F-Stack 2 target)
-
-   **POTENTIAL SCENARIOS**
-   - Potential Upside: +16.96% to +42.60% (based on targets)
-   - Potential Downside: -20.86% (to F-Stack 1 support level)
-
-   **FUNDAMENTAL METRICS**
-   - P/E Ratio: 127.92
-   - PEG Ratio: 0.5248
-
-## **ETH-USD (Ethereum)**
-   Function: FRACTAL TRACK Weekly
-
-   **SIGNAL INFORMATION**
-   - Symbol, Signal, Signal Date/Price[$]: ETH-USD, Long, 2025-10-10 (Price: 4369.1436)
-   - Exit Signal Date/Price[$]: No Exit Yet
-   - Interval, Confirmation Status: Weekly, is CONFIRMED on 2025-10-10
-   - Cancellation Level/Date: Already confirmed
-
-   **CURRENT POSITION**
-   - Current Trading Date/Price[$], Current Price vs Signal: 2025-10-10 (Price: 4369.1436), 0.0% below
-   - Trading Days between Signal and Current Date: 0 days
-   - Current Mark to Market and Holding Period: 0.0%, 0 days
-
-   **STRATEGY PERFORMANCE METRICS**
-   - Win Rate [%], History Tested, Number of Trades: 83.33%, Past 10 years, 6
-   - Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days): 84.51%/71/553 days (Across ALL Assets)
-   - Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days): 64.74%/190/227 days (Across ALL Assets)
-
-   **FRACTAL TRACK ANALYSIS**
-   - Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type: 23.66% (Price: 3756.8479), 16.3% above, Upmove Bounce Back
-   - Reference Upmove or Downmove start Date/Price($), end Date/Price($): 2020-03-15 (Price: 95.1843), 2021-11-21 (Price: 4891.7046)
-
-   **BACKTESTED RETURNS**
-   - Backtested Returns(Win Trades) [%] (Best/Worst/Avg): 4.78%/4.78%/4.78%
-   - Backtested Max Loss [%], Max Drawdown [%]: 22.37%, 27.67%
-   - Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.): 39 days/39 days/39 days
-   - Target Exit Date (Farthest./Earliest./Avg.): 2025-12-05/2025-12-05/2025-12-05
-
-   **COMPARATIVE PERFORMANCE**
-   - Backtested Strategy CAGR [%]: -6.09%
-   - CAGR of Buy and Hold [%]: 39.5%
-   - CAGR difference (Strategy - Buy and Hold) [%]: -45.59%
-   - Backtested Strategy Sharpe Ratio: -0.31
-   - Sharpe Ratio of Buy and Hold: 1.16
-
-   **PRICE TARGETS & SUPPORT LEVELS**
-   - Targets (Historic Rise/Avg Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$]: 3868.8767/4577.9887/7247.06/4922.7188/5483.4169/7318.9774
-   - Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$]: 4141.48/1370.4997/4348.9543/15094.584/4750.5446/5146.0553
-   - Moving Average (50-days/200-days): 4407.52/3088.96
-
-   **TRADING RECOMMENDATIONS**
-   - Recommended Stop Loss: $4142 (based on recent extrema support)
-   - Recommended Take Profit: $5483 (based on F-Stack 1 target)
-
-   **POTENTIAL SCENARIOS**
-   - Potential Upside: +25.5% (to F-Stack 1 target)
-   - Potential Downside: -5.2% (to recent extrema support)
-
-   **FUNDAMENTAL METRICS**
-   - P/E Ratio: N/A
-   - PEG Ratio: N/A
-
-## **QQQ (Invesco QQQ Trust)**
-   Function: BASELINEDIVERGENCE Weekly
-
-   **SIGNAL INFORMATION**
-   - Symbol, Signal, Signal Date/Price[$]: QQQ, Long, 2025-10-10 (Price: 589.5)
-   - Exit Signal Date/Price[$]: No Exit Yet
-   - Interval, Confirmation Status: Weekly, is CONFIRMED on 2025-10-10
-   - Cancellation Level/Date: Already confirmed
-
-   **CURRENT POSITION**
-   - Current Trading Date/Price[$], Current Price vs Signal: 2025-10-10 (Price: 589.5), 0.0% below
-   - Trading Days between Signal and Current Date: 0 days
-   - Current Mark to Market and Holding Period: 0.0%, 0 days
-
-   **STRATEGY PERFORMANCE METRICS**
-   - Win Rate [%], History Tested, Number of Trades: 86.49%, Past 10 years, 74
-   - Sigmashell, Success Rate of Past Analysis [%]: ^GSPC, Normal Case
-   - Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days): 75.86%/29/94 days (Across ALL Assets)
-   - Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days): 85.71%/56/77 days (Across ALL Assets)
-
-   **BACKTESTED RETURNS**
-   - Backtested Returns(Win Trades) [%] (Best/Worst/Avg): 44.95%/1.39%/10.44%
-   - Backtested Max Loss [%], Max Drawdown [%]: 13.49%, 27.25%
-   - Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.): 149 days/44 days/79 days
-   - Target Exit Date (Farthest./Earliest./Avg.): 2026-05-13/2025-12-12/2026-02-01
-
-   **COMPARATIVE PERFORMANCE**
-   - Backtested Strategy CAGR [%]: 23.97%
-   - CAGR of Buy and Hold [%]: 18.58%
-   - CAGR difference (Strategy - Buy and Hold) [%]: 5.39%
-   - Backtested Strategy Sharpe Ratio: 0.9
-   - Sharpe Ratio of Buy and Hold: 0.83
-
-   **PRICE TARGETS & SUPPORT LEVELS**
-   - Targets (Historic Rise/Avg Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$]: 660.9474/651.0438/634.1966/No Horizontal Resistance/634.1966/765.0054
-   - Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$]: 422.67/256.995/578.1694/464.7077/No Fib Ret Level/No Fib Ret Level
-   - Moving Average (50-days/200-days): 583.55/529.68
-
-   **TRADING RECOMMENDATIONS**
-   - Recommended Stop Loss: $578.17 (based on F-Stack 1 support)
-   - Recommended Take Profit: $651.04 (based on Average Gain target)
-
-   **POTENTIAL SCENARIOS**
-   - Potential Upside: +10.44% to +29.77% (based on targets)
-   - Potential Downside: -1.92% (to F-Stack 1 support)
-
-   **FUNDAMENTAL METRICS**
-   - P/E Ratio: 33.24
-   - PEG Ratio: N/A
-
-## **ARM (Arm Holdings)**
-   Function: BASELINEDIVERGENCE Weekly
-
-   **SIGNAL INFORMATION**
-   - Symbol, Signal, Signal Date/Price[$]: ARM, Long, 2025-10-10 (Price: 154.81)
-   - Exit Signal Date/Price[$]: No Exit Yet
-   - Interval, Confirmation Status: Weekly, is CONFIRMED on 2025-10-10
-   - Cancellation Level/Date: Already confirmed
-
-   **CURRENT POSITION**
-   - Current Trading Date/Price[$], Current Price vs Signal: 2025-10-10 (Price: 154.81), 0.0% below
-   - Trading Days between Signal and Current Date: 0 days
-   - Current Mark to Market and Holding Period: 0.0%, 0 days
-
-   **STRATEGY PERFORMANCE METRICS**
-   - Win Rate [%], History Tested, Number of Trades: 85.71%, Past 2 years, 14
-   - Sigmashell, Success Rate of Past Analysis [%]: ^GSPC, Normal Case
-   - Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days): 75.86%/29/94 days (Across ALL Assets)
-   - Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days): 85.71%/56/77 days (Across ALL Assets)
-
-   **BACKTESTED RETURNS**
-   - Backtested Returns(Win Trades) [%] (Best/Worst/Avg): 30.87%/3.18%/21.53%
-   - Backtested Max Loss [%], Max Drawdown [%]: 16.41%, 46.03%
-   - Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.): 154 days/44 days/84 days
-   - Target Exit Date (Farthest./Earliest./Avg.): 2026-05-21/2025-12-12/2026-02-08
-
-   **COMPARATIVE PERFORMANCE**
-   - Backtested Strategy CAGR [%]: 85.29%
-   - CAGR of Buy and Hold [%]: 59.75%
-   - CAGR difference (Strategy - Buy and Hold) [%]: 25.54%
-   - Backtested Strategy Sharpe Ratio: 0.86
-   - Sharpe Ratio of Buy and Hold: 1.39
-
-   **PRICE TARGETS & SUPPORT LEVELS**
-   - Targets (Historic Rise/Avg Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$]: 212.8173/188.1406/218.0854/165.49/218.0854/235.5107
-   - Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$]: 87.71/No Horizontal Support/148.9705/138.4687/207.2214/222.1802
-   - Moving Average (50-days/200-days): 143.76/137.07
-
-   **TRADING RECOMMENDATIONS**
-   - Recommended Stop Loss: $138.47 (based on F-Stack 2 support)
-   - Recommended Take Profit: $212.82 (based on Historic Rise target)
-
-   **POTENTIAL SCENARIOS**
-   - Potential Upside: +21.53% to +52.13% (based on targets)
-   - Potential Downside: -10.55% (to F-Stack 2 support)
-
-   **FUNDAMENTAL METRICS**
-   - P/E Ratio: 231.06
-   - PEG Ratio: 2.7544
-
-## **C6L.SI (Singapore Airlines)**
-   Function: FRACTAL TRACK Weekly
-
-   **SIGNAL INFORMATION**
-   - Symbol, Signal, Signal Date/Price[$]: C6L.SI, Long, 2025-10-10 (Price: 6.64)
-   - Exit Signal Date/Price[$]: No Exit Yet
-   - Interval, Confirmation Status: Weekly, is CONFIRMED on 2025-10-10
-   - Cancellation Level/Date: Already confirmed
-
-   **CURRENT POSITION**
-   - Current Trading Date/Price[$], Current Price vs Signal: 2025-10-10 (Price: 6.64), 0.0% below
-   - Trading Days between Signal and Current Date: 0 days
-   - Current Mark to Market and Holding Period: 0.0%, 0 days
-
-   **STRATEGY PERFORMANCE METRICS**
-   - Win Rate [%], History Tested, Number of Trades: 88.89%, Past 20 years, 27
-   - Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days): 84.51%/71/553 days (Across ALL Assets)
-   - Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days): 64.74%/190/227 days (Across ALL Assets)
-
-   **FRACTAL TRACK ANALYSIS**
-   - Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type: 61.8% (Price: 6.5361), 1.59% above, Upmove Bounce Back
-   - Reference Upmove or Downmove start Date/Price($), end Date/Price($): 2024-08-18 (Price: 5.86), 2025-08-03 (Price: 7.63)
-
-   **BACKTESTED RETURNS**
-   - Backtested Returns(Win Trades) [%] (Best/Worst/Avg): 12.48%/5.49%/8.98%
-   - Backtested Max Loss [%], Max Drawdown [%]: 8.55%, 13.74%
-   - Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.): 169 days/114 days/141 days
-   - Target Exit Date (Farthest./Earliest./Avg.): 2026-06-11/2026-03-24/2026-05-02
-
-   **COMPARATIVE PERFORMANCE**
-   - Backtested Strategy CAGR [%]: 4.42%
-   - CAGR of Buy and Hold [%]: -1.13%
-   - CAGR difference (Strategy - Buy and Hold) [%]: 5.55%
-   - Backtested Strategy Sharpe Ratio: -0.01
-   - Sharpe Ratio of Buy and Hold: -0.15
-
-   **PRICE TARGETS & SUPPORT LEVELS**
-   - Targets (Historic Rise/Avg Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$]: 6.8226/7.2363/7.7/6.9575/15.4629/16.7442
-   - Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$]: 6.46/4.792/4.2257/3.3611/8.5682/8.8866
-   - Moving Average (50-days/200-days): 6.58/6.71
-
-   **TRADING RECOMMENDATIONS**
-   - Recommended Stop Loss: $6.46 (based on recent extrema support)
-   - Recommended Take Profit: $7.24 (based on average gain target)
-
-   **POTENTIAL SCENARIOS**
-   - Potential Upside: +8.98% to +152.17% (based on targets)
-   - Potential Downside: -2.71% (to recent extrema support)
-
-   **FUNDAMENTAL METRICS**
-   - P/E Ratio: 8.41
-   - PEG Ratio: N/A
-
-# Detailed Analysis of Top Sell/Short Signals
-
-## **NZDUSD=X (NZD/USD Currency Pair)**
-   Function: FRACTAL TRACK Daily
-
-   **SIGNAL INFORMATION**
-   - Symbol, Signal, Signal Date/Price[$]: NZDUSD=X, Short, 2025-10-10 (Price: 0.5723)
-   - Exit Signal Date/Price[$]: No Exit Yet
-   - Interval, Confirmation Status: Daily, is CONFIRMED on 2025-10-10
-   - Cancellation Level/Date: Already confirmed
-
-   **CURRENT POSITION**
-   - Current Trading Date/Price[$], Current Price vs Signal: 2025-10-10 (Price: 0.5723), 0.0% below
-   - Trading Days between Signal and Current Date: 0 days
-   - Current Mark to Market and Holding Period: -0.0%, 0 days
-
-   **STRATEGY PERFORMANCE METRICS**
-   - Win Rate [%], History Tested, Number of Trades: 87.93%, Past 5 years, 58
-   - Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days): 65.0%/80/9 days (Across ALL Assets)
-   - Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days): 31.9%/163/61 days (Across ALL Assets)
-
-   **FRACTAL TRACK ANALYSIS**
-   - Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type: 88.6% (Price: 0.5885), 2.75% below, Upmove Break Below
-   - Reference Upmove or Downmove start Date/Price($), end Date/Price($): 2024-04-19 (Price: 0.5855), 2025-07-01 (Price: 0.6121)
-
-   **BACKTESTED RETURNS**
-   - Backtested Returns(Win Trades) [%] (Best/Worst/Avg): 4.16%/0.03%/2.62%
-   - Backtested Max Loss [%], Max Drawdown [%]: 1.43%, 5.37%
-   - Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.): 54 days/1 days/10 days
-   - Target Exit Date (Farthest./Earliest./Avg.): 2025-12-27/2025-10-11/2025-10-24
-
-   **COMPARATIVE PERFORMANCE**
-   - Backtested Strategy CAGR [%]: 16.12%
-   - CAGR of Buy and Hold [%]: 5.1%
-   - CAGR difference (Strategy - Buy and Hold) [%]: 11.02%
-   - Backtested Strategy Sharpe Ratio: 0.62
-   - Sharpe Ratio of Buy and Hold: -0.61
-
-   **PRICE TARGETS & SUPPORT LEVELS**
-   - Targets (Historic Rise/Avg Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$]: 0.5655/0.5573/0.56/0.5509/No Next Fib Ext Support/No Next Fib Ext Support
-   - Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$]: 0.58/0.5509/No Next Fib Ext Support/No Next Fib Ext Support/0.6587/0.6715
-   - Moving Average (50-days/200-days): 0.59/0.58
-
-   **TRADING RECOMMENDATIONS**
-   - Recommended Stop Loss: $0.58 (based on recent extrema)
-   - Recommended Take Profit: $0.5573 (based on Avg Gain target)
-
-   **POTENTIAL SCENARIOS**
-   - Potential Upside (for short): +2.62% (based on average gain)
-   - Potential Downside (for short risk): -1.35% (to recent extrema)
-
-   **FUNDAMENTAL METRICS**
-   - P/E Ratio: N/A
-   - PEG Ratio: N/A
-
-## **LYFT (Lyft, Inc.)**
-   Function: FRACTAL TRACK Daily
-
-   **SIGNAL INFORMATION**
-   - Symbol, Signal, Signal Date/Price[$]: LYFT, Short, 2025-10-10 (Price: 19.25)
-   - Exit Signal Date/Price[$]: No Exit Yet
-   - Interval, Confirmation Status: Daily, is CONFIRMED on 2025-10-10
-   - Cancellation Level/Date: Already confirmed
-
-   **CURRENT POSITION**
-   - Current Trading Date/Price[$], Current Price vs Signal: 2025-10-10 (Price: 19.25), 0.0% below
-   - Trading Days between Signal and Current Date: 0 days
-   - Current Mark to Market and Holding Period: -0.0%, 0 days
-
-   **STRATEGY PERFORMANCE METRICS**
-   - Win Rate [%], History Tested, Number of Trades: 88.73%, Past 5 years, 71
-   - Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days): 65.0%/80/9 days (Across ALL Assets)
-   - Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days): 31.9%/163/61 days (Across ALL Assets)
-
-   **FRACTAL TRACK ANALYSIS**
-   - Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type: 38.2% (Price: 19.552), 1.54% below, Upmove Break Below
-   - Reference Upmove or Downmove start Date/Price($), end Date/Price($): 2025-08-11 (Price: 13.165), 2025-09-17 (Price: 23.5)
-
-   **BACKTESTED RETURNS**
-   - Backtested Returns(Win Trades) [%] (Best/Worst/Avg): 19.27%/0.06%/4.76%
-   - Backtested Max Loss [%], Max Drawdown [%]: 16.51%, 19.27%
-   - Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.): 10 days/1 days/3 days
-   - Target Exit Date (Farthest./Earliest./Avg.): 2025-10-24/2025-10-11/2025-10-14
-
-   **COMPARATIVE PERFORMANCE**
-   - Backtested Strategy CAGR [%]: 24.73%
-   - CAGR of Buy and Hold [%]: 5.1%
-   - CAGR difference (Strategy - Buy and Hold) [%]: 19.63%
-   - Backtested Strategy Sharpe Ratio: 0.25
-   - Sharpe Ratio of Buy and Hold: 0.15
-
-   **PRICE TARGETS & SUPPORT LEVELS**
-   - Targets (Historic Rise/Avg Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$]: 17.9179/18.3337/13.05/8.8875/No Next Fib Ext Support/No Next Fib Ext Support
-   - Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$]: 22.93/8.8875/No Next Fib Ext Support/No Next Fib Ext Support/21.2902/22.6577
-   - Moving Average (50-days/200-days): 18.21/14.85
-
-   **TRADING RECOMMENDATIONS**
-   - Recommended Stop Loss: $21.29 (based on F-Track 1)
-   - Recommended Take Profit: $17.92 (based on Historic Rise target)
-
-   **POTENTIAL SCENARIOS**
-   - Potential Upside (for short): +6.9% to +32.23% (based on targets)
-   - Potential Downside (for short risk): -10.6% (to F-Track 1)
-
-   **FUNDAMENTAL METRICS**
-   - P/E Ratio: 83.70
-   - PEG Ratio: 0.2850
-
-## **BRK-B (Berkshire Hathaway Inc.)**
-   Function: OSCILLATOR DELTA Daily
-
-   **SIGNAL INFORMATION**
-   - Symbol, Signal, Signal Date/Price[$]: BRK-B, Short, 2025-10-09 (Price: 496.74)
-   - Exit Signal Date/Price[$]: No Exit Yet
-   - Interval, Confirmation Status: Daily, is Confirmed on 2025-10-09
-   - Cancellation Level/Date: No Cancellation Possible
-
-   **CURRENT POSITION**
-   - Current Trading Date/Price[$], Current Price vs Signal: 2025-10-10 (Price: 489.13), 1.53% below
-   - Trading Days between Signal and Current Date: 1 days
-   - Current Mark to Market and Holding Period: 1.53%, 1 days
-
-   **STRATEGY PERFORMANCE METRICS**
-   - Win Rate [%], History Tested, Number of Trades: 87.88%, Past 6 years, 33
-   - Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days): 87.5%/16/5 days (Across ALL Assets)
-   - Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days): 60.98%/41/6 days (Across ALL Assets)
-
-   **BACKTESTED RETURNS**
-   - Backtested Returns(Win Trades) [%] (Best/Worst/Avg): 4.43%/0.09%/1.39%
-   - Backtested Max Loss [%], Max Drawdown [%]: 4.75%, 6.36%
-   - Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.): 17 days/1 days/5 days
-   - Target Exit Date (Farthest./Earliest./Avg.): 2025-11-02/2025-10-10/2025-10-16
-
-   **COMPARATIVE PERFORMANCE**
-   - Backtested Strategy CAGR [%]: 8.78%
-   - CAGR of Buy and Hold [%]: 5.1%
-   - CAGR difference (Strategy - Buy and Hold) [%]: 3.68%
-   - Backtested Strategy Sharpe Ratio: 0.35
-   - Sharpe Ratio of Buy and Hold: 0.64
-
-   **PRICE TARGETS & SUPPORT LEVELS**
-   - Targets (Historic Rise/Avg Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$]: 487.6/489.8353/488.72/268.082/491.88/449.7662
-   - Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$]: No Recent Maxima/268.082/491.88/449.7662/No Fib Ret Level/No Fib Ret Level
-   - Moving Average (50-days/200-days): 489.31/491.85
-
-   **TRADING RECOMMENDATIONS**
-   - Recommended Stop Loss: $505 (approximately 3% above entry)
-   - Recommended Take Profit: $470 (approximately 5% below entry)
-
-   **POTENTIAL SCENARIOS**
-   - Potential Upside (for short): +1.39% (based on average win)
-   - Potential Downside (for short risk): -1.65% (to moving average)
-
-   **FUNDAMENTAL METRICS**
-   - P/E Ratio: 16.75
-   - PEG Ratio: N/A
-
-## **^VIX (CBOE Volatility Index)**
-   Function: FRACTAL TRACK Quarterly
-
-   **SIGNAL INFORMATION**
-   - Symbol, Signal, Signal Date/Price[$]: ^VIX, Short, 2025-09-30 (Price: 16.28)
-   - Exit Signal Date/Price[$]: 2025-10-10 (Price: 21.66) (Today)
-   - Interval, Confirmation Status: Quarterly, was CONFIRMED on 2025-09-30
-   - Cancellation Level/Date: Already confirmed
-
-   **CURRENT POSITION**
-   - Current Trading Date/Price[$], Current Price vs Signal: 2025-10-10 (Price: 21.66), 33.05% above
-   - Trading Days between Signal and Current Date: 8 days
-   - Current Mark to Market and Holding Period: -33.05%, 8 days
-
-   **STRATEGY PERFORMANCE METRICS**
-   - Win Rate [%], History Tested, Number of Trades: 87.5%, Past 35 years, 24
-   - Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days): No Data (Across ALL Assets)
-   - Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days): 55.56%/18/83 days (Across ALL Assets)
-
-   **FRACTAL TRACK ANALYSIS**
-   - Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type: 88.6% (Price: 16.2641), 33.18% above, Upmove Break Below
-   - Reference Upmove or Downmove start Date/Price($), end Date/Price($): 2024-09-30 (Price: 10.62), 2025-06-30 (Price: 60.13)
-
-   **BACKTESTED RETURNS**
-   - Backtested Returns(Win Trades) [%] (Best/Worst/Avg): 33.76%/3.51%/16.23%
-   - Backtested Max Loss [%], Max Drawdown [%]: 107.76%, 33.76%
-   - Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.): 132 days/64 days/69 days
-   - Target Exit Date (Farthest./Earliest./Avg.): 2026-04-09/2025-12-31/2026-01-07
-
-   **COMPARATIVE PERFORMANCE**
-   - Backtested Strategy CAGR [%]: 11.36%
-   - CAGR of Buy and Hold [%]: 5.5%
-   - CAGR difference (Strategy - Buy and Hold) [%]: 5.86%
-   - Backtested Strategy Sharpe Ratio: 0.09
-   - Sharpe Ratio of Buy and Hold: 0.21
-
-   **PRICE TARGETS & SUPPORT LEVELS**
-   - Targets (Historic Rise/Avg Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$]: 17.3936/13.6378/-13.43/11.665/No Next Fib Ext Support/No Next Fib Ext Support
-   - Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$]: 22.28/11.665/No Next Fib Ext Support/No Next Fib Ext Support/No Fib Ret Level/No Fib Ret Level
-   - Moving Average (50-days/200-days): 15.99/19.19
-
-   **TRADING RECOMMENDATIONS**
-   - Recommended Stop Loss: $24 (approximately 10% above current price)
-   - Recommended Take Profit: $15 (historical average target range)
-
-   **POTENTIAL SCENARIOS**
-   - Potential Upside (for short): +30.75% (reversion to historical levels)
-   - Potential Downside (for short risk): -10.8% (from current price)
-
-   **FUNDAMENTAL METRICS**
-   - P/E Ratio: N/A
-   - PEG Ratio: N/A
-
-## **BTI (British American Tobacco)**
-   Function: FRACTAL TRACK Daily
-
-   **SIGNAL INFORMATION**
-   - Symbol, Signal, Signal Date/Price[$]: BTI, Short, 2025-10-03 (Price: 51.24)
-   - Exit Signal Date/Price[$]: No Exit Yet
-   - Interval, Confirmation Status: Daily, was CONFIRMED on 2025-10-03
-   - Cancellation Level/Date: Already confirmed
-
-   **CURRENT POSITION**
-   - Current Trading Date/Price[$], Current Price vs Signal: 2025-10-10 (Price: 51.54), 0.59% above
-   - Trading Days between Signal and Current Date: 5 days
-   - Current Mark to Market and Holding Period: -0.59%, 5 days
-
-   **STRATEGY PERFORMANCE METRICS**
-   - Win Rate [%], History Tested, Number of Trades: 89.47%, Past 5 years, 57
-   - Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days): 65.0%/80/9 days (Across ALL Assets)
-   - Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days): 31.9%/163/61 days (Across ALL Assets)
-
-   **FRACTAL TRACK ANALYSIS**
-   - Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type: 23.66% (Price: 52.7433), 2.28% below, Upmove Break Below
-   - Reference Upmove or Downmove start Date/Price($), end Date/Price($): 2023-08-16 (Price: 31.62), 2025-08-21 (Price: 59.29)
-
-   **BACKTESTED RETURNS**
-   - Backtested Returns(Win Trades) [%] (Best/Worst/Avg): 9.47%/0.23%/3.61%
-   - Backtested Max Loss [%], Max Drawdown [%]: 10.15%, 9.93%
-   - Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.): 19 days/1 days/7 days
-   - Target Exit Date (Farthest./Earliest./Avg.): 2025-10-30/2025-10-04/2025-10-13
-
-   **COMPARATIVE PERFORMANCE**
-   - Backtested Strategy CAGR [%]: 13.92%
-   - CAGR of Buy and Hold [%]: 5.1%
-   - CAGR difference (Strategy - Buy and Hold) [%]: 8.82%
-   - Backtested Strategy Sharpe Ratio: 0.34
-   - Sharpe Ratio of Buy and Hold: 0.41
-
-   **PRICE TARGETS & SUPPORT LEVELS**
-   - Targets (Historic Rise/Avg Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$]: 50.6559/49.3902/34.64/28.5067/49.3734/41.6622
-   - Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$]: 57.31/28.5067/49.3734/41.6622/No Fib Ret Level/No Fib Ret Level
-   - Moving Average (50-days/200-days): 55.34/46.05
-
-   **TRADING RECOMMENDATIONS**
-   - Recommended Stop Loss: $54.00 (approximately 5% above entry)
-   - Recommended Take Profit: $49.39 (based on average gain target)
-
-   **POTENTIAL SCENARIOS**
-   - Potential Upside (for short): +3.61% to +4.60% (based on targets)
-   - Potential Downside (for short risk): -5.39% (to 50-day moving average)
-
-   **FUNDAMENTAL METRICS**
-   - P/E Ratio: 27.56
-   - PEG Ratio: 0.4041
-
-# Top TrendPulse Buy Signals
-
-## **AMD (Advanced Micro Devices)**
-   Function: TRENDPULSE Monthly
-
-   **SIGNAL INFORMATION**
-   - Symbol, Signal, Signal Date/Price[$]: AMD, Long, 2025-07-31 (Price: 176.31)
-   - Exit Signal Date/Price[$]: No Exit Yet
-   - Interval, Confirmation Status: Monthly, is CONFIRMED on 2025-07-31
-   - Cancellation Level/Date: Already confirmed
-
-   **CURRENT POSITION**
-   - Current Trading Date/Price[$], Current Price vs Signal: 2025-10-10 (Price: 214.9), 21.89% above
-   - Trading Days between Signal and Current Date: 51 days
-   - Current Mark to Market and Holding Period: 21.89%, 51 days
-
-   **STRATEGY PERFORMANCE METRICS**
-   - Win Rate [%], History Tested, Number of Trades: 81.82%, Past 20 years, 11
-   - Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days): 72.34%/94/220 days (Across ALL Assets)
-   - Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days): 78.1%/105/179 days (Across ALL Assets)
-
-   **BACKTESTED RETURNS**
-   - Backtested Returns(Win Trades) [%] (Best/Worst/Avg): 157.84%/42.09%/87.28%
-   - Backtested Max Loss [%], Max Drawdown [%]: 11.47%, 58.95%
-   - Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.): 653 days/109 days/231 days
-   - Target Exit Date (Farthest./Earliest./Avg.): 2027-08-26/2025-11-04/2026-04-16
-
-   **COMPARATIVE PERFORMANCE**
-   - Backtested Strategy CAGR [%]: 19.99%
-   - CAGR of Buy and Hold [%]: 7.61%
-   - CAGR difference (Strategy - Buy and Hold) [%]: 12.38%
-   - Backtested Strategy Sharpe Ratio: 1.41
-   - Sharpe Ratio of Buy and Hold: 0.41
-
-   **PRICE TARGETS & SUPPORT LEVELS**
-   - Targets (Historic Rise/Avg Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$]: 337.6689/330.1934/178.82/No Horizontal Resistance/219.0648/251.3512
-   - Support (Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2) [$]: 97.35/73.114/170.075/140.6278/No Fib Ret Level/No Fib Ret Level
-
-   **TRADING RECOMMENDATIONS**
-   - Recommended Stop Loss: $170.08 (based on F-Stack 1 support)
-   - Recommended Take Profit: $251.35 (based on F-Stack 2 target)
-
-## **TSM (Taiwan Semiconductor Manufacturing)**
-   Function: TRENDPULSE Weekly
-
-   **SIGNAL INFORMATION**
-   - Symbol, Signal, Signal Date/Price[$]: TSM, Long, 2025-10-05 (Price: 292.19)
-   - Exit Signal Date/Price[$]: 2025-10-10 (Price: 280.66) (Today)
-   - Interval, Confirmation Status: Weekly, is CONFIRMED on 2025-10-03
-   - Cancellation Level/Date: Already confirmed
-
-   **CURRENT POSITION**
-   - Current Trading Date/Price[$], Current Price vs Signal: 2025-10-10 (Price: 280.66), 3.95% below
-   - Trading Days between Signal and Current Date: 4 days
-   - Current Mark to Market and Holding Period: -3.95%, 4 days
-
-   **STRATEGY PERFORMANCE METRICS**
-   - Win Rate [%], History Tested, Number of Trades: 90.0%, Past 10 years, 10
-   - Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days): 79.27%/193/90 days (Across ALL Assets)
-   - Forward Testing Win Rate[%]/No. of Analysed Trades/Avg Holding Period (days): 82.46%/268/77 days (Across ALL Assets)
-
-   **BACKTESTED RETURNS**
-   - Backtested Returns(Win Trades) [%] (Best/Worst/Avg): 40.88%/5.34%/14.87%
-   - Backtested Max Loss [%], Max Drawdown [%]: 3.63%, 21.69%
-   - Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.): 189 days/29 days/60 days
-   - Target Exit Date (Farthest./Earliest./Avg.): 2026-07-05/2025-11-16/2025-12-30
-
-   **COMPARATIVE PERFORMANCE**
-   - Backtested Strategy CAGR [%]: 15.
+# Best Trading Signal Analysis Summary
+
+Based on the extensive criteria provided, I've analyzed all trading signals to identify the most promising opportunities for both buy (long) and sell (short) positions. Below is a summary of the top signals that meet the specified filtering and ranking criteria.
+
+## Top Buy (Long) Signals:
+
+1. **BTC-USD** - FRACTAL TRACK, Daily, confirmed on 2025-10-12 with 92.59% win rate and strong fundamentals
+2. **GDX** - TRENDPULSE, Weekly, confirmed on 2025-09-21 with 93.33% win rate and excellent recent performance
+3. **ARM** - BASELINEDIVERGENCE, Weekly, confirmed on 2025-10-12 with 85.71% win rate and strong CAGR of 85.29%
+4. **WPM** - FRACTAL TRACK, Daily, confirmed on 2025-10-13 with 100% win rate and high Sharpe ratio
+5. **NFLX** - TRENDPULSE, Monthly, confirmed on 2025-05-31 with 100% win rate and strong potential upside
+
+## Top Sell (Short) Signals:
+
+1. **NZDUSD=X** - FRACTAL TRACK, Daily, confirmed on 2025-10-10 with 87.93% win rate and excellent risk-reward profile
+2. **EWJ** - FRACTAL TRACK, Daily, confirmed on 2025-10-13 with 90.7% win rate and strong fundamentals
+3. **BABA** - FRACTAL TRACK, Daily, confirmed on 2025-10-13 with 89.61% win rate and excellent downside potential
+4. **BTI** - FRACTAL TRACK, Daily, confirmed on 2025-10-13 with 89.47% win rate and solid technical setup
+5. **LYFT** - FRACTAL TRACK, Daily, confirmed on 2025-10-10 with 88.73% win rate and excellent forward testing performance
+
+## Top TrendPulse Buy (Long) Signals:
+
+1. **GDX** - Weekly, confirmed on 2025-09-21 with 93.33% win rate
+2. **NVDA** - Weekly, confirmed on 2025-10-12 with 87.18% win rate
+3. **NFLX** - Monthly, confirmed on 2025-05-31 with 100% win rate
+4. **TCEHY** - Monthly, confirmed on 2025-03-31 with 100% win rate
+5. **BDGI.TO** - Weekly, confirmed on 2025-10-12 with 79.17% win rate
+
+## Top TrendPulse Sell (Short) Signals:
+No qualifying TrendPulse short signals met all the criteria.
+
+Now, let's examine each signal in detail:
+
+---
+
+# Best Buy (Long) Signals
+
+## 1. BTC-USD (Bitcoin)
+- **Function**: FRACTAL TRACK
+- **Signal Date**: 2025-10-12
+- **Signal**: Long
+- **Signal Price**: 115,169.77
+- **Win Rate**: 92.59%
+- **CAGR**: Strategy (82.7%) - Buy and Hold (58.57%) = 24.13%
+- **Latest Performance Win Rate**: 74.39%
+- **Average Return of Historical Winning Trades**: 34.82%
+- **Max single trade loss historically**: 10.03%
+- **Potential Upside (from signal price)**: 11.33% to 51.41%
+- **Target Exit Date (Farthest./Earliest./Avg.)**: 2028-02-28/2025-10-19/2026-04-21
+- **Current Price, Current Mark to Market**: 113,428.68, -1.51% 
+- **Target Prices**: 128230.02/155271.88/165911.59/123774.36/134811.07/174387.69 based on Historic Rise/Avg % Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- **Support Levels**: 110807.88/18304.42/112399.93/107223.59 based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2
+- **Recommended Stop Loss**: 107,223 (approximately 5.5% below signal price, at the F-Stack 2 support level)
+- **Recommended Take Profit**: 134,811 (F-Stack 1 target, representing approximately 17% upside)
+- **Is Signal timely?**: Yes, only experienced a small pullback of 1.51% since signal date
+- **P/E Ratio**: N/A
+- **PEG Ratio**: N/A
+
+**Notes**: This signal is confirmed with excellent win rate and historical performance. Bitcoin shows strong bullish trend with high Sharpe ratio (0.67) and exceptional CAGR difference (+24.13%). Multiple target levels indicate significant upside potential, and the current price is well-supported by technical levels.
+
+## 2. GDX (Gold Miners ETF)
+- **Function**: TRENDPULSE
+- **Signal Date**: 2025-09-21
+- **Signal**: Long
+- **Signal Price**: 72.36
+- **Win Rate**: 93.33%
+- **CAGR**: Strategy (12.63%) - Buy and Hold (1.45%) = 11.18%
+- **Latest Performance Win Rate**: 82.46%
+- **Average Return of Historical Winning Trades**: 11.74%
+- **Max single trade loss historically**: 1.9%
+- **Potential Upside (from signal price)**: 9.3% to 25.7%
+- **Target Exit Date (Farthest./Earliest./Avg.)**: 2027-02-08/2025-09-26/2025-12-21
+- **Current Price, Current Mark to Market**: 79.37, 9.69%
+- **Target Prices**: 79.09/80.86/93.79/No Horizontal Resistance/72.73/90.97 based on Historic Rise/Avg % Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- **Support Levels**: 34.26/25.65/50.02/36.16 based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2
+- **Recommended Stop Loss**: 72.73 (approximately 8.4% below current price, at the F-Stack 1 support level)
+- **Recommended Take Profit**: 90.97 (F-Stack 2 target, representing approximately 14.6% upside from current price)
+- **Is Signal timely?**: The signal has already achieved its first target (79.09)
+- **P/E Ratio**: 24.65
+- **PEG Ratio**: N/A
+
+**Notes**: This signal is confirmed with exceptional win rate and has already reached its first target. Gold miners continue to show strength amid global economic uncertainty. With a Sharpe ratio of 1.4 and strong CAGR difference (+11.18%), this signal offers good risk-adjusted returns with solid support levels.
+
+## 3. ARM (Arm Holdings)
+- **Function**: BASELINEDIVERGENCE
+- **Signal Date**: 2025-10-12
+- **Signal**: Long
+- **Signal Price**: 154.81
+- **Win Rate**: 85.71%
+- **CAGR**: Strategy (85.29%) - Buy and Hold (59.75%) = 25.54%
+- **Latest Performance Win Rate**: 85.71%
+- **Average Return of Historical Winning Trades**: 21.53%
+- **Max single trade loss historically**: 16.41%
+- **Potential Upside (from signal price)**: 37.47% to 52.13%
+- **Target Exit Date (Farthest./Earliest./Avg.)**: 2026-05-23/2025-12-14/2026-02-10
+- **Current Price, Current Mark to Market**: 171.94, 11.07%
+- **Target Prices**: 212.82/188.14/218.09/165.49/218.09/235.51 based on Historic Rise/Avg % Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- **Support Levels**: 87.71/No Horizontal Support/148.97/138.47 based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2
+- **Recommended Stop Loss**: 138.47 (approximately 19.5% below current price, at the F-Stack 2 support level)
+- **Recommended Take Profit**: 218.09 (F-Stack 1/Exit Rule target, representing approximately 26.8% upside from current price)
+- **Is Signal timely?**: The signal has already moved 11.07% since signal date, capturing about 29% of the potential upside
+- **P/E Ratio**: 264.52
+- **PEG Ratio**: 2.75
+
+**Notes**: This signal is confirmed with excellent win rate and strong momentum. ARM has shown significant upward movement since the signal date. With exceptional CAGR (85.29%) and Sharpe ratio (0.86), this signal offers substantial upside potential despite the high P/E ratio.
+
+## 4. WPM (Wheaton Precious Metals)
+- **Function**: FRACTAL TRACK
+- **Signal Date**: 2025-10-13
+- **Signal**: Long
+- **Signal Price**: 108.99
+- **Win Rate**: 100%
+- **CAGR**: Strategy (26.76%) - Buy and Hold (15.48%) = 11.28%
+- **Latest Performance Win Rate**: 74.39%
+- **Average Return of Historical Winning Trades**: 23.57%
+- **Max single trade loss historically**: 0%
+- **Potential Upside (from signal price)**: 3.9% to 22.49%
+- **Target Exit Date (Farthest./Earliest./Avg.)**: 2027-09-24/2025-12-07/2026-06-24
+- **Current Price, Current Mark to Market**: 108.99, 0%
+- **Target Prices**: 113.24/134.68/144.11/No Horizontal Resistance/114.49/133.50 based on Historic Rise/Avg % Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- **Support Levels**: 103.38/38.34/101.61/85.70 based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2
+- **Recommended Stop Loss**: 101.61 (approximately 6.8% below current price, at the F-Stack 1 support level)
+- **Recommended Take Profit**: 133.50 (F-Stack 2 target, representing approximately 22.5% upside)
+- **Is Signal timely?**: Yes, the signal is very timely as the position has just been initiated
+- **P/E Ratio**: 63.00
+- **PEG Ratio**: N/A
+
+**Notes**: This signal is confirmed with perfect historical win rate and excellent CAGR difference (+11.28%). WPM shows strong potential in the precious metals sector with a high Sharpe ratio (0.55). The multiple support levels provide good risk management opportunities, and the upside targets are well-defined.
+
+## 5. NFLX (Netflix)
+- **Function**: TRENDPULSE
+- **Signal Date**: 2025-05-31
+- **Signal**: Long
+- **Signal Price**: 1207.23
+- **Win Rate**: 100%
+- **CAGR**: Strategy (15.77%) - Buy and Hold (34.23%) = -18.46%
+- **Latest Performance Win Rate**: 78.10%
+- **Average Return of Historical Winning Trades**: 29.24%
+- **Max single trade loss historically**: 0%
+- **Potential Upside (from signal price)**: 78.18% to 15.43%
+- **Target Exit Date (Farthest./Earliest./Avg.)**: 2027-10-30/2025-11-04/2026-04-16
+- **Current Price, Current Mark to Market**: 1219.03, 0.98%
+- **Target Prices**: 2151.16/1560.22/1813.10/No Horizontal Resistance/1163.18/1393.52 based on Historic Rise/Avg % Gain/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- **Support Levels**: 174.87/348.66/1008.85/864.77 based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2
+- **Recommended Stop Loss**: 1008.85 (approximately 17.2% below current price, at the F-Stack 1 support level)
+- **Recommended Take Profit**: 1560.22 (Avg % Gain target, representing approximately 28% upside)
+- **Is Signal timely?**: Yes, only 0.98% move since signal date with substantial remaining upside
+- **P/E Ratio**: 51.81
+- **PEG Ratio**: 1.29
+
+**Notes**: This signal is confirmed with perfect historical win rate. Despite negative CAGR difference, NFLX has excellent Sharpe ratio (1.9) and strong technical support. The signal offers substantial upside potential with multiple target levels. The company's strong fundamentals (reasonable PEG ratio) support this bullish outlook.
+
+---
+
+# Best Sell (Short) Signals
+
+## 1. NZDUSD=X (New Zealand Dollar/US Dollar)
+- **Function**: FRACTAL TRACK
+- **Signal Date**: 2025-10-10
+- **Signal**: Short
+- **Signal Price**: 0.5753
+- **Win Rate**: 87.93%
+- **CAGR**: Strategy (16.12%) - Buy and Hold (5.10%) = 11.02%
+- **Latest Performance Win Rate**: 31.90%
+- **Average Return of Historical Winning Trades**: 2.62%
+- **Max single trade loss historically**: 1.43%
+- **Potential Downside (from signal price)**: 1.18% to 4.24%
+- **Target Exit Date (Farthest./Earliest./Avg.)**: 2025-12-27/2025-10-11/2025-10-24
+- **Current Price, Current Mark to Market**: 0.5708, 0.78% (profit)
+- **Target Prices**: 0.5685/0.5602/0.56/0.5509/No Next Support/No Next Support based on Historic Fall/Avg % Loss/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- **Resistance Levels**: 0.58/0.5509/No Next Support/No Next Support based on Recent Maxima/Horizontal/F-Stack 1/F-Stack 2
+- **Recommended Stop Loss**: 0.58 (approximately 1.6% above current price, at the recent maxima resistance level)
+- **Recommended Take Profit**: 0.56 (Exit Rule target, representing approximately 1.9% additional downside)
+- **Is Signal timely?**: Yes, already captured 0.78% profit with more potential downside
+- **P/E Ratio**: N/A
+- **PEG Ratio**: N/A
+
+**Notes**: This signal is confirmed with excellent win rate and strong CAGR difference (+11.02%). The currency pair has already started moving in the expected direction. With a tight risk-reward profile, this short position offers good profit potential with defined risk parameters.
+
+## 2. EWJ (iShares MSCI Japan ETF)
+- **Function**: FRACTAL TRACK
+- **Signal Date**: 2025-10-13
+- **Signal**: Short
+- **Signal Price**: 79.29
+- **Win Rate**: 90.70%
+- **CAGR**: Strategy (7.81%) - Buy and Hold (5.10%) = 2.71%
+- **Latest Performance Win Rate**: 31.90%
+- **Average Return of Historical Winning Trades**: 2.90%
+- **Max single trade loss historically**: 7.85%
+- **Potential Downside (from signal price)**: 0.74% to 34%
+- **Target Exit Date (Farthest./Earliest./Avg.)**: 2025-12-09/2025-10-14/2025-10-26
+- **Current Price, Current Mark to Market**: 79.29, 0% 
+- **Target Prices**: 78.70/76.99/78.91/53.92/68.85/52.34 based on Historic Fall/Avg % Loss/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- **Resistance Levels**: 83.27/53.92/68.85/52.34 based on Recent Maxima/Horizontal/F-Stack 1/F-Stack 2
+- **Recommended Stop Loss**: 83.27 (approximately 5% above current price, at the recent maxima resistance level)
+- **Recommended Take Profit**: 68.85 (F-Stack 1 target, representing approximately 13.2% downside)
+- **Is Signal timely?**: Yes, the signal is very timely as the position has just been initiated
+- **P/E Ratio**: 17.02
+- **PEG Ratio**: N/A
+
+**Notes**: This signal is confirmed with excellent win rate. The Japanese market shows technical weakness with multiple downside targets. With a Sharpe ratio of 0.18 and positive CAGR difference, this short opportunity offers good risk-adjusted returns with well-defined support targets.
+
+## 3. BABA (Alibaba Group)
+- **Function**: FRACTAL TRACK
+- **Signal Date**: 2025-10-13
+- **Signal**: Short
+- **Signal Price**: 166.81
+- **Win Rate**: 89.61%
+- **CAGR**: Strategy (24.26%) - Buy and Hold (5.10%) = 19.16%
+- **Latest Performance Win Rate**: 31.90%
+- **Average Return of Historical Winning Trades**: 4.30%
+- **Max single trade loss historically**: 15.97%
+- **Potential Downside (from signal price)**: 3.25% to 35.28%
+- **Target Exit Date (Farthest./Earliest./Avg.)**: 2025-11-09/2025-10-14/2025-10-18
+- **Current Price, Current Mark to Market**: 166.81, 0%
+- **Target Prices**: 161.34/159.64/108.65/67.50/138.43/108.08 based on Historic Fall/Avg % Loss/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- **Resistance Levels**: 189.34/67.50/138.43/108.08 based on Recent Maxima/Horizontal/F-Stack 1/F-Stack 2
+- **Recommended Stop Loss**: 189.34 (approximately 13.5% above current price, at the recent maxima resistance level)
+- **Recommended Take Profit**: 138.43 (F-Stack 1 target, representing approximately 17% downside)
+- **Is Signal timely?**: Yes, the signal is very timely as the position has just been initiated
+- **P/E Ratio**: 19.26
+- **PEG Ratio**: 1.95
+
+**Notes**: This signal is confirmed with excellent win rate and exceptional CAGR difference (+19.16%). Alibaba faces headwinds from Chinese regulatory environment and competitive pressures. The technical setup suggests significant downside potential with multiple support targets.
+
+## 4. BTI (British American Tobacco)
+- **Function**: FRACTAL TRACK
+- **Signal Date**: 2025-10-13
+- **Signal**: Short
+- **Signal Price**: 50.81
+- **Win Rate**: 89.47%
+- **CAGR**: Strategy (13.92%) - Buy and Hold (5.10%) = 8.82%
+- **Latest Performance Win Rate**: 31.90%
+- **Average Return of Historical Winning Trades**: 3.61%
+- **Max single trade loss historically**: 10.15%
+- **Potential Downside (from signal price)**: 1.14% to 17.99%
+- **Target Exit Date (Farthest./Earliest./Avg.)**: 2025-11-09/2025-10-14/2025-10-23
+- **Current Price, Current Mark to Market**: 50.81, 0%
+- **Target Prices**: 50.23/48.98/32.19/28.51/49.37/41.66 based on Historic Fall/Avg % Loss/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- **Resistance Levels**: 57.31/28.51/49.37/41.66 based on Recent Maxima/Horizontal/F-Stack 1/F-Stack 2
+- **Recommended Stop Loss**: 57.31 (approximately 12.8% above current price, at the recent maxima resistance level)
+- **Recommended Take Profit**: 41.66 (F-Stack 2 target, representing approximately 18% downside)
+- **Is Signal timely?**: Yes, the signal is very timely as the position has just been initiated
+- **P/E Ratio**: 27.32
+- **PEG Ratio**: 0.40
+
+**Notes**: This signal is confirmed with excellent win rate and good CAGR difference (+8.82%). The tobacco industry faces regulatory headwinds and declining demand in developed markets. Despite low PEG ratio, the technical setup suggests downside potential with multiple support targets.
+
+## 5. LYFT (Lyft, Inc.)
+- **Function**: FRACTAL TRACK
+- **Signal Date**: 2025-10-10
+- **Signal**: Short
+- **Signal Price**: 19.25
+- **Win Rate**: 88.73%
+- **CAGR**: Strategy (24.73%) - Buy and Hold (5.10%) = 19.63%
+- **Latest Performance Win Rate**: 31.90%
+- **Average Return of Historical Winning Trades**: 4.76%
+- **Max single trade loss historically**: 16.51%
+- **Potential Downside (from signal price)**: 6.92% to 53.82%
+- **Target Exit Date (Farthest./Earliest./Avg.)**: 2025-10-24/2025-10-11/2025-10-14
+- **Current Price, Current Mark to Market**: 19.99, -3.84% (loss)
+- **Target Prices**: 17.92/18.33/13.05/8.89/No Next Support/No Next Support based on Historic Fall/Avg % Loss/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- **Resistance Levels**: 22.93/8.89/No Next Support/No Next Support based on Recent Maxima/Horizontal/F-Stack 1/F-Stack 2
+- **Recommended Stop Loss**: 22.93 (approximately 14.7% above current price, at the recent maxima resistance level)
+- **Recommended Take Profit**: 13.05 (Exit Rule target, representing approximately 34.7% downside from current price)
+- **Is Signal timely?**: The signal has moved against the position by 3.84%, which increases risk
+- **P/E Ratio**: 86.91
+- **PEG Ratio**: 0.29
+
+**Notes**: This signal is confirmed with excellent win rate and exceptional CAGR difference (+19.63%). Lyft faces profitability challenges and competitive pressures with extremely high P/E ratio. The technical setup suggests significant downside potential despite recent adverse price movement.
+
+---
+
+# Top TrendPulse Buy (Long) Signals
+
+## 1. GDX (Gold Miners ETF)
+- **Function**: TRENDPULSE
+- **Signal Date**: 2025-09-21
+- **Signal**: Long
+- **Signal Price**: 72.36
+- **Win Rate**: 93.33%
+- **CAGR**: Strategy (12.63%) - Buy and Hold (1.45%) = 11.18%
+- **Latest Performance Win Rate**: 82.46%
+- **Average Return of Historical Winning Trades**: 11.74%
+- **Potential Upside (from signal price)**: 9.3% to 25.7%
+- **Recommended Stop Loss**: 72.73 (F-Stack 1 support level)
+- **Recommended Take Profit**: 90.97 (F-Stack 2 target)
+- **P/E Ratio**: 24.65
+- **PEG Ratio**: N/A
+
+## 2. NVDA (NVIDIA Corporation)
+- **Function**: TRENDPULSE
+- **Signal Date**: 2025-10-12
+- **Signal**: Long
+- **Signal Price**: 183.16
+- **Win Rate**: 87.18%
+- **CAGR**: Strategy (48.43%) - Buy and Hold (74.98%) = -26.55%
+- **Latest Performance Win Rate**: 85.71%
+- **Average Return of Historical Winning Trades**: 41.47%
+- **Potential Upside (from signal price)**: 31.96% to 54.88%
+- **Current Price, Current Mark to Market**: 188.32, 2.82%
+- **Recommended Stop Loss**: 167.02 (Recent Minima support level, approximately 11.3% below current price)
+- **Recommended Take Profit**: 241.70 (Historic Rise target, representing approximately 28.3% upside)
+- **P/E Ratio**: 53.81
+- **PEG Ratio**: 1.00
+
+## 3. NFLX (Netflix)
+- **Function**: TRENDPULSE
+- **Signal Date**: 2025-05-31
+- **Signal**: Long
+- **Signal Price**: 1207.23
+- **Win Rate**: 100%
+- **CAGR**: Strategy (15.77%) - Buy and Hold (34.23%) = -18.46%
+- **Latest Performance Win Rate**: 78.10%
+- **Average Return of Historical Winning Trades**: 29.24%
+- **Potential Upside (from signal price)**: 78.18% to 15.43%
+- **Recommended Stop Loss**: 1008.85 (F-Stack 1 support level)
+- **Recommended Take Profit**: 1560.22 (Avg % Gain target)
+- **P/E Ratio**: 51.81
+- **PEG Ratio**: 1.29
+
+## 4. TCEHY (Tencent Holdings)
+- **Function**: TRENDPULSE
+- **Signal Date**: 2025-03-31
+- **Signal**: Long
+- **Signal Price**: 63.84
+- **Win Rate**: 100%
+- **CAGR**: Strategy (21.22%) - Buy and Hold (21.28%) = -0.06%
+- **Latest Performance Win Rate**: 78.10%
+- **Average Return of Historical Winning Trades**: 32.64%
+- **Potential Upside (from signal price)**: 64.91% to 82.30%
+- **Current Price, Current Mark to Market**: 81.63, 27.87%
+- **Recommended Stop Loss**: 58.33 (F-Stack 1 support level, approximately 28.5% below current price)
+- **Recommended Take Profit**: 105.27 (Historic Rise target, representing approximately 29% additional upside)
+- **P/E Ratio**: 26.16
+- **PEG Ratio**: 1.60
+
+## 5. BDGI.TO (Badger Infrastructure Solutions)
+- **Function**: TRENDPULSE
+- **Signal Date**: 2025-10-12
+- **Signal**: Long
+- **Signal Price**: 65.01
+- **Win Rate**: 79.17%
+- **CAGR**: Strategy (3.07%) - Buy and Hold (17.39%) = -14.32%
+- **Latest Performance Win Rate**: 82.46%
+- **Average Return of Historical Winning Trades**: 12.95%
+- **Potential Upside (from signal price)**: 15.1% to 68.63%
+- **Current Price, Current Mark to Market**: 65.01, 0%
+- **Recommended Stop Loss**: 60.87 (Cancellation level, approximately 6.4% below current price)
+- **Recommended Take Profit**: 74.83 (Historic Rise target, representing approximately 15.1% upside)
+- **P/E Ratio**: 28.51
+- **PEG Ratio**: N/A
+
+---
+
+|||BTC-USD,Daily,FRACTAL TRACK,2025-10-12,Long|GDX,Weekly,TRENDPULSE,2025-09-21,Long|ARM,Weekly,BASELINEDIVERGENCE,2025-10-12,Long|WPM,Daily,FRACTAL TRACK,2025-10-13,Long|NFLX,Monthly,TRENDPULSE,2025-05-31,Long|NZDUSD=X,Daily,FRACTAL TRACK,2025-10-10,Short|EWJ,Daily,FRACTAL TRACK,2025-10-13,Short|BABA,Daily,FRACTAL TRACK,2025-10-13,Short|BTI,Daily,FRACTAL TRACK,2025-10-13,Short|LYFT,Daily,FRACTAL TRACK,2025-10-10,Short|NVDA,Weekly,TRENDPULSE,2025-10-12,Long|TCEHY,Monthly,TRENDPULSE,2025-03-31,Long|BDGI.TO,Weekly,TRENDPULSE,2025-10-12,Long|||

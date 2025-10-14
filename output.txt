@@ -4,49 +4,42 @@ MINDWEALTH CHATBOT - DEMONSTRATION
 ================================================================================
 
 Initializing chatbot...
-✓ Chatbot initialized with session ID: 6dda7adb-3d3b-49cb-a928-c4a6db542167
+✓ Chatbot initialized with session ID: 4025e840-2552-48e6-ad97-1eaebb0d0846
 
 Available data sources:
-  - Assets: 134 available
+  - Assets: 136 available
     Examples: AAPL, ABNB, ACWX, AIA.NZ, AMD, AMZN, ARM, ASML, ATD.TO, ATM.NZ...
-  - Functions: 8 available
-    Types: ALTITUDE ALPHA, BAND MATRIX, BASELINEDIVERGENCE, FRACTAL TRACK, OSCILLATOR DELTA, PULSEGAUGE, SIGMASHELL, TRENDPULSE
+  - Functions: 31 available
+    Types: AIA.NZ, ALTITUDE ALPHA, AMD, AMZN, ARM, BAND MATRIX, BASELINEDIVERGENCE, BDGI.TO, BNS.TO, BRK-B, DIS, FRACTAL TRACK, GILD, GLD, GNE.NZ, GOOG, GS, JPM, MSFT, OSCILLATOR DELTA, PULSEGAUGE, RHHBY, SIGMASHELL, SLV, SOXX, TD.TO, TRENDPULSE, TSLA, XIU.TO, XLU, ^GSPC
 
 --------------------------------------------------------------------------------
 DEMO 1: Analyze single stock
 --------------------------------------------------------------------------------
-
 Query: How many TRENDPULSE signals exist for AAPL?
 Assets: ['AAPL']
 Functions: ['TRENDPULSE']
 Date Range: 2025-10-01 to 2025-10-10
+Note: Loads BOTH signal and target data automatically
 
 Processing...
 
 📊 Response:
-Based on the provided trading data for AAPL, there is one TRENDPULSE signal recorded. This signal is a "Long" signal that was confirmed on August 15, 2025, with the signal date being August 17, 2025, at a price of $231.59. The exit signal date is October 10, 2025, at a price of $245.27.
+Based on the provided trading data for AAPL, there is one TRENDPULSE signal recorded. This signal is a "Long" position that was confirmed on August 15, 2025, with the signal date being August 17, 2025, at a price of $231.59. The exit signal date is October 10, 2025, at a price of $245.27.
 
 📈 Metadata:
-  - Tokens used: 1472
+  - Tokens used: 1486
   - Data loaded: {'assets': ['AAPL'], 'total_records': 1}
 --------------------------------------------------------------------------------
 
-Follow-up Query: What was the stretegy sharpe ratio in that whole data for AAPL for TRENDPULSE?
+Follow-up Query: Is there any potential selloff price signal for TRENDPULSE for aapl if yes then tell me the entry date and price of that signal?
 Processing...
 
+✨ Note: Data reused from history (smart optimization!)
+
 📊 Response:
-The backtested strategy Sharpe Ratio for the TRENDPULSE signal on AAPL, as provided in the data, is 1.20. This value is consistent across the summary statistics, indicating that it is both the minimum and maximum value observed in the dataset.
+The provided data does not indicate any potential selloff price signal for the TRENDPULSE strategy for AAPL. The only TRENDPULSE signal present is a "Long" position with an entry date of August 17, 2025, at a price of $231.59. There is no mention of a selloff or short signal in the data provided.
 
-📈 Tokens used: 2780
-
-================================================================================
-SESSION SUMMARY
-================================================================================
-
-Session ID: 6dda7adb-3d3b-49cb-a928-c4a6db542167
-Total Messages: 5
-User Messages: 2
-Assistant Messages: 2
+📈 Tokens used: 1599
 
 ================================================================================
 ✓ DEMONSTRATION COMPLETE

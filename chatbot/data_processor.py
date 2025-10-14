@@ -13,11 +13,14 @@ from .config import (
     CHATBOT_DATA_DIR,
     CHATBOT_SIGNAL_DIR,
     CHATBOT_TARGET_DIR,
+    CHATBOT_BREADTH_DIR,
     STOCK_DATA_DIR,
     DATE_FORMAT,
     CSV_ENCODING,
     MAX_ROWS_TO_INCLUDE,
-    DEDUP_COLUMNS
+    DEDUP_COLUMNS,
+    MAX_INPUT_TOKENS_PER_CALL,
+    ESTIMATED_CHARS_PER_TOKEN
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -39,6 +42,7 @@ class DataProcessor:
         self.chatbot_data_dir = Path(CHATBOT_DATA_DIR)
         self.signal_data_dir = Path(CHATBOT_SIGNAL_DIR)
         self.target_data_dir = Path(CHATBOT_TARGET_DIR)
+        self.breadth_data_dir = Path(CHATBOT_BREADTH_DIR)
         self.stock_data_dir = Path(STOCK_DATA_DIR)
         
     def get_available_tickers(self) -> List[str]:
@@ -196,11 +200,12 @@ class DataProcessor:
         from_date: Optional[str] = None,
         to_date: Optional[str] = None,
         dedup_columns: Optional[List[str]] = None,
-        functions: Optional[List[str]] = None
+        functions: Optional[List[str]] = None,
+        signal_types: Optional[List[str]] = None
     ) -> Dict[str, pd.DataFrame]:
         """
         Load stock data from new structure: chatbot/data/{signal|target}/{asset}/{function}/YYYY-MM-DD.csv
-        Loads from BOTH signal and target folders automatically.
+        Loads from signal and/or target folders based on signal_types parameter.
         
         Args:
             tickers: List of ticker/asset symbols
@@ -208,6 +213,11 @@ class DataProcessor:
             to_date: End date in YYYY-MM-DD format
             dedup_columns: Columns to use for deduplication (placeholder)
             functions: List of function names to filter (None = all functions)
+            signal_types: List of signal types - controls which folders to load from:
+                         - ['entry_exit'] → load from signal/ folder only
+                         - ['potential_achievement'] → load from target/ folder only
+                         - ['entry_exit', 'potential_achievement'] → load from both
+                         - None or [] → load from both (fallback)
             
         Returns:
             Dictionary mapping ticker to combined DataFrame
@@ -233,11 +243,24 @@ class DataProcessor:
                     logger.warning(f"No functions found for asset: {ticker}")
                     continue
                 
-                # Load data for each function from BOTH signal and target folders
+                # Determine which directories to load from based on signal_types
+                base_dirs_to_load = []
+                if signal_types:
+                    if 'entry_exit' in signal_types:
+                        base_dirs_to_load.append(self.signal_data_dir)
+                    if 'potential_achievement' in signal_types:
+                        base_dirs_to_load.append(self.target_data_dir)
+                    logger.info(f"Loading based on signal_types {signal_types}: {['signal' if d == self.signal_data_dir else 'target' for d in base_dirs_to_load]}")
+                else:
+                    # No signal_types specified - load from BOTH folders (fallback)
+                    base_dirs_to_load = [self.signal_data_dir, self.target_data_dir]
+                    logger.info(f"No signal_types specified - loading from BOTH signal and target folders")
+                
+                # Load data for each function from selected folders
                 all_dfs = []
                 for function_name in functions_to_load:
-                    # Load from both signal and target directories
-                    for base_dir in [self.signal_data_dir, self.target_data_dir]:
+                    # Load from selected directories
+                    for base_dir in base_dirs_to_load:
                         if not base_dir.exists():
                             continue
                             
@@ -324,19 +347,27 @@ class DataProcessor:
                 else:
                     logger.warning(f"No deduplication columns found for {ticker}. Available columns: {combined_df.columns.tolist()}")
                 
-                # Sort by date if Date column exists
+                # Sort by date if Date column exists (LATEST FIRST)
                 if 'Date' in combined_df.columns:
-                    combined_df = combined_df.sort_values('Date')
+                    combined_df = combined_df.sort_values('Date', ascending=False)
+                elif 'LoadedDate' in combined_df.columns:
+                    combined_df = combined_df.sort_values('LoadedDate', ascending=False)
                 
-                # Limit rows if too many
+                # Limit rows if too many - KEEP LATEST DATA
                 if len(combined_df) > MAX_ROWS_TO_INCLUDE:
-                    logger.info(f"Limiting {ticker} data from {len(combined_df)} to {MAX_ROWS_TO_INCLUDE} rows")
-                    # Sample evenly across the data
-                    step = len(combined_df) // MAX_ROWS_TO_INCLUDE
-                    combined_df = combined_df.iloc[::step][:MAX_ROWS_TO_INCLUDE]
+                    logger.info(f"Limiting {ticker} data from {len(combined_df)} to {MAX_ROWS_TO_INCLUDE} rows (keeping latest)")
+                    # Keep the most recent rows
+                    combined_df = combined_df.head(MAX_ROWS_TO_INCLUDE)
                 
                 result[ticker] = combined_df
-                logger.info(f"Loaded {len(combined_df)} rows for {ticker} (from {total_files_loaded} files)")
+                
+                # Count by SignalType (entry_exit vs potential_achievement)
+                if 'SignalType' in combined_df.columns:
+                    entry_exit_count = len(combined_df[combined_df['SignalType'] == 'entry_exit'])
+                    potential_count = len(combined_df[combined_df['SignalType'] == 'potential_achievement'])
+                    logger.info(f"Loaded {len(combined_df)} rows for {ticker} (entry_exit: {entry_exit_count}, potential: {potential_count})")
+                else:
+                    logger.info(f"Loaded {len(combined_df)} rows for {ticker}")
                 
             except Exception as e:
                 logger.error(f"Error loading data for {ticker}: {e}")
@@ -416,11 +447,12 @@ class DataProcessor:
         from_date: Optional[str] = None,
         to_date: Optional[str] = None,
         dedup_columns: Optional[List[str]] = None,
-        functions: Optional[List[str]] = None
+        functions: Optional[List[str]] = None,
+        signal_types: Optional[List[str]] = None
     ) -> Dict[str, pd.DataFrame]:
         """
         Load stock data for specified tickers, functions, and date range.
-        Loads from BOTH signal and target folders automatically.
+        Loads from signal and/or target folders based on signal_types.
         Uses new structure if available, falls back to legacy.
         
         Args:
@@ -429,115 +461,166 @@ class DataProcessor:
             to_date: End date in YYYY-MM-DD format
             dedup_columns: Columns to use for deduplication
             functions: List of function names to filter (None = all functions)
+            signal_types: List of signal types - controls which folders to load from:
+                         - ['entry_exit'] → load from signal/ folder only
+                         - ['potential_achievement'] → load from target/ folder only
+                         - Both → load from both folders
             
         Returns:
             Dictionary mapping ticker to DataFrame (includes DataType column: 'signal' or 'target')
         """
         if self.use_new_structure:
             return self.load_stock_data_new_structure(
-                tickers, from_date, to_date, dedup_columns, functions
+                tickers, from_date, to_date, dedup_columns, functions, signal_types
             )
         else:
             return self.load_stock_data_legacy(tickers, from_date, to_date)
     
-    def get_available_manus_files(self) -> List[str]:
+    def load_breadth_data(
+        self,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None
+    ) -> Optional[pd.DataFrame]:
         """
-        Get list of available Manus data files.
-        
-        Returns:
-            List of file names (without .csv extension)
-        """
-        try:
-            csv_files = list(self.manus_data_dir.glob("*.csv"))
-            files = [f.stem for f in csv_files]
-            return sorted(files)
-        except Exception as e:
-            logger.error(f"Error getting available Manus files: {e}")
-            return []
-    
-    def load_manus_data(self, file_names: Optional[List[str]] = None) -> Dict[str, pd.DataFrame]:
-        """
-        Load Manus chat data files.
+        Load breadth report data for the specified date range.
+        Breadth data is market-wide (not asset-specific).
         
         Args:
-            file_names: List of file names to load (without .csv). If None, loads all.
+            from_date: Start date in YYYY-MM-DD format
+            to_date: End date in YYYY-MM-DD format
             
         Returns:
-            Dictionary mapping file name to DataFrame
+            DataFrame with breadth data or None if no data found
         """
-        result = {}
+        if not self.breadth_data_dir.exists():
+            logger.warning(f"Breadth directory not found: {self.breadth_data_dir}")
+            return None
         
-        if file_names is None:
-            file_names = self.get_available_manus_files()
+        # Get all CSV files in breadth directory
+        csv_files = list(self.breadth_data_dir.glob("*.csv"))
         
-        for file_name in file_names:
-            try:
-                file_path = self.manus_data_dir / f"{file_name}.csv"
-                
-                if not file_path.exists():
-                    logger.warning(f"Manus data file not found: {file_name}")
-                    continue
-                
-                df = pd.read_csv(file_path, encoding=CSV_ENCODING)
-                
-                # Limit rows if too many
-                if len(df) > MAX_ROWS_TO_INCLUDE:
-                    logger.info(f"Limiting {file_name} data from {len(df)} to {MAX_ROWS_TO_INCLUDE} rows")
-                    df = df.head(MAX_ROWS_TO_INCLUDE)
-                
-                result[file_name] = df
-                logger.info(f"Loaded {len(df)} rows from {file_name}")
-                
-            except Exception as e:
-                logger.error(f"Error loading Manus data {file_name}: {e}")
-                continue
+        if not csv_files:
+            logger.warning("No breadth reports found")
+            return None
         
-        return result
+        # Filter by date range
+        files_to_load = []
+        for file_path in csv_files:
+            file_date = file_path.stem  # filename without extension (YYYY-MM-DD)
+            
+            # Check if date is within range
+            include_file = True
+            if from_date and file_date < from_date:
+                include_file = False
+            if to_date and file_date > to_date:
+                include_file = False
+            
+            if include_file:
+                files_to_load.append((file_date, file_path))
+        
+        if not files_to_load:
+            logger.info(f"No breadth reports found in date range {from_date} to {to_date}")
+            return None
+        
+        # Sort by date (most recent first)
+        files_to_load.sort(reverse=True)
+        
+        # Load the most recent breadth report
+        most_recent_date, most_recent_file = files_to_load[0]
+        
+        try:
+            df = pd.read_csv(most_recent_file, encoding=CSV_ENCODING)
+            df['Date'] = most_recent_date
+            df['DataType'] = 'breadth'
+            
+            logger.info(f"Loaded breadth report from {most_recent_date}: {len(df)} functions")
+            return df
+            
+        except Exception as e:
+            logger.error(f"Error loading breadth report {most_recent_file}: {e}")
+            return None
+    
+    def estimate_token_count(self, text: str) -> int:
+        """
+        Estimate token count from text.
+        
+        Args:
+            text: Text to estimate tokens for
+            
+        Returns:
+            Estimated token count
+        """
+        return len(text) // ESTIMATED_CHARS_PER_TOKEN
     
     def format_data_for_prompt(
         self,
-        stock_data: Dict[str, pd.DataFrame]
+        stock_data: Dict[str, pd.DataFrame],
+        max_tokens: Optional[int] = None
     ) -> str:
         """
-        Format loaded data into a text representation for GPT-4o prompt.
+        Format stock data as JSON for inclusion in GPT prompt.
+        Automatically limits data to fit within token constraints.
         
         Args:
-            stock_data: Dictionary of stock DataFrames
+            stock_data: Dictionary mapping ticker to DataFrame
+            max_tokens: Maximum tokens allowed (default from config)
             
         Returns:
-            Formatted string representation of the data
+            Formatted JSON string for prompt (limited to max_tokens)
         """
-        formatted_parts = []
+        if not stock_data:
+            return ""
         
-        # Format stock data
-        if stock_data:
-            formatted_parts.append("=== TRADING DATA ===\n")
-            for ticker, df in stock_data.items():
-                formatted_parts.append(f"\n--- {ticker} ---")
-                
-                if 'Date' in df.columns:
-                    formatted_parts.append(f"Date Range: {df['Date'].min()} to {df['Date'].max()}")
-                
-                formatted_parts.append(f"Number of Records: {len(df)}")
-                formatted_parts.append(f"Columns: {', '.join(df.columns.tolist())}")
-                
-                # Add summary statistics for numeric columns
-                numeric_cols = df.select_dtypes(include=['number']).columns
-                if len(numeric_cols) > 0:
-                    formatted_parts.append("\nSummary Statistics:")
-                    for col in numeric_cols[:5]:  # Limit to first 5 numeric columns
-                        formatted_parts.append(f"  {col}: min={df[col].min():.2f}, max={df[col].max():.2f}, avg={df[col].mean():.2f}")
-                
-                # Add sample of data (first 5 and last 5 rows)
-                formatted_parts.append("\nData Sample (first 5 and last 5 rows):")
-                if len(df) <= 10:
-                    sample_df = df
-                else:
-                    sample_df = pd.concat([df.head(5), df.tail(5)])
-                formatted_parts.append(sample_df.to_string(index=False))
-                formatted_parts.append("\n")
+        if max_tokens is None:
+            max_tokens = MAX_INPUT_TOKENS_PER_CALL
         
-        return "\n".join(formatted_parts)
+        import json
+        
+        formatted_parts = ["=== TRADING DATA (JSON Format) ===\n"]
+        current_tokens = 0
+        tickers_included = []
+        tickers_skipped = []
+        
+        for ticker, df in stock_data.items():
+            if df.empty:
+                continue
+            
+            # Convert DataFrame to list of dictionaries (each row as key-value pairs)
+            records = df.to_dict('records')
+            
+            # Create JSON structure for this ticker
+            ticker_data = {
+                "asset": ticker,
+                "record_count": len(records),
+                "data": records
+            }
+            
+            # Convert to JSON string (pretty printed for readability)
+            ticker_json = json.dumps(ticker_data, indent=2, default=str)
+            
+            ticker_token_estimate = self.estimate_token_count(ticker_json)
+            
+            # Check if adding this ticker would exceed limit
+            if current_tokens + ticker_token_estimate > max_tokens:
+                logger.warning(f"Token limit approaching - skipping {ticker} ({ticker_token_estimate} tokens)")
+                tickers_skipped.append(ticker)
+                continue
+            
+            # Add ticker data
+            formatted_parts.append(f"\n{ticker_json}")
+            current_tokens += ticker_token_estimate
+            tickers_included.append(ticker)
+        
+        # Add summary
+        if tickers_skipped:
+            formatted_parts.append(f"\n\n// Note: {len(tickers_skipped)} assets skipped due to token limits: {', '.join(tickers_skipped[:5])}")
+            if len(tickers_skipped) > 5:
+                formatted_parts.append(f" ... and {len(tickers_skipped) - 5} more")
+        
+        result = "\n".join(formatted_parts)
+        logger.info(f"Formatted data as JSON: ~{current_tokens} tokens, {len(tickers_included)} assets included, {len(tickers_skipped)} skipped")
+        
+        return result
     
     def validate_date_format(self, date_str: str) -> bool:
         """

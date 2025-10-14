@@ -6,6 +6,7 @@ from .chatbot_engine import ChatbotEngine
 from .data_processor import DataProcessor
 from .history_manager import HistoryManager
 from .function_extractor import FunctionExtractor
+from .ticker_extractor import TickerExtractor
 
-__all__ = ['ChatbotEngine', 'DataProcessor', 'HistoryManager', 'FunctionExtractor']
+__all__ = ['ChatbotEngine', 'DataProcessor', 'HistoryManager', 'FunctionExtractor', 'TickerExtractor']
 

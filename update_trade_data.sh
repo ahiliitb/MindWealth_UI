@@ -34,6 +34,10 @@ cp "$CACHE_DIR"/*.csv "$TARGET_STOCK_DATA_DIR"/ 2>/dev/null || echo "⚠️  No 
 echo "📊 Copying trade signal CSV files..."
 cp "$SOURCE_TRADE_DIR"/*.csv "$TARGET_TRADE_DIR"/ 2>/dev/null || echo "⚠️  No CSV files found in trade_store/US"
 
+# Copy all TXT files from trade_store/US
+echo "📄 Copying trade signal TXT files..."
+cp "$SOURCE_TRADE_DIR"/*.txt "$TARGET_TRADE_DIR"/ 2>/dev/null || echo "⚠️  No TXT files found in trade_store/US"
+
 # Copy virtual trading CSV files specifically (from trade_store root, not US subfolder)
 echo "📊 Copying virtual trading CSV files..."
 if [ -f "$SOURCE_VIRTUAL_TRADING_DIR/virtual_trading_long.csv" ]; then

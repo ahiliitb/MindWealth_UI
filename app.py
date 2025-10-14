@@ -10,7 +10,8 @@ from src.pages import (
     create_top_signals_dashboard,
     create_analysis_page,
     create_text_file_page,
-    create_virtual_trading_page
+    create_virtual_trading_page,
+    render_chatbot_page
 )
 from src.utils import discover_csv_files
 
@@ -90,6 +91,7 @@ def main():
     # Define all available pages in the correct order
     page_options = {
         "Dashboard": None,
+        "🤖 AI Chatbot": "chatbot",
         "Virtual Trading": "virtual_trading",
         "Claude Output": "text_files",
     }
@@ -107,6 +109,8 @@ def main():
     # Display selected page
     if page == "Dashboard":
         create_top_signals_dashboard()
+    elif page == "🤖 AI Chatbot":
+        render_chatbot_page()
     elif page == "Virtual Trading":
         create_virtual_trading_page()
     elif page == "Claude Output":
@@ -114,7 +118,7 @@ def main():
     else:
         # Create analysis page for CSV files
         csv_file = page_options[page]
-        if csv_file and csv_file not in ["text_files", "virtual_trading"]:
+        if csv_file and csv_file not in ["text_files", "virtual_trading", "chatbot"]:
             create_analysis_page(csv_file, page)
         else:
             st.error(f"No data file found for {page}")

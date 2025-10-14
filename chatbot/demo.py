@@ -75,7 +75,7 @@ def main():
         # Example 2: Follow-up question
         print("-" * 80)
         
-        follow_up = "What was the stretegy sharpe ratio in that whole data for AAPL for TRENDPULSE?"
+        follow_up = "Is there any potential achievement  signal for TRENDPULSE for aapl if yes then tell me the entry date and price of that signal?"
         print(f"\nFollow-up Query: {follow_up}")
         print("Processing...")
         
@@ -83,7 +83,7 @@ def main():
         response2, metadata2 = chatbot.query(
             user_message=follow_up,
             tickers=["AAPL"],
-            from_date="2025-10-10",
+            from_date="2025-10-01",
             to_date="2025-10-10",
             functions=["TRENDPULSE"]  # Same parameters - will reuse data
         )
@@ -94,42 +94,44 @@ def main():
         print(f"\n📊 Response:\n{response2}")
         print(f"\n📈 Tokens used: {metadata2.get('tokens_used', {}).get('total', 'N/A')}")
         
-        # Demo 3: Query both signals and targets
+        # Demo 3: Auto Function Extraction with GPT-4o-mini
         print("\n" + "="*80)
-        print("DEMO 3: Query Both Signals and Targets for AMD")
+        print("DEMO 3: Auto Function Extraction (GPT-4o-mini)")
         print("="*80 + "\n")
         
-        multi_query = "What signals and targets exist for AMD? Summarize both."
-        print(f"Query: {multi_query}")
-        print(f"Assets: ['AMD']")
-        print(f"Note: Automatically loads BOTH signal and target data")
+        auto_query = "Show me the FRACTAL TRACK signals for AAPL"
+        print(f"Query: {auto_query}")
+        print(f"Assets: ['AAPL']")
+        print(f"Functions: None (let AI extract from query)")
+        print(f"Note: GPT-4o-mini will extract 'FRACTAL TRACK' automatically!")
         print("\nProcessing...")
         
-        response_multi, metadata_multi = chatbot.query(
-            user_message=multi_query,
-            tickers=["AMD"],
-            functions=None  # Load all functions from both signal and target
+        response_auto, metadata_auto = chatbot.query(
+            user_message=auto_query,
+            tickers=["AAPL"],
+            from_date="2025-10-01",
+            to_date="2025-10-10",
+            functions=None,  # Don't specify - let it auto-extract!
+            auto_extract_functions=True  # Enable auto-extraction (default)
         )
         
-        print(f"\n📊 Response (first 500 chars):\n{response_multi[:500]}...")
-        print(f"\n📈 Metadata:")
-        print(f"  - Tokens used: {metadata_multi['tokens_used']['total']}")
-        print(f"  - Data loaded: {metadata_multi.get('data_loaded', {})}")
-        print("="*80)
-        
-        # Show session summary
-        print("\n" + "="*80)
-        print("SESSION SUMMARY")
-        print("="*80)
-        
-        summary = chatbot.get_session_summary()
-        print(f"\nSession ID: {summary['session_id']}")
-        print(f"Total Messages: {summary['message_count']}")
-        print(f"User Messages: {summary['user_messages']}")
-        print(f"Assistant Messages: {summary['assistant_messages']}")
+        print(f"\n🤖 Auto-extracted functions: {metadata_auto.get('functions_auto_extracted', [])}")
+        print(f"📊 Functions used for loading: {metadata_auto.get('functions', [])}")
+        print(f"\n📊 Response (first 400 chars):\n{response_auto[:400]}...")
+        print(f"\n📈 Tokens used: {metadata_auto.get('tokens_used', {}).get('total', 'N/A')}")
+        print(f"💡 Note: GPT-4o-mini extracted the function name from your natural language!")
         
         print("\n" + "="*80)
         print("✓ DEMONSTRATION COMPLETE")
+        print("="*80)
+        print("\n🌟 Key Features Demonstrated:")
+        print("  1. ✅ Basic signal query with specific function")
+        print("  2. ✅ Context reuse (smart optimization)")
+        print("  3. ✅ Auto function extraction with GPT-4o-mini")
+        print("\n💡 All features include:")
+        print("  • Automatic loading from BOTH signal and target folders")
+        print("  • SignalType classification (entry_exit, potential_selloff_price, potential_achievement)")
+        print("  • Smart conversation history management")
         print("="*80 + "\n")
         
     except Exception as e:

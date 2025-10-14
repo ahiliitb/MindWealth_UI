@@ -5,17 +5,27 @@ Main chatbot engine for processing queries and generating responses.
 import logging
 from typing import List, Dict, Optional, Tuple
 from openai import OpenAI
+import time
 
 from .config import (
     OPENAI_API_KEY,
     OPENAI_MODEL,
     MAX_TOKENS,
     TEMPERATURE,
-    SYSTEM_PROMPT
+    SYSTEM_PROMPT,
+    MAX_HISTORY_LENGTH,
+    MAX_INPUT_TOKENS_PER_CALL,
+    MAX_TICKERS_PER_QUERY,
+    MAX_SEQUENTIAL_BATCHES,
+    BATCH_DELAY_SECONDS,
+    ESTIMATED_CHARS_PER_TOKEN,
+    MIN_HISTORY_MESSAGES,
+    ENABLE_BATCH_PROCESSING
 )
 from .data_processor import DataProcessor
 from .history_manager import HistoryManager
 from .function_extractor import FunctionExtractor
+from .ticker_extractor import TickerExtractor
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -53,6 +63,11 @@ class ChatbotEngine:
         self.data_processor = DataProcessor(use_new_structure=use_new_data_structure)
         self.history_manager = HistoryManager(session_id=session_id)
         self.function_extractor = FunctionExtractor(api_key=self.api_key)
+        self.ticker_extractor = TickerExtractor(api_key=self.api_key)
+        
+        # Set available tickers for ticker extractor
+        available_tickers = self.data_processor.get_available_tickers()
+        self.ticker_extractor.set_available_tickers(available_tickers)
         
         # Add system prompt to history if this is a new session
         if not self.history_manager.conversation_history:
@@ -67,9 +82,11 @@ class ChatbotEngine:
         from_date: Optional[str] = None,
         to_date: Optional[str] = None,
         functions: Optional[List[str]] = None,
+        signal_types: Optional[List[str]] = None,
         additional_context: Optional[str] = None,
         dedup_columns: Optional[List[str]] = None,
-        auto_extract_functions: bool = True
+        auto_extract_functions: bool = True,
+        auto_extract_tickers: bool = False
     ) -> Tuple[str, Dict]:
         """
         Process a user query with optional data context.
@@ -80,9 +97,11 @@ class ChatbotEngine:
             from_date: Start date for data filtering (YYYY-MM-DD)
             to_date: End date for data filtering (YYYY-MM-DD)
             functions: List of function names to filter (None = auto-extract or all functions)
+            signal_types: List of signal types to filter (entry_exit, potential_achievement) - from UI checkboxes
             additional_context: Any additional text context to include
             dedup_columns: Columns to use for deduplication (None = use config default)
             auto_extract_functions: If True and functions=None, use GPT-4o-mini to extract
+            auto_extract_tickers: If True and tickers=None, use GPT-4o-mini to extract asset names
             
         Note: Automatically loads data from BOTH signal and target folders
             
@@ -90,6 +109,29 @@ class ChatbotEngine:
             Tuple of (response_text, metadata_dict)
         """
         try:
+            # Auto-extract tickers if enabled and not provided
+            extracted_tickers = None
+            if tickers is None and auto_extract_tickers:
+                logger.info("Auto-extracting tickers from user query...")
+                extracted_tickers = self.ticker_extractor.extract_tickers(user_message)
+                
+                if extracted_tickers:
+                    # Empty list means ALL tickers (no specific ones mentioned)
+                    if len(extracted_tickers) == 0:
+                        logger.info(f"No specific tickers mentioned - limiting to top {MAX_TICKERS_PER_QUERY} for speed")
+                        all_tickers = self.data_processor.get_available_tickers()
+                        # Take first N tickers for fast response
+                        tickers = all_tickers[:MAX_TICKERS_PER_QUERY]
+                        logger.info(f"Using {len(tickers)} tickers for fast response: {tickers[:5]}...")
+                    else:
+                        logger.info(f"Auto-extracted specific tickers: {extracted_tickers}")
+                        tickers = extracted_tickers
+                else:
+                    # None returned = error or no extraction, use limited set
+                    logger.info(f"Using top {MAX_TICKERS_PER_QUERY} tickers (fallback)")
+                    all_tickers = self.data_processor.get_available_tickers()
+                    tickers = all_tickers[:MAX_TICKERS_PER_QUERY]
+            
             # Auto-extract functions from user message if not provided
             extracted_functions = None
             if functions is None and auto_extract_functions and tickers:
@@ -108,22 +150,39 @@ class ChatbotEngine:
             data_context = ""
             metadata = {
                 "tickers": tickers or [],
+                "tickers_auto_extracted": extracted_tickers or [],
                 "from_date": from_date,
                 "to_date": to_date,
                 "functions": functions or [],
-                "functions_auto_extracted": extracted_functions or []
+                "functions_auto_extracted": extracted_functions or [],
+                "signal_types": signal_types or []
             }
             
             # Check if these exact parameters were used before in this conversation
             data_already_in_context = self._check_if_data_in_history(
-                tickers, from_date, to_date, functions
+                tickers, from_date, to_date, functions, signal_types
             )
             
             if tickers and not data_already_in_context:
-                # Load and format stock data (from both signal and target)
+                # Filter signal_types for stock data (exclude breadth)
+                stock_signal_types = [st for st in (signal_types or []) if st != 'breadth'] if signal_types else None
+                
+                # Load stock data from selected folders based on signal_types
+                # signal_types controls which folders to load from:
+                # - ['entry_exit'] → signal/ folder only
+                # - ['potential_achievement'] → target/ folder only  
+                # - Both or None → both folders
                 stock_data = self.data_processor.load_stock_data(
-                    tickers, from_date, to_date, dedup_columns, functions
+                    tickers, from_date, to_date, dedup_columns, functions, stock_signal_types
                 )
+                
+                # Load breadth data if requested
+                if signal_types and 'breadth' in signal_types:
+                    breadth_data = self.data_processor.load_breadth_data(from_date, to_date)
+                    if breadth_data is not None:
+                        # Add breadth data as a special "MARKET_BREADTH" ticker
+                        stock_data['MARKET_BREADTH'] = breadth_data
+                        logger.info("Added breadth report to data context")
                 
                 # Format data for prompt
                 data_context = self.data_processor.format_data_for_prompt(stock_data)
@@ -155,26 +214,63 @@ class ChatbotEngine:
             # Get conversation history for API
             messages = self.history_manager.get_messages_for_api()
             
-            # Call GPT-4o
-            logger.info(f"Calling GPT-4o with {len(messages)} messages in context")
-            response = self.client.chat.completions.create(
-                model=OPENAI_MODEL,
-                messages=messages,
-                max_tokens=MAX_TOKENS,
-                temperature=TEMPERATURE
-            )
+            # PRE-FLIGHT TOKEN CHECK
+            total_chars = sum(len(str(msg.get('content', ''))) for msg in messages)
+            estimated_tokens = total_chars // ESTIMATED_CHARS_PER_TOKEN
             
-            # Extract response
-            assistant_message = response.choices[0].message.content
+            logger.info(f"Estimated input tokens: {estimated_tokens}")
             
-            # Add response metadata
-            metadata["model"] = OPENAI_MODEL
-            metadata["tokens_used"] = {
-                "prompt": response.usage.prompt_tokens,
-                "completion": response.usage.completion_tokens,
-                "total": response.usage.total_tokens
-            }
-            metadata["finish_reason"] = response.choices[0].finish_reason
+            # Check if we should use batch processing
+            use_batching = ENABLE_BATCH_PROCESSING and estimated_tokens > MAX_INPUT_TOKENS_PER_CALL
+            
+            if use_batching:
+                logger.info(f"Input too large ({estimated_tokens} tokens) - using SEQUENTIAL BATCH processing with rate limiting")
+                assistant_message = self._batch_query(messages, user_message, stock_data if tickers else {})
+                
+                # Create mock response object for metadata
+                metadata["model"] = OPENAI_MODEL
+                metadata["tokens_used"] = {
+                    "prompt": estimated_tokens,
+                    "completion": len(assistant_message) // ESTIMATED_CHARS_PER_TOKEN,
+                    "total": estimated_tokens + (len(assistant_message) // ESTIMATED_CHARS_PER_TOKEN)
+                }
+                metadata["finish_reason"] = "batch_aggregation"
+                metadata["batch_processing_used"] = True
+            else:
+                # Single API call - trim if needed
+                trimmed_count = 0
+                while estimated_tokens > MAX_INPUT_TOKENS_PER_CALL and len(messages) > MIN_HISTORY_MESSAGES:
+                    if len(messages) > 2:
+                        removed_msg = messages.pop(1)
+                        trimmed_count += 1
+                        logger.warning(f"Trimmed old message (role: {removed_msg.get('role', 'unknown')})")
+                        
+                        total_chars = sum(len(str(msg.get('content', ''))) for msg in messages)
+                        estimated_tokens = total_chars // ESTIMATED_CHARS_PER_TOKEN
+                    else:
+                        break
+                
+                if trimmed_count > 0:
+                    logger.warning(f"Trimmed {trimmed_count} old messages to stay under token limit")
+                
+                # Call GPT
+                logger.info(f"Calling {OPENAI_MODEL} with {len(messages)} messages, ~{estimated_tokens} tokens")
+                response = self.client.chat.completions.create(
+                    model=OPENAI_MODEL,
+                    messages=messages,
+                    max_tokens=MAX_TOKENS,
+                    temperature=TEMPERATURE
+                )
+                assistant_message = response.choices[0].message.content
+                
+                # Add response metadata
+                metadata["model"] = OPENAI_MODEL
+                metadata["tokens_used"] = {
+                    "prompt": response.usage.prompt_tokens,
+                    "completion": response.usage.completion_tokens,
+                    "total": response.usage.total_tokens
+                }
+                metadata["finish_reason"] = response.choices[0].finish_reason
             
             # Add assistant response to history
             self.history_manager.add_message("assistant", assistant_message, metadata)
@@ -270,6 +366,116 @@ class ChatbotEngine:
         self.history_manager.add_message("system", SYSTEM_PROMPT)
         logger.info("Conversation history cleared")
     
+    def _batch_query(
+        self,
+        base_messages: List[Dict],
+        user_query: str,
+        stock_data: Dict
+    ) -> str:
+        """
+        Execute SEQUENTIAL batch API calls for large data sets with rate limiting.
+        Splits data by ticker groups and makes sequential calls with delays to avoid TPM limits.
+        
+        Args:
+            base_messages: Base conversation messages
+            user_query: User's query text
+            stock_data: Dictionary of stock DataFrames by ticker
+            
+        Returns:
+            Aggregated response text
+        """
+        import pandas as pd
+        
+        logger.info(f"Starting batch query with {len(stock_data)} tickers")
+        
+        # Split tickers into groups
+        ticker_list = list(stock_data.keys())
+        tickers_per_batch = max(1, len(ticker_list) // MAX_SEQUENTIAL_BATCHES)
+        
+        ticker_groups = []
+        for i in range(0, len(ticker_list), tickers_per_batch):
+            ticker_groups.append(ticker_list[i:i + tickers_per_batch])
+        
+        logger.info(f"Split into {len(ticker_groups)} batches: {[len(g) for g in ticker_groups]} tickers each")
+        
+        # Execute SEQUENTIAL batch calls with delays
+        results = []
+        
+        for group_idx, group_tickers in enumerate(ticker_groups):
+            try:
+                # Create data context for this group
+                group_data = {t: stock_data[t] for t in group_tickers if t in stock_data}
+                group_context = self.data_processor.format_data_for_prompt(
+                    group_data, 
+                    max_tokens=MAX_INPUT_TOKENS_PER_CALL
+                )
+                
+                # Create message for this group
+                group_message = f"""User Query: {user_query}
+
+{group_context}
+
+Note: This is batch {group_idx + 1} of {len(ticker_groups)} analyzing assets: {', '.join(group_tickers)}"""
+                
+                # Create messages for this call
+                group_messages = base_messages[:-1]  # All except last message
+                group_messages.append({"role": "user", "content": group_message})
+                
+                # Add delay before API call (except for first call)
+                if group_idx > 0:
+                    logger.info(f"Waiting {BATCH_DELAY_SECONDS}s before next batch to avoid rate limits...")
+                    time.sleep(BATCH_DELAY_SECONDS)
+                
+                # Call API
+                logger.info(f"Calling API for batch {group_idx + 1}/{len(ticker_groups)}")
+                response = self.client.chat.completions.create(
+                    model=OPENAI_MODEL,
+                    messages=group_messages,
+                    max_tokens=MAX_TOKENS,
+                    temperature=TEMPERATURE
+                )
+                
+                result_text = response.choices[0].message.content
+                tokens = response.usage.total_tokens
+                
+                logger.info(f"Batch {group_idx + 1} completed: {tokens} tokens")
+                results.append({
+                    'group_idx': group_idx,
+                    'tickers': group_tickers,
+                    'response': result_text,
+                    'tokens': tokens
+                })
+                
+            except Exception as e:
+                logger.error(f"Error in batch {group_idx + 1}: {e}")
+                results.append({
+                    'group_idx': group_idx,
+                    'tickers': group_tickers,
+                    'response': f"Error analyzing {', '.join(group_tickers)}: {str(e)}",
+                    'tokens': 0
+                })
+        
+        # Aggregate responses
+        total_tokens = sum(r['tokens'] for r in results)
+        logger.info(f"Batch processing complete: {len(results)} batches, {total_tokens} total tokens")
+        
+        # Combine responses
+        combined_response = f"""# Comprehensive Analysis ({len(ticker_list)} assets analyzed in {len(results)} batches)
+
+"""
+        
+        for result in results:
+            if result['response']:
+                combined_response += f"\n## Batch {result['group_idx'] + 1}: {', '.join(result['tickers'][:5])}"
+                if len(result['tickers']) > 5:
+                    combined_response += f" ... and {len(result['tickers']) - 5} more"
+                combined_response += f"\n\n{result['response']}\n\n---\n"
+        
+        # Add overall note
+        combined_response += f"\n\n**Analysis Complete**: Processed {len(ticker_list)} assets using sequential batch processing with rate limiting."
+        
+        return combined_response
+    
     def get_available_tickers(self) -> List[str]:
         """Get list of available ticker/asset symbols from both signal and target."""
         return self.data_processor.get_available_tickers()
@@ -291,7 +497,8 @@ class ChatbotEngine:
         tickers: Optional[List[str]],
         from_date: Optional[str],
         to_date: Optional[str],
-        functions: Optional[List[str]]
+        functions: Optional[List[str]],
+        signal_types: Optional[List[str]] = None
     ) -> bool:
         """
         Check if the same data parameters were used in a previous query.
@@ -301,6 +508,7 @@ class ChatbotEngine:
             from_date: Start date
             to_date: End date
             functions: List of function names
+            signal_types: List of signal types to filter
             
         Returns:
             True if exact same parameters found in history, False otherwise
@@ -335,10 +543,17 @@ class ChatbotEngine:
             if set(prev_functions) != set(current_functions):
                 continue
             
+            # Check if signal_types match
+            prev_signal_types = msg_metadata.get("signal_types", [])
+            current_signal_types = signal_types or []
+            if set(prev_signal_types) != set(current_signal_types):
+                continue
+            
             # If we got here, parameters match!
             logger.info(
                 f"Found matching data in history: tickers={tickers}, "
-                f"from={from_date}, to={to_date}, functions={functions}"
+                f"from={from_date}, to={to_date}, functions={functions}, "
+                f"signal_types={signal_types}"
             )
             return True
         
