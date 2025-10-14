@@ -11,7 +11,8 @@ import logging
 
 from .config import (
     CHATBOT_DATA_DIR,
-    CHATBOT_SIGNAL_DIR,
+    CHATBOT_ENTRY_DIR,
+    CHATBOT_EXIT_DIR,
     CHATBOT_TARGET_DIR,
     CHATBOT_BREADTH_DIR,
     STOCK_DATA_DIR,
@@ -35,31 +36,36 @@ class DataProcessor:
         Initialize DataProcessor.
         
         Args:
-            use_new_structure: If True, uses chatbot/data/{signal|target}/{asset}/{function}/YYYY-MM-DD.csv structure.
+            use_new_structure: If True, uses chatbot/data/{entry|exit|target|breadth} structure.
                              If False, uses legacy trade_store/stock_data structure.
         """
         self.use_new_structure = use_new_structure
         self.chatbot_data_dir = Path(CHATBOT_DATA_DIR)
-        self.signal_data_dir = Path(CHATBOT_SIGNAL_DIR)
+        self.entry_data_dir = Path(CHATBOT_ENTRY_DIR)
+        self.exit_data_dir = Path(CHATBOT_EXIT_DIR)
         self.target_data_dir = Path(CHATBOT_TARGET_DIR)
         self.breadth_data_dir = Path(CHATBOT_BREADTH_DIR)
         self.stock_data_dir = Path(STOCK_DATA_DIR)
         
     def get_available_tickers(self) -> List[str]:
         """
-        Get list of available ticker/asset symbols from both signal and target folders.
+        Get list of available ticker/asset symbols from entry, exit, and target folders.
         
         Returns:
             List of ticker symbols
         """
         try:
             if self.use_new_structure:
-                # Get folder names from both signal/ and target/
+                # Get folder names from entry/, exit/, and target/
                 tickers = set()
                 
-                if self.signal_data_dir.exists():
-                    signal_tickers = [d.name for d in self.signal_data_dir.iterdir() if d.is_dir()]
-                    tickers.update(signal_tickers)
+                if self.entry_data_dir.exists():
+                    entry_tickers = [d.name for d in self.entry_data_dir.iterdir() if d.is_dir()]
+                    tickers.update(entry_tickers)
+                
+                if self.exit_data_dir.exists():
+                    exit_tickers = [d.name for d in self.exit_data_dir.iterdir() if d.is_dir()]
+                    tickers.update(exit_tickers)
                 
                 if self.target_data_dir.exists():
                     target_tickers = [d.name for d in self.target_data_dir.iterdir() if d.is_dir()]
@@ -246,21 +252,28 @@ class DataProcessor:
                 # Determine which directories to load from based on signal_types
                 base_dirs_to_load = []
                 if signal_types:
-                    if 'entry_exit' in signal_types:
-                        base_dirs_to_load.append(self.signal_data_dir)
-                    if 'potential_achievement' in signal_types:
-                        base_dirs_to_load.append(self.target_data_dir)
-                    logger.info(f"Loading based on signal_types {signal_types}: {['signal' if d == self.signal_data_dir else 'target' for d in base_dirs_to_load]}")
+                    if 'entry' in signal_types:
+                        base_dirs_to_load.append(('entry', self.entry_data_dir))
+                    if 'exit' in signal_types:
+                        base_dirs_to_load.append(('exit', self.exit_data_dir))
+                    if 'target' in signal_types:
+                        base_dirs_to_load.append(('target', self.target_data_dir))
+                    # Note: breadth is handled separately, not asset-specific
+                    logger.info(f"Loading based on signal_types {signal_types}: {[name for name, _ in base_dirs_to_load]}")
                 else:
-                    # No signal_types specified - load from BOTH folders (fallback)
-                    base_dirs_to_load = [self.signal_data_dir, self.target_data_dir]
-                    logger.info(f"No signal_types specified - loading from BOTH signal and target folders")
+                    # No signal_types specified - load from entry, exit, and target (fallback)
+                    base_dirs_to_load = [
+                        ('entry', self.entry_data_dir),
+                        ('exit', self.exit_data_dir),
+                        ('target', self.target_data_dir)
+                    ]
+                    logger.info(f"No signal_types specified - loading from entry, exit, and target folders")
                 
                 # Load data for each function from selected folders
                 all_dfs = []
                 for function_name in functions_to_load:
                     # Load from selected directories
-                    for base_dir in base_dirs_to_load:
+                    for dir_name, base_dir in base_dirs_to_load:
                         if not base_dir.exists():
                             continue
                             
@@ -288,8 +301,8 @@ class DataProcessor:
                         if not dates_to_load:
                             continue
                         
-                        # Determine data type based on directory
-                        data_type = "signal" if base_dir == self.signal_data_dir else "target"
+                        # Determine data type based on directory name
+                        data_type = dir_name  # 'entry', 'exit', or 'target'
                         
                         # Load all CSV files for the date range and function
                         for date_str in dates_to_load:

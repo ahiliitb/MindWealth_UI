@@ -163,39 +163,50 @@ class ChatbotEngine:
                 tickers, from_date, to_date, functions, signal_types
             )
             
-            if tickers and not data_already_in_context:
-                # Filter signal_types for stock data (exclude breadth)
-                stock_signal_types = [st for st in (signal_types or []) if st != 'breadth'] if signal_types else None
-                
+            # Determine what data to load based on signal_types
+            stock_signal_types = [st for st in (signal_types or []) if st != 'breadth'] if signal_types else None
+            load_breadth = signal_types and 'breadth' in signal_types
+            
+            # Check if we need stock data (entry/exit/target)
+            need_stock_data = tickers and stock_signal_types and not data_already_in_context
+            
+            # Initialize stock_data
+            stock_data = {}
+            
+            if need_stock_data:
                 # Load stock data from selected folders based on signal_types
                 # signal_types controls which folders to load from:
-                # - ['entry_exit'] → signal/ folder only
-                # - ['potential_achievement'] → target/ folder only  
-                # - Both or None → both folders
+                # - ['entry'] → entry/ folder only (open positions)
+                # - ['exit'] → exit/ folder only (completed trades)
+                # - ['target'] → target/ folder only (target achievements)
+                # - Multiple or None → load from selected folders
                 stock_data = self.data_processor.load_stock_data(
                     tickers, from_date, to_date, dedup_columns, functions, stock_signal_types
                 )
+                logger.info(f"Loaded stock data for {len(stock_data)} assets")
                 
-                # Load breadth data if requested
-                if signal_types and 'breadth' in signal_types:
-                    breadth_data = self.data_processor.load_breadth_data(from_date, to_date)
-                    if breadth_data is not None:
-                        # Add breadth data as a special "MARKET_BREADTH" ticker
-                        stock_data['MARKET_BREADTH'] = breadth_data
-                        logger.info("Added breadth report to data context")
-                
-                # Format data for prompt
+            elif tickers and data_already_in_context:
+                # Data already in conversation history, skip reloading
+                metadata["data_reused_from_history"] = True
+                metadata["note"] = "Using data from previous query in conversation history"
+                logger.info(f"Reusing data from history for tickers: {tickers}, dates: {from_date} to {to_date}")
+            
+            # Load breadth data if requested (independent of tickers)
+            if load_breadth:
+                breadth_data = self.data_processor.load_breadth_data(from_date, to_date)
+                if breadth_data is not None:
+                    # Add breadth data as a special "MARKET_BREADTH" ticker
+                    stock_data['MARKET_BREADTH'] = breadth_data
+                    logger.info("Added breadth report to data context")
+            
+            # Format data for prompt if we have any data
+            if stock_data:
                 data_context = self.data_processor.format_data_for_prompt(stock_data)
                 
                 metadata["data_loaded"] = {
                     "assets": list(stock_data.keys()),
                     "total_records": sum(len(df) for df in stock_data.values())
                 }
-            elif tickers and data_already_in_context:
-                # Data already in conversation history, skip reloading
-                metadata["data_reused_from_history"] = True
-                metadata["note"] = "Using data from previous query in conversation history"
-                logger.info(f"Reusing data from history for tickers: {tickers}, dates: {from_date} to {to_date}")
             
             # Build complete user message
             complete_message = user_message

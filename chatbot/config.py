@@ -6,33 +6,42 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
-# First try to load from project root, then from chatbot directory
+# Try loading from Streamlit secrets first (for deployed apps)
+try:
+    import streamlit as st
+    USING_STREAMLIT_SECRETS = hasattr(st, 'secrets') and len(st.secrets) > 0
+except (ImportError, AttributeError, FileNotFoundError):
+    USING_STREAMLIT_SECRETS = False
+
+# Load environment variables from .env file (fallback if not using Streamlit secrets)
 project_root = Path(__file__).resolve().parent.parent
 chatbot_dir = Path(__file__).resolve().parent
 
-# Try loading from project root first
-env_file = project_root / ".env"
-if env_file.exists():
-    load_dotenv(env_file)
-else:
-    # Try loading from chatbot directory
-    env_file = chatbot_dir / ".env"
+if not USING_STREAMLIT_SECRETS:
+    # Try loading from project root first
+    env_file = project_root / ".env"
     if env_file.exists():
         load_dotenv(env_file)
+    else:
+        # Try loading from chatbot directory
+        env_file = chatbot_dir / ".env"
+        if env_file.exists():
+            load_dotenv(env_file)
 
 # Base directories
 BASE_DIR = project_root
 CHATBOT_DATA_DIR = BASE_DIR / "chatbot" / "data"
-CHATBOT_SIGNAL_DIR = CHATBOT_DATA_DIR / "signal"  # Signal data
-CHATBOT_TARGET_DIR = CHATBOT_DATA_DIR / "target"  # Target data
+CHATBOT_ENTRY_DIR = CHATBOT_DATA_DIR / "entry"  # Entry signals (no exit yet)
+CHATBOT_EXIT_DIR = CHATBOT_DATA_DIR / "exit"  # Exit signals (completed trades)
+CHATBOT_TARGET_DIR = CHATBOT_DATA_DIR / "target"  # Target achievements
 CHATBOT_BREADTH_DIR = CHATBOT_DATA_DIR / "breadth"  # Breadth reports (market-wide)
 TARGET_MASTER_CSV = CHATBOT_TARGET_DIR / "all_targets.csv"  # Master target file for dedup
-STOCK_DATA_DIR = BASE_DIR / "trade_store" / "stock_data"  # Legacy support
+STOCK_DATA_DIR = BASE_DIR / "trade_store" / "stock_data"
 HISTORY_DIR = BASE_DIR / "chatbot" / "history"
 
 # Create necessary directories if they don't exist
-CHATBOT_SIGNAL_DIR.mkdir(parents=True, exist_ok=True)
+CHATBOT_ENTRY_DIR.mkdir(parents=True, exist_ok=True)
+CHATBOT_EXIT_DIR.mkdir(parents=True, exist_ok=True)
 CHATBOT_TARGET_DIR.mkdir(parents=True, exist_ok=True)
 CHATBOT_BREADTH_DIR.mkdir(parents=True, exist_ok=True)
 HISTORY_DIR.mkdir(parents=True, exist_ok=True)
@@ -44,8 +53,27 @@ TARGET_DEDUP_COLUMNS = [
     "Entry Signal Date/Price[$]"
 ]
 
+# Helper function to get API key from Streamlit secrets
+def get_api_key() -> str:
+    """Get OpenAI API key from Streamlit secrets or environment variables."""
+    if USING_STREAMLIT_SECRETS:
+        try:
+            import streamlit as st
+            # Try openai section first, then root level
+            if "openai" in st.secrets and "OPENAI_API_KEY" in st.secrets["openai"]:
+                return st.secrets["openai"]["OPENAI_API_KEY"]
+            elif "OPENAI_API_KEY" in st.secrets:
+                return st.secrets["OPENAI_API_KEY"]
+        except Exception:
+            pass
+    # Fallback to environment variable
+    return os.getenv("OPENAI_API_KEY", "")
+
 # OpenAI Configuration
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+# API Key from Streamlit secrets (secure)
+OPENAI_API_KEY = get_api_key()
+
+# All other config from .env file
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4-turbo")  # GPT-4 Turbo has 128K context window
 MAX_TOKENS = int(os.getenv("MAX_TOKENS", "4096"))  # Output tokens (response length)
 TEMPERATURE = float(os.getenv("TEMPERATURE", "0.7"))

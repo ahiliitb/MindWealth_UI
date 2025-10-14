@@ -232,6 +232,10 @@ def convert_signal_file_to_data_structure(
     Convert a trading signal/target CSV file to the data folder structure.
     Automatically deduplicates data based on DEDUP_COLUMNS from .env.
     
+    For signals: Splits into entry/ and exit/ folders based on exit date:
+        - If exit date exists → exit/ folder (completed trades)
+        - If no exit yet → entry/ folder (open positions)
+    
     For targets: Checks against master CSV before storing.
     
     Args:
@@ -265,8 +269,16 @@ def convert_signal_file_to_data_structure(
         print(f"✓ Exit column: '{exit_column}'")
     
     # Parse each row
-    output_base = Path(output_base_dir) / signal_type  # Add signal/target subfolder
-    output_base.mkdir(parents=True, exist_ok=True)
+    # Note: For signals, we'll determine entry/exit folder per-row based on exit date
+    if signal_type == "target":
+        output_base = Path(output_base_dir) / "target"
+        output_base.mkdir(parents=True, exist_ok=True)
+    # For signals, we create both entry and exit folders
+    elif signal_type == "signal":
+        entry_base = Path(output_base_dir) / "entry"
+        exit_base = Path(output_base_dir) / "exit"
+        entry_base.mkdir(parents=True, exist_ok=True)
+        exit_base.mkdir(parents=True, exist_ok=True)
     
     # For targets, set up master CSV path
     master_csv_path = None
@@ -331,28 +343,30 @@ def convert_signal_file_to_data_structure(
             exit_data = row[exit_column]
             exit_date, exit_price = parse_exit_signal_column(exit_data)
         
-        # Determine which date to use for file naming and set SignalType
-        # Only TWO signal types: entry_exit and potential_achievement
+        # Determine which folder and date to use based on signal type and exit date
         if signal_type == "target":
-            # For targets, always use current date
+            # For targets, always use current date and target folder
             date_to_use = datetime.now().strftime("%Y-%m-%d")
-            row_signal_type = "potential_achievement"  # Targets
+            row_signal_type = "target"
+            output_base = Path(output_base_dir) / "target"
         elif exit_date:
-            # For signals with exit, use exit date
+            # For signals with exit, use exit date and EXIT folder
             date_to_use = exit_date
             signals_with_exit += 1
-            row_signal_type = "entry_exit"  # Completed trade
+            row_signal_type = "exit"  # Completed trade
+            output_base = exit_base
         else:
-            # For signals without exit, use signal date - ALSO potential_achievement
+            # For signals without exit, use signal date and ENTRY folder
             date_to_use = signal_date
             signals_no_exit += 1
-            row_signal_type = "potential_achievement"  # Open position/potential target
+            row_signal_type = "entry"  # Open position
+            output_base = entry_base
         
         # Add SignalType column to the row
         row['SignalType'] = row_signal_type
         
         # Create asset/function directory structure
-        # Structure: data/{asset}/{function}/YYYY-MM-DD.csv
+        # Structure: data/{entry|exit|target}/{asset}/{function}/YYYY-MM-DD.csv
         asset_dir = output_base / symbol
         function_dir = asset_dir / function_name
         function_dir.mkdir(parents=True, exist_ok=True)
@@ -408,14 +422,22 @@ def convert_signal_file_to_data_structure(
     print(f"✓ Unique assets: {len(created_symbols)}")
     print(f"✓ Unique functions: {len(created_functions)}")
     if signal_type != "target":
-        print(f"✓ Signals with exit date: {signals_with_exit} (stored by exit date)")
-        print(f"✓ Signals without exit: {signals_no_exit} (stored by signal date)")
+        print(f"\n📂 Folder Distribution:")
+        print(f"   ✓ EXIT signals (completed trades): {signals_with_exit}")
+        print(f"      → Stored in: chatbot/data/exit/{{asset}}/{{function}}/{{exit_date}}.csv")
+        print(f"   ✓ ENTRY signals (open positions): {signals_no_exit}")
+        print(f"      → Stored in: chatbot/data/entry/{{asset}}/{{function}}/{{signal_date}}.csv")
     print(f"\n✓ Functions: {', '.join(sorted(list(created_functions)))}")
     print(f"\n✓ Assets (sample): {', '.join(sorted(list(created_symbols)[:10]))}")
     if len(created_symbols) > 10:
         print(f"  ... and {len(created_symbols) - 10} more")
     
-    print(f"\n✓ Output structure: {output_base}/{{asset}}/{{function}}/YYYY-MM-DD.csv")
+    if signal_type == "target":
+        print(f"\n✓ Output structure: chatbot/data/target/{{asset}}/{{function}}/YYYY-MM-DD.csv")
+    else:
+        print(f"\n✓ Output structures:")
+        print(f"   - chatbot/data/entry/{{asset}}/{{function}}/YYYY-MM-DD.csv")
+        print(f"   - chatbot/data/exit/{{asset}}/{{function}}/YYYY-MM-DD.csv")
     print("="*80 + "\n")
     
     return processed, skipped, created_symbols
@@ -449,9 +471,12 @@ def convert_breadth_report(
     breadth_dir = Path(output_base_dir) / "breadth"
     breadth_dir.mkdir(parents=True, exist_ok=True)
     
-    # Use current date for filename
+    # Use current date for filename and add Date column
     current_date = datetime.now().strftime("%Y-%m-%d")
     output_file = breadth_dir / f"{current_date}.csv"
+    
+    # Add Date column to the dataframe
+    df['Date'] = current_date
     
     # Save breadth report with current date
     try:
@@ -485,9 +510,10 @@ def main():
     
     print("This script converts trading CSV files to the chatbot data structure.")
     print("Structure:")
-    print("  - chatbot/data/signal/{asset}/{function}/YYYY-MM-DD.csv")
-    print("  - chatbot/data/target/{asset}/{function}/YYYY-MM-DD.csv")
-    print("  - chatbot/data/breadth/YYYY-MM-DD.csv\n")
+    print("  - chatbot/data/entry/{asset}/{function}/YYYY-MM-DD.csv (open positions)")
+    print("  - chatbot/data/exit/{asset}/{function}/YYYY-MM-DD.csv (completed trades)")
+    print("  - chatbot/data/target/{asset}/{function}/YYYY-MM-DD.csv (target achievements)")
+    print("  - chatbot/data/breadth/YYYY-MM-DD.csv (market breadth)\n")
     
     # Convert outstanding_signal.csv (signals)
     print("-" * 80)
@@ -541,11 +567,13 @@ def main():
     print("\n" + "="*80)
     print("✓ Conversion Complete!")
     print("="*80)
-    print("\nData structure created:")
-    print("  chatbot/data/signal/{asset}/{function}/YYYY-MM-DD.csv")
-    print("  chatbot/data/target/{asset}/{function}/YYYY-MM-DD.csv")
-    print("  chatbot/data/breadth/YYYY-MM-DD.csv")
-    print("  chatbot/data/target/all_targets.csv (master file)")
+    print("\nData structure created (4 signal types):")
+    print("  1. ENTRY:   chatbot/data/entry/{asset}/{function}/YYYY-MM-DD.csv")
+    print("  2. EXIT:    chatbot/data/exit/{asset}/{function}/YYYY-MM-DD.csv")
+    print("  3. TARGET:  chatbot/data/target/{asset}/{function}/YYYY-MM-DD.csv")
+    print("  4. BREADTH: chatbot/data/breadth/YYYY-MM-DD.csv")
+    print("\nMaster files:")
+    print("  - chatbot/data/target/all_targets.csv (target deduplication)")
     print()
 
 

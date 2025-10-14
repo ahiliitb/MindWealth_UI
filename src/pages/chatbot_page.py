@@ -82,44 +82,49 @@ def render_chatbot_page():
             help="End date for data (default: today)"
         )
     
-    # Signal Type selection
+    # Signal Type selection (4 types)
     st.sidebar.subheader("Select Signal Types")
     
     col_sig1, col_sig2 = st.sidebar.columns(2)
     
     with col_sig1:
-        include_entry_exit = st.checkbox(
-            "Entry/Exit Trades",
+        include_entry = st.checkbox(
+            "🔵 Entry Signals",
             value=True,
-            help="Include entry_exit signals (trades with exit dates)"
+            help="Open positions (no exit yet)"
+        )
+        include_exit = st.checkbox(
+            "🟢 Exit Signals",
+            value=True,
+            help="Completed trades (with exit dates)"
         )
     
     with col_sig2:
-        include_potential = st.checkbox(
-            "Potential Achievements/Targets",
+        include_target = st.checkbox(
+            "🎯 Target Achievements",
             value=True,
-            help="Include potential_achievement signals (open positions & targets)"
+            help="Target price achievements (90%+ gains)"
         )
-    
-    # Breadth report checkbox
-    include_breadth = st.sidebar.checkbox(
-        "📊 Market Breadth Report",
-        value=False,
-        help="Include market-wide breadth analysis (bullish assets & signals %)"
-    )
+        include_breadth = st.checkbox(
+            "📊 Market Breadth",
+            value=False,
+            help="Market-wide sentiment analysis"
+        )
     
     # Build signal_types list
     selected_signal_types = []
-    if include_entry_exit:
-        selected_signal_types.append("entry_exit")
-    if include_potential:
-        selected_signal_types.append("potential_achievement")
+    if include_entry:
+        selected_signal_types.append("entry")
+    if include_exit:
+        selected_signal_types.append("exit")
+    if include_target:
+        selected_signal_types.append("target")
     if include_breadth:
         selected_signal_types.append("breadth")
     
-    # If nothing selected, include signal/target only (not breadth)
+    # If nothing selected, include entry/exit/target (not breadth by default)
     if not selected_signal_types:
-        selected_signal_types = ["entry_exit", "potential_achievement"]
+        selected_signal_types = ["entry", "exit", "target"]
     
     # Function selection (optional)
     st.sidebar.subheader("Function Filter")
@@ -222,8 +227,10 @@ def render_chatbot_page():
     user_input = st.chat_input("Ask a question about your trading signals...")
     
     if user_input:
-        # Validate configuration (only if not using auto-extraction)
-        if not use_auto_extract_tickers and not selected_tickers:
+        # Validate configuration (only if not using auto-extraction AND not breadth-only)
+        # If only breadth is selected, we don't need tickers
+        breadth_only = selected_signal_types == ['breadth']
+        if not use_auto_extract_tickers and not selected_tickers and not breadth_only:
             st.error("⚠️ Please select at least one ticker or enable auto-extraction!")
             st.stop()
         
