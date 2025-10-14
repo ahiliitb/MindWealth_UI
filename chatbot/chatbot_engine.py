@@ -61,9 +61,25 @@ class ChatbotEngine:
         
         # Initialize OpenAI client with minimal parameters for Streamlit Cloud compatibility
         try:
+            # Initialize with just the API key - no other parameters
             self.client = OpenAI(api_key=self.api_key)
+        except TypeError as e:
+            if 'proxies' in str(e):
+                # Workaround for Streamlit Cloud proxy issues
+                # Try importing from the right module
+                try:
+                    from openai import OpenAI as OpenAIClient
+                    self.client = OpenAIClient(api_key=self.api_key)
+                except Exception as e2:
+                    raise ValueError(
+                        f"Failed to initialize OpenAI client (proxy error): {e}\n"
+                        f"This is likely a version incompatibility. "
+                        f"Please update openai to version 1.30.1+ in requirements.txt"
+                    )
+            else:
+                raise ValueError(f"Failed to initialize OpenAI client: {e}")
         except Exception as e:
-            raise ValueError(f"Failed to initialize OpenAI client: {e}. Check your API key and openai library version.")
+            raise ValueError(f"Failed to initialize OpenAI client: {e}. Check your API key.")
         self.data_processor = DataProcessor(use_new_structure=use_new_data_structure)
         self.history_manager = HistoryManager(session_id=session_id)
         self.function_extractor = FunctionExtractor(api_key=self.api_key)
