@@ -168,17 +168,18 @@ def render_chatbot_page():
     
     if st.session_state.last_settings is not None:
         if current_settings != st.session_state.last_settings:
-            logger_msg = "Settings changed - clearing chat history"
-            st.sidebar.info("⚠️ Settings changed - chat history cleared")
+            logger_msg = "Settings changed - clearing backend history (chat visible)"
+            st.sidebar.warning("⚠️ Settings changed - Starting fresh context (previous chat still visible)")
+            # Clear backend history but keep chat visible for reference
             chatbot.clear_history()
-            st.session_state.chat_history = []
+            # Don't clear st.session_state.chat_history - keep it visible
             st.session_state.last_settings = current_settings
     else:
         st.session_state.last_settings = current_settings
     
-    # Clear history button
+    # Clear everything button
     st.sidebar.markdown("---")
-    if st.sidebar.button("🗑️ Clear Chat History"):
+    if st.sidebar.button("🗑️ Clear All Chat (Visible + History)"):
         chatbot.clear_history()
         st.session_state.chat_history = []
         st.session_state.last_settings = current_settings
@@ -191,7 +192,12 @@ def render_chatbot_page():
     chat_container = st.container()
     with chat_container:
         for message in st.session_state.chat_history:
-            if message['role'] == 'user':
+            if message['role'] == 'separator':
+                # Display separator for context reset
+                st.markdown("---")
+                st.info(message['content'])
+                st.markdown("---")
+            elif message['role'] == 'user':
                 with st.chat_message("user"):
                     st.markdown(message['content'])
             else:
@@ -232,16 +238,44 @@ def render_chatbot_page():
                             else:
                                 st.caption(f"💡 Prompt: {tokens_used.get('prompt', 0):,} tokens | Completion: {tokens_used.get('completion', 0):,} tokens")
     
-    # Chat input
+    # Chat input with follow-up question mode
+    st.markdown("### 💬 Ask a Question")
+    
+    # Follow-up mode toggle
+    is_followup = st.checkbox(
+        "🔗 Follow-up Question Mode",
+        value=False,
+        help="✅ Enabled: Ask follow-up questions using previous data context (no new data loaded)\n❌ Disabled: Start a new question with fresh data (clears history)"
+    )
+    
+    if is_followup:
+        st.info("💡 **Follow-up Mode Active**: Your question will use the previous data context. Conversation continues.")
+    else:
+        st.warning("🆕 **New Question Mode**: Fresh data will be loaded. Previous chat visible but context resets.")
+    
     user_input = st.chat_input("Ask a question about your trading signals...")
     
     if user_input:
-        # Validate configuration (only if not using auto-extraction AND not breadth-only)
-        # If only breadth is selected, we don't need tickers
-        breadth_only = selected_signal_types == ['breadth']
-        if not use_auto_extract_tickers and not selected_tickers and not breadth_only:
-            st.error("⚠️ Please select at least one ticker or enable auto-extraction!")
-            st.stop()
+        # Handle follow-up vs new question
+        if not is_followup:
+            # New question - clear backend history but keep chat visible
+            chatbot.clear_history()
+            # Don't clear st.session_state.chat_history - keep previous messages visible
+            
+            # Add visual separator to indicate new conversation context
+            if st.session_state.chat_history:  # Only if there's previous chat
+                st.session_state.chat_history.append({
+                    'role': 'separator',
+                    'content': '--- 🆕 New Question (Fresh Context) ---'
+                })
+        
+        # Validate configuration (only if not follow-up AND not using auto-extraction AND not breadth-only)
+        # Skip validation for follow-up questions as they reuse previous data
+        if not is_followup:
+            breadth_only = selected_signal_types == ['breadth']
+            if not use_auto_extract_tickers and not selected_tickers and not breadth_only:
+                st.error("⚠️ Please select at least one ticker or enable auto-extraction!")
+                st.stop()
         
         # Add user message to history
         st.session_state.chat_history.append({
@@ -255,17 +289,19 @@ def render_chatbot_page():
         
         # Get AI response
         with st.chat_message("assistant"):
-            with st.spinner("🤔 Analyzing your query..."):
+            spinner_text = "🤔 Analyzing follow-up question..." if is_followup else "🤔 Analyzing your query..."
+            with st.spinner(spinner_text):
                 try:
                     response, metadata = chatbot.query(
                         user_message=user_input,
-                        tickers=selected_tickers,  # None if auto-extracting
-                        from_date=from_date.strftime('%Y-%m-%d'),
-                        to_date=to_date.strftime('%Y-%m-%d'),
-                        functions=selected_functions,
-                        signal_types=selected_signal_types,  # From checkboxes (manual selection)
-                        auto_extract_functions=use_auto_extract,
-                        auto_extract_tickers=use_auto_extract_tickers
+                        tickers=selected_tickers if not is_followup else None,  # None if follow-up or auto-extracting
+                        from_date=from_date.strftime('%Y-%m-%d') if not is_followup else None,
+                        to_date=to_date.strftime('%Y-%m-%d') if not is_followup else None,
+                        functions=selected_functions if not is_followup else None,
+                        signal_types=selected_signal_types if not is_followup else None,  # From checkboxes (manual selection)
+                        auto_extract_functions=use_auto_extract if not is_followup else False,
+                        auto_extract_tickers=use_auto_extract_tickers if not is_followup else False,
+                        is_followup=is_followup
                     )
                     
                     # Display response

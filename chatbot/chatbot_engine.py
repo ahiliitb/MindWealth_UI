@@ -104,7 +104,8 @@ class ChatbotEngine:
         additional_context: Optional[str] = None,
         dedup_columns: Optional[List[str]] = None,
         auto_extract_functions: bool = True,
-        auto_extract_tickers: bool = False
+        auto_extract_tickers: bool = False,
+        is_followup: bool = False
     ) -> Tuple[str, Dict]:
         """
         Process a user query with optional data context.
@@ -120,6 +121,7 @@ class ChatbotEngine:
             dedup_columns: Columns to use for deduplication (None = use config default)
             auto_extract_functions: If True and functions=None, use GPT-4o-mini to extract
             auto_extract_tickers: If True and tickers=None, use GPT-4o-mini to extract asset names
+            is_followup: If True, skip data loading and use existing conversation context
             
         Note: Automatically loads data from BOTH signal and target folders
             
@@ -127,12 +129,55 @@ class ChatbotEngine:
             Tuple of (response_text, metadata_dict)
         """
         try:
+            # FOLLOW-UP QUESTION MODE: Skip data loading, use existing context
+            if is_followup:
+                logger.info("Follow-up question mode: Using existing conversation context")
+                
+                metadata = {
+                    "is_followup": True,
+                    "message": "Follow-up question using previous data context"
+                }
+                
+                # Add user message to history
+                self.history_manager.add_message("user", user_message, metadata)
+                
+                # Get conversation history for API
+                messages = self.history_manager.get_messages_for_api()
+                
+                # Estimate tokens
+                total_chars = sum(len(str(msg.get('content', ''))) for msg in messages)
+                estimated_tokens = total_chars // ESTIMATED_CHARS_PER_TOKEN
+                
+                logger.info(f"Follow-up query with ~{estimated_tokens} tokens")
+                
+                # Use simple batch processing for follow-up
+                assistant_message, batch_metadata = self._simple_batch_query(messages, estimated_tokens)
+                
+                # Update metadata
+                metadata["model"] = OPENAI_MODEL
+                metadata["tokens_used"] = batch_metadata["tokens_used"]
+                metadata["finish_reason"] = batch_metadata["finish_reason"]
+                metadata["batch_processing_used"] = True
+                metadata["batch_count"] = batch_metadata.get("batch_count", 1)
+                metadata["batch_mode"] = batch_metadata.get("batch_mode", "single")
+                
+                # Add assistant response to history
+                self.history_manager.add_message("assistant", assistant_message, metadata)
+                
+                logger.info(f"Follow-up response generated with {metadata['tokens_used']['total']} tokens")
+                
+                return assistant_message, metadata
+            
+            # REGULAR QUERY MODE: Load fresh data
+            logger.info("Regular query mode: Loading fresh data")
+            
             # Auto-extract tickers if enabled and not provided
             extracted_tickers = None
             if tickers is None and auto_extract_tickers:
                 logger.info("Auto-extracting tickers from user query...")
                 extracted_tickers = self.ticker_extractor.extract_tickers(user_message)
-                
+
+                # Empty list means no specific tickers mentioned - will use smart filtering
                 # Empty list means no specific tickers mentioned - will use smart filtering
                 if len(extracted_tickers) == 0:
                     logger.info("No specific tickers mentioned - will use smart filtering based on functions")
@@ -141,7 +186,6 @@ class ChatbotEngine:
                 else:
                     logger.info(f"Auto-extracted specific tickers: {extracted_tickers}")
                     tickers = extracted_tickers
-            
             # Auto-extract functions from user message if not provided
             extracted_functions = None
             if functions is None and auto_extract_functions:
@@ -256,10 +300,64 @@ class ChatbotEngine:
             if stock_data:
                 data_context = self.data_processor.format_data_for_prompt(stock_data)
                 
+                total_records = sum(len(df) for df in stock_data.values())
                 metadata["data_loaded"] = {
                     "assets": list(stock_data.keys()),
-                    "total_records": sum(len(df) for df in stock_data.values())
+                    "total_records": total_records
                 }
+                
+                # CHECK: If data loaded but empty (no records), return "No Signal Found"
+                if total_records == 0:
+                    no_signal_message = "**No Signal Found**\n\nNo trading signals were found for the specified criteria."
+                    
+                    if tickers:
+                        no_signal_message += f"\n\n**Searched for:**\n- Assets: {', '.join(tickers[:10])}"
+                        if len(tickers) > 10:
+                            no_signal_message += f" (and {len(tickers) - 10} more)"
+                    if functions:
+                        no_signal_message += f"\n- Functions: {', '.join(functions)}"
+                    if from_date and to_date:
+                        no_signal_message += f"\n- Date range: {from_date} to {to_date}"
+                    if signal_types:
+                        no_signal_message += f"\n- Signal types: {', '.join(signal_types)}"
+                    
+                    no_signal_message += "\n\n💡 *Try expanding your date range or adjusting search criteria.*"
+                    
+                    metadata["no_data_found"] = True
+                    self.history_manager.add_message("user", user_message, metadata)
+                    self.history_manager.add_message("assistant", no_signal_message, metadata)
+                    
+                    return no_signal_message, metadata
+            
+            # CHECK: If no data found and tickers were expected, return "No Signal Found"
+            if not stock_data and not data_already_in_context and (tickers is not None or auto_extract_tickers):
+                # No data was loaded and we were looking for ticker-specific data
+                no_signal_message = "**No Signal Found**\n\nNo trading signals were found matching your criteria."
+                
+                if tickers is not None and len(tickers) == 0:
+                    # Tickers list is empty - no matching tickers found
+                    if functions:
+                        no_signal_message += f"\n\n**Searched for:**\n- Functions: {', '.join(functions)}"
+                        no_signal_message += "\n\n*No assets found with the specified function(s).*"
+                    else:
+                        no_signal_message += "\n\n*No assets match your criteria.*"
+                elif tickers:
+                    # Tickers were specified but no data loaded
+                    no_signal_message += f"\n\n**Searched for:**\n- Assets: {', '.join(tickers[:10])}"
+                    if len(tickers) > 10:
+                        no_signal_message += f" (and {len(tickers) - 10} more)"
+                    if functions:
+                        no_signal_message += f"\n- Functions: {', '.join(functions)}"
+                    if from_date and to_date:
+                        no_signal_message += f"\n- Date range: {from_date} to {to_date}"
+                
+                no_signal_message += "\n\n💡 *Try adjusting your search criteria or date range.*"
+                
+                metadata["no_data_found"] = True
+                self.history_manager.add_message("user", user_message, metadata)
+                self.history_manager.add_message("assistant", no_signal_message, metadata)
+                
+                return no_signal_message, metadata
             
             # Build complete user message
             complete_message = user_message
@@ -703,11 +801,11 @@ Create a professional, well-structured response that reads as one cohesive analy
             for result in results:
                 if result['response']:
                     final_response += f"\n## Batch {result['group_idx'] + 1}: {', '.join(result['tickers'][:5])}"
+                if result['response']:
+                    final_response += f"\n## Batch {result['group_idx'] + 1}: {', '.join(result['tickers'][:5])}"
                     if len(result['tickers']) > 5:
                         final_response += f" ... and {len(result['tickers']) - 5} more"
                     final_response += f"\n\n{result['response']}\n\n---\n"
-            
-            final_response += f"\n\n**Note**: Processed {len(ticker_list)} assets in {len(results)} batches. Automatic synthesis failed, showing batch results."
         
         metadata = {
             "tokens_used": {
