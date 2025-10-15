@@ -93,7 +93,7 @@ def main():
         "Dashboard": None,
         "🤖 AI Chatbot": "chatbot",
         "Virtual Trading": "virtual_trading",
-        "Claude Output": "text_files",
+        "AI Output": "text_files",
     }
     
     # Add CSV files in the specified order
@@ -113,7 +113,7 @@ def main():
         render_chatbot_page()
     elif page == "Virtual Trading":
         create_virtual_trading_page()
-    elif page == "Claude Output":
+    elif page == "AI Output":
         create_text_file_page()
     else:
         # Create analysis page for CSV files

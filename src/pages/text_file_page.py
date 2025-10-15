@@ -13,7 +13,7 @@ def create_text_file_page():
     st.markdown("---")
     
     # Create two tabs for the text files
-    tab1, tab2 = st.tabs(["Claude Output", "Box Claude Output"])
+    tab1, tab2 = st.tabs(["Claude Output", "GPT Output"])
     
     # Claude Output tab
     with tab1:
@@ -29,7 +29,7 @@ def create_text_file_page():
     
     # Box Claude Output tab
     with tab2:
-        st.markdown("### 📦 Box Claude Output")
+        st.markdown("### 🤖 GPT Output")
         try:
             with open(BOX_CLAUDE_OUTPUT_TXT_PATH, 'r', encoding='utf-8') as file:
                 content = file.read()
