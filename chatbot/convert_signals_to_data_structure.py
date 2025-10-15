@@ -293,17 +293,16 @@ def convert_signal_file_to_data_structure(
     signals_with_exit = 0
     signals_no_exit = 0
     
-    # Get function column (first column)
-    function_column = df.columns[0]
-    
     # Handle different column structures for signal vs target
     if signal_type == "target":
-        # For target_signal.csv, Symbol is column 0
+        # For target_signal.csv, Symbol is column 0, Function is column 10
         symbol_column = df.columns[0]  # "Symbol"
+        function_column = df.columns[10]  # "Function"
         exit_column = None  # No exit column for targets
         use_current_date = True  # Use current date for targets
     else:
-        # For signal files, symbol is in column 1
+        # For signal files, function is first column, symbol is in column 1
+        function_column = df.columns[0]  # Function name
         symbol_column = df.columns[1]
         exit_column = df.columns[2] if len(df.columns) > 2 else None
         use_current_date = False
