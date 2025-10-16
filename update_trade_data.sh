@@ -5,7 +5,12 @@
 
 set -e  # Exit on any error
 
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
 echo "🔄 Starting trade data update process..."
+echo "📁 Working directory: $SCRIPT_DIR"
 
 # Define directories
 CACHE_DIR="../MindWealth/cache"
@@ -54,6 +59,12 @@ else
     echo "⚠️  virtual_trading_short.csv not found in $SOURCE_VIRTUAL_TRADING_DIR"
 fi
 
+
+# Convert signals to data structure
+echo "🔄 Converting signals to chatbot data structure..."
+echo "🐍 Activating virtual environment..."
+source venv/bin/activate
+python3 chatbot/convert_signals_to_data_structure.py
 
 # Git operations
 echo "🔄 Adding files to git..."
