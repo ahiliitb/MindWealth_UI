@@ -136,7 +136,7 @@ MAX_HISTORY_LENGTH = int(os.getenv("MAX_HISTORY_LENGTH", "10"))  # Max conversat
 FOLLOWUP_HISTORY_LENGTH = int(os.getenv("FOLLOWUP_HISTORY_LENGTH", "3"))  # Number of previous exchanges to include in follow-up context
 
 # Chat History UI Settings
-MAX_CHATS_DISPLAY = int(os.getenv("MAX_CHATS_DISPLAY", "5"))  # Max number of chats to show in sidebar (default: 10)
+MAX_CHATS_DISPLAY = int(os.getenv("MAX_CHATS_DISPLAY", "10"))  # Max number of chats to show in sidebar (default: 10)
 
 # Data deduplication settings
 # Placeholder column names for deduplication - will be updated based on actual data
