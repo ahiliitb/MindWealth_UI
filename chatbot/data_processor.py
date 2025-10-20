@@ -221,8 +221,7 @@ class DataProcessor:
             functions: List of function names to filter (None = all functions)
             signal_types: List of signal types - controls which folders to load from:
                          - ['entry_exit'] → load from signal/ folder only
-                         - ['potential_achievement'] → load from target/ folder only
-                         - ['entry_exit', 'potential_achievement'] → load from both
+                         - ['target_achieved'] → load from target/ folder only
                          - None or [] → load from both (fallback)
             
         Returns:
@@ -374,11 +373,11 @@ class DataProcessor:
                 
                 result[ticker] = combined_df
                 
-                # Count by SignalType (entry_exit vs potential_achievement)
+                # Count by SignalType (entry_exit vs target_achieved)
                 if 'SignalType' in combined_df.columns:
                     entry_exit_count = len(combined_df[combined_df['SignalType'] == 'entry_exit'])
-                    potential_count = len(combined_df[combined_df['SignalType'] == 'potential_achievement'])
-                    logger.info(f"Loaded {len(combined_df)} rows for {ticker} (entry_exit: {entry_exit_count}, potential: {potential_count})")
+                    target_count = len(combined_df[combined_df['SignalType'] == 'target_achieved'])
+                    logger.info(f"Loaded {len(combined_df)} rows for {ticker} (entry_exit: {entry_exit_count}, target_achieved: {target_count})")
                 else:
                     logger.info(f"Loaded {len(combined_df)} rows for {ticker}")
                 
@@ -476,8 +475,8 @@ class DataProcessor:
             functions: List of function names to filter (None = all functions)
             signal_types: List of signal types - controls which folders to load from:
                          - ['entry_exit'] → load from signal/ folder only
-                         - ['potential_achievement'] → load from target/ folder only
-                         - Both → load from both folders
+                         - ['target_achieved'] → load from target/ folder only
+                         - ['entry_exit', 'target_achieved'] → load from both
             
         Returns:
             Dictionary mapping ticker to DataFrame (includes DataType column: 'signal' or 'target')

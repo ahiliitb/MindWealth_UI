@@ -12,7 +12,98 @@ import pandas as pd
 project_root = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from chatbot import ChatbotEngine
+from chatbot import ChatbotEngine, SessionManager
+from chatbot.config import MAX_CHATS_DISPLAY
+
+
+def render_chat_history_sidebar():
+    """Render the chat history sidebar for managing sessions."""
+    st.sidebar.title("💬 Chat History")
+    
+    # New Chat button at the top
+    if st.sidebar.button("➕ New Chat", use_container_width=True, type="primary"):
+        # Create new session
+        new_session_id = SessionManager.create_new_session()
+        st.session_state.current_session_id = new_session_id
+        st.session_state.chatbot_engine = None  # Will be recreated with new session
+        st.session_state.chat_history = []
+        st.session_state.last_settings = None
+        st.rerun()
+    
+    st.sidebar.markdown("---")
+    
+    # Search box
+    search_query = st.sidebar.text_input("🔍 Search chats", placeholder="Type to search...")
+    
+    # Get sessions
+    if search_query:
+        sessions = SessionManager.search_sessions(search_query)
+    else:
+        sessions = SessionManager.list_all_sessions(sort_by='last_updated')
+    
+    # Limit displayed sessions to MAX_CHATS_DISPLAY (unless searching)
+    total_sessions = len(sessions)
+    if not search_query and total_sessions > MAX_CHATS_DISPLAY:
+        sessions = sessions[:MAX_CHATS_DISPLAY]
+        showing_limited = True
+    else:
+        showing_limited = False
+    
+    # Display sessions (compact, no chat number/time, use preview as title)
+    if not sessions:
+        st.sidebar.info("No chat history yet. Start a new conversation!")
+    else:
+        for session in sessions:
+            session_id = session['session_id']
+            # Use preview (first user message) as the display title, fallback to title
+            preview = session.get('preview', '').strip()
+            display_title = preview if preview else session.get('title', 'New Chat')
+            # Only show first 6 words for compactness
+            display_title = ' '.join(display_title.split()[:6])
+            if len(display_title) < len(preview):
+                display_title += '...'
+            is_current = st.session_state.get('current_session_id') == session_id
+            # Compact row: title + rename + delete
+            # Use two columns: title (wide) and icons (narrow, side-by-side)
+            cols = st.sidebar.columns([8, 2], gap="small")
+            with cols[0]:
+                if st.button(f"{'🟢 ' if is_current else ''}{display_title}", key=f"load_{session_id}", use_container_width=True, disabled=is_current):
+                    st.session_state.current_session_id = session_id
+                    st.session_state.chatbot_engine = None
+                    st.session_state.chat_history = []
+                    st.session_state.last_settings = None
+                    st.rerun()
+            with cols[1]:
+                icon_cols = st.columns([1, 1], gap="small")
+                with icon_cols[0]:
+                    if st.button("✏️", key=f"rename_{session_id}", help="Rename"):
+                        st.session_state[f'renaming_{session_id}'] = True
+                        st.rerun()
+                with icon_cols[1]:
+                    if st.button("🗑️", key=f"delete_{session_id}", help="Delete"):
+                        if not is_current or len(sessions) > 1:
+                            SessionManager.delete_session(session_id)
+                            if is_current:
+                                remaining = [s for s in sessions if s['session_id'] != session_id]
+                                if remaining:
+                                    st.session_state.current_session_id = remaining[0]['session_id']
+                                    st.session_state.chatbot_engine = None
+                                    st.session_state.chat_history = []
+                                    st.session_state.last_settings = None
+                            st.rerun()
+            # Inline rename input (compact)
+            if st.session_state.get(f'renaming_{session_id}', False):
+                new_title = st.text_input("Rename chat:", value=display_title, key=f"rename_input_{session_id}")
+                col_save, col_cancel = st.columns([1,1], gap="small")
+                with col_save:
+                    if st.button("✅", key=f"save_rename_{session_id}"):
+                        SessionManager.update_session_title(session_id, new_title)
+                        st.session_state[f'renaming_{session_id}'] = False
+                        st.rerun()
+                with col_cancel:
+                    if st.button("❌", key=f"cancel_rename_{session_id}"):
+                        st.session_state[f'renaming_{session_id}'] = False
+                        st.rerun()
 
 
 def render_chatbot_page():
@@ -21,14 +112,42 @@ def render_chatbot_page():
     st.title("🤖 AI Trading Analysis Chatbot")
     st.markdown("Ask questions about your trading signals and get AI-powered insights!")
     
+    # Initialize current session if not exists
+    if 'current_session_id' not in st.session_state:
+        # Check if there are existing sessions
+        existing_sessions = SessionManager.list_all_sessions()
+        if existing_sessions:
+            # Use the most recent session
+            st.session_state.current_session_id = existing_sessions[0]['session_id']
+        else:
+            # Create a new session
+            st.session_state.current_session_id = SessionManager.create_new_session()
+    
+    # Render chat history sidebar
+    render_chat_history_sidebar()
+    
     # Sidebar configuration
     st.sidebar.header("📊 Query Configuration")
     
-    # Initialize chatbot engine
-    if 'chatbot_engine' not in st.session_state:
+    # Initialize chatbot engine with current session
+    if 'chatbot_engine' not in st.session_state or st.session_state.chatbot_engine is None:
         try:
-            st.session_state.chatbot_engine = ChatbotEngine()
+            st.session_state.chatbot_engine = ChatbotEngine(
+                session_id=st.session_state.current_session_id
+            )
+            # Load chat history from the session
+            history_manager = st.session_state.chatbot_engine.history_manager
             st.session_state.chat_history = []
+            
+            # Convert history to chat format
+            for msg in history_manager.get_full_history():
+                if msg['role'] in ['user', 'assistant']:
+                    st.session_state.chat_history.append({
+                        'role': msg['role'],
+                        'content': msg['content'],
+                        'metadata': msg.get('metadata', {})
+                    })
+            
             st.session_state.last_settings = None
         except Exception as e:
             st.error(f"❌ Failed to initialize chatbot: {e}")
@@ -179,8 +298,10 @@ def render_chatbot_page():
     
     # Clear everything button
     st.sidebar.markdown("---")
-    if st.sidebar.button("🗑️ Clear All Chat (Visible + History)"):
+    if st.sidebar.button("🗑️ Clear Current Chat"):
         chatbot.clear_history()
+        # Update title to "New Chat"
+        chatbot.history_manager.update_session_title("New Chat")
         st.session_state.chat_history = []
         st.session_state.last_settings = current_settings
         st.rerun()
@@ -192,21 +313,49 @@ def render_chatbot_page():
     chat_container = st.container()
     with chat_container:
         for message in st.session_state.chat_history:
-            if message['role'] == 'separator':
-                # Display separator for context reset
-                st.markdown("---")
-                st.info(message['content'])
-                st.markdown("---")
-            elif message['role'] == 'user':
+            if message['role'] == 'user':
                 with st.chat_message("user"):
                     st.markdown(message['content'])
             else:
                 with st.chat_message("assistant"):
                     st.markdown(message['content'])
                     
-                    # Show batch processing metadata for historical messages too
+                    # Show metadata
                     msg_metadata = message.get('metadata', {})
-                    if msg_metadata.get('batch_processing_used'):
+                    
+                    # Check if it's a smart query
+                    if msg_metadata.get('input_type') == 'smart_query':
+                        with st.expander("📊 Smart Query Details", expanded=False):
+                            # Show column selection per signal type
+                            st.subheader("🎯 Column Selection by Signal Type")
+                            
+                            columns_by_type = msg_metadata.get('columns_by_signal_type', {})
+                            reasoning_by_type = msg_metadata.get('reasoning_by_signal_type', {})
+                            
+                            for signal_type in msg_metadata.get('selected_signal_types', []):
+                                if signal_type in columns_by_type:
+                                    cols = columns_by_type[signal_type]
+                                    reasoning = reasoning_by_type.get(signal_type, '')
+                                    
+                                    st.markdown(f"**{signal_type.upper()}** ({len(cols)} columns)")
+                                    st.caption(f"💡 {reasoning}")
+                                    with st.expander(f"View {signal_type} columns"):
+                                        for col in cols:
+                                            st.text(f"  • {col}")
+                            
+                            # Show data statistics
+                            col1, col2, col3 = st.columns(3)
+                            
+                            with col1:
+                                st.metric("Rows Fetched", msg_metadata.get('rows_fetched', 0))
+                            with col2:
+                                st.metric("Signal Types", len(msg_metadata.get('signal_types_with_data', [])))
+                            with col3:
+                                total_tokens = msg_metadata.get('tokens_used', {}).get('total', 0)
+                                st.metric("Tokens Used", f"{total_tokens:,}")
+                    
+                    # Show batch processing metadata for old query() method
+                    elif msg_metadata.get('batch_processing_used'):
                         batch_mode = msg_metadata.get('batch_mode', 'unknown')
                         batch_count = msg_metadata.get('batch_count', 0)
                         tokens_used = msg_metadata.get('tokens_used', {})
@@ -238,44 +387,18 @@ def render_chatbot_page():
                             else:
                                 st.caption(f"💡 Prompt: {tokens_used.get('prompt', 0):,} tokens | Completion: {tokens_used.get('completion', 0):,} tokens")
     
-    # Chat input with follow-up question mode
+    # Chat input
     st.markdown("### 💬 Ask a Question")
-    
-    # Follow-up mode toggle
-    is_followup = st.checkbox(
-        "🔗 Follow-up Question Mode",
-        value=False,
-        help="✅ Enabled: Ask follow-up questions using previous data context (no new data loaded)\n❌ Disabled: Start a new question with fresh data (clears history)"
-    )
-    
-    if is_followup:
-        st.info("💡 **Follow-up Mode Active**: Your question will use the previous data context. Conversation continues.")
-    else:
-        st.warning("🆕 **New Question Mode**: Fresh data will be loaded. Previous chat visible but context resets.")
     
     user_input = st.chat_input("Ask a question about your trading signals...")
     
     if user_input:
-        # Handle follow-up vs new question
-        if not is_followup:
-            # New question - clear backend history but keep chat visible
-            chatbot.clear_history()
-            # Don't clear st.session_state.chat_history - keep previous messages visible
-            
-            # Add visual separator to indicate new conversation context
-            if st.session_state.chat_history:  # Only if there's previous chat
-                st.session_state.chat_history.append({
-                    'role': 'separator',
-                    'content': '--- 🆕 New Question (Fresh Context) ---'
-                })
-        
-        # Validate configuration (only if not follow-up AND not using auto-extraction AND not breadth-only)
-        # Skip validation for follow-up questions as they reuse previous data
-        if not is_followup:
-            breadth_only = selected_signal_types == ['breadth']
-            if not use_auto_extract_tickers and not selected_tickers and not breadth_only:
-                st.error("⚠️ Please select at least one ticker or enable auto-extraction!")
-                st.stop()
+        # Validate configuration for first message or when no tickers selected
+        # For breadth-only queries, skip ticker validation
+        breadth_only = selected_signal_types == ['breadth']
+        if not use_auto_extract_tickers and not selected_tickers and not breadth_only:
+            st.error("⚠️ Please select at least one ticker or enable auto-extraction!")
+            st.stop()
         
         # Add user message to history
         st.session_state.chat_history.append({
@@ -289,23 +412,145 @@ def render_chatbot_page():
         
         # Get AI response
         with st.chat_message("assistant"):
-            spinner_text = "🤔 Analyzing follow-up question..." if is_followup else "🤔 Analyzing your query..."
-            with st.spinner(spinner_text):
+            with st.spinner("🤔 Analyzing your query with conversation context..."):
                 try:
-                    response, metadata = chatbot.query(
+                    # Always use smart follow-up query to maintain conversation context (like ChatGPT)
+                    response, metadata = chatbot.smart_followup_query(
                         user_message=user_input,
-                        tickers=selected_tickers if not is_followup else None,  # None if follow-up or auto-extracting
-                        from_date=from_date.strftime('%Y-%m-%d') if not is_followup else None,
-                        to_date=to_date.strftime('%Y-%m-%d') if not is_followup else None,
-                        functions=selected_functions if not is_followup else None,
-                        signal_types=selected_signal_types if not is_followup else None,  # From checkboxes (manual selection)
-                        auto_extract_functions=use_auto_extract if not is_followup else False,
-                        auto_extract_tickers=use_auto_extract_tickers if not is_followup else False,
-                        is_followup=is_followup
+                        selected_signal_types=selected_signal_types,
+                        assets=selected_tickers if not use_auto_extract_tickers else None,
+                        from_date=from_date.strftime('%Y-%m-%d'),
+                        to_date=to_date.strftime('%Y-%m-%d'),
+                        functions=selected_functions if not use_auto_extract else None,
+                        auto_extract_tickers=use_auto_extract_tickers
                     )
                     
                     # Display response
                     st.markdown(response)
+                    
+                    # Show smart query metadata
+                    input_type = metadata.get('input_type', '')
+                    
+                    if input_type in ['smart_query', 'smart_followup']:
+                        with st.expander("📊 Smart Query Details", expanded=False):
+                            # Show follow-up specific info if applicable
+                            if input_type == 'smart_followup':
+                                followup_mode = metadata.get('followup_mode', 'unknown')
+                                needs_new_data = metadata.get('needs_new_data', False)
+                                analysis_reasoning = metadata.get('analysis_reasoning', '')
+                                history_used = metadata.get('history_exchanges_used', 0)
+                                filters_changed = metadata.get('filters_changed', False)
+                                filter_change_details = metadata.get('filter_change_details', [])
+                                data_passing_mode = metadata.get('data_passing_mode', 'unknown')
+                                
+                                # Build info message
+                                info_msg = f"""**Follow-up Mode**: {followup_mode.replace('_', ' ').title()}
+- **New Data Needed**: {'Yes' if needs_new_data else 'No'}
+- **Reasoning**: {analysis_reasoning}
+- **History Context**: Last {history_used} exchange(s) used"""
+                                
+                                if filters_changed:
+                                    info_msg += f"\n- **⚠️ Filters Changed**: {', '.join(filter_change_details)}"
+                                
+                                # Add token optimization info
+                                if data_passing_mode == "full_data":
+                                    info_msg += f"\n- **💰 Data Passed**: Full data (filters changed)"
+                                elif data_passing_mode == "new_columns_only":
+                                    info_msg += f"\n- **💰 Data Passed**: Only NEW columns (token optimized ⚡)"
+                                elif data_passing_mode == "no_new_data":
+                                    info_msg += f"\n- **💰 Data Passed**: Nothing (all in context ⚡⚡)"
+                                
+                                # Add batch processing info if applicable
+                                batch_mode = metadata.get('batch_mode', '')
+                                batch_count = metadata.get('batch_count', 0)
+                                if batch_mode == 'multi':
+                                    info_msg += f"\n- **⚡ Batch Processing**: {batch_count} batches (data too large for single call)"
+                                elif batch_mode == 'single' and batch_count == 1:
+                                    info_msg += f"\n- **⚡ Processing**: Single batch (data within token limit)"
+                                
+                                st.info(info_msg)
+                            
+                            # Show column selection per signal type
+                            st.subheader("🎯 Column Selection by Signal Type")
+                            
+                            columns_by_type = metadata.get('columns_by_signal_type', {})
+                            reasoning_by_type = metadata.get('reasoning_by_signal_type', {})
+                            new_columns_by_type = metadata.get('new_columns_by_type', {})
+                            existing_columns_by_type = metadata.get('existing_columns_by_type', {})
+                            
+                            for signal_type in metadata.get('selected_signal_types', []):
+                                if signal_type in columns_by_type:
+                                    cols = columns_by_type[signal_type]
+                                    reasoning = reasoning_by_type.get(signal_type, '')
+                                    new_cols = new_columns_by_type.get(signal_type, [])
+                                    existing_cols = existing_columns_by_type.get(signal_type, [])
+                                    
+                                    # Show counts
+                                    total_cols = len(cols)
+                                    new_count = len(new_cols)
+                                    existing_count = len(existing_cols)
+                                    
+                                    if new_count > 0 and existing_count > 0:
+                                        st.markdown(f"**{signal_type.upper()}** ({total_cols} columns: {new_count} new ✨ + {existing_count} existing 📦)")
+                                    elif new_count > 0:
+                                        st.markdown(f"**{signal_type.upper()}** ({total_cols} columns: all new ✨)")
+                                    elif existing_count > 0:
+                                        st.markdown(f"**{signal_type.upper()}** ({total_cols} columns: all existing 📦)")
+                                    else:
+                                        st.markdown(f"**{signal_type.upper()}** ({total_cols} columns)")
+                                    
+                                    st.caption(f"💡 {reasoning}")
+                                    
+                                    with st.expander(f"View {signal_type} columns"):
+                                        # Show new columns first
+                                        if new_cols:
+                                            st.markdown("**✨ NEW Columns (freshly fetched):**")
+                                            for col in new_cols:
+                                                st.markdown(f"  <span style='color: #00cc00;'>✨ {col}</span>", unsafe_allow_html=True)
+                                        
+                                        # Then show existing columns
+                                        if existing_cols:
+                                            if new_cols:  # Add separator if we showed new cols
+                                                st.markdown("---")
+                                            st.markdown("**📦 EXISTING Columns (already in context):**")
+                                            for col in existing_cols:
+                                                st.markdown(f"  <span style='color: #888888;'>📦 {col}</span>", unsafe_allow_html=True)
+                                        
+                                        # Fallback: if no split info, show all columns
+                                        if not new_cols and not existing_cols:
+                                            for col in cols:
+                                                st.text(f"  • {col}")
+                            
+                            # Show data statistics
+                            batch_mode = metadata.get('batch_mode', '')
+                            batch_count = metadata.get('batch_count', 0)
+                            
+                            if batch_mode == 'multi' and batch_count > 1:
+                                # Show batch-specific metrics for multi-batch processing
+                                col1, col2, col3, col4 = st.columns(4)
+                                
+                                with col1:
+                                    st.metric("Rows Fetched", metadata.get('rows_fetched', 0))
+                                with col2:
+                                    signal_types_count = len(metadata.get('signal_types_with_data', metadata.get('selected_signal_types', [])))
+                                    st.metric("Signal Types", signal_types_count)
+                                with col3:
+                                    st.metric("Batch Count", batch_count, help="Data split across multiple API calls")
+                                with col4:
+                                    total_tokens = metadata.get('tokens_used', {}).get('total', 0)
+                                    st.metric("Total Tokens", f"{total_tokens:,}")
+                            else:
+                                # Standard metrics for single batch
+                                col1, col2, col3 = st.columns(3)
+                                
+                                with col1:
+                                    st.metric("Rows Fetched", metadata.get('rows_fetched', 0))
+                                with col2:
+                                    signal_types_count = len(metadata.get('signal_types_with_data', metadata.get('selected_signal_types', [])))
+                                    st.metric("Signal Types", signal_types_count)
+                                with col3:
+                                    total_tokens = metadata.get('tokens_used', {}).get('total', 0)
+                                    st.metric("Tokens Used", f"{total_tokens:,}")
                     
                     # Add to history
                     st.session_state.chat_history.append({

@@ -18,20 +18,23 @@ logger = logging.getLogger(__name__)
 class HistoryManager:
     """Manages conversation history and context for chatbot sessions."""
     
-    def __init__(self, session_id: Optional[str] = None):
+    def __init__(self, session_id: Optional[str] = None, session_title: Optional[str] = None):
         """
         Initialize history manager.
         
         Args:
             session_id: Unique session identifier. If None, creates new session.
+            session_title: Optional title for the session.
         """
         self.session_id = session_id or str(uuid4())
         self.history_file = HISTORY_DIR / f"{self.session_id}.json"
         self.conversation_history: List[Dict[str, str]] = []
         self.metadata: Dict = {
             "session_id": self.session_id,
+            "title": session_title or "New Chat",
             "created_at": datetime.now().isoformat(),
-            "last_updated": datetime.now().isoformat()
+            "last_updated": datetime.now().isoformat(),
+            "message_count": 0
         }
         
         # Load existing history if available
@@ -58,6 +61,11 @@ class HistoryManager:
         
         self.conversation_history.append(message)
         self.metadata["last_updated"] = datetime.now().isoformat()
+        self.metadata["message_count"] = len(self.conversation_history)
+        
+        # Auto-generate title from first user message if title is still "New Chat"
+        if role == "user" and self.metadata.get("title") == "New Chat":
+            self.update_session_title_from_message(content)
         
         # Trim history if it exceeds max length
         if len(self.conversation_history) > MAX_HISTORY_LENGTH * 2:  # *2 for user+assistant pairs
@@ -68,17 +76,36 @@ class HistoryManager:
         
         logger.info(f"Added {role} message to session {self.session_id}")
     
-    def get_messages_for_api(self) -> List[Dict[str, str]]:
+    def get_messages_for_api(self, max_pairs: Optional[int] = None) -> List[Dict[str, str]]:
         """
         Get conversation history formatted for OpenAI API.
+        
+        Args:
+            max_pairs: Optional maximum number of user-assistant message pairs to include.
+                      If specified, returns the last N pairs plus the system message.
+                      If None, returns all messages.
         
         Returns:
             List of message dictionaries with 'role' and 'content' keys
         """
-        return [
+        messages = [
             {"role": msg["role"], "content": msg["content"]}
             for msg in self.conversation_history
         ]
+        
+        if max_pairs is None:
+            return messages
+        
+        # Separate system message from conversation
+        system_messages = [msg for msg in messages if msg["role"] == "system"]
+        conversation_messages = [msg for msg in messages if msg["role"] != "system"]
+        
+        # Get last N pairs (each pair is user + assistant = 2 messages)
+        num_messages_to_keep = max_pairs * 2
+        last_messages = conversation_messages[-num_messages_to_keep:] if len(conversation_messages) > num_messages_to_keep else conversation_messages
+        
+        # Combine: system message + last N pairs
+        return system_messages + last_messages
     
     def get_full_history(self) -> List[Dict[str, str]]:
         """
@@ -145,12 +172,45 @@ class HistoryManager:
         """
         return {
             "session_id": self.session_id,
+            "title": self.metadata.get("title", "New Chat"),
             "created_at": self.metadata.get("created_at"),
             "last_updated": self.metadata.get("last_updated"),
             "message_count": len(self.conversation_history),
             "user_messages": len([m for m in self.conversation_history if m["role"] == "user"]),
             "assistant_messages": len([m for m in self.conversation_history if m["role"] == "assistant"])
         }
+    
+    def update_session_title(self, new_title: str):
+        """
+        Update the session title.
+        
+        Args:
+            new_title: New title for the session
+        """
+        self.metadata["title"] = new_title
+        self.metadata["last_updated"] = datetime.now().isoformat()
+        self.save_history()
+        logger.info(f"Updated title for session {self.session_id}: {new_title}")
+    
+    def update_session_title_from_message(self, message: str, max_length: int = 50):
+        """
+        Auto-generate and update session title from a message.
+        
+        Args:
+            message: Message content to generate title from
+            max_length: Maximum length for the title
+        """
+        if not message:
+            return
+        
+        # Clean up the message
+        title = message.strip()
+        
+        # Truncate if too long
+        if len(title) > max_length:
+            title = title[:max_length].rsplit(' ', 1)[0] + "..."
+        
+        self.update_session_title(title)
     
     @staticmethod
     def list_all_sessions() -> List[str]:

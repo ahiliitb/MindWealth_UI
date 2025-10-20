@@ -346,7 +346,7 @@ def convert_signal_file_to_data_structure(
         if signal_type == "target":
             # For targets, always use current date and target folder
             date_to_use = datetime.now().strftime("%Y-%m-%d")
-            row_signal_type = "target"
+            row_signal_type = "target_achieved"
             output_base = Path(output_base_dir) / "target"
         elif exit_date:
             # For signals with exit, use exit date and EXIT folder

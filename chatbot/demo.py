@@ -130,7 +130,7 @@ def main():
         print("  3. ✅ Auto function extraction with GPT-4o-mini")
         print("\n💡 All features include:")
         print("  • Automatic loading from BOTH signal and target folders")
-        print("  • SignalType classification (entry_exit, potential_selloff_price, potential_achievement)")
+        print("  • SignalType classification (entry_exit, potential_selloff_price, target_achieved)")
         print("  • Smart conversation history management")
         print("="*80 + "\n")
         
