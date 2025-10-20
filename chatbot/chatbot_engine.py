@@ -1283,8 +1283,13 @@ NOTE: Please answer using the data already provided in our conversation history.
             tickers_per_batch = max(1, int(available_tokens_per_batch / tokens_per_ticker))
             num_batches = max(1, (num_tickers + tickers_per_batch - 1) // tickers_per_batch)  # Ceiling division
             
-            # NO LIMIT on number of batches - process ALL data
-            logger.info(f"Calculated strategy: {num_batches} batches, ~{tickers_per_batch} tickers per batch (NO LIMITS - processing ALL data)")
+            # Enforce MAX_SEQUENTIAL_BATCHES limit
+            if num_batches > MAX_SEQUENTIAL_BATCHES:
+                logger.warning(f"Calculated {num_batches} batches exceeds MAX_SEQUENTIAL_BATCHES ({MAX_SEQUENTIAL_BATCHES})")
+                logger.warning(f"Will process only first {MAX_SEQUENTIAL_BATCHES} batches with {MAX_SEQUENTIAL_BATCHES * tickers_per_batch} tickers")
+                num_batches = MAX_SEQUENTIAL_BATCHES
+            
+            logger.info(f"Batch strategy: {num_batches} batches, ~{tickers_per_batch} tickers per batch (limited by MAX_SEQUENTIAL_BATCHES={MAX_SEQUENTIAL_BATCHES})")
             
             return self._execute_multi_batch(base_messages, user_query, stock_data, tickers_per_batch, num_batches)
     
@@ -1388,7 +1393,15 @@ NOTE: Please answer using the data already provided in our conversation history.
         for i in range(0, len(ticker_list), tickers_per_batch):
             ticker_groups.append(ticker_list[i:i + tickers_per_batch])
         
-        logger.info(f"Split into {len(ticker_groups)} batches: {[len(g) for g in ticker_groups]} tickers each")
+        # Enforce MAX_SEQUENTIAL_BATCHES limit
+        if len(ticker_groups) > num_batches:
+            logger.warning(f"Limiting to {num_batches} batches (from {len(ticker_groups)} calculated batches)")
+            ticker_groups = ticker_groups[:num_batches]
+            remaining_tickers = len(ticker_list) - (num_batches * tickers_per_batch)
+            if remaining_tickers > 0:
+                logger.warning(f"Excluding {remaining_tickers} tickers due to MAX_SEQUENTIAL_BATCHES limit")
+        
+        logger.info(f"Processing {len(ticker_groups)} batches: {[len(g) for g in ticker_groups]} tickers each")
         
         # Execute SEQUENTIAL batch calls with delays
         results = []
