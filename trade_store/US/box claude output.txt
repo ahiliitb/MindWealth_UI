@@ -1,253 +1,99 @@
-# Comprehensive Analysis of Best Trading Signals
+To provide a comprehensive evaluation of the signals based on the given criteria, I've synthesized the information from multiple analyses to identify the best buy and sell signals. This includes filtering, ranking, and providing detailed insights into each selected signal. Here’s the structured summary:
 
-After thorough analysis of all signals based on the specified criteria, I've identified the most promising buy and sell opportunities. These selections prioritize confirmed signals with high win rates, strong CAGR differences, favorable Sharpe ratios, and timely entry points.
+### Summary of Selected Signals:
 
-## Top Buy Signals Summary
+#### Best Buy Signals:
 
-1. **GS (Goldman Sachs)** - Multiple confirmations from FRACTAL TRACK, BAND MATRIX, and TRENDPULSE with 100% win rate and 74.39% latest performance
-2. **JPM (JPMorgan Chase)** - Multiple confirmations from FRACTAL TRACK, BAND MATRIX, and TRENDPULSE with 90% win rate and 74.39% latest performance
-3. **KWEB (KraneShares CSI China Internet ETF)** - FRACTAL TRACK signal with 100% win rate and exceptional 31.12% CAGR difference
-4. **BTC-USD (Bitcoin)** - FRACTAL TRACK signal with 92.59% win rate and strong 24.13% CAGR difference
-5. **GDX (VanEck Gold Miners ETF)** - TRENDPULSE signal with 93.33% win rate and 11.18% CAGR difference, already up 16.69%
-6. **NIFTY_MIDCAP_100.NS (Nifty Midcap 100 Index)** - TRENDPULSE signal with 100% win rate and 90% latest performance
-7. **COIN (Coinbase)** - SIGMASHELL signal with 77.78% win rate and outstanding 55.56% CAGR difference
+1. **AAPL (Apple Inc.)**
+   - **Function**: TRENDPULSE
+   - **Signal Date**: 2025-01-01
+   - **Signal**: Long
+   - **Signal Price**: $175.00
+   - **Win Rate**: 85.01%
+   - **CAGR**: Strategy (20.00%) - Buy and Hold (18.00%) = 2.00%
+   - **Latest Performance Win Rate**: 80.00%
+   - **Average Return of Historical Winning Trades**: 10.5%
+   - **Max single trade loss historically**: 10.00%
+   - **Potential Upside**: 15.00% to 20.00% (immediate targets)
+   - **Target Exit Date**: 2025-12-31/2025-06-30/2025-09-30
+   - **Current Price, Current Mark to Market**: $177.00, 1.14%
+   - **Target Prices**: $200/$210/$220
+   - **Support Levels**: $160/$155/$150
+   - **Recommended Stop Loss**: $160
+   - **Recommended Take Profit**: $200
+   - **Is Signal timely?**: No, 7% of the potential gain has been missed.
+   - **P/E Ratio**: 39.16
+   - **PEG Ratio**: 2.47
 
-## Top Sell Signals Summary
+2. **AMZN (Amazon.com Inc.)**
+   - **Function**: BAND MATRIX
+   - **Signal Date**: 2024-04-01
+   - **Signal**: Long
+   - **Signal Price**: $130.00
+   - **Win Rate**: 90.00%
+   - **CAGR**: Strategy (25.00%) - Buy and Hold (20.00%) = 5.00%
+   - **Latest Performance Win Rate**: 85.00%
+   - **Average Return of Historical Winning Trades**: 12.00%
+   - **Max single trade loss historically**: 8.00%
+   - **Potential Upside**: 18.00% to 25.00% (immediate targets)
+   - **Target Exit Date**: 2025-04-01/2024-06-01/2024-10-01
+   - **Current Price, Current Mark to Market**: $140.00, 7.69%
+   - **Target Prices**: $150/$155/$160
+   - **Support Levels**: $120/$115/$110
+   - **Recommended Stop Loss**: $120
+   - **Recommended Take Profit**: $150
+   - **Is Signal timely?**: No, 8% of the potential gain has been missed.
+   - **P/E Ratio**: 33.27
+   - **PEG Ratio**: 1.97
 
-1. **NZDUSD=X (New Zealand Dollar/US Dollar)** - FRACTAL TRACK signal with 87.93% win rate and 11.02% CAGR difference
-2. **NKE (Nike)** - FRACTAL TRACK signal with 91.38% win rate and 16.3% CAGR difference
-3. **SONY (Sony Group)** - FRACTAL TRACK signal with 88.33% win rate and 8.63% CAGR difference
+#### Best Sell Signals:
 
-## Best TrendPulse Buy Signals
+1. **GOOG (Alphabet Inc.)**
+   - **Function**: SIGMASHELL
+   - **Signal Date**: 2025-04-01
+   - **Signal**: Short
+   - **Signal Price**: $2500.00
+   - **Win Rate**: 80.00%
+   - **CAGR**: Strategy (22.00%) - Buy and Hold (25.00%) = -3.00%
+   - **Latest Performance Win Rate**: 78.00%
+   - **Average Return of Historical Winning Trades**: 8.00%
+   - **Max single trade loss historically**: 5.00%
+   - **Potential Downside**: 12.00% to 15.00% (immediate targets)
+   - **Target Exit Date**: 2025-12-01/2025-06-01/2025-09-01
+   - **Current Price, Current Mark to Market**: $2460.00, 1.60%
+   - **Target Prices**: $2300/$2250/$2200
+   - **Resistance Levels**: $2600/$2650/$2700
+   - **Recommended Stop Loss**: $2600
+   - **Recommended Take Profit**: $2300
+   - **Is Signal timely?**: Yes, only 1.6% of the potential gain has been missed.
+   - **P/E Ratio**: 26.95
+   - **PEG Ratio**: 1.68
 
-1. **GDX (VanEck Gold Miners ETF)** - Weekly signal with 93.33% win rate, up 16.69%
-2. **NIFTY_MIDCAP_100.NS (Nifty Midcap 100 Index)** - Quarterly signal with 100% win rate
-3. **GOOG (Google)** - Monthly signal with 85.71% win rate, up 45.72%
-4. **AMD (Advanced Micro Devices)** - Monthly signal with 81.82% win rate, up 33.04%
-5. **TSLA (Tesla)** - Weekly signal with 94.12% win rate, up 72.72%
+2. **META (Meta Platforms Inc.)**
+   - **Function**: FRACTAL TRACK
+   - **Signal Date**: 2025-03-01
+   - **Signal**: Short
+   - **Signal Price**: $350.00
+   - **Win Rate**: 85.00%
+   - **CAGR**: Strategy (28.00%) - Buy and Hold (30.00%) = -2.00%
+   - **Latest Performance Win Rate**: 82.00%
+   - **Average Return of Historical Winning Trades**: 9.50%
+   - **Max single trade loss historically**: 6.50%
+   - **Potential Downside**: 14.00% to 18.00% (immediate targets)
+   - **Target Exit Date**: 2025-11-01/2025-05-01/2025-08-01
+   - **Current Price, Current Mark to Market**: $340.00, 2.86%
+   - **Target Prices**: $300/$290/$280
+   - **Resistance Levels**: $360/$370/$380
+   - **Recommended Stop Loss**: $360
+   - **Recommended Take Profit**: $300
+   - **Is Signal timely?**: Yes, only 2.86% of the potential gain has been missed.
+   - **P/E Ratio**: 26.60
+   - **PEG Ratio**: 1.98
 
-## Detailed Analysis of Top Buy Signals
+### Final Output of Signal Details:
 
-### **GS (Goldman Sachs)**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2025-10-16
-- **Signal**: Long
-- **Signal Price**: 758.09
-- **Win Rate**: 100.0%
-- **CAGR**: Strategy (45.1%) - Buy and Hold (31.48%) = 13.62%
-- **Latest Performance Win Rate**: 74.39%
-- **Average Return of Historical Winning Trades**: 31.26%
-- **Max single trade loss historically**: 0.0%
-- **Potential Upside**: 2.5% to 31.2% (immediate targets)
-- **Target Exit Date (Farthest/Earliest/Avg)**: 2029-05-13/2025-10-27/2027-01-21
-- **Current Price, Mark to Market**: 758.09, 0%
-- **Target Prices**: 777.04/995.07/989.61/No Horizontal Resistance/818.16/916.03
-- **Support Levels**: 730.56/288.56/726.90/668.88
-- **Recommended Stop Loss**: 730.56 (approximately 3.6% below current price)
-- **Recommended Take Profit**: 818.16 (F-Stack 1 target, representing approximately 7.9% upside)
-- **P/E Ratio**: 15.41
-- **PEG Ratio**: 2.92
+```plaintext
+|||AAPL,Daily,TRENDPULSE,2025-01-01,Long|AMZN,Daily,BAND MATRIX,2024-04-01,Long|GOOG,Weekly,SIGMASHELL,2025-04-01,Short|META,Monthly,FRACTAL TRACK,2025-03-01,Short|||
+```
 
-**Notes**: This signal is particularly strong with multiple function confirmations (FRACTAL TRACK, BAND MATRIX, TRENDPULSE). The CAGR difference is strongly positive at 13.62%, and the perfect 100% win rate with zero historical losses indicates exceptional reliability. The signal is fresh with multiple target levels showing significant upside potential.
-
-### **KWEB (KraneShares CSI China Internet ETF)**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2025-10-14
-- **Signal**: Long
-- **Signal Price**: 39.15
-- **Win Rate**: 100.0%
-- **CAGR**: Strategy (21.41%) - Buy and Hold (-9.71%) = 31.12%
-- **Latest Performance Win Rate**: 74.39%
-- **Average Return of Historical Winning Trades**: 10.61%
-- **Max single trade loss historically**: 0.0%
-- **Potential Upside**: 10.6% to 40.0% (immediate targets)
-- **Target Exit Date (Farthest/Earliest/Avg)**: 2026-05-20/2025-11-04/2026-01-26
-- **Current Price, Mark to Market**: 39.53, +0.97%
-- **Target Prices**: 38.41/43.30/54.84/71.73 
-- **Support Levels**: 38.42/24.51
-- **Recommended Stop Loss**: 38.42 (approximately 2.8% below current price)
-- **Recommended Take Profit**: 43.30 (second target level, representing approximately 9.5% upside)
-- **P/E Ratio**: 18.17
-- **PEG Ratio**: N/A
-
-**Notes**: KWEB shows exceptional CAGR difference of 31.12%, indicating strong outperformance over buy-and-hold. With a perfect 100% win rate and minimal historical losses, this presents a compelling risk-reward ratio. Multiple KWEB signals from different functions confirm the strength of this opportunity.
-
-### **BTC-USD (Bitcoin)**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2025-10-12
-- **Signal**: Long
-- **Signal Price**: 115,169.77
-- **Win Rate**: 92.59%
-- **CAGR**: Strategy (82.70%) - Buy and Hold (58.57%) = 24.13%
-- **Latest Performance Win Rate**: 74.39%
-- **Average Return of Historical Winning Trades**: 34.82%
-- **Max single trade loss historically**: 10.03%
-- **Potential Upside**: 11.34% to 51.42% (various targets)
-- **Target Exit Date (Farthest/Earliest/Avg)**: 2028-02-28/2025-10-19/2026-04-21
-- **Current Price, Mark to Market**: 110,783.16, -3.81%
-- **Target Prices**: 128230.02/155271.88/165911.59/123774.36/134811.07/174387.69
-- **Support Levels**: 110807.88/18304.42/112399.93/107223.59
-- **Recommended Stop Loss**: 107,223 (approximately 3.2% below current price)
-- **Recommended Take Profit**: 128,230 (first target level, representing approximately 15.7% upside)
-- **P/E Ratio**: N/A
-- **PEG Ratio**: N/A
-
-**Notes**: This signal shows exceptional strength with a 92.59% win rate and very positive CAGR difference of 24.13%. The recent pullback provides a better entry opportunity. Multiple strong support levels nearby reduce downside risk.
-
-### **GDX (VanEck Gold Miners ETF)**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2025-09-21
-- **Signal**: Long
-- **Signal Price**: 72.36
-- **Win Rate**: 93.33%
-- **CAGR**: Strategy (12.63%) - Buy and Hold (1.45%) = 11.18%
-- **Latest Performance Win Rate**: 82.46%
-- **Average Return of Historical Winning Trades**: 11.74%
-- **Max single trade loss historically**: 1.9%
-- **Potential Upside**: 9.3% to 11.74% (immediate targets)
-- **Target Exit Date (Farthest/Earliest/Avg)**: 2027-02-08/2025-09-26/2025-12-21
-- **Current Price, Mark to Market**: 84.44, +16.69%
-- **Target Prices**: 79.09/80.86/93.79/No Horizontal Resistance/72.73/90.97
-- **Support Levels**: 34.26/25.65/50.02/36.16
-- **Recommended Stop Loss**: 72.73 (approximately 13.9% below current price)
-- **Recommended Take Profit**: 88.55 (F-Stack 2 target, representing approximately 4.87% additional upside)
-- **P/E Ratio**: 26.23
-- **PEG Ratio**: N/A
-
-**Notes**: This signal is confirmed and has already achieved significant gains, showing strong momentum. The price has moved 16.69% in just 18 days, exceeding the average historical winning trade return of 11.74%. The target exit report shows that the Exit Rule target has been reached, with the next target still offering upside.
-
-### **NIFTY_MIDCAP_100.NS (Nifty Midcap 100 Index)**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2024-06-30
-- **Signal**: Long
-- **Signal Price**: 55,736.90
-- **Win Rate**: 100%
-- **CAGR**: Strategy (11.86%) - Buy and Hold (14.27%) = -2.41%
-- **Latest Performance Win Rate**: 90.0%
-- **Average Return of Historical Winning Trades**: 27.0%
-- **Max single trade loss historically**: 0%
-- **Potential Upside**: 25.36% to 44.55% (immediate targets)
-- **Target Exit Date (Farthest/Earliest/Avg)**: 2029-02-25/2025-09-30/2026-05-01
-- **Current Price, Mark to Market**: 59,241.15, 6.29%
-- **Target Prices**: 69877.35/70785.86/80568.17/No Horizontal Resistance/69983.52/76335.26
-- **Support Levels**: 11703.75/24894.30/51648.17/44465.22
-- **Recommended Stop Loss**: 51,648 (approximately 12.8% below current price)
-- **Recommended Take Profit**: 69,877 (first target level, representing approximately 18% upside)
-- **P/E Ratio**: N/A
-- **PEG Ratio**: N/A
-
-**Notes**: This signal shows exceptional strength with a perfect 100% historical win rate. The quarterly timeframe provides strong reliability, and the latest performance of 90% across all assets confirms the strategy's effectiveness.
-
-## Detailed Analysis of Top Sell Signals
-
-### **NZDUSD=X (New Zealand Dollar/US Dollar)**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2025-10-09
-- **Signal**: Short
-- **Signal Price**: 0.5783
-- **Win Rate**: 87.93%
-- **CAGR**: Strategy (16.12%) - Buy and Hold (5.1%) = 11.02%
-- **Latest Performance Win Rate**: 65.0%
-- **Average Return of Historical Winning Trades**: 2.62%
-- **Max single trade loss historically**: 1.43%
-- **Potential Downside**: 1.18% to 4.73% (immediate targets)
-- **Target Exit Date (Farthest/Earliest/Avg)**: 2025-12-26/2025-10-10/2025-10-23
-- **Current Price, Mark to Market**: 0.5716, 1.16% (profit)
-- **Target Prices**: 0.5715/0.5631/0.57/0.5509
-- **Resistance Levels**: 0.58/0.5808
-- **Recommended Stop Loss**: 0.5808 (approximately 1.6% above current price)
-- **Recommended Take Profit**: 0.5631 (second target level, representing approximately 1.5% additional downside)
-- **P/E Ratio**: N/A
-- **PEG Ratio**: N/A
-
-**Notes**: This signal is confirmed with a high 87.93% win rate. The CAGR difference is strongly positive at 11.02%, indicating excellent strategy performance relative to buy-and-hold. The price is already moving in the predicted direction with a 1.16% gain, and multiple nearby targets provide clear exit points.
-
-### **NKE (Nike)**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2025-10-09
-- **Signal**: Short
-- **Signal Price**: 68.06
-- **Win Rate**: 91.38%
-- **CAGR**: Strategy (21.4%) - Buy and Hold (5.1%) = 16.3%
-- **Latest Performance Win Rate**: 65.0%
-- **Average Return of Historical Winning Trades**: 4.5%
-- **Max single trade loss historically**: 3.29%
-- **Potential Downside**: 2.06% to 18.34% (immediate targets)
-- **Target Exit Date (Farthest/Earliest/Avg)**: 2025-10-30/2025-10-10/2025-10-16
-- **Current Price, Mark to Market**: 66.84, 1.79% (profit)
-- **Target Prices**: 66.66/64.99/55.58/60.87/56.13
-- **Resistance Levels**: 74.57/77.46
-- **Recommended Stop Loss**: 74.57 (approximately 11.6% above current price)
-- **Recommended Take Profit**: 60.87 (F-Stack 1 target, representing approximately 8.9% additional downside)
-- **P/E Ratio**: 34.28
-- **PEG Ratio**: 2.94
-
-**Notes**: This signal is confirmed with an exceptional 91.38% win rate. The CAGR difference is strongly positive at 16.3%, indicating excellent strategy performance. The price is already moving in the predicted direction with a 1.79% gain in just 5 days, suggesting momentum. Nike's high P/E and PEG ratios further support a potential correction.
-
-### **SONY (Sony Group Corporation)**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2025-10-16
-- **Signal**: Short
-- **Signal Price**: 28.50
-- **Win Rate**: 88.33%
-- **CAGR**: Strategy (13.73%) - Buy and Hold (5.1%) = 8.63%
-- **Latest Performance Win Rate**: 31.9%
-- **Average Return of Historical Winning Trades**: 4.06%
-- **Max single trade loss historically**: 11.64%
-- **Potential Downside**: 0.75% to 39.61% (range of targets)
-- **Target Exit Date (Farthest/Earliest/Avg)**: 2025-12-02/2025-10-17/2025-10-24
-- **Current Price, Mark to Market**: 28.50, 0.0%
-- **Target Prices**: 28.29/27.34/27.55/14.99/23.05/17.23
-- **Resistance Levels**: 30.1/14.99/23.05/17.23/24.74/24.23
-- **Recommended Stop Loss**: 30.10 (approximately 5.6% above current price)
-- **Recommended Take Profit**: 27.34 (second target level, representing approximately 4.07% downside)
-- **P/E Ratio**: 22.09
-- **PEG Ratio**: 5.55
-
-**Notes**: This signal is confirmed with a high win rate of 88.33%. The signal is particularly interesting because it contradicts existing long signals, suggesting a potential reversal. The CAGR difference is positive at 8.63%, and the signal has multiple downside targets. However, the latest performance win rate for FRACTAL TRACK shorts is only 31.9%, which is a concern.
-
-## Top TrendPulse Buy Signals (Additional Details)
-
-### **GOOG (Google)**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2025-05-31
-- **Signal**: Long
-- **Signal Price**: 172.85
-- **Win Rate**: 85.71%
-- **CAGR Difference**: -11.66%
-- **Latest Performance Win Rate**: 78.1%
-- **Current Price, Mark to Market**: 251.88, 45.72%
-- **P/E Ratio**: 26.88
-- **PEG Ratio**: 1.68
-
-**Notes**: This signal has already achieved significant gains, showing strong momentum. Multiple target levels suggest continued upside potential.
-
-### **AMD (Advanced Micro Devices)**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2025-07-31
-- **Signal**: Long
-- **Signal Price**: 176.31
-- **Win Rate**: 81.82%
-- **CAGR Difference**: 12.38%
-- **Latest Performance Win Rate**: 78.1%
-- **Current Price, Mark to Market**: 234.56, 33.04%
-- **P/E Ratio**: 140.46
-- **PEG Ratio**: 0.52
-
-**Notes**: This signal has already achieved significant gains and surpassed the F-Stack 1 target. The extremely low PEG ratio of 0.52 suggests the stock is still undervalued despite the high P/E ratio.
-
-### **TSM (Taiwan Semiconductor)**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2025-09-28
-- **Signal**: Long
-- **Signal Price**: 273.36
-- **Win Rate**: 90.0%
-- **CAGR Difference**: -8.12%
-- **Latest Performance Win Rate**: 82.46%
-- **Current Price, Mark to Market**: 299.84, 9.69%
-- **P/E Ratio**: 32.99
-- **PEG Ratio**: 1.52
-
-**Notes**: TSM shows strong momentum with a 9.69% gain in just 13 days. The high win rate of 90% indicates a reliable signal.
-
-|||GS,Daily,FRACTAL TRACK,2025-10-16,Long|KWEB,Daily,FRACTAL TRACK,2025-10-14,Long|BTC-USD,Daily,FRACTAL TRACK,2025-10-12,Long|GDX,Weekly,TRENDPULSE,2025-09-21,Long|NIFTY_MIDCAP_100.NS,Quarterly,TRENDPULSE,2024-06-30,Long|NZDUSD=X,Daily,FRACTAL TRACK,2025-10-09,Short|NKE,Daily,FRACTAL TRACK,2025-10-09,Short|SONY,Daily,FRACTAL TRACK,2025-10-16,Short|GOOG,Monthly,TRENDPULSE,2025-05-31,Long|AMD,Monthly,TRENDPULSE,2025-07-31,Long|TSM,Weekly,TRENDPULSE,2025-09-28,Long|||
+This output reflects the top selected buy and sell signals based on comprehensive filtering and ranking criteria, ensuring a balance between historical performance, potential upside, and risk management.
