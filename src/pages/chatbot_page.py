@@ -16,6 +16,117 @@ from chatbot import ChatbotEngine, SessionManager
 from chatbot.config import MAX_CHATS_DISPLAY
 
 
+def apply_table_styling():
+    """Apply custom CSS styling for larger table fonts."""
+    st.markdown("""
+    <style>
+    /* Enhanced CSS for larger table fonts with comprehensive targeting */
+    
+    /* Primary dataframe container targeting */
+    .stDataFrame {
+        font-size: 16px !important;
+    }
+    
+    [data-testid="stDataFrame"] {
+        font-size: 16px !important;
+    }
+    
+    /* Target AG Grid components (Streamlit's dataframe implementation) */
+    .ag-root-wrapper {
+        font-size: 16px !important;
+    }
+    
+    .ag-header {
+        font-size: 17px !important;
+        font-weight: 600 !important;
+    }
+    
+    .ag-header-cell-text {
+        font-size: 17px !important;
+        font-weight: 600 !important;
+    }
+    
+    .ag-cell {
+        font-size: 16px !important;
+        padding: 10px 12px !important;
+        line-height: 1.4 !important;
+    }
+    
+    .ag-cell-value {
+        font-size: 16px !important;
+    }
+    
+    /* Target table elements within dataframes */
+    .stDataFrame table,
+    [data-testid="stDataFrame"] table {
+        font-size: 16px !important;
+    }
+    
+    .stDataFrame th,
+    [data-testid="stDataFrame"] th {
+        font-size: 17px !important;
+        font-weight: 600 !important;
+        padding: 12px 14px !important;
+    }
+    
+    .stDataFrame td,
+    [data-testid="stDataFrame"] td {
+        font-size: 16px !important;
+        padding: 10px 14px !important;
+        line-height: 1.4 !important;
+    }
+    
+    /* Target all text elements within dataframe containers */
+    .stDataFrame *,
+    [data-testid="stDataFrame"] * {
+        font-size: 16px !important;
+    }
+    
+    /* Additional comprehensive targeting */
+    .element-container div[data-testid="stDataFrame"] * {
+        font-size: 16px !important;
+    }
+    
+    /* Streamlit specific dataframe elements */
+    .streamlit-expanderHeader {
+        font-size: 16px !important;
+    }
+    
+    /* Style for dataframe in expander */
+    .streamlit-expander .stDataFrame {
+        font-size: 16px !important;
+    }
+    
+    /* Override any inherited smaller font sizes */
+    .stApp .stDataFrame {
+        font-size: 16px !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+def display_styled_dataframe(df, height=400, key_suffix=""):
+    """Display dataframe with enhanced styling and larger fonts."""
+    # Apply additional styling through column configuration
+    column_config = {}
+    for col in df.columns:
+        column_config[col] = st.column_config.TextColumn(
+            col,
+            width="medium",
+            help=None
+        )
+    
+    # Display with enhanced parameters
+    st.dataframe(
+        df,
+        width='stretch',
+        hide_index=True,
+        height=min(height, (len(df) + 1) * 40),  # Slightly larger row height for better readability
+        column_config=column_config,
+        key=f"styled_df_{key_suffix}_{hash(str(df.shape))}"  # Unique key
+    )
+
+
 def render_chat_history_sidebar():
     """Render the chat history sidebar for managing sessions."""
     st.sidebar.title("💬 Chat History")
@@ -112,6 +223,9 @@ def render_chatbot_page():
     st.title("🤖 AI Trading Analysis Chatbot")
     st.markdown("Ask questions about your trading signals and get AI-powered insights!")
     
+    # Apply custom styling for larger table fonts
+    apply_table_styling()
+    
     # Initialize current session if not exists
     if 'current_session_id' not in st.session_state:
         # Check if there are existing sessions
@@ -123,12 +237,6 @@ def render_chatbot_page():
             # Create a new session
             st.session_state.current_session_id = SessionManager.create_new_session()
     
-    # Render chat history sidebar
-    render_chat_history_sidebar()
-    
-    # Sidebar configuration
-    st.sidebar.header("📊 Query Configuration")
-    
     # Initialize chatbot engine with current session
     if 'chatbot_engine' not in st.session_state or st.session_state.chatbot_engine is None:
         try:
@@ -139,12 +247,37 @@ def render_chatbot_page():
             history_manager = st.session_state.chatbot_engine.history_manager
             st.session_state.chat_history = []
             
-            # Convert history to chat format
+            # Convert history to chat format - clean user messages for display
             for msg in history_manager.get_full_history():
                 if msg['role'] in ['user', 'assistant']:
+                    content = msg['content']
+                    # For user messages, extract just the original query from the full content
+                    if msg['role'] == 'user':
+                        # Extract original query from different message formats
+                        if 'FOLLOW-UP QUESTION:' in content:
+                            # Extract the follow-up question part
+                            lines = content.split('\n')
+                            for line in lines:
+                                if line.startswith('FOLLOW-UP QUESTION:'):
+                                    content = line.replace('FOLLOW-UP QUESTION:', '').strip()
+                                    break
+                        elif 'User Query:' in content:
+                            # Extract from "User Query: ..." format
+                            lines = content.split('\n')
+                            for line in lines:
+                                if line.startswith('User Query:'):
+                                    content = line.replace('User Query:', '').strip()
+                                    break
+                        # If content still contains data blocks, try to extract just the question
+                        elif '===' in content:
+                            # Find content before first data block
+                            parts = content.split('===')
+                            if parts:
+                                content = parts[0].strip()
+                    
                     st.session_state.chat_history.append({
                         'role': msg['role'],
-                        'content': msg['content'],
+                        'content': content,
                         'metadata': msg.get('metadata', {})
                     })
             
@@ -164,32 +297,19 @@ def render_chatbot_page():
     # Get available tickers
     available_tickers = chatbot.get_available_tickers()
     
-    # Ticker selection with auto-extraction option
-    st.sidebar.subheader("Select Assets")
+    # --- SIDEBAR QUERY CONFIGURATION ---
+    st.sidebar.header("📊 Query Configuration")
     
-    use_auto_extract_tickers = st.sidebar.checkbox(
-        "🤖 Auto-extract tickers from query",
-        value=True,
-        help="Let AI automatically detect ticker symbols from your question"
-    )
-    
+    # Auto-extraction is always enabled (no manual selection)
+    use_auto_extract_tickers = True
     selected_tickers = None
-    if not use_auto_extract_tickers:
-        selected_tickers = st.sidebar.multiselect(
-            "Choose one or more tickers:",
-            options=sorted(available_tickers),
-            default=["AAPL"] if "AAPL" in available_tickers else (available_tickers[:1] if available_tickers else []),
-            help="Select the assets you want to analyze"
-        )
-    else:
-        pass
     
     # Date range selection
     st.sidebar.subheader("Select Date Range")
     
     col1, col2 = st.sidebar.columns(2)
     
-    # Set default dates (last 10 days)
+    # Set default dates (last 5 days)
     default_from_date = datetime.now() - timedelta(days=5)
     default_to_date = datetime.now()
     
@@ -197,7 +317,7 @@ def render_chatbot_page():
         from_date = st.date_input(
             "From Date",
             value=default_from_date,
-            help="Start date for data (default: 10 days ago)"
+            help="Start date for data (default: 5 days ago)"
         )
     
     with col2:
@@ -251,26 +371,9 @@ def render_chatbot_page():
     if not selected_signal_types:
         selected_signal_types = ["entry", "exit", "target"]
     
-    # Function selection (optional)
-    st.sidebar.subheader("Function Filter")
-    available_functions = chatbot.get_available_functions()
-    
-    use_auto_extract = st.sidebar.checkbox(
-        "🤖 Auto-extract functions from query",
-        value=True,
-        help="Let AI automatically detect function names from your question"
-    )
-    
+    # Auto-extract functions is always enabled (no manual selection)
+    use_auto_extract = True
     selected_functions = None
-    if not use_auto_extract:
-        selected_functions = st.sidebar.multiselect(
-            "Choose functions:",
-            options=sorted(available_functions),
-            default=[],
-            help="Leave empty to load all functions"
-        )
-        if not selected_functions:
-            selected_functions = None
     
     # Smart batch processing is always enabled
     import chatbot.config as config
@@ -285,6 +388,20 @@ def render_chatbot_page():
         'functions': tuple(sorted(selected_functions)) if selected_functions else None
     }
     
+    # Clear everything button in sidebar
+    st.sidebar.markdown("---")
+    if st.sidebar.button("🗑️ Clear Current Chat"):
+        chatbot.clear_history()
+        # Update title to "New Chat"
+        chatbot.history_manager.update_session_title("New Chat")
+        st.session_state.chat_history = []
+        st.session_state.last_settings = current_settings
+        st.rerun()
+    
+    # Now render chat history sidebar AFTER query configuration
+    st.sidebar.markdown("---")
+    render_chat_history_sidebar()
+    
     if st.session_state.last_settings is not None:
         if current_settings != st.session_state.last_settings:
             logger_msg = "Settings changed - clearing backend history (chat visible)"
@@ -295,20 +412,10 @@ def render_chatbot_page():
             st.session_state.last_settings = current_settings
     else:
         st.session_state.last_settings = current_settings
-    
-    # Clear everything button
-    st.sidebar.markdown("---")
-    if st.sidebar.button("🗑️ Clear Current Chat"):
-        chatbot.clear_history()
-        # Update title to "New Chat"
-        chatbot.history_manager.update_session_title("New Chat")
-        st.session_state.chat_history = []
-        st.session_state.last_settings = current_settings
-        st.rerun()
-    
-    # Chat history display
+
+    # --- CHAT HISTORY UI ---
     st.markdown("### 💬 Conversation")
-    
+
     # Display chat messages
     chat_container = st.container()
     with chat_container:
@@ -320,23 +427,68 @@ def render_chatbot_page():
                 with st.chat_message("assistant"):
                     st.markdown(message['content'])
                     
-                    # Show metadata
+                    # Display full signal tables if available
                     msg_metadata = message.get('metadata', {})
+                    full_signal_tables = msg_metadata.get('full_signal_tables', {})
                     
+                    if full_signal_tables:
+                        st.markdown("### 📊 Complete Signal Data Used in Analysis")
+                        
+                        # Display each signal type in separate sections
+                        for signal_type, signal_df in full_signal_tables.items():
+                            if not signal_df.empty:
+                                st.markdown(f"#### {signal_type.upper()} Signals ({len(signal_df)} records)")
+                                
+                                # Display the complete table with all columns and enhanced styling
+                                display_styled_dataframe(
+                                    signal_df, 
+                                    height=min(350, (len(signal_df) + 1) * 40),  # Adaptive height for history
+                                    key_suffix=f"history_{signal_type}"
+                                )
+                                
+                                # Show summary info (same as new responses)
+                                col1, col2, col3 = st.columns(3)
+                                with col1:
+                                    st.metric("Records", len(signal_df))
+                                with col2:
+                                    try:
+                                        # Try to extract symbols from various columns
+                                        symbols_found = set()
+                                        for col in signal_df.columns:
+                                            if any(keyword in col.lower() for keyword in ['symbol', 'asset']):
+                                                symbols = signal_df[col].astype(str).str.extract(r'([A-Z]{2,5})').dropna()
+                                                symbols_found.update(symbols.iloc[:, 0].tolist() if not symbols.empty else [])
+                                        unique_symbols = len(symbols_found) if symbols_found else "N/A"
+                                    except:
+                                        unique_symbols = "N/A"
+                                    st.metric("Unique Symbols", unique_symbols)
+                                with col3:
+                                    st.metric("Total Columns", len(signal_df.columns))
+                    
+                    else:
+                        # Fallback to legacy simple table
+                        signals_df = msg_metadata.get('signals_table')
+                        if signals_df is not None and not signals_df.empty:
+                            with st.expander(f"Signals Referenced ({len(signals_df)} signals)", expanded=False):
+                                # Use styled dataframe for legacy tables too
+                                display_styled_dataframe(
+                                    signals_df,
+                                    height=300,
+                                    key_suffix="legacy"
+                                )
+                    
+                    # Show metadata
                     # Check if it's a smart query
                     if msg_metadata.get('input_type') == 'smart_query':
                         with st.expander("📊 Smart Query Details", expanded=False):
                             # Show column selection per signal type
                             st.subheader("🎯 Column Selection by Signal Type")
-                            
                             columns_by_type = msg_metadata.get('columns_by_signal_type', {})
                             reasoning_by_type = msg_metadata.get('reasoning_by_signal_type', {})
-                            
                             for signal_type in msg_metadata.get('selected_signal_types', []):
                                 if signal_type in columns_by_type:
                                     cols = columns_by_type[signal_type]
                                     reasoning = reasoning_by_type.get(signal_type, '')
-                                    
                                     st.markdown(f"**{signal_type.upper()}** ({len(cols)} columns)")
                                     st.caption(f"💡 {reasoning}")
                                     with st.expander(f"View {signal_type} columns"):
@@ -393,17 +545,11 @@ def render_chatbot_page():
     user_input = st.chat_input("Ask a question about your trading signals...")
     
     if user_input:
-        # Validate configuration for first message or when no tickers selected
-        # For breadth-only queries, skip ticker validation
-        breadth_only = selected_signal_types == ['breadth']
-        if not use_auto_extract_tickers and not selected_tickers and not breadth_only:
-            st.error("⚠️ Please select at least one ticker or enable auto-extraction!")
-            st.stop()
-        
-        # Add user message to history
+        # Add user message to history (store clean user input for UI display)
         st.session_state.chat_history.append({
             'role': 'user',
-            'content': user_input
+            'content': user_input,  # Store the clean user input, not the full message with data
+            'original_input': user_input  # Keep original for reference
         })
         
         # Display user message immediately
@@ -427,6 +573,64 @@ def render_chatbot_page():
                     
                     # Display response
                     st.markdown(response)
+                    
+                    # Display full signal tables with all columns if available
+                    full_signal_tables = metadata.get('full_signal_tables', {})
+                    if full_signal_tables:
+                        st.markdown("### 📊 Complete Signal Data Used in Analysis")
+                        
+                        # Display each signal type in separate sections
+                        for signal_type, signal_df in full_signal_tables.items():
+                            if not signal_df.empty:
+                                st.markdown(f"#### {signal_type.upper()} Signals ({len(signal_df)} records)")
+                                
+                                # Display the complete table with all columns and enhanced styling
+                                display_styled_dataframe(
+                                    signal_df, 
+                                    height=min(400, (len(signal_df) + 1) * 40),  # Adaptive height for new responses
+                                    key_suffix=f"new_{signal_type}"
+                                )
+                                
+                                # Show summary info
+                                col1, col2, col3 = st.columns(3)
+                                with col1:
+                                    st.metric("Records", len(signal_df))
+                                with col2:
+                                    try:
+                                        # Try to extract symbols from various columns
+                                        symbols_found = set()
+                                        for col in signal_df.columns:
+                                            if any(keyword in col.lower() for keyword in ['symbol', 'asset']):
+                                                symbols = signal_df[col].astype(str).str.extract(r'([A-Z]{2,5})').dropna()
+                                                symbols_found.update(symbols.iloc[:, 0].tolist() if not symbols.empty else [])
+                                        unique_symbols = len(symbols_found) if symbols_found else "N/A"
+                                    except:
+                                        unique_symbols = "N/A"
+                                    st.metric("Unique Symbols", unique_symbols)
+                                with col3:
+                                    st.metric("Total Columns", len(signal_df.columns))
+                    
+                    else:
+                        # Fallback to legacy simple table if full tables not available
+                        signals_df = metadata.get('signals_table')
+                        if signals_df is not None and not signals_df.empty:
+                            st.markdown("### 📊 Signals Referenced in Analysis")
+                            st.dataframe(
+                                signals_df,
+                                width='stretch',
+                                hide_index=True,
+                                column_config={
+                                    "Symbol": st.column_config.TextColumn("Symbol", width="small"),
+                                    "Function": st.column_config.TextColumn("Function", width="medium"),
+                                    "Signal_Type": st.column_config.TextColumn("Signal Type", width="small"),
+                                    "Signal_Direction": st.column_config.TextColumn("Direction", width="small"),
+                                    "Signal_Date": st.column_config.DateColumn("Signal Date", width="medium"),
+                                    "Price": st.column_config.TextColumn("Price", width="small"),
+                                    "Interval": st.column_config.TextColumn("Interval", width="small"),
+                                    "Status": st.column_config.TextColumn("Status", width="small")
+                                }
+                            )
+                            st.caption(f"📈 {len(signals_df)} signal(s) were used to generate this analysis")
                     
                     # Show smart query metadata
                     input_type = metadata.get('input_type', '')

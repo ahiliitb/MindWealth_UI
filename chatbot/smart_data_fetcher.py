@@ -42,7 +42,7 @@ class SmartDataFetcher:
     def fetch_data(
         self,
         signal_types: List[str],
-        required_columns: List[str],
+        required_columns: Optional[List[str]],
         assets: Optional[List[str]] = None,
         functions: Optional[List[str]] = None,
         from_date: Optional[str] = None,
@@ -50,11 +50,11 @@ class SmartDataFetcher:
         limit_rows: Optional[int] = None
     ) -> Dict[str, pd.DataFrame]:
         """
-        Fetch data from specified signal types with only the required columns.
+        Fetch data from specified signal types with the required columns or ALL columns.
         
         Args:
             signal_types: List of signal types to fetch from (entry, exit, target, breadth)
-            required_columns: List of column names to fetch
+            required_columns: List of column names to fetch, or None to fetch ALL columns (preserves CSV structure)
             assets: Optional list of asset/ticker names to filter by
             functions: Optional list of function names to filter by
             from_date: Optional start date (YYYY-MM-DD)
@@ -64,8 +64,8 @@ class SmartDataFetcher:
         Returns:
             Dictionary mapping signal_type to DataFrame with fetched data
             {
-                "entry": DataFrame with required columns,
-                "exit": DataFrame with required columns,
+                "entry": DataFrame with required/all columns,
+                "exit": DataFrame with required/all columns,
                 ...
             }
         """
@@ -93,9 +93,19 @@ class SmartDataFetcher:
                 
                 if not df.empty:
                     result[signal_type] = df
-                    logger.info(f"Fetched {len(df)} rows from {signal_type}")
+                    logger.info(f"✅ Fetched {len(df)} rows from {signal_type} with columns: {list(df.columns)}")
+                    # Show sample data for debugging
+                    if len(df) > 0:
+                        logger.info(f"📊 Sample data preview from {signal_type}:")
+                        for col in df.columns:
+                            sample_val = df[col].iloc[0] if not df[col].empty else "N/A"
+                            logger.info(f"   {col}: {sample_val}")
                 else:
-                    logger.warning(f"No data fetched from {signal_type}")
+                    logger.warning(f"❌ No data fetched from {signal_type}")
+                    logger.warning(f"   Requested columns: {required_columns}")
+                    logger.warning(f"   Assets filter: {assets}")
+                    logger.warning(f"   Functions filter: {functions}")
+                    logger.warning(f"   Date range: {from_date} to {to_date}")
             
             except Exception as e:
                 logger.error(f"Error fetching data from {signal_type}: {e}")
@@ -105,7 +115,7 @@ class SmartDataFetcher:
     def _fetch_signal_type_data(
         self,
         signal_type: str,
-        required_columns: List[str],
+        required_columns: Optional[List[str]],
         assets: Optional[List[str]] = None,
         functions: Optional[List[str]] = None,
         from_date: Optional[str] = None,
@@ -117,7 +127,7 @@ class SmartDataFetcher:
         
         Args:
             signal_type: One of "entry", "exit", "target"
-            required_columns: List of column names to fetch
+            required_columns: List of column names to fetch, or None to fetch ALL columns
             assets: Optional list of assets to filter by
             functions: Optional list of functions to filter by
             from_date: Optional start date
@@ -195,7 +205,7 @@ class SmartDataFetcher:
     
     def _fetch_breadth_data(
         self,
-        required_columns: List[str],
+        required_columns: Optional[List[str]],
         from_date: Optional[str] = None,
         to_date: Optional[str] = None,
         limit_rows: Optional[int] = None
@@ -204,7 +214,7 @@ class SmartDataFetcher:
         Fetch breadth data (no assets/functions, just date-based files).
         
         Args:
-            required_columns: List of column names to fetch
+            required_columns: List of column names to fetch, or None to fetch ALL columns
             from_date: Optional start date
             to_date: Optional end date
             limit_rows: Optional row limit
@@ -318,33 +328,50 @@ class SmartDataFetcher:
     def _read_csv_with_columns(
         self,
         csv_file: Path,
-        required_columns: List[str]
+        required_columns: Optional[List[str]]
     ) -> pd.DataFrame:
         """
-        Read a CSV file and return only the required columns.
+        Read a CSV file and return the required columns or ALL columns if None specified.
         Uses flexible matching: exact match, partial match, or semantic match.
         
         Args:
             csv_file: Path to CSV file
-            required_columns: List of column names to read
+            required_columns: List of column names to read, or None to fetch ALL columns
             
         Returns:
-            DataFrame with only the required columns
+            DataFrame with the required columns or ALL columns (preserving original CSV structure)
         """
         try:
             # First read just the header to see what columns are available
             df_header = pd.read_csv(csv_file, nrows=0, encoding=CSV_ENCODING)
             available_columns = df_header.columns.tolist()
             
+            logger.info(f"📁 Reading {csv_file.name}")
+            logger.info(f"📊 Available columns ({len(available_columns)}): {available_columns}")
+            
+            # If no specific columns requested, return ALL columns to preserve original CSV structure
+            if required_columns is None:
+                logger.info(f"🎯 Fetching ALL columns to preserve original CSV structure")
+                df = pd.read_csv(csv_file, encoding=CSV_ENCODING)
+                logger.info(f"📈 Loaded {len(df)} rows with {len(df.columns)} columns from {csv_file.name}")
+                return df
+            
             # Find which required columns exist in this file using flexible matching
+            logger.info(f"🎯 Required columns ({len(required_columns)}): {required_columns}")
             columns_to_read = self._match_columns_flexibly(required_columns, available_columns)
             
+            logger.info(f"✅ Matched columns ({len(columns_to_read)}): {columns_to_read}")
+            
             if not columns_to_read:
-                logger.debug(f"None of the required columns found in {csv_file.name}")
+                logger.warning(f"❌ None of the required columns found in {csv_file.name}")
+                logger.warning(f"   Required: {required_columns}")
+                logger.warning(f"   Available: {available_columns}")
                 return pd.DataFrame()
             
             # Read only the required columns
             df = pd.read_csv(csv_file, usecols=columns_to_read, encoding=CSV_ENCODING)
+            
+            logger.info(f"📈 Loaded {len(df)} rows with {len(df.columns)} columns from {csv_file.name}")
             
             return df
         
@@ -378,29 +405,57 @@ class SmartDataFetcher:
             req_col_lower = req_col.lower().strip()
             
             # Strategy 1: Exact match (case-insensitive)
+            found_exact = False
             for avail_col in available_columns:
                 if avail_col.lower().strip() == req_col_lower:
                     if avail_col not in matched_columns:
                         matched_columns.append(avail_col)
+                    found_exact = True
                     break
-            else:
-                # Strategy 2: Partial match - check if required column is in available column
-                # OR if available column contains the required column keyword
-                matched = False
+            
+            if not found_exact:
+                # Strategy 2: Smart partial matching with preference for better matches
+                best_match = None
+                best_score = 0
+                
                 for avail_col in available_columns:
+                    if avail_col in matched_columns:
+                        continue  # Skip already matched columns
+                        
                     avail_col_lower = avail_col.lower().strip()
                     
-                    # Check if they share common keywords
-                    if (req_col_lower in avail_col_lower or 
-                        avail_col_lower in req_col_lower or
-                        self._are_semantically_related(req_col_lower, avail_col_lower)):
-                        if avail_col not in matched_columns:
-                            matched_columns.append(avail_col)
-                            matched = True
+                    # Calculate match score
+                    score = 0
+                    
+                    # High score for exact substring match
+                    if req_col_lower in avail_col_lower:
+                        score += 100
+                    
+                    # Medium score for containing key words
+                    req_words = set(req_col_lower.replace('[', ' ').replace(']', ' ').replace('(', ' ').replace(')', ' ').replace(',', ' ').split())
+                    avail_words = set(avail_col_lower.replace('[', ' ').replace(']', ' ').replace('(', ' ').replace(')', ' ').replace(',', ' ').split())
+                    
+                    common_words = req_words & avail_words
+                    if common_words:
+                        score += len(common_words) * 10
+                    
+                    # Bonus for semantic relationships
+                    if self._are_semantically_related(req_col_lower, avail_col_lower):
+                        score += 5
+                    
+                    # Update best match
+                    if score > best_score and score > 10:  # Minimum threshold
+                        best_score = score
+                        best_match = avail_col
                 
-                if not matched:
-                    logger.debug(f"Could not match required column '{req_col}' to any available columns")
+                if best_match:
+                    matched_columns.append(best_match)
+                    logger.info(f"✅ Matched '{req_col}' to '{best_match}' (score: {best_score})")
+                else:
+                    logger.warning(f"❌ Could not match required column '{req_col}' to any available columns")
+                    logger.warning(f"   Available columns: {available_columns}")
         
+        logger.info(f"🔗 Final column matching: {dict(zip(required_columns, matched_columns))}")
         return matched_columns
     
     def _are_semantically_related(self, col1: str, col2: str) -> bool:

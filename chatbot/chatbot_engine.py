@@ -27,6 +27,7 @@ from .function_extractor import FunctionExtractor
 from .ticker_extractor import TickerExtractor
 from .column_selector import ColumnSelector
 from .smart_data_fetcher import SmartDataFetcher
+from .signal_extractor import SignalExtractor
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -87,6 +88,7 @@ class ChatbotEngine:
         self.ticker_extractor = TickerExtractor(api_key=self.api_key)
         self.column_selector = ColumnSelector(api_key=self.api_key)
         self.smart_data_fetcher = SmartDataFetcher()
+        self.signal_extractor = SignalExtractor()
         
         # Set available tickers for ticker extractor
         available_tickers = self.data_processor.get_available_tickers()
@@ -443,6 +445,54 @@ class ChatbotEngine:
                 metadata["batch_count"] = batch_metadata.get("batch_count", 1)
                 metadata["batch_mode"] = batch_metadata.get("batch_mode", "single")
             
+            # Extract full signal tables with all columns
+            query_params = {
+                'assets': tickers,
+                'functions': functions,
+                'from_date': from_date,
+                'to_date': to_date,
+                'signal_types': signal_types
+            }
+            # Convert stock_data format to fetched_data format for signal extraction
+            fetched_data_for_signals = {}
+            if 'stock_data' in locals() and stock_data:
+                # Transform ticker-keyed data to signal-type-keyed data
+                for ticker, ticker_df in stock_data.items():
+                    if not ticker_df.empty and hasattr(ticker_df, 'columns'):
+                        # Determine signal type from the data structure
+                        if 'SignalType' in ticker_df.columns:
+                            # Group by signal type
+                            for signal_type in ticker_df['SignalType'].unique():
+                                if signal_type not in fetched_data_for_signals:
+                                    fetched_data_for_signals[signal_type] = []
+                                signal_type_data = ticker_df[ticker_df['SignalType'] == signal_type].copy()
+                                fetched_data_for_signals[signal_type].append(signal_type_data)
+                        else:
+                            # Default to 'entry' if no signal type column
+                            if 'entry' not in fetched_data_for_signals:
+                                fetched_data_for_signals['entry'] = []
+                            fetched_data_for_signals['entry'].append(ticker_df)
+                
+                # Concatenate DataFrames for each signal type
+                for signal_type, df_list in fetched_data_for_signals.items():
+                    if df_list:
+                        import pandas as pd
+                        fetched_data_for_signals[signal_type] = pd.concat(df_list, ignore_index=True)
+            
+            full_signal_tables = self.signal_extractor.extract_full_signal_tables(
+                assistant_message,
+                fetched_data_for_signals,
+                query_params
+            )
+            metadata["full_signal_tables"] = full_signal_tables
+            
+            # Keep legacy for compatibility
+            signals_df = self.signal_extractor.extract_signals_from_response(
+                assistant_message,
+                stock_data if 'stock_data' in locals() else None
+            )
+            metadata["signals_table"] = signals_df
+            
             # Add assistant response to history
             self.history_manager.add_message("assistant", assistant_message, metadata)
             
@@ -578,11 +628,17 @@ class ChatbotEngine:
                 if df.empty:
                     continue
                 
-                data_context_parts.append(f"\n=== {signal_type.upper()} SIGNALS ({len(df)} rows) ===")
-                data_context_parts.append(f"Columns selected: {', '.join(columns_by_signal_type[signal_type])}")
-                data_context_parts.append(f"Reasoning: {reasoning_by_signal_type.get(signal_type, '')}")
-                data_context_parts.append("\nData:")
-                data_context_parts.append(df.to_string(index=False))
+                import json as _json_main
+                records = df.to_dict('records')
+                payload = {
+                    "signal_type": signal_type,
+                    "record_count": len(records),
+                    "columns_selected": columns_by_signal_type[signal_type],
+                    "reasoning": reasoning_by_signal_type.get(signal_type, ''),
+                    "data": records
+                }
+                data_context_parts.append(f"\n=== {signal_type.upper()} SIGNALS (JSON) ===")
+                data_context_parts.append(_json_main.dumps(payload, indent=2, default=str))
             
             data_context = "\n".join(data_context_parts)
             
@@ -640,6 +696,28 @@ class ChatbotEngine:
             metadata["batch_processing_used"] = True
             metadata["batch_count"] = batch_metadata.get("batch_count", 1)
             metadata["batch_mode"] = batch_metadata.get("batch_mode", "single")
+            
+            # Extract full signal tables with all columns
+            query_params = {
+                'assets': assets,
+                'functions': functions,
+                'from_date': from_date,
+                'to_date': to_date,
+                'selected_signal_types': selected_signal_types
+            }
+            full_signal_tables = self.signal_extractor.extract_full_signal_tables(
+                assistant_message, 
+                fetched_data,
+                query_params
+            )
+            metadata["full_signal_tables"] = full_signal_tables
+            
+            # Keep legacy signals_table for compatibility
+            signals_df = self.signal_extractor.extract_signals_from_response(
+                assistant_message, 
+                fetched_data
+            )
+            metadata["signals_table"] = signals_df
             
             # Add assistant response to history
             self.history_manager.add_message("assistant", assistant_message, metadata)
@@ -881,55 +959,39 @@ Decision rules:
                                 logger.info(f"  {signal_type}: Column selector chose {len(columns_by_signal_type[signal_type])} columns")
                 
                 # Fetch the new data
-                fetched_data = {}
+                import pandas as pd  # local import for typing and usage
+                fetched_data: Dict[str, 'pd.DataFrame'] = {}
                 total_rows = 0
-                
+                new_columns_by_type: Dict[str, List[str]] = {}
+                existing_columns_by_type: Dict[str, List[str]] = {}
+
                 for signal_type, required_cols in columns_by_signal_type.items():
                     if not required_cols:
                         continue
-                    
                     signal_data = self.smart_data_fetcher.fetch_data(
                         signal_types=[signal_type],
                         required_columns=required_cols,
                         assets=assets,
                         functions=functions,
                         from_date=from_date,
-                        to_date=to_date,
-                        limit_rows=MAX_ROWS_TO_INCLUDE
+                        to_date=to_date
                     )
-                    
                     if signal_data and signal_type in signal_data:
-                        fetched_data[signal_type] = signal_data[signal_type]
-                        total_rows += len(signal_data[signal_type])
-                
-                # Determine what data to pass to GPT based on filter changes
-                # OPTIMIZATION: Don't re-pass data that's already in context
-                
-                # Track which columns are new vs existing for each signal type
-                new_columns_by_type = {}
-                existing_columns_by_type = {}
-                
-                for signal_type in columns_by_signal_type.keys():
-                    previous_cols = set(previous_columns_by_type.get(signal_type, []))
-                    current_cols = set(columns_by_signal_type[signal_type])
-                    
-                    new_cols = list(current_cols - previous_cols)
-                    existing_cols = list(current_cols & previous_cols)
-                    
-                    if new_cols:
-                        new_columns_by_type[signal_type] = new_cols
-                    if existing_cols:
-                        existing_columns_by_type[signal_type] = existing_cols
+                        df = signal_data[signal_type]
+                        fetched_data[signal_type] = df
+                        total_rows += len(df)
                 
                 if filters_changed:
                     # Case 1: Filters changed → Full data needed (different rows)
-                    logger.info("💰 Token optimization: Passing full new data (filters changed)")
-                    new_data_context = "\n=== NEW DATA FETCHED (FILTERS CHANGED) ===\n"
-                    for signal_type, df in fetched_data.items():
+                    logger.info("💰 Token optimization: Passing full new data (filters changed) as JSON")
+                    import json as _json
+                    new_data_context = "\n=== NEW DATA FETCHED (FILTERS CHANGED, JSON) ===\n"
+                    for stype, df in fetched_data.items():
                         if df.empty:
                             continue
-                        new_data_context += f"\n{signal_type.upper()} ({len(df)} rows, {len(df.columns)} columns):\n"
-                        new_data_context += df.to_string(index=False)
+                        records = df.to_dict('records')
+                        payload = {"signal_type": stype, "record_count": len(records), "data": records}
+                        new_data_context += _json.dumps(payload, indent=2, default=str) + "\n"
                     
                     complete_message = f"""FOLLOW-UP QUESTION: {user_message}
 
@@ -941,38 +1003,43 @@ Decision rules:
                 else:
                     # Case 2: Same filters, but new columns requested
                     # Only pass the NEW columns that weren't in previous context
-                    logger.info("💰 Token optimization: Passing only NEW columns (same filters)")
+                    logger.info("💰 Token optimization: Passing only NEW columns (same filters) as JSON")
                     
                     new_columns_only = {}
-                    for signal_type, df in fetched_data.items():
+                    for stype, df in fetched_data.items():
                         if df.empty:
                             continue
                         
                         # Get columns that weren't in previous query
-                        previous_cols = set(previous_columns_by_type.get(signal_type, []))
+                        previous_cols = set(previous_columns_by_type.get(stype, []))
                         current_cols = set(df.columns)
                         truly_new_cols = current_cols - previous_cols
                         
                         if truly_new_cols:
                             # Extract only the new columns
-                            new_columns_only[signal_type] = df[list(truly_new_cols)]
-                            logger.info(f"  {signal_type}: Passing {len(truly_new_cols)} new columns: {list(truly_new_cols)}")
+                            new_columns_only[stype] = df[list(truly_new_cols)]
+                            logger.info(f"  {stype}: Passing {len(truly_new_cols)} new columns: {list(truly_new_cols)}")
+                            # Track metadata of new/existing columns
+                            new_columns_by_type[stype] = list(truly_new_cols)
+                            existing_columns_by_type[stype] = list(current_cols & previous_cols)
                         else:
-                            logger.info(f"  {signal_type}: All columns already in context, passing nothing")
+                            logger.info(f"  {stype}: All columns already in context, passing nothing")
                     
                     if new_columns_only:
-                        # Pass only the new columns
-                        new_data_context = "\n=== NEW COLUMNS ADDED TO EXISTING DATA ===\n"
-                        new_data_context += "NOTE: The data rows are the same as before. Only showing NEW columns:\n"
-                        for signal_type, df in new_columns_only.items():
-                            new_data_context += f"\n{signal_type.upper()} - NEW COLUMNS ({len(df)} rows, {len(df.columns)} new columns):\n"
-                            new_data_context += df.to_string(index=False)
+                        # Pass only the new columns, in JSON
+                        import json as _json
+                        new_data_context = "\n=== NEW COLUMNS ADDED TO EXISTING DATA (JSON) ===\n"
+                        new_data_context += "NOTE: The data rows are the same as before. Only showing NEW columns as JSON.\n"
+                        for stype, df in new_columns_only.items():
+                            records = df.to_dict('records')
+                            payload = {"signal_type": stype, "record_count": len(records), "data": records}
+                            new_data_context += _json.dumps(payload, indent=2, default=str) + "\n"
                         
                         complete_message = f"""FOLLOW-UP QUESTION: {user_message}
 
 {new_data_context}
 
-NOTE: Use the data from previous messages combined with the new columns above.
+NOTE: We did not resend old raw data. Use the conversation context (previous prompts and your outputs) combined with the NEW columns above to answer.
 {additional_context or ''}"""
                         data_passing_mode = "new_columns_only"
                     else:
@@ -989,6 +1056,8 @@ NOTE: All required data is already in the conversation history.
                     "followup_mode": "new_data",
                     "needs_new_data": True,
                     "data_passing_mode": data_passing_mode,  # NEW: Track what we passed
+                    "data_format": "json",
+                    "prior_data_omitted": True,
                     "filters_changed": filters_changed,
                     "filter_change_details": filter_change_details if filters_changed else [],
                     "analysis_reasoning": reasoning,
@@ -1012,15 +1081,16 @@ NOTE: All required data is already in the conversation history.
                 
                 complete_message = f"""FOLLOW-UP QUESTION: {user_message}
 
-{existing_columns_context}
+    {existing_columns_context}
 
-NOTE: Please answer using the data already provided in our conversation history.
-{additional_context or ''}"""
+    NOTE: We are not resending old raw data. Please answer using the conversation context (previous prompts and your outputs only). If additional columns are strictly required, explain why and which columns are needed.
+    {additional_context or ''}"""
                 
                 metadata = {
                     "input_type": "smart_followup",
                     "followup_mode": "existing_context",
                     "needs_new_data": False,
+                    "prior_data_omitted": True,
                     "filters_changed": False,
                     "filter_change_details": [],
                     "analysis_reasoning": reasoning,
@@ -1041,9 +1111,31 @@ NOTE: Please answer using the data already provided in our conversation history.
             # Build conversation context: include summary of messages older than MAX_HISTORY_LENGTH pairs
             # and include the last MAX_HISTORY_LENGTH pairs in full.
             full_history_with_meta = self.history_manager.get_full_history()
-            # Convert to simple messages (role/content)
-            simple_messages = [{"role": m.get("role", "user"), "content": m.get("content", "")}
-                                for m in full_history_with_meta]
+            # Sanitize large historical data dumps from user messages to reduce tokens
+            import re as _re
+            def _strip_data_payload(text: str) -> str:
+                if not text:
+                    return text
+                patterns = [
+                    r"===\s*TRADING DATA \(JSON Format\)\s*===[\s\S]*$",
+                    r"===\s*NEW DATA FETCHED[\s\S]*$",
+                    r"===\s*NEW COLUMNS ADDED TO EXISTING DATA[\s\S]*$",
+                    r"===\s*PROVIDED DATA\s*===[\s\S]*$",
+                ]
+                cleaned = text
+                for pat in patterns:
+                    cleaned = _re.sub(pat, "[context: prior raw data omitted]", cleaned, flags=_re.IGNORECASE)
+                if len(cleaned) > 12000:
+                    cleaned = cleaned[:12000] + "\n[truncated]"
+                return cleaned
+            # Convert to simple sanitized messages (role/content)
+            simple_messages = []
+            for m in full_history_with_meta:
+                role = m.get("role", "user")
+                content = m.get("content", "")
+                if role == "user":
+                    content = _strip_data_payload(content)
+                simple_messages.append({"role": role, "content": content})
             # Separate system messages and conversation messages
             system_messages = [msg for msg in simple_messages if msg["role"] == "system"]
             conversation_messages = [msg for msg in simple_messages if msg["role"] != "system"]
@@ -1136,6 +1228,28 @@ NOTE: Please answer using the data already provided in our conversation history.
             metadata["model"] = OPENAI_MODEL
             metadata["tokens_used"] = batch_metadata["tokens_used"]
             metadata["finish_reason"] = batch_metadata["finish_reason"]
+            
+            # Extract full signal tables with all columns
+            query_params = {
+                'assets': assets,
+                'functions': functions, 
+                'from_date': from_date,
+                'to_date': to_date,
+                'selected_signal_types': selected_signal_types
+            }
+            full_signal_tables = self.signal_extractor.extract_full_signal_tables(
+                assistant_message,
+                fetched_data if 'fetched_data' in locals() and fetched_data else None,
+                query_params
+            )
+            metadata["full_signal_tables"] = full_signal_tables
+            
+            # Keep legacy for compatibility
+            signals_df = self.signal_extractor.extract_signals_from_response(
+                assistant_message, 
+                fetched_data if 'fetched_data' in locals() and fetched_data else None
+            )
+            metadata["signals_table"] = signals_df
             
             # Add assistant response to history
             self.history_manager.add_message("assistant", assistant_message, metadata)
@@ -1654,7 +1768,8 @@ Create a professional, well-structured response that reads as one cohesive analy
         """
         import pandas as pd
         import time
-        
+        import json as _json
+
         try:
             logger.info(f"⚡ Batch processing follow-up query: {len(signal_data)} signal types, ~{estimated_tokens} tokens")
             
@@ -1669,8 +1784,11 @@ Create a professional, well-structured response that reads as one cohesive analy
                 if df.empty:
                     continue
                 
-                # Estimate tokens for this signal type
-                data_str = df.to_string(index=False)
+                # Estimate tokens for this signal type (JSON records)
+                try:
+                    data_str = _json.dumps(df.to_dict('records'), default=str)
+                except Exception:
+                    data_str = df.to_string(index=False)
                 signal_tokens = len(data_str) // ESTIMATED_CHARS_PER_TOKEN
                 
                 if signal_tokens <= available_tokens_per_batch:
@@ -1691,7 +1809,10 @@ Create a professional, well-structured response that reads as one cohesive analy
                     # Split into chunks
                     for i in range(0, len(df), rows_per_batch):
                         chunk_df = df.iloc[i:i+rows_per_batch]
-                        chunk_str = chunk_df.to_string(index=False)
+                        try:
+                            chunk_str = _json.dumps(chunk_df.to_dict('records'), default=str)
+                        except Exception:
+                            chunk_str = chunk_df.to_string(index=False)
                         chunk_tokens = len(chunk_str) // ESTIMATED_CHARS_PER_TOKEN
                         
                         batches.append({
@@ -1706,10 +1827,11 @@ Create a professional, well-structured response that reads as one cohesive analy
             if num_batches == 1:
                 # Single batch - process directly
                 batch = batches[0]
-                data_context = ""
+                data_context = "\n=== BATCH DATA (JSON) ===\n"
                 for sig_type, df in batch['data'].items():
-                    data_context += f"\n{sig_type.upper()} ({len(df)} rows, {len(df.columns)} columns):\n"
-                    data_context += df.to_string(index=False) + "\n"
+                    records = df.to_dict('records')
+                    payload = {"signal_type": sig_type, "record_count": len(records), "data": records}
+                    data_context += _json.dumps(payload, indent=2, default=str) + "\n"
                 
                 complete_message = f"""User Query: {user_query}
 
@@ -1752,10 +1874,11 @@ Create a professional, well-structured response that reads as one cohesive analy
                     logger.info(f"Processing batch {idx}/{num_batches}")
                     
                     # Create data context for this batch
-                    data_context = ""
+                    data_context = "\n=== BATCH DATA (JSON) ===\n"
                     for sig_type, df in batch['data'].items():
-                        data_context += f"\n{sig_type.upper()} ({len(df)} rows, {len(df.columns)} columns):\n"
-                        data_context += df.to_string(index=False) + "\n"
+                        records = df.to_dict('records')
+                        payload = {"signal_type": sig_type, "record_count": len(records), "data": records}
+                        data_context += _json.dumps(payload, indent=2, default=str) + "\n"
                     
                     batch_message = f"""User Query: {user_query}
 

@@ -40,6 +40,10 @@ class HistoryManager:
         # Load existing history if available
         if self.history_file.exists():
             self.load_history()
+        else:
+            # Create new session file immediately to ensure persistence
+            self.save_history()
+            logger.info(f"Created new session file for {self.session_id}")
     
     def add_message(self, role: str, content: str, metadata: Optional[Dict] = None):
         """
@@ -119,9 +123,40 @@ class HistoryManager:
     def save_history(self):
         """Save conversation history to file."""
         try:
+            # Prepare conversation history for serialization
+            serializable_conversation = []
+            for message in self.conversation_history:
+                serializable_message = message.copy()
+                
+                # Convert DataFrames in metadata to serializable format
+                if 'metadata' in serializable_message and serializable_message['metadata']:
+                    metadata = serializable_message['metadata'].copy()
+                    
+                    # Handle full_signal_tables DataFrames
+                    if 'full_signal_tables' in metadata:
+                        metadata['full_signal_tables'] = {
+                            signal_type: df.to_dict('records') if hasattr(df, 'to_dict') else df
+                            for signal_type, df in metadata['full_signal_tables'].items()
+                        }
+                    
+                    # Handle any other DataFrames in metadata
+                    for key, value in metadata.items():
+                        if hasattr(value, 'to_dict'):  # Check if it's a DataFrame
+                            metadata[key] = value.to_dict('records')
+                    
+                    serializable_message['metadata'] = metadata
+                
+                serializable_conversation.append(serializable_message)
+            
+            # Also handle DataFrames in session metadata
+            serializable_metadata = self.metadata.copy()
+            for key, value in serializable_metadata.items():
+                if hasattr(value, 'to_dict'):  # Check if it's a DataFrame
+                    serializable_metadata[key] = value.to_dict('records')
+            
             data = {
-                "metadata": self.metadata,
-                "conversation": self.conversation_history
+                "metadata": serializable_metadata,
+                "conversation": serializable_conversation
             }
             
             with open(self.history_file, 'w', encoding='utf-8') as f:
@@ -138,8 +173,45 @@ class HistoryManager:
             with open(self.history_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
+            # Load metadata and reconstruct any DataFrames
             self.metadata = data.get("metadata", {})
-            self.conversation_history = data.get("conversation", [])
+            
+            # Convert serialized DataFrames back to DataFrames in session metadata
+            import pandas as pd
+            for key, value in self.metadata.items():
+                if isinstance(value, list) and value and isinstance(value[0], dict):
+                    # This looks like serialized DataFrame data
+                    try:
+                        self.metadata[key] = pd.DataFrame(value)
+                    except:
+                        # Keep as-is if conversion fails
+                        pass
+            
+            # Load conversation history and convert serialized DataFrames back
+            self.conversation_history = []
+            for message in data.get("conversation", []):
+                loaded_message = message.copy()
+                
+                # Convert serialized data back to DataFrames for internal use
+                if 'metadata' in loaded_message and loaded_message['metadata']:
+                    metadata = loaded_message['metadata'].copy()
+                    
+                    # Handle full_signal_tables - convert back to DataFrames
+                    if 'full_signal_tables' in metadata:
+                        import pandas as pd
+                        converted_tables = {}
+                        for signal_type, table_data in metadata['full_signal_tables'].items():
+                            if isinstance(table_data, list) and table_data:
+                                # Convert list of records back to DataFrame
+                                converted_tables[signal_type] = pd.DataFrame(table_data)
+                            else:
+                                # Keep as-is if not in expected format
+                                converted_tables[signal_type] = table_data
+                        metadata['full_signal_tables'] = converted_tables
+                    
+                    loaded_message['metadata'] = metadata
+                
+                self.conversation_history.append(loaded_message)
             
             logger.info(f"Loaded history for session {self.session_id} with {len(self.conversation_history)} messages")
             

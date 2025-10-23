@@ -74,7 +74,7 @@ def get_api_key() -> str:
 OPENAI_API_KEY = get_api_key()
 
 # All other config from .env file
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4-turbo")  # GPT-4 Turbo has 128K context window
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")  # Default to GPT-4o
 MAX_TOKENS = int(os.getenv("MAX_TOKENS", "4096"))  # Output tokens (response length)
 TEMPERATURE = float(os.getenv("TEMPERATURE", "0.7"))
 
