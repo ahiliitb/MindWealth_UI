@@ -1,99 +1,116 @@
-To provide a comprehensive evaluation of the signals based on the given criteria, I've synthesized the information from multiple analyses to identify the best buy and sell signals. This includes filtering, ranking, and providing detailed insights into each selected signal. Here’s the structured summary:
+Based on the analysis of the signals from the provided data, here is a synthesized summary of the best buy and sell signals using the criteria you specified. The analysis includes the best overall signals and specific TrendPulse signals for both buy and sell categories, including their detailed characteristics and recommended actions.
 
-### Summary of Selected Signals:
+### Summary of Filtered Signals
 
-#### Best Buy Signals:
+**Top Buy Signals:**
+1. **MA (Mastercard)**
+   - Function: OSCILLATOR DELTA
+   - Signal Date: 2025-10-20
+   - Signal Price: 566.36
+   - Win Rate: 92.31%
+   - CAGR: Strategy (24.21%) - Buy and Hold (13.3%) = 10.91%
+   - Latest Performance Win Rate: 66.23%
+   - Average Return of Historical Winning Trades: 8.68%
+   - Potential Upside (from signal price): 12.8%
+   - Recommended Take Profit: 638.80
+   - Recommended Stop Loss: 554.06
+   - P/E Ratio: 38.61
+   - PEG Ratio: 1.96
 
-1. **AAPL (Apple Inc.)**
-   - **Function**: TRENDPULSE
-   - **Signal Date**: 2025-01-01
-   - **Signal**: Long
-   - **Signal Price**: $175.00
-   - **Win Rate**: 85.01%
-   - **CAGR**: Strategy (20.00%) - Buy and Hold (18.00%) = 2.00%
-   - **Latest Performance Win Rate**: 80.00%
-   - **Average Return of Historical Winning Trades**: 10.5%
-   - **Max single trade loss historically**: 10.00%
-   - **Potential Upside**: 15.00% to 20.00% (immediate targets)
-   - **Target Exit Date**: 2025-12-31/2025-06-30/2025-09-30
-   - **Current Price, Current Mark to Market**: $177.00, 1.14%
-   - **Target Prices**: $200/$210/$220
-   - **Support Levels**: $160/$155/$150
-   - **Recommended Stop Loss**: $160
-   - **Recommended Take Profit**: $200
-   - **Is Signal timely?**: No, 7% of the potential gain has been missed.
-   - **P/E Ratio**: 39.16
-   - **PEG Ratio**: 2.47
+2. **TCS.NS (Tata Consultancy Services)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-10-19
+   - Signal Price: 2962.2
+   - Win Rate: 95.65%
+   - CAGR: Strategy (16.08%) - Buy and Hold (15.1%) = 0.98%
+   - Latest Performance Win Rate: 64.74%
+   - Average Return of Historical Winning Trades: 58.77%
+   - Potential Upside (from signal price): 11.2% to 13.8%
+   - Recommended Take Profit: 3293.97
+   - Recommended Stop Loss: 2899.10
+   - P/E Ratio: 22.51
+   - PEG Ratio: 5.72
 
-2. **AMZN (Amazon.com Inc.)**
-   - **Function**: BAND MATRIX
-   - **Signal Date**: 2024-04-01
-   - **Signal**: Long
-   - **Signal Price**: $130.00
-   - **Win Rate**: 90.00%
-   - **CAGR**: Strategy (25.00%) - Buy and Hold (20.00%) = 5.00%
-   - **Latest Performance Win Rate**: 85.00%
-   - **Average Return of Historical Winning Trades**: 12.00%
-   - **Max single trade loss historically**: 8.00%
-   - **Potential Upside**: 18.00% to 25.00% (immediate targets)
-   - **Target Exit Date**: 2025-04-01/2024-06-01/2024-10-01
-   - **Current Price, Current Mark to Market**: $140.00, 7.69%
-   - **Target Prices**: $150/$155/$160
-   - **Support Levels**: $120/$115/$110
-   - **Recommended Stop Loss**: $120
-   - **Recommended Take Profit**: $150
-   - **Is Signal timely?**: No, 8% of the potential gain has been missed.
-   - **P/E Ratio**: 33.27
-   - **PEG Ratio**: 1.97
+3. **AMZN (Amazon)**
+   - Function: FRACTAL TRACK
+   - Signal Date: 2025-10-16
+   - Signal Price: 214.47
+   - Win Rate: 90.91%
+   - CAGR: Strategy (23.08%) - Buy and Hold (9.19%) = 13.89%
+   - Latest Performance Win Rate: 74.39%
+   - Average Return of Historical Winning Trades: 16.64%
+   - Potential Upside (from signal price): 15% to 19%
+   - Recommended Take Profit: 250.16
+   - Recommended Stop Loss: 211.65
+   - P/E Ratio: 33.70
+   - PEG Ratio: 1.97
 
-#### Best Sell Signals:
+**Top Sell Signals:**
+1. **UPS (United Parcel Service)**
+   - Function: TRENDPULSE
+   - Signal Date: 2024-07-21
+   - Signal Price: 145.18
+   - Win Rate: 72.73%
+   - Latest Performance Win Rate: 82.46%
+   - Potential Downside (from signal price): 25% to 30%
+   - Recommended Take Profit: 112.83
+   - Recommended Stop Loss: 135.65
+   - P/E Ratio: 12.95
+   - PEG Ratio: 1.33
 
-1. **GOOG (Alphabet Inc.)**
-   - **Function**: SIGMASHELL
-   - **Signal Date**: 2025-04-01
-   - **Signal**: Short
-   - **Signal Price**: $2500.00
-   - **Win Rate**: 80.00%
-   - **CAGR**: Strategy (22.00%) - Buy and Hold (25.00%) = -3.00%
-   - **Latest Performance Win Rate**: 78.00%
-   - **Average Return of Historical Winning Trades**: 8.00%
-   - **Max single trade loss historically**: 5.00%
-   - **Potential Downside**: 12.00% to 15.00% (immediate targets)
-   - **Target Exit Date**: 2025-12-01/2025-06-01/2025-09-01
-   - **Current Price, Current Mark to Market**: $2460.00, 1.60%
-   - **Target Prices**: $2300/$2250/$2200
-   - **Resistance Levels**: $2600/$2650/$2700
-   - **Recommended Stop Loss**: $2600
-   - **Recommended Take Profit**: $2300
-   - **Is Signal timely?**: Yes, only 1.6% of the potential gain has been missed.
-   - **P/E Ratio**: 26.95
-   - **PEG Ratio**: 1.68
+2. **BTC-USD (Bitcoin)**
+   - Function: TRENDPULSE
+   - Signal Date: 2025-10-02
+   - Signal Price: 122,813.59
+   - Win Rate: 95.65%
+   - Latest Performance Win Rate: 85.01%
+   - Potential Downside (from signal price): 8.28% to 10.84%
+   - Recommended Take Profit: 134,065
+   - Recommended Stop Loss: 109,050
+   - P/E Ratio: N/A
+   - PEG Ratio: N/A
 
-2. **META (Meta Platforms Inc.)**
-   - **Function**: FRACTAL TRACK
-   - **Signal Date**: 2025-03-01
-   - **Signal**: Short
-   - **Signal Price**: $350.00
-   - **Win Rate**: 85.00%
-   - **CAGR**: Strategy (28.00%) - Buy and Hold (30.00%) = -2.00%
-   - **Latest Performance Win Rate**: 82.00%
-   - **Average Return of Historical Winning Trades**: 9.50%
-   - **Max single trade loss historically**: 6.50%
-   - **Potential Downside**: 14.00% to 18.00% (immediate targets)
-   - **Target Exit Date**: 2025-11-01/2025-05-01/2025-08-01
-   - **Current Price, Current Mark to Market**: $340.00, 2.86%
-   - **Target Prices**: $300/$290/$280
-   - **Resistance Levels**: $360/$370/$380
-   - **Recommended Stop Loss**: $360
-   - **Recommended Take Profit**: $300
-   - **Is Signal timely?**: Yes, only 2.86% of the potential gain has been missed.
-   - **P/E Ratio**: 26.60
-   - **PEG Ratio**: 1.98
+### Best TrendPulse Signals
 
-### Final Output of Signal Details:
+**TrendPulse Buy Signals:**
+1. **TCEHY (Tencent Holdings Ltd)**
+   - Function: TRENDPULSE
+   - Interval: Monthly
+   - Signal Date: 2025-03-31
+   - Signal Price: 63.84
+   - Win Rate: 100.0%
+   - Latest Performance Win Rate: 78.1%
+   - Recommended Take Profit: 105.27
+   - Recommended Stop Loss: 58.33
+   - P/E Ratio: 26.14
+   - PEG Ratio: 1.595
 
-```plaintext
-|||AAPL,Daily,TRENDPULSE,2025-01-01,Long|AMZN,Daily,BAND MATRIX,2024-04-01,Long|GOOG,Weekly,SIGMASHELL,2025-04-01,Short|META,Monthly,FRACTAL TRACK,2025-03-01,Short|||
-```
+2. **TRI.TO (Thomson Reuters Corp)**
+   - Function: OSCILLATOR DELTA
+   - Interval: Daily
+   - Signal Date: 2025-10-03
+   - Signal Price: 213.48
+   - Win Rate: 100.0%
+   - Latest Performance Win Rate: 66.23%
+   - Recommended Take Profit: 233.65
+   - Recommended Stop Loss: 193.12
+   - P/E Ratio: 45.728
+   - PEG Ratio: N/A
 
-This output reflects the top selected buy and sell signals based on comprehensive filtering and ranking criteria, ensuring a balance between historical performance, potential upside, and risk management.
+**TrendPulse Sell Signals:**
+1. **NVO (Novo Nordisk A/S)**
+   - Function: TRENDPULSE
+   - Interval: Weekly
+   - Signal Date: 2025-06-08
+   - Signal Price: 74.63
+   - Win Rate: 78.57%
+   - Latest Performance Win Rate: 82.46%
+   - Recommended Take Profit: 51.10
+   - Recommended Stop Loss: 70.51
+   - P/E Ratio: 13.68
+   - PEG Ratio: 1.4816
+
+### Final Output in Requested Format
+|||MA,Daily,OSCILLATOR DELTA,2025-10-20,Long|TCS.NS,Weekly,FRACTAL TRACK,2025-10-19,Long|AMZN,Daily,FRACTAL TRACK,2025-10-16,Long|UPS,Weekly,TRENDPULSE,2024-07-21,Short|BTC-USD,Daily,TRENDPULSE,2025-10-02,Short|||
+
+This synthesis provides a detailed overview of the top buy and sell signals, including the best TrendPulse signals. The selection follows the detailed criteria provided, emphasizing confirmed signals, latest performance, and the potential for upside or downside based on historical data.
