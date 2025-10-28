@@ -1,120 +1,84 @@
-To provide a comprehensive analysis based on the given data and criteria, I've synthesized the filtered buy and sell signals, including TrendPulse signals, from the parallel processing results. Below is the structured output with detailed information for each selected signal.
+To provide a comprehensive analysis and select the best buy and sell signals based on the criteria outlined, I've synthesized the data from multiple parallel processing results. Here's a detailed breakdown of the filtered and ranked signals, with a focus on performance metrics, potential upside/downside, and market fundamentals.
 
-### Summary of Filtered Signals
+### Summary of Selected Signals
 
 #### Best Buy Signals:
-
-1. **ETH-USD (Ethereum)**
-   - Function: FRACTAL TRACK
-   - Signal Date: 2025-10-24
+1. **AMZN (Amazon)**
+   - Function: TRENDPULSE
+   - Signal Date: 2025-08-31
    - Signal: Long
-   - Signal Price: 3939.71
-   - Win Rate: 83.33%
-   - CAGR: Strategy (-6.09%) - Buy and Hold (39.5%) = -45.59%
-   - Latest Performance Win Rate: 64.74%
-   - Average Return of Historical Winning Trades: 4.78%
-   - Max single trade loss historically: 27.67%
-   - Potential Upside: 8.28% to 10.84%
-   - Target Exit Date: 2025-12-19
-   - Current Price, Current Mark to Market: 3939.71, 0%
-   - Target Prices: 3488.61/4128.02/6374.28/4922.72/5483.42/7318.98
-   - Support Levels: 1576.73/1370.50/4750.54/5146.06
-   - Recommended Stop Loss: 1370.50 (approximately 12% below current price)
-   - Recommended Take Profit: 4128.02 (first target level)
-   - Is Signal timely?: Yes
-   - P/E Ratio: N/A
+   - Signal Price: $229.0
+   - Win Rate: 100.0%
+   - CAGR: Strategy (12.8%) - Buy and Hold (20.63%) = -7.83%
+   - Latest Performance Win Rate: 78.1%
+   - Average Return of Historical Winning Trades: 6.8%
+   - Max Single Trade Loss Historically: 23.74%
+   - Potential Upside (from signal price): 16.5% to 48.2% (immediate targets)
+   - Target Exit Date: 2027-05-20 / 2026-07-24
+   - Current Price, Current Mark to Market: $226.97, -0.89%
+   - Target Prices: $275.40 / $297.84 / $262.87
+   - Support Levels: $213.13 / $193.06
+   - Recommended Stop Loss: $213.00 (based on nearest support level, approx. 6.5% below)
+   - Recommended Take Profit: $275.40 (first target level, approx. 20.2% upside)
+   - Is Signal Timely?: No, potential gain has not been missed significantly.
+   - P/E Ratio: 34.13
+   - PEG Ratio: 1.97
+
+2. **QQQ (Invesco QQQ Trust)**
+   - Function: TRENDPULSE
+   - Signal Date: 2025-08-31
+   - Signal: Long
+   - Signal Price: $570.4
+   - Win Rate: 100.0%
+   - CAGR: Strategy (8.54%) - Buy and Hold (7.66%) = 0.88%
+   - Latest Performance Win Rate: 78.1%
+   - Average Return of Historical Winning Trades: 11.5%
+   - Max Single Trade Loss Historically: 13.09%
+   - Potential Upside (from signal price): 12.2% to 46.5% (immediate targets)
+   - Target Exit Date: 2027-02-16 / 2026-04-29
+   - Current Price, Current Mark to Market: $628.09, 10.11%
+   - Target Prices: $659.38 / $735.71
+   - Support Levels: $563.37 / $526.89
+   - Recommended Stop Loss: $563.00 (based on nearest support level, approx. 10% below)
+   - Recommended Take Profit: $659.38 (first target level, approx. 10.5% upside)
+   - Is Signal Timely?: Partial gain already realized.
+   - P/E Ratio: 35.42
    - PEG Ratio: N/A
-
-2. **NVDA (NVIDIA)**
-   - Function: FRACTAL TRACK
-   - Signal Date: 2025-10-24
-   - Signal: Long
-   - Signal Price: 186.26
-   - Win Rate: 92.86%
-   - CAGR: Strategy (103.84%) - Buy and Hold (69.06%) = 34.78%
-   - Latest Performance Win Rate: 74.39%
-   - Average Return of Historical Winning Trades: 101.37%
-   - Max single trade loss historically: 44.79%
-   - Potential Upside: 6.84% to 11.99%
-   - Target Exit Date: 2026-04-20
-   - Current Price, Current Mark to Market: 186.26, 0%
-   - Target Prices: 198.87/375.07/205.19
-   - Support Levels: 179.83/13.97/89.37/78.68
-   - Recommended Stop Loss: 179.83 (approx. 3.5% below current price)
-   - Recommended Take Profit: 198.87 (first target level)
-   - Is Signal timely?: Yes
-   - P/E Ratio: 53.22
-   - PEG Ratio: 1.00
 
 #### Best Sell Signals:
-
-1. **WPM (Wheaton Precious Metals)**
-   - Function: FRACTAL TRACK
-   - Signal Date: 2025-10-24
-   - Signal: Short
-   - Signal Price: 98.15
-   - Win Rate: 87.5%
-   - CAGR: Strategy (13.82%) - Buy and Hold (5.4%) = 8.42%
-   - Latest Performance Win Rate: 50.0%
-   - Average Return of Historical Winning Trades: 10.76%
-   - Max single trade loss historically: 24.39%
-   - Potential Downside: 6.67% to 10.84%
-   - Target Exit Date: 2025-12-05
-   - Current Price, Current Mark to Market: 98.15, 0%
-   - Target Prices: 104.53/87.59/52.56
-   - Resistance Levels: 111.84/38.34
-   - Recommended Stop Loss: 111.84 (approx. 14% above current price)
-   - Recommended Take Profit: 87.59 (first target level)
-   - Is Signal timely?: Yes
-   - P/E Ratio: 56.41
-   - PEG Ratio: N/A
-
-2. **MX.TO (Methanex Corporation)**
+1. **CNR.TO (Canadian National Railway)**
    - Function: FRACTAL TRACK
    - Signal Date: 2025-10-23
    - Signal: Short
-   - Signal Price: 50.3
-   - Win Rate: 96.15%
-   - CAGR: Strategy (19.72%) - Buy and Hold (10.64%) = 9.08%
-   - Latest Performance Win Rate: 88.67%
-   - Average Return of Historical Winning Trades: 19.95%
-   - Max single trade loss historically: 41.4%
-   - Potential Downside: 5.5% to 9.8%
-   - Target Exit Date: 2026-09-19
-   - Current Price, Current Mark to Market: 50.05, -0.5%
-   - Target Prices: 51.03/60.33/63.09
-   - Resistance Levels: 47.53/38.43
-   - Recommended Stop Loss: 47.53 (approx. 5% above current price)
-   - Recommended Take Profit: 51.03 (first target level)
-   - Is Signal timely?: Yes
-   - P/E Ratio: 10.32
+   - Signal Price: 134.25
+   - Win Rate: 87.5%
+   - CAGR: Strategy (6.01%) - Buy and Hold (5.1%) = 0.91%
+   - Latest Performance Win Rate: 31.9%
+   - Average Return of Historical Winning Trades: 2.83%
+   - Max Single Trade Loss Historically: 5.65%
+   - Potential Downside: -57.93% to -34.56%
+   - Target Exit Date: 2025-11-16/2025-10-27/2025-11-03
+   - Current Price, Current Mark to Market: 132.66, -1.18%
+   - Target Prices: 132.6659/130.4507/112.15
+   - Resistance Levels: 136.43/127.762
+   - Recommended Stop Loss: 136.43 (near resistance level)
+   - Recommended Take Profit: 130.45 (first target level)
+   - Is Signal Timely?: No significant gain has been missed
+   - P/E Ratio: 18.425001
    - PEG Ratio: N/A
 
-#### Best TrendPulse Buy Signals:
+### Detailed Analysis
 
-1. **SUM.NZ (Summerset Group Holdings)**
-   - Function: TRENDPULSE
-   - Signal Date: 2025-10-24
-   - Signal: Long
-   - Signal Price: 11.9
-   - Win Rate: 100.0%
-   - CAGR: Strategy (14.49%) - Buy and Hold (9.01%) = 5.48%
-   - Latest Performance Win Rate: 85.01%
-   - Average Return of Historical Winning Trades: 5.09%
-   - Max single trade loss historically: 11.81%
-   - Potential Upside: 1.71% to 5.09%
-   - Target Exit Date: 2025-11-24
-   - Current Price, Current Mark to Market: 11.9, 0%
-   - Target Prices: 12.80/12.51/12.58
-   - Support Levels: 10.6/9.14
-   - Recommended Stop Loss: 10.6 (approx. 11% below current price)
-   - Recommended Take Profit: 12.80 (first target level)
-   - Is Signal timely?: Yes
-   - P/E Ratio: 7.73
-   - PEG Ratio: N/A
+- **Sharpe Ratio and CAGR**: Signals with high Sharpe ratios and positive CAGR differences are prioritized, indicating robust performance.
+- **Latest Performance**: High latest performance win rates were a key factor in selecting signals, reflecting recent effectiveness.
+- **Support and Resistance**: Proximity to support/resistance levels was assessed to manage risk.
+- **TrendPulse Signals**: Limited to 2-3 TrendPulse signals to ensure diversity.
+- **Market Fundamentals**: Provided P/E and PEG ratios for economic context, though not used for filtering.
 
 ### Final Output in Required Format
 
-|||ETH-USD,Weekly,FRACTAL TRACK,2025-10-24,Long|NVDA,Daily,FRACTAL TRACK,2025-10-24,Long|WPM,Monthly,FRACTAL TRACK,2025-10-24,Short|MX.TO,Daily,FRACTAL TRACK,2025-10-23,Short|SUM.NZ,Daily,TRENDPULSE,2025-10-24,Long|||
+```text
+|||AMZN,Monthly,TRENDPULSE,2025-08-31,Long|QQQ,Monthly,TRENDPULSE,2025-08-31,Long|CNR.TO,Daily,FRACTAL TRACK,2025-10-23,Short|||
+```
 
-This output includes the asset name, interval, function, signal date, and signal type for each signal, reflecting a detailed evaluation based on the provided criteria. The signals are selected to maximize potential gains while considering historical performance, current market conditions, and strategic alignment with economic fundamentals.
+This output highlights the best buy and sell signals according to your criteria, with detailed metrics to support the decision-making process.
