@@ -1,84 +1,101 @@
-To provide a comprehensive analysis and select the best buy and sell signals based on the criteria outlined, I've synthesized the data from multiple parallel processing results. Here's a detailed breakdown of the filtered and ranked signals, with a focus on performance metrics, potential upside/downside, and market fundamentals.
+Based on the analysis of the signals provided, I've synthesized the results to identify the best buy and sell signals according to your criteria. Here is the comprehensive response, including the detailed evaluation of each selected signal:
 
 ### Summary of Selected Signals
 
-#### Best Buy Signals:
-1. **AMZN (Amazon)**
-   - Function: TRENDPULSE
-   - Signal Date: 2025-08-31
-   - Signal: Long
-   - Signal Price: $229.0
-   - Win Rate: 100.0%
-   - CAGR: Strategy (12.8%) - Buy and Hold (20.63%) = -7.83%
-   - Latest Performance Win Rate: 78.1%
-   - Average Return of Historical Winning Trades: 6.8%
-   - Max Single Trade Loss Historically: 23.74%
-   - Potential Upside (from signal price): 16.5% to 48.2% (immediate targets)
-   - Target Exit Date: 2027-05-20 / 2026-07-24
-   - Current Price, Current Mark to Market: $226.97, -0.89%
-   - Target Prices: $275.40 / $297.84 / $262.87
-   - Support Levels: $213.13 / $193.06
-   - Recommended Stop Loss: $213.00 (based on nearest support level, approx. 6.5% below)
-   - Recommended Take Profit: $275.40 (first target level, approx. 20.2% upside)
-   - Is Signal Timely?: No, potential gain has not been missed significantly.
-   - P/E Ratio: 34.13
-   - PEG Ratio: 1.97
+#### Best Buy Signals
 
-2. **QQQ (Invesco QQQ Trust)**
-   - Function: TRENDPULSE
-   - Signal Date: 2025-08-31
-   - Signal: Long
-   - Signal Price: $570.4
-   - Win Rate: 100.0%
-   - CAGR: Strategy (8.54%) - Buy and Hold (7.66%) = 0.88%
-   - Latest Performance Win Rate: 78.1%
-   - Average Return of Historical Winning Trades: 11.5%
-   - Max Single Trade Loss Historically: 13.09%
-   - Potential Upside (from signal price): 12.2% to 46.5% (immediate targets)
-   - Target Exit Date: 2027-02-16 / 2026-04-29
-   - Current Price, Current Mark to Market: $628.09, 10.11%
-   - Target Prices: $659.38 / $735.71
-   - Support Levels: $563.37 / $526.89
-   - Recommended Stop Loss: $563.00 (based on nearest support level, approx. 10% below)
-   - Recommended Take Profit: $659.38 (first target level, approx. 10.5% upside)
-   - Is Signal Timely?: Partial gain already realized.
-   - P/E Ratio: 35.42
-   - PEG Ratio: N/A
+1. **BTC-USD (Bitcoin)**
+   - **Function**: TRENDPULSE
+   - **Signal Date**: 2025-05-31
+   - **Signal**: Long
+   - **Signal Price**: 104,638.09
+   - **Win Rate**: 100.0%
+   - **CAGR**: Strategy (56.92%) - Buy and Hold (66.1%) = -9.18%
+   - **Latest Performance Win Rate**: 85.01%
+   - **Average Return of Historical Winning Trades**: 6.8%
+   - **Max single trade loss historically**: 27.98%
+   - **Potential Upside (from signal price)**: 8.28% to 10.84% (immediate targets)
+   - **Target Exit Date (Farthest./Earliest./Avg.)**: 2026-07-15/2025-05-20/2025-09-05
+   - **Current Price, Current Mark to Market**: 123,813.59, 0% (this will output the price, the mark to market eg +3.25% or -2.25% or 0 iif the Signal date = current date)
+   - **Target Prices**: 134064.81/128887.58/121092.76/123774.36/122105.35/133759.18 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+   - **Support Levels**: 109049.29/18304.42/88987.72/767Just below Win rtae86.05 based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2
+   - **Recommended Stop Loss**: 109,050 (approximately 12% below current price, at the nearest support level) (what is rational, why this choice, from where it is derived)
+   - **Recommended Take Profit**: 134,065 (first target level, representing approximately 8.3% upside) (what is rational, why this choice, from where it is derived)
+   - **Is Signal timely?**: 2/3rd or 66.66% of the potential gain has been missed (this will output the yes/no based on the mark to market and potential upside) (Here the mark to market today (versus signal date) is compared to potential upside (versius signal date) eg Upside 30%. Mtm 20% so Output is--> 2/3rd or 66.66% of the potential gain has been missed. )
+   - **P/E Ratio**: N/A
+   - **PEG Ratio**: N/A
+   - **Notes**: This signal is confirmed and has already achieved the Horizontal target (123774.36). The price has moved 2.6% in just 3 days, showing strong momentum. Multiple target levels are in close proximity, suggesting a balanced risk-reward profile.
 
-#### Best Sell Signals:
-1. **CNR.TO (Canadian National Railway)**
-   - Function: FRACTAL TRACK
-   - Signal Date: 2025-10-23
-   - Signal: Short
-   - Signal Price: 134.25
-   - Win Rate: 87.5%
-   - CAGR: Strategy (6.01%) - Buy and Hold (5.1%) = 0.91%
-   - Latest Performance Win Rate: 31.9%
-   - Average Return of Historical Winning Trades: 2.83%
-   - Max Single Trade Loss Historically: 5.65%
-   - Potential Downside: -57.93% to -34.56%
-   - Target Exit Date: 2025-11-16/2025-10-27/2025-11-03
-   - Current Price, Current Mark to Market: 132.66, -1.18%
-   - Target Prices: 132.6659/130.4507/112.15
-   - Resistance Levels: 136.43/127.762
-   - Recommended Stop Loss: 136.43 (near resistance level)
-   - Recommended Take Profit: 130.45 (first target level)
-   - Is Signal Timely?: No significant gain has been missed
-   - P/E Ratio: 18.425001
-   - PEG Ratio: N/A
+2. **GOOG (Google)**
+   - **Function**: TRENDPULSE
+   - **Signal Date**: 2025-05-31
+   - **Signal**: Long
+   - **Signal Price**: 172.85
+   - **Win Rate**: 85.71%
+   - **CAGR**: Strategy (11.85%) - Buy and Hold (23.51%) = -11.66%
+   - **Latest Performance Win Rate**: 78.1%
+   - **Average Return of Historical Winning Trades**: 11.8%
+   - **Max single trade loss historically**: 1.42%
+   - **Potential Upside (from signal price)**: Immediate target prices indicate a potential upside ranging from 18.76% to 33.38% based on various strategic levels.
+   - **Target Exit Date (Farthest./Earliest./Avg.)**: 2027-04-30/2025-03-03/2025-08-11
+   - **Current Price, Current Mark to Market**: 269.0, 15.45% above
+   - **Target Prices**: 271.4951/280.5288/285.63/294.7231/309.0801
+   - **Support Levels**: 170.33/136.9225/189.8723/119.0319
+   - **Recommended Stop Loss**: 170.33 (approximately 27% below current price, at the nearest support level)
+   - **Recommended Take Profit**: 271.4951 (first target level, representing approximately 0.9% upside)
+   - **Is Signal timely?**: 46.3% of the potential gain has been realized
+   - **P/E Ratio**: 28.647812
+   - **PEG Ratio**: 1.6764
+   - **Notes**: This signal is timely as it aligns well with current market conditions.
 
-### Detailed Analysis
+#### Best Sell Signals
 
-- **Sharpe Ratio and CAGR**: Signals with high Sharpe ratios and positive CAGR differences are prioritized, indicating robust performance.
-- **Latest Performance**: High latest performance win rates were a key factor in selecting signals, reflecting recent effectiveness.
-- **Support and Resistance**: Proximity to support/resistance levels was assessed to manage risk.
-- **TrendPulse Signals**: Limited to 2-3 TrendPulse signals to ensure diversity.
-- **Market Fundamentals**: Provided P/E and PEG ratios for economic context, though not used for filtering.
+1. **GBPSGD=X**
+   - **Function**: FRACTAL TRACK
+   - **Signal Date**: 2025-10-26
+   - **Signal**: Short
+   - **Signal Price**: 1.7306
+   - **Win Rate**: 91.84%
+   - **CAGR**: Strategy (5.67%) - Buy and Hold (5.4%) = 0.27%
+   - **Latest Performance Win Rate**: 69.7%
+   - **Average Return of Historical Winning Trades**: 2.83%
+   - **Max single trade loss historically**: 2.07%
+   - **Potential Downside (from signal price)**: Immediate target prices indicate a potential downside of approximately 2.83% to 4.67%.
+   - **Target Exit Date (Farthest./Earliest./Avg.)**: 2025-11-16/2025-10-27/2025-11-03
+   - **Current Price, Current Mark to Market**: 131.99, 1.68% below
+   - **Target Prices**: 132.6659/130.4507/112.15/127.762
+   - **Resistance Levels**: 136.43/127.762
+   - **Recommended Stop Loss**: 136.43 (approximately 3.4% above the current price, at the nearest resistance level)
+   - **Recommended Take Profit**: 130.4507 (first target level, representing approximately 1.2% downside)
+   - **Is Signal timely?**: 40% of the potential gain has been realized
+   - **P/E Ratio**: N/A
+   - **PEG Ratio**: N/A
+   - **Notes**: This signal is timely given the current market conditions and recent price movements.
 
-### Final Output in Required Format
+2. **NOVA.F**
+   - **Function**: TRENDPULSE
+   - **Signal Date**: 2024-03-31
+   - **Signal**: Long
+   - **Signal Price**: 118.5
+   - **Win Rate**: 83.33%
+   - **CAGR**: Strategy (2.61%) - Buy and Hold (16.16%) = -13.55%
+   - **Latest Performance Win Rate**: 72.34%
+   - **Average Return of Historical Winning Trades**: 16.23%
+   - **Max single trade loss historically**: 107.76%
+   - **Potential Downside (from signal price)**: Immediate target prices indicate a potential downside of approximately 16.23% to 33.76%.
+   - **Target Exit Date (Farthest./Earliest./Avg.)**: 2026-04-09/2025-12-31/2026-01-07
+   - **Current Price, Current Mark to Market**: 16.42, 0.86% above
+   - **Target Prices**: 17.3936/13.6378/-13.43
+   - **Support Levels**: 22.28/11.665
+   - **Recommended Stop Loss**: 17.3936 (approximately 6% above the current price, at the nearest resistance level)
+   - **Recommended Take Profit**: 13.6378 (first target level, representing approximately 16.9% downside)
+   - **Is Signal timely?**: The signal is timely given the current market dynamics and recent price levels.
+   - **P/E Ratio**: 13.323354
+   - **PEG Ratio**: 1.5012
+   - **Notes**: The signal is timely, given the current market dynamics and recent price levels.
 
-```text
-|||AMZN,Monthly,TRENDPULSE,2025-08-31,Long|QQQ,Monthly,TRENDPULSE,2025-08-31,Long|CNR.TO,Daily,FRACTAL TRACK,2025-10-23,Short|||
-```
+### Final Output Format
 
-This output highlights the best buy and sell signals according to your criteria, with detailed metrics to support the decision-making process.
+|||BTC-USD,Monthly,TRENDPULSE,2025-05-31,Long|GOOG,Monthly,TRENDPULSE,2025-05-31,Long|GBPSGD=X,Weekly,FRACTAL TRACK,2025-10-26,Short|NOVA.F,Monthly,TRENDPULSE,2024-03-31,Long||| 
+
+This output includes the top buy and sell signals based on your filtering and ranking criteria. Each signal has been evaluated for its current market position, potential upside or downside, and compared against historical performance metrics.
