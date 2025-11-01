@@ -90,11 +90,11 @@ def create_breadth_page(data_file, page_title):
             import plotly.graph_objects as go
             fig = go.Figure()
             fig.add_trace(go.Scatter(
-                x=x, y=y1, mode='lines', name='Bullish Assets (%)',
+                x=x, y=y1, mode='lines', name='Bullish Asset vs Total Asset (%)',
                 line=dict(color='#1f77b4', width=3), opacity=0.95
             ))
             fig.add_trace(go.Scatter(
-                x=x, y=y2, mode='lines', name='Bullish Signals (%)',
+                x=x, y=y2, mode='lines', name='Bullish Signal vs Total Signal (%)',
                 line=dict(color='#ff7f0e', width=3), opacity=0.95
             ))
 
@@ -105,8 +105,8 @@ def create_breadth_page(data_file, page_title):
                 yaxis_title='Percentage (%)',
                 legend=dict(
                     orientation='h',
-                    yanchor='bottom', y=1.08,
-                    xanchor='center', x=0.5,
+                    yanchor='bottom', y=1.02,
+                    xanchor='right', x=1,
                     bgcolor='rgba(255,255,255,0.95)',
                     bordercolor='#333', borderwidth=1,
                     font=dict(size=13, color='#111')
