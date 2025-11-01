@@ -5,27 +5,77 @@ Text file page for displaying GPT output
 import streamlit as st
 import pandas as pd
 import os
+import glob
+from datetime import datetime
 
 from constant import (
     GPT_SIGNALS_REPORT_TXT_PATH_US,
     GPT_SIGNALS_REPORT_CSV_PATH_US,
 )
 from ..components.cards import create_summary_cards, create_strategy_cards
+from ..utils.file_discovery import extract_date_from_filename
+
+
+def find_latest_gpt_file(base_path, extension='txt'):
+    """
+    Find the most recent GPT report file (dated or non-dated).
+    Returns the file path and extracted date if found.
+    """
+    # Get directory and base filename
+    dir_path = os.path.dirname(base_path)
+    base_name = os.path.basename(base_path)
+    
+    # Pattern to match: YYYY-MM-DD_gpt_signals_report.ext or gpt_signals_report.ext
+    pattern_txt = os.path.join(dir_path, f"*_gpt_signals_report.{extension}")
+    pattern_base = os.path.join(dir_path, f"gpt_signals_report.{extension}")
+    
+    # Find all matching files
+    dated_files = glob.glob(pattern_txt)
+    base_files = glob.glob(pattern_base)
+    
+    all_files = dated_files + base_files
+    
+    if not all_files:
+        return None, None
+    
+    # Sort files by date (most recent first)
+    def get_file_date(file_path):
+        filename = os.path.basename(file_path)
+        date_obj = extract_date_from_filename(filename)
+        return date_obj if date_obj else datetime.min
+    
+    # Get the most recent file
+    latest_file = max(all_files, key=get_file_date)
+    file_date = extract_date_from_filename(os.path.basename(latest_file))
+    
+    return latest_file, file_date
 
 
 def create_text_file_page():
     """Create a page to display GPT Signals report: text first, then cards + table"""
     st.title("🤖 GPT Signals Report")
+    
+    # Find the latest GPT files
+    txt_file, txt_date = find_latest_gpt_file(GPT_SIGNALS_REPORT_TXT_PATH_US, 'txt')
+    csv_file, csv_date = find_latest_gpt_file(GPT_SIGNALS_REPORT_CSV_PATH_US, 'csv')
+    
+    # Display date if found (prefer CSV date if both exist, otherwise use TXT date)
+    report_date = csv_date if csv_date else txt_date
+    if report_date:
+        formatted_date = report_date.strftime('%B %d, %Y')
+        st.markdown(f"**📅 Report Date: {formatted_date}**")
+    
     st.markdown("---")
     
     # 1) Text output
     st.markdown("### 📝 GPT Analysis (Text)")
+    txt_path = txt_file if txt_file else GPT_SIGNALS_REPORT_TXT_PATH_US
     try:
-        with open(GPT_SIGNALS_REPORT_TXT_PATH_US, 'r', encoding='utf-8') as file:
+        with open(txt_path, 'r', encoding='utf-8') as file:
             content = file.read()
-            st.text_area("Report Text:", content, height=400, key="gpt_signals_text")
+            st.text_area("Report Text:", content, height=600, key="gpt_signals_text")
     except FileNotFoundError:
-        st.warning(f"Text report not found: {GPT_SIGNALS_REPORT_TXT_PATH_US}")
+        st.warning(f"Text report not found: {txt_path}")
     except Exception as e:
         st.error(f"Error reading text report: {str(e)}")
     
@@ -33,9 +83,10 @@ def create_text_file_page():
     
     # 2) CSV output: show strategy cards first, then table
     st.markdown("### 📊 GPT Signals (Cards + Table)")
-    if os.path.exists(GPT_SIGNALS_REPORT_CSV_PATH_US):
+    csv_path = csv_file if csv_file else GPT_SIGNALS_REPORT_CSV_PATH_US
+    if os.path.exists(csv_path):
         try:
-            raw_df = pd.read_csv(GPT_SIGNALS_REPORT_CSV_PATH_US)
+            raw_df = pd.read_csv(csv_path)
             if raw_df.empty:
                 st.info("No data available in GPT signals CSV.")
                 return
@@ -88,5 +139,5 @@ def create_text_file_page():
         except Exception as e:
             st.error(f"Error reading CSV report: {str(e)}")
     else:
-        st.warning(f"CSV report not found: {GPT_SIGNALS_REPORT_CSV_PATH_US}")
+        st.warning(f"CSV report not found: {csv_path}")
 

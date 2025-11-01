@@ -10,11 +10,12 @@ from datetime import datetime
 
 def extract_date_from_filename(filename):
     """
-    Extract date from filename in format: YYYY-MM-DD_filename.csv (date prefix convention)
+    Extract date from filename in format: YYYY-MM-DD_filename.ext (date prefix convention)
     Returns datetime object if found, None otherwise
+    Works with .csv, .txt, and other extensions
     """
-    # Pattern to match dates at the START of filename: YYYY-MM-DD_filename.csv
-    date_pattern = r'^(\d{4}-\d{2}-\d{2})_(.+)\.csv$'
+    # Pattern to match dates at the START of filename: YYYY-MM-DD_filename.ext
+    date_pattern = r'^(\d{4}-\d{2}-\d{2})_(.+)\.(csv|txt|json)$'
     match = re.search(date_pattern, filename)
     if match:
         try:
