@@ -4,11 +4,46 @@ File discovery and CSV structure detection utilities
 
 import os
 import glob
+import re
+from datetime import datetime
+
+
+def extract_date_from_filename(filename):
+    """
+    Extract date from filename in format: YYYY-MM-DD_filename.csv (date prefix convention)
+    Returns datetime object if found, None otherwise
+    """
+    # Pattern to match dates at the START of filename: YYYY-MM-DD_filename.csv
+    date_pattern = r'^(\d{4}-\d{2}-\d{2})_(.+)\.csv$'
+    match = re.search(date_pattern, filename)
+    if match:
+        try:
+            return datetime.strptime(match.group(1), '%Y-%m-%d')
+        except ValueError:
+            return None
+    return None
+
+
+def get_base_filename(filename):
+    """
+    Extract base filename without date prefix.
+    e.g., '2025-10-31_bollinger_band.csv' -> 'bollinger_band.csv'
+    """
+    # Pattern to match dates at the START: YYYY-MM-DD_filename.csv
+    date_pattern = r'^\d{4}-\d{2}-\d{2}_(.+)\.csv$'
+    match = re.search(date_pattern, filename)
+    if match:
+        return match.group(1) + '.csv'
+    # If no date prefix, return filename as-is
+    return filename
 
 
 def detect_csv_structure(file_path):
-    """Detect the structure and type of CSV file based on filename"""
+    """Detect the structure and type of CSV file based on filename (handles dated filenames)"""
     filename = os.path.basename(file_path)
+    
+    # Get base filename (without date)
+    base_filename = get_base_filename(filename)
     
     # Map filenames to their specific parsers
     file_mapping = {
@@ -30,11 +65,11 @@ def detect_csv_structure(file_path):
         'forward_backtesting.csv': 'forward_backtesting'
     }
     
-    return file_mapping.get(filename, 'unknown')
+    return file_mapping.get(base_filename, 'unknown')
 
 
 def discover_csv_files():
-    """Dynamically discover all CSV files in the trade_store/US directory"""
+    """Dynamically discover all CSV files in the trade_store/US directory (handles dated filenames)"""
     # Define the specific order for page names
     ordered_pages = [
         'Band Matrix',
@@ -52,11 +87,12 @@ def discover_csv_files():
         'Outstanding Signals Exit',
         'New Signals',
         'Latest Performance',
-        'Forward Testing Performance'
+        'Forward Testing Performance',
+        'Horizontal'
     ]
     
-    # Map file names to model function names
-    name_mapping = {
+    # Map base file names (without date) to model function names
+    base_name_mapping = {
         'bollinger_band.csv': 'Band Matrix',
         'Distance.csv': 'DeltaDrift',
         'Fib-Ret.csv': 'Fractal Track',
@@ -72,7 +108,9 @@ def discover_csv_files():
         'new_signal.csv': 'New Signals',
         'latest_performance.csv': 'Latest Performance',
         'forward_backtesting.csv': 'Forward Testing Performance',
-        'target_signal.csv': 'Outstanding Target'
+        'forward_testing.csv': 'Forward Testing Performance',  # Alternative filename
+        'target_signal.csv': 'Outstanding Target',
+        'Horizontal.csv': 'Horizontal'
     }
     
     csv_files = {}
@@ -83,19 +121,65 @@ def discover_csv_files():
         csv_pattern = os.path.join(trade_store_path, "*.csv")
         csv_file_paths = glob.glob(csv_pattern)
         
-        # Create a mapping from filename to filepath
+        # Create a mapping from base filename to filepath
+        # If multiple dated versions exist, prefer the most recent
         file_mapping = {}
         for file_path in csv_file_paths:
             filename = os.path.basename(file_path)
-            file_mapping[filename] = file_path
+            base_filename = get_base_filename(filename)
+            
+            if base_filename in base_name_mapping:
+                # Files that should NOT use dated versions (prefer non-dated)
+                non_dated_files = ['latest_performance.csv', 'forward_backtesting.csv', 'forward_testing.csv']
+                
+                # If we haven't seen this base file, or this one is more recent
+                if base_filename not in file_mapping:
+                    file_mapping[base_filename] = file_path
+                else:
+                    current_date = extract_date_from_filename(filename)
+                    existing_date = extract_date_from_filename(os.path.basename(file_mapping[base_filename]))
+                    
+                    # For specific files, prefer non-dated versions
+                    if base_filename in non_dated_files:
+                        # Prefer non-dated file if available
+                        if not current_date and existing_date:
+                            file_mapping[base_filename] = file_path
+                        elif current_date and not existing_date:
+                            # Keep existing non-dated file
+                            pass
+                        elif not current_date and not existing_date:
+                            # Both non-dated, keep first one found
+                            pass
+                        elif current_date and existing_date:
+                            # Both dated, keep first one found (don't prefer newer)
+                            pass
+                    else:
+                        # For other files, prefer dated versions (existing logic)
+                        if current_date and existing_date:
+                            if current_date > existing_date:
+                                file_mapping[base_filename] = file_path
+                        elif current_date and not existing_date:
+                            # Prefer dated file over non-dated
+                            file_mapping[base_filename] = file_path
+                        # If both are dated and current is older, keep existing
+                        # If both are non-dated, keep first one found
         
         # Add files in the specified order
         for page_name in ordered_pages:
-            # Find the corresponding file
-            for original_name, mapped_name in name_mapping.items():
-                if mapped_name == page_name and original_name in file_mapping:
-                    csv_files[page_name] = file_mapping[original_name]
-                    break
+            # Find the corresponding file(s) - may have multiple mappings for same page
+            candidates = []
+            for base_name, mapped_name in base_name_mapping.items():
+                if mapped_name == page_name and base_name in file_mapping:
+                    candidates.append(base_name)
+            
+            # If multiple candidates, prefer specific ones (e.g., forward_testing.csv over forward_backtesting.csv)
+            if candidates:
+                # Prefer forward_testing.csv if both exist
+                if 'forward_testing.csv' in candidates:
+                    selected_base = 'forward_testing.csv'
+                else:
+                    selected_base = candidates[0]  # Use first found
+                csv_files[page_name] = file_mapping[selected_base]
     
     return csv_files
 

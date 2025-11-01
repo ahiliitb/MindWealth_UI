@@ -207,8 +207,8 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                         if page_name == 'Outstanding Signals Exit':
                             # Fetch original signal data and display chart with exit marker
                             create_outstanding_exit_signal_chart(row, raw_data)
-                        elif page_name == 'Outstanding Signals':
-                            # Fetch original signal data and display appropriate chart
+                        elif page_name in ['Outstanding Signals', 'New Signals']:
+                            # For New Signals and Outstanding Signals, fetch original data from function CSVs
                             create_outstanding_signal_chart(row, raw_data)
                         elif page_name == 'Oscillator Delta':
                             # Divergence chart with divergence line

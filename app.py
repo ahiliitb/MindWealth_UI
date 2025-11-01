@@ -13,6 +13,7 @@ from src.pages import (
     create_virtual_trading_page,
     render_chatbot_page
 )
+from src.pages.horizontal_page import create_horizontal_page
 from src.utils import discover_csv_files
 
 # Set page config
@@ -119,7 +120,10 @@ def main():
         # Create analysis page for CSV files
         csv_file = page_options[page]
         if csv_file and csv_file not in ["text_files", "virtual_trading", "chatbot"]:
-            create_analysis_page(csv_file, page)
+            if page == 'Horizontal':
+                create_horizontal_page(csv_file, page)
+            else:
+                create_analysis_page(csv_file, page)
         else:
             st.error(f"No data file found for {page}")
 

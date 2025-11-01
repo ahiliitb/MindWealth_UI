@@ -40,6 +40,136 @@ def calculate_retracement_levels(ret_high_low, high_or_low_diff, is_uptrend):
     return retracement_prices
 
 
+def create_horizontal_chart(symbol: str, interval: str, horizontal_price: float):
+    """Create a simple candlestick chart with a horizontal reference line.
+
+    Uses `load_stock_data_file` to fetch OHLC for the symbol and interval.
+    """
+    try:
+        # Determine back window based on interval, mirroring the referenced logic
+        # Daily: 4 years; Weekly: 15 years; Otherwise: full history (IPO to date)
+        end_date_for_data = datetime.now()
+        start_date_for_data = None
+        if interval and 'Daily' in interval:
+            start_date_for_data = end_date_for_data - timedelta(days=365 * 4)
+        elif interval and 'Weekly' in interval:
+            start_date_for_data = end_date_for_data - timedelta(days=365 * 15)
+        else:
+            # Load full history by passing None (approximation for IPO date)
+            start_date_for_data = None
+
+        df = load_stock_data_file(symbol, start_date_for_data, end_date_for_data, interval if interval else 'Daily')
+        if df is None or df.empty:
+            st.warning(f"No price data available for {symbol} ({interval}).")
+            return
+
+        fig = go.Figure()
+        
+        # Add candlestick chart
+        fig.add_trace(go.Candlestick(
+            x=df['Date'],
+            open=df['Open'],
+            high=df['High'],
+            low=df['Low'],
+            close=df['Close'],
+            name=symbol,
+            increasing_line_color='green',
+            decreasing_line_color='red'
+        ))
+
+        # Add horizontal reference line
+        if horizontal_price is not None:
+            try:
+                horizontal_price_float = float(horizontal_price)
+                # Use Scatter for better control over the horizontal line
+                fig.add_trace(go.Scatter(
+                    x=[df['Date'].min(), df['Date'].max()],
+                    y=[horizontal_price_float, horizontal_price_float],
+                    mode='lines',
+                    line=dict(color='orange', width=3, dash='dash'),
+                    name=f'Horizontal: {horizontal_price_float:.4f}',
+                    hovertemplate=f'Horizontal Level: ${horizontal_price_float:.4f}<extra></extra>'
+                ))
+            except (ValueError, TypeError):
+                pass
+
+        # Update layout for better appearance (similar to other charts)
+        fig.update_layout(
+            title=dict(
+                text=f'{symbol} - Horizontal Analysis ({interval})',
+                x=0.5,
+                xanchor='center',
+                font=dict(size=20, color='#1f77b4')
+            ),
+            xaxis=dict(
+                title=dict(text='Date', font=dict(size=16, color='#111')),
+                tickfont=dict(size=13, color='#111'),
+                tickangle=0,
+                gridcolor='#e9e9e9',
+                gridwidth=1,
+                showgrid=True,
+                zeroline=False,
+                showline=True,
+                linewidth=1.5,
+                linecolor='#333',
+                mirror=True,
+                showspikes=True,
+                spikemode='across',
+                spikesnap='cursor',
+                spikedash='solid',
+                spikecolor='#999999',
+                spikethickness=1
+            ),
+            yaxis=dict(
+                title=dict(text='Price ($)', font=dict(size=16, color='#111')),
+                tickfont=dict(size=13, color='#111'),
+                gridcolor='#e9e9e9',
+                gridwidth=1,
+                showgrid=True,
+                zeroline=False,
+                showline=True,
+                linewidth=1.5,
+                linecolor='#333',
+                mirror=True,
+                showspikes=True,
+                spikemode='across',
+                spikesnap='cursor',
+                spikedash='solid',
+                spikecolor='#999999',
+                spikethickness=1
+            ),
+            hovermode='closest',
+            showlegend=True,
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=1.02,
+                xanchor="right",
+                x=1
+            ),
+            height=700,
+            margin=dict(l=65, r=20, t=90, b=70),
+            plot_bgcolor='white',
+            paper_bgcolor='#fafafa',
+            xaxis_rangeslider_visible=False,
+            autosize=True,
+            width=None
+        )
+
+        # Display the chart with full width
+        st.plotly_chart(
+            fig, 
+            use_container_width=True,
+            config={
+                'displayModeBar': True,
+                'displaylogo': False,
+                'modeBarButtonsToRemove': ['pan2d', 'lasso2d', 'select2d'],
+                'responsive': True
+            }
+        )
+    except Exception as e:
+        st.error(f"Error rendering horizontal chart for {symbol}: {str(e)}")
+
 def create_interactive_chart(row_data, raw_data, exit_date=None, exit_price=None, exit_signal_type=None):
     """Create an interactive candlestick chart for Fib-Ret data"""
     try:
@@ -397,12 +527,17 @@ def create_interactive_chart(row_data, raw_data, exit_date=None, exit_price=None
                 font=dict(size=20, color='#1f77b4')
             ),
             xaxis=dict(
-                title=dict(text='Date', font=dict(size=14)),
-                tickfont=dict(size=11),
-                gridcolor='#f0f0f0',
+                title=dict(text='Date', font=dict(size=16, color='#111')),
+                tickfont=dict(size=13, color='#111'),
+                tickangle=0,
+                gridcolor='#e9e9e9',
                 gridwidth=1,
                 showgrid=True,
                 zeroline=False,
+                showline=True,
+                linewidth=1.5,
+                linecolor='#333',
+                mirror=True,
                 showspikes=True,
                 spikemode='across',
                 spikesnap='cursor',
@@ -411,12 +546,16 @@ def create_interactive_chart(row_data, raw_data, exit_date=None, exit_price=None
                 spikethickness=1
             ),
             yaxis=dict(
-                title=dict(text='Price ($)', font=dict(size=14)),
-                tickfont=dict(size=11),
-                gridcolor='#f0f0f0',
+                title=dict(text='Price ($)', font=dict(size=16, color='#111')),
+                tickfont=dict(size=13, color='#111'),
+                gridcolor='#e9e9e9',
                 gridwidth=1,
                 showgrid=True,
                 zeroline=False,
+                showline=True,
+                linewidth=1.5,
+                linecolor='#333',
+                mirror=True,
                 showspikes=True,
                 spikemode='across',
                 spikesnap='cursor',
@@ -434,7 +573,7 @@ def create_interactive_chart(row_data, raw_data, exit_date=None, exit_price=None
                 x=1
             ),
             height=700,
-            margin=dict(l=50, r=10, t=100, b=60),
+            margin=dict(l=65, r=20, t=90, b=70),
             plot_bgcolor='white',
             paper_bgcolor='#fafafa',
             xaxis_rangeslider_visible=False,
@@ -714,20 +853,29 @@ def create_divergence_chart(row, raw_data, exit_date=None, exit_price=None, exit
                 font=dict(size=20, color='#1f77b4')
             ),
             xaxis=dict(
-                title=dict(text='Date', font=dict(size=14)),
-                tickfont=dict(size=11),
-                gridcolor='#f0f0f0',
+                title=dict(text='Date', font=dict(size=16, color='#111')),
+                tickfont=dict(size=13, color='#111'),
+                tickangle=0,
+                gridcolor='#e9e9e9',
                 gridwidth=1,
                 showgrid=True,
-                zeroline=False
+                zeroline=False,
+                showline=True,
+                linewidth=1.5,
+                linecolor='#333',
+                mirror=True
             ),
             yaxis=dict(
-                title=dict(text='Price ($)', font=dict(size=14)),
-                tickfont=dict(size=11),
-                gridcolor='#f0f0f0',
+                title=dict(text='Price ($)', font=dict(size=16, color='#111')),
+                tickfont=dict(size=13, color='#111'),
+                gridcolor='#e9e9e9',
                 gridwidth=1,
                 showgrid=True,
-                zeroline=False
+                zeroline=False,
+                showline=True,
+                linewidth=1.5,
+                linecolor='#333',
+                mirror=True
             ),
             hovermode='closest',
             showlegend=True,
@@ -739,7 +887,7 @@ def create_divergence_chart(row, raw_data, exit_date=None, exit_price=None, exit
                 x=1
             ),
             height=700,
-            margin=dict(l=50, r=10, t=100, b=60),
+            margin=dict(l=65, r=20, t=90, b=70),
             plot_bgcolor='white',
             paper_bgcolor='#fafafa',
             xaxis_rangeslider_visible=False,
@@ -975,12 +1123,17 @@ def create_bollinger_band_chart(row, raw_data, exit_date=None, exit_price=None, 
                 font=dict(size=20, color='#1f77b4')
             ),
             xaxis=dict(
-                title=dict(text='Date', font=dict(size=14)),
-                tickfont=dict(size=11),
-                gridcolor='#f0f0f0',
+                title=dict(text='Date', font=dict(size=16, color='#111')),
+                tickfont=dict(size=13, color='#111'),
+                tickangle=0,
+                gridcolor='#e9e9e9',
                 gridwidth=1,
                 showgrid=True,
                 zeroline=False,
+                showline=True,
+                linewidth=1.5,
+                linecolor='#333',
+                mirror=True,
                 showspikes=True,
                 spikemode='across',
                 spikesnap='cursor',
@@ -989,12 +1142,16 @@ def create_bollinger_band_chart(row, raw_data, exit_date=None, exit_price=None, 
                 spikethickness=1
             ),
             yaxis=dict(
-                title=dict(text='Price ($)', font=dict(size=14)),
-                tickfont=dict(size=11),
-                gridcolor='#f0f0f0',
+                title=dict(text='Price ($)', font=dict(size=16, color='#111')),
+                tickfont=dict(size=13, color='#111'),
+                gridcolor='#e9e9e9',
                 gridwidth=1,
                 showgrid=True,
                 zeroline=False,
+                showline=True,
+                linewidth=1.5,
+                linecolor='#333',
+                mirror=True,
                 showspikes=True,
                 spikemode='across',
                 spikesnap='cursor',
@@ -1012,7 +1169,7 @@ def create_bollinger_band_chart(row, raw_data, exit_date=None, exit_price=None, 
                 x=1
             ),
             height=700,
-            margin=dict(l=50, r=10, t=100, b=60),
+            margin=dict(l=65, r=20, t=90, b=70),
             plot_bgcolor='white',
             paper_bgcolor='#fafafa',
             xaxis_rangeslider_visible=False,

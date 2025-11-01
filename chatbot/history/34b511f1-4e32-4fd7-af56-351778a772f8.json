@@ -1,0 +1,1908 @@
+{
+  "metadata": {
+    "session_id": "34b511f1-4e32-4fd7-af56-351778a772f8",
+    "title": "User Query: give me the top 5 signals and the...",
+    "created_at": "2025-10-23T16:12:58.076056",
+    "last_updated": "2025-10-23T16:13:25.344109",
+    "message_count": 3
+  },
+  "conversation": [
+    {
+      "role": "system",
+      "content": "You are an expert financial trading analyst assistant for MindWealth. \nYou help users analyze stock market data, trading signals, and provide insights based on historical data.\n\nYour capabilities include:\n- Analyzing stock price movements and trends\n- Interpreting trading signals and technical indicators\n- Providing insights on market performance\n- Comparing multiple tickers\n- Identifying patterns and opportunities\n\nIMPORTANT OUTPUT FORMATTING REQUIREMENTS:\n1. ALWAYS use proper Markdown formatting\n2. ALWAYS include spaces between words and punctuation\n3. Use bullet points (- or •) for lists\n4. Use **bold** for emphasis\n5. Use headers (##, ###) to organize sections\n6. Use line breaks between paragraphs\n7. Format numbers with proper spacing: \"245.27 is significantly above the track level (169.28)\"\n8. NEVER concatenate words without spaces\n\nWhen analyzing data:\n1. Be precise and data-driven in your analysis\n2. Highlight key trends and patterns\n3. Provide actionable insights when possible\n4. Use technical analysis terminology appropriately\n5. Consider the time period and context of the data\n6. Structure your response with clear sections and proper spacing\n\nCRITICAL: Always format your response in clean, readable Markdown with proper spacing.\nAlways base your responses on the actual data provided and avoid speculation.\n",
+      "timestamp": "2025-10-23T16:12:58.233672"
+    },
+    {
+      "role": "user",
+      "content": "User Query: give me the top 5 signals and the table asociated with them. top 5 as per sharpe ratio and cagr difference each\n\n=== COLUMN SELECTION BY SIGNAL TYPE ===\n\nENTRY:\n  Columns: Function, Symbol, Signal, Signal Date/Price[$], Backtested Strategy Sharpe Ratio, Sharpe Ratio of Buy and Hold, Backtested Strategy CAGR [%], CAGR of Buy and Hold [%], CAGR difference (Strategy - Buy and Hold) [%]\n  Reasoning: To determine the top 5 signals based on Sharpe Ratio and CAGR difference, we need columns that provide the backtested strategy Sharpe Ratio, Sharpe Ratio of buy and hold, backtested strategy CAGR, and the CAGR difference. These metrics will allow us to rank the signals and identify the top performers.\n\n=== DATA CONTEXT ===\n\n=== ENTRY SIGNALS (JSON) ===\n{\n  \"signal_type\": \"entry\",\n  \"record_count\": 100,\n  \"columns_selected\": [\n    \"Function\",\n    \"Symbol, Signal, Signal Date/Price[$]\",\n    \"Backtested Strategy Sharpe Ratio\",\n    \"Sharpe Ratio of Buy and Hold\",\n    \"Backtested Strategy CAGR [%]\",\n    \"CAGR of Buy and Hold [%]\",\n    \"CAGR difference (Strategy - Buy and Hold) [%]\"\n  ],\n  \"reasoning\": \"To determine the top 5 signals based on Sharpe Ratio and CAGR difference, we need columns that provide the backtested strategy Sharpe Ratio, Sharpe Ratio of buy and hold, backtested strategy CAGR, and the CAGR difference. These metrics will allow us to rank the signals and identify the top performers.\",\n  \"data\": [\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"FXI, Long, 2025-10-20 (Price: 40.49)\",\n      \"Backtested Strategy CAGR [%]\": \"6.5%\",\n      \"CAGR of Buy and Hold [%]\": \"3.38%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"3.12%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.36,\n      \"Sharpe Ratio of Buy and Hold\": 0.11,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"FXI\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"AAPL, Long, 2025-10-20 (Price: 262.24)\",\n      \"Backtested Strategy CAGR [%]\": \"15.43%\",\n      \"CAGR of Buy and Hold [%]\": \"17.35%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-1.92%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.42,\n      \"Sharpe Ratio of Buy and Hold\": 0.55,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"AAPL\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"AAPL, Long, 2025-10-21 (Price: 262.77)\",\n      \"Backtested Strategy CAGR [%]\": \"15.43%\",\n      \"CAGR of Buy and Hold [%]\": \"17.35%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-1.92%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.42,\n      \"Sharpe Ratio of Buy and Hold\": 0.55,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"AAPL\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"AAPL, Long, 2025-10-22 (Price: 258.45)\",\n      \"Backtested Strategy CAGR [%]\": \"15.43%\",\n      \"CAGR of Buy and Hold [%]\": \"17.35%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-1.92%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.42,\n      \"Sharpe Ratio of Buy and Hold\": 0.55,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"AAPL\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"WPM, Short, 2025-10-22 (Price: 97.13)\",\n      \"Backtested Strategy CAGR [%]\": \"13.82%\",\n      \"CAGR of Buy and Hold [%]\": \"5.4%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"8.42%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.5,\n      \"Sharpe Ratio of Buy and Hold\": 0.59,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"WPM\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"PFE, Long, 2025-10-20 (Price: 24.69)\",\n      \"Backtested Strategy CAGR [%]\": \"6.44%\",\n      \"CAGR of Buy and Hold [%]\": \"6.41%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"0.03%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.46,\n      \"Sharpe Ratio of Buy and Hold\": 0.21,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"PFE\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"PFE, Long, 2025-10-21 (Price: 24.85)\",\n      \"Backtested Strategy CAGR [%]\": \"7.04%\",\n      \"CAGR of Buy and Hold [%]\": \"-6.47%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"13.51%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.24,\n      \"Sharpe Ratio of Buy and Hold\": -0.32,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"PFE\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"PFE, Long, 2025-10-22 (Price: 24.72)\",\n      \"Backtested Strategy CAGR [%]\": \"6.44%\",\n      \"CAGR of Buy and Hold [%]\": \"6.41%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"0.03%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.46,\n      \"Sharpe Ratio of Buy and Hold\": 0.21,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"PFE\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"INFY, Long, 2025-10-20 (Price: 16.91)\",\n      \"Backtested Strategy CAGR [%]\": \"5.53%\",\n      \"CAGR of Buy and Hold [%]\": \"12.66%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-7.13%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.48,\n      \"Sharpe Ratio of Buy and Hold\": 0.38,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"INFY\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"INFY, Long, 2025-10-21 (Price: 17.41)\",\n      \"Backtested Strategy CAGR [%]\": \"5.53%\",\n      \"CAGR of Buy and Hold [%]\": \"12.66%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-7.13%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.48,\n      \"Sharpe Ratio of Buy and Hold\": 0.38,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"INFY\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"INFY, Long, 2025-10-22 (Price: 17.47)\",\n      \"Backtested Strategy CAGR [%]\": \"5.53%\",\n      \"CAGR of Buy and Hold [%]\": \"12.66%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-7.13%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.48,\n      \"Sharpe Ratio of Buy and Hold\": 0.38,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"INFY\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"OSCILLATOR DELTA\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"INFY, Long, 2025-10-20 (Price: 16.91)\",\n      \"Backtested Strategy CAGR [%]\": \"19.88%\",\n      \"CAGR of Buy and Hold [%]\": \"6.2%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"13.68%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.52,\n      \"Sharpe Ratio of Buy and Hold\": 0.23,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"INFY\",\n      \"_function\": \"OSCILLATOR DELTA\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"UBER, Long, 2025-10-20 (Price: 93.7)\",\n      \"Backtested Strategy CAGR [%]\": \"50.24%\",\n      \"CAGR of Buy and Hold [%]\": \"20.29%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"29.95%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.54,\n      \"Sharpe Ratio of Buy and Hold\": 0.65,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"UBER\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"OSCILLATOR DELTA\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"UBER, Long, 2025-10-20 (Price: 93.7)\",\n      \"Backtested Strategy CAGR [%]\": \"19.73%\",\n      \"CAGR of Buy and Hold [%]\": \"18.04%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"1.69%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.53,\n      \"Sharpe Ratio of Buy and Hold\": 0.59,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"UBER\",\n      \"_function\": \"OSCILLATOR DELTA\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"MCY.NZ, Long, 2025-10-20 (Price: 6.65)\",\n      \"Backtested Strategy CAGR [%]\": \"1.98%\",\n      \"CAGR of Buy and Hold [%]\": \"6.99%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-5.01%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.31,\n      \"Sharpe Ratio of Buy and Hold\": 0.25,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"MCY.NZ\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"OSCILLATOR DELTA\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"MA, Long, 2025-10-20 (Price: 566.36)\",\n      \"Backtested Strategy CAGR [%]\": \"24.21%\",\n      \"CAGR of Buy and Hold [%]\": \"13.3%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"10.91%\",\n      \"Backtested Strategy Sharpe Ratio\": 1.26,\n      \"Sharpe Ratio of Buy and Hold\": 0.48,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"MA\",\n      \"_function\": \"OSCILLATOR DELTA\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"TCS.NS, Long, 2025-10-19 (Price: 2962.2)\",\n      \"Backtested Strategy CAGR [%]\": \"16.08%\",\n      \"CAGR of Buy and Hold [%]\": \"15.1%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"0.98%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.63,\n      \"Sharpe Ratio of Buy and Hold\": 0.57,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"TCS.NS\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-19\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"BAC, Long, 2025-10-20 (Price: 52.04)\",\n      \"Backtested Strategy CAGR [%]\": \"10.28%\",\n      \"CAGR of Buy and Hold [%]\": \"4.52%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"5.76%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.62,\n      \"Sharpe Ratio of Buy and Hold\": 0.21,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"BAC\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"BAC, Long, 2025-10-21 (Price: 51.52)\",\n      \"Backtested Strategy CAGR [%]\": \"10.28%\",\n      \"CAGR of Buy and Hold [%]\": \"4.52%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"5.76%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.62,\n      \"Sharpe Ratio of Buy and Hold\": 0.21,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"BAC\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"BAC, Long, 2025-10-22 (Price: 51.1)\",\n      \"Backtested Strategy CAGR [%]\": \"10.28%\",\n      \"CAGR of Buy and Hold [%]\": \"4.52%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"5.76%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.62,\n      \"Sharpe Ratio of Buy and Hold\": 0.21,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"BAC\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"OSCILLATOR DELTA\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"BRK-B, Long, 2025-10-20 (Price: 494.08)\",\n      \"Backtested Strategy CAGR [%]\": \"26.16%\",\n      \"CAGR of Buy and Hold [%]\": \"15.02%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"11.14%\",\n      \"Backtested Strategy Sharpe Ratio\": 1.04,\n      \"Sharpe Ratio of Buy and Hold\": 0.64,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"BRK-B\",\n      \"_function\": \"OSCILLATOR DELTA\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"WIPRO.NS, Long, 2025-10-20 (Price: 241.24)\",\n      \"Backtested Strategy CAGR [%]\": \"4.25%\",\n      \"CAGR of Buy and Hold [%]\": \"22.57%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-18.32%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.6,\n      \"Sharpe Ratio of Buy and Hold\": 0.56,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"WIPRO.NS\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"WIPRO.NS, Long, 2025-10-21 (Price: 241.36)\",\n      \"Backtested Strategy CAGR [%]\": \"4.25%\",\n      \"CAGR of Buy and Hold [%]\": \"22.57%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-18.32%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.6,\n      \"Sharpe Ratio of Buy and Hold\": 0.56,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"WIPRO.NS\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"WIPRO.NS, Long, 2025-10-22 (Price: 241.36)\",\n      \"Backtested Strategy CAGR [%]\": \"4.25%\",\n      \"CAGR of Buy and Hold [%]\": \"22.57%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-18.32%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.6,\n      \"Sharpe Ratio of Buy and Hold\": 0.56,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"WIPRO.NS\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"ETH-USD, Long, 2025-10-19 (Price: 3984.6497)\",\n      \"Backtested Strategy CAGR [%]\": \"66.29%\",\n      \"CAGR of Buy and Hold [%]\": \"61.64%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"4.65%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.47,\n      \"Sharpe Ratio of Buy and Hold\": 1.06,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"ETH-USD\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-19\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"ETH-USD, Long, 2025-10-20 (Price: 3984.9019)\",\n      \"Backtested Strategy CAGR [%]\": \"-6.09%\",\n      \"CAGR of Buy and Hold [%]\": \"39.5%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-45.59%\",\n      \"Backtested Strategy Sharpe Ratio\": -0.31,\n      \"Sharpe Ratio of Buy and Hold\": 1.16,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"ETH-USD\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"ETH-USD, Long, 2025-10-21 (Price: 3924.886)\",\n      \"Backtested Strategy CAGR [%]\": \"-6.09%\",\n      \"CAGR of Buy and Hold [%]\": \"39.5%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-45.59%\",\n      \"Backtested Strategy Sharpe Ratio\": -0.31,\n      \"Sharpe Ratio of Buy and Hold\": 1.16,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"ETH-USD\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"ETH-USD, Long, 2025-10-22 (Price: 3734.8792)\",\n      \"Backtested Strategy CAGR [%]\": \"-6.09%\",\n      \"CAGR of Buy and Hold [%]\": \"39.5%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-45.59%\",\n      \"Backtested Strategy Sharpe Ratio\": -0.31,\n      \"Sharpe Ratio of Buy and Hold\": 1.16,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"ETH-USD\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"IBKR, Long, 2025-10-21 (Price: 66.27)\",\n      \"Backtested Strategy CAGR [%]\": \"76.4%\",\n      \"CAGR of Buy and Hold [%]\": \"38.72%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"37.68%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.7,\n      \"Sharpe Ratio of Buy and Hold\": 1.31,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"IBKR\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"TRI.TO, Long, 2025-10-20 (Price: 225.74)\",\n      \"Backtested Strategy CAGR [%]\": \"17.16%\",\n      \"CAGR of Buy and Hold [%]\": \"10.46%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"6.7%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.56,\n      \"Sharpe Ratio of Buy and Hold\": 0.41,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"TRI.TO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"TRI.TO, Long, 2025-10-21 (Price: 225.71)\",\n      \"Backtested Strategy CAGR [%]\": \"17.16%\",\n      \"CAGR of Buy and Hold [%]\": \"10.46%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"6.7%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.56,\n      \"Sharpe Ratio of Buy and Hold\": 0.41,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"TRI.TO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"TRI.TO, Long, 2025-10-22 (Price: 228.2)\",\n      \"Backtested Strategy CAGR [%]\": \"17.16%\",\n      \"CAGR of Buy and Hold [%]\": \"10.46%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"6.7%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.56,\n      \"Sharpe Ratio of Buy and Hold\": 0.41,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"TRI.TO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"IEI, Long, 2025-10-20 (Price: 120.25)\",\n      \"Backtested Strategy CAGR [%]\": \"3.28%\",\n      \"CAGR of Buy and Hold [%]\": \"0.97%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"2.31%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.32,\n      \"Sharpe Ratio of Buy and Hold\": -0.88,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"IEI\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"IEI, Long, 2025-10-21 (Price: 120.36)\",\n      \"Backtested Strategy CAGR [%]\": \"3.28%\",\n      \"CAGR of Buy and Hold [%]\": \"0.97%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"2.31%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.32,\n      \"Sharpe Ratio of Buy and Hold\": -0.88,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"IEI\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"IEI, Long, 2025-10-22 (Price: 120.38)\",\n      \"Backtested Strategy CAGR [%]\": \"3.28%\",\n      \"CAGR of Buy and Hold [%]\": \"0.97%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"2.31%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.32,\n      \"Sharpe Ratio of Buy and Hold\": -0.88,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"IEI\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"EEM, Long, 2025-10-20 (Price: 54.92)\",\n      \"Backtested Strategy CAGR [%]\": \"3.9%\",\n      \"CAGR of Buy and Hold [%]\": \"6.2%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-2.3%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.26,\n      \"Sharpe Ratio of Buy and Hold\": 0.2,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"EEM\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"EEM, Long, 2025-10-21 (Price: 54.31)\",\n      \"Backtested Strategy CAGR [%]\": \"3.9%\",\n      \"CAGR of Buy and Hold [%]\": \"6.2%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-2.3%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.26,\n      \"Sharpe Ratio of Buy and Hold\": 0.2,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"EEM\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"EEM, Long, 2025-10-22 (Price: 54.26)\",\n      \"Backtested Strategy CAGR [%]\": \"3.9%\",\n      \"CAGR of Buy and Hold [%]\": \"6.2%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-2.3%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.26,\n      \"Sharpe Ratio of Buy and Hold\": 0.2,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"EEM\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"ORCL, Long, 2025-10-20 (Price: 277.18)\",\n      \"Backtested Strategy CAGR [%]\": \"15.72%\",\n      \"CAGR of Buy and Hold [%]\": \"17.04%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-1.32%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.47,\n      \"Sharpe Ratio of Buy and Hold\": 0.63,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"ORCL\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"ORCL, Long, 2025-10-21 (Price: 275.15)\",\n      \"Backtested Strategy CAGR [%]\": \"15.72%\",\n      \"CAGR of Buy and Hold [%]\": \"17.04%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-1.32%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.47,\n      \"Sharpe Ratio of Buy and Hold\": 0.63,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"ORCL\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"SJ.TO, Long, 2025-10-20 (Price: 79.76)\",\n      \"Backtested Strategy CAGR [%]\": \"17.01%\",\n      \"CAGR of Buy and Hold [%]\": \"17.8%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-0.79%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.35,\n      \"Sharpe Ratio of Buy and Hold\": 0.63,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"SJ.TO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"SJ.TO, Long, 2025-10-21 (Price: 80.12)\",\n      \"Backtested Strategy CAGR [%]\": \"17.01%\",\n      \"CAGR of Buy and Hold [%]\": \"17.8%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-0.79%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.35,\n      \"Sharpe Ratio of Buy and Hold\": 0.63,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"SJ.TO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"SJ.TO, Long, 2025-10-22 (Price: 78.12)\",\n      \"Backtested Strategy CAGR [%]\": \"17.01%\",\n      \"CAGR of Buy and Hold [%]\": \"17.8%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-0.79%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.35,\n      \"Sharpe Ratio of Buy and Hold\": 0.63,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"SJ.TO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"CNQ.TO, Long, 2025-10-20 (Price: 42.23)\",\n      \"Backtested Strategy CAGR [%]\": \"13.14%\",\n      \"CAGR of Buy and Hold [%]\": \"14.1%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-0.96%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.31,\n      \"Sharpe Ratio of Buy and Hold\": 0.49,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"CNQ.TO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"CNQ.TO, Long, 2025-10-21 (Price: 41.91)\",\n      \"Backtested Strategy CAGR [%]\": \"13.14%\",\n      \"CAGR of Buy and Hold [%]\": \"14.1%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-0.96%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.31,\n      \"Sharpe Ratio of Buy and Hold\": 0.49,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"CNQ.TO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"CNQ.TO, Long, 2025-10-22 (Price: 42.45)\",\n      \"Backtested Strategy CAGR [%]\": \"13.14%\",\n      \"CAGR of Buy and Hold [%]\": \"14.1%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-0.96%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.31,\n      \"Sharpe Ratio of Buy and Hold\": 0.49,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"CNQ.TO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"XLE, Long, 2025-10-20 (Price: 86.89)\",\n      \"Backtested Strategy CAGR [%]\": \"31.36%\",\n      \"CAGR of Buy and Hold [%]\": \"21.09%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"10.27%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.35,\n      \"Sharpe Ratio of Buy and Hold\": 0.77,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"XLE\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"OSCILLATOR DELTA\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"XLE, Long, 2025-10-20 (Price: 86.89)\",\n      \"Backtested Strategy CAGR [%]\": \"19.19%\",\n      \"CAGR of Buy and Hold [%]\": \"5.78%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"13.41%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.62,\n      \"Sharpe Ratio of Buy and Hold\": 0.23,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"XLE\",\n      \"_function\": \"OSCILLATOR DELTA\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"MEL.NZ, Long, 2025-10-22 (Price: 5.98)\",\n      \"Backtested Strategy CAGR [%]\": \"7.03%\",\n      \"CAGR of Buy and Hold [%]\": \"3.81%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"3.22%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.22,\n      \"Sharpe Ratio of Buy and Hold\": 0.14,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"MEL.NZ\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"SBUX, Long, 2025-10-20 (Price: 84.53)\",\n      \"Backtested Strategy CAGR [%]\": \"20.74%\",\n      \"CAGR of Buy and Hold [%]\": \"17.47%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"3.27%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.62,\n      \"Sharpe Ratio of Buy and Hold\": 0.57,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"SBUX\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"SBUX, Long, 2025-10-21 (Price: 85.9)\",\n      \"Backtested Strategy CAGR [%]\": \"20.74%\",\n      \"CAGR of Buy and Hold [%]\": \"17.47%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"3.27%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.62,\n      \"Sharpe Ratio of Buy and Hold\": 0.57,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"SBUX\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"SBUX, Long, 2025-10-22 (Price: 85.5)\",\n      \"Backtested Strategy CAGR [%]\": \"20.74%\",\n      \"CAGR of Buy and Hold [%]\": \"17.47%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"3.27%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.62,\n      \"Sharpe Ratio of Buy and Hold\": 0.57,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"SBUX\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"JETS, Long, 2025-10-20 (Price: 25.49)\",\n      \"Backtested Strategy CAGR [%]\": \"7.2%\",\n      \"CAGR of Buy and Hold [%]\": \"0.53%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"6.67%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.28,\n      \"Sharpe Ratio of Buy and Hold\": 0.06,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"JETS\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"JETS, Long, 2025-10-21 (Price: 25.61)\",\n      \"Backtested Strategy CAGR [%]\": \"7.2%\",\n      \"CAGR of Buy and Hold [%]\": \"0.53%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"6.67%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.28,\n      \"Sharpe Ratio of Buy and Hold\": 0.06,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"JETS\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"JETS, Long, 2025-10-22 (Price: 25.19)\",\n      \"Backtested Strategy CAGR [%]\": \"7.2%\",\n      \"CAGR of Buy and Hold [%]\": \"0.53%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"6.67%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.28,\n      \"Sharpe Ratio of Buy and Hold\": 0.06,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"JETS\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"ASML, Long, 2025-10-20 (Price: 1042.15)\",\n      \"Backtested Strategy CAGR [%]\": \"12.88%\",\n      \"CAGR of Buy and Hold [%]\": \"19.16%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-6.28%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.53,\n      \"Sharpe Ratio of Buy and Hold\": 0.6,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"ASML\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"ASML, Long, 2025-10-21 (Price: 1025.02)\",\n      \"Backtested Strategy CAGR [%]\": \"12.88%\",\n      \"CAGR of Buy and Hold [%]\": \"19.16%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-6.28%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.53,\n      \"Sharpe Ratio of Buy and Hold\": 0.6,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"ASML\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"ASML, Long, 2025-10-22 (Price: 1011.565)\",\n      \"Backtested Strategy CAGR [%]\": \"12.88%\",\n      \"CAGR of Buy and Hold [%]\": \"19.16%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-6.28%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.53,\n      \"Sharpe Ratio of Buy and Hold\": 0.6,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"ASML\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"SOXX, Long, 2025-10-20 (Price: 292.97)\",\n      \"Backtested Strategy CAGR [%]\": \"9.78%\",\n      \"CAGR of Buy and Hold [%]\": \"11.98%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-2.2%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.68,\n      \"Sharpe Ratio of Buy and Hold\": 0.43,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"SOXX\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"SOXX, Long, 2025-10-21 (Price: 291.33)\",\n      \"Backtested Strategy CAGR [%]\": \"9.78%\",\n      \"CAGR of Buy and Hold [%]\": \"11.98%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-2.2%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.68,\n      \"Sharpe Ratio of Buy and Hold\": 0.43,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"SOXX\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"SOXX, Long, 2025-10-22 (Price: 284.13)\",\n      \"Backtested Strategy CAGR [%]\": \"9.78%\",\n      \"CAGR of Buy and Hold [%]\": \"11.98%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-2.2%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.68,\n      \"Sharpe Ratio of Buy and Hold\": 0.43,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"SOXX\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"TFII.TO, Long, 2025-10-20 (Price: 135.16)\",\n      \"Backtested Strategy CAGR [%]\": \"8.14%\",\n      \"CAGR of Buy and Hold [%]\": \"12.86%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-4.72%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.55,\n      \"Sharpe Ratio of Buy and Hold\": 0.45,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"TFII.TO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"TFII.TO, Long, 2025-10-21 (Price: 134.69)\",\n      \"Backtested Strategy CAGR [%]\": \"8.14%\",\n      \"CAGR of Buy and Hold [%]\": \"12.86%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-4.72%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.55,\n      \"Sharpe Ratio of Buy and Hold\": 0.45,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"TFII.TO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"TFII.TO, Long, 2025-10-22 (Price: 130.82)\",\n      \"Backtested Strategy CAGR [%]\": \"8.14%\",\n      \"CAGR of Buy and Hold [%]\": \"12.86%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-4.72%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.55,\n      \"Sharpe Ratio of Buy and Hold\": 0.45,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"TFII.TO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"GNE.NZ, Long, 2025-10-21 (Price: 2.47)\",\n      \"Backtested Strategy CAGR [%]\": \"3.18%\",\n      \"CAGR of Buy and Hold [%]\": \"-3.41%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"6.59%\",\n      \"Backtested Strategy Sharpe Ratio\": -0.26,\n      \"Sharpe Ratio of Buy and Hold\": -0.26,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"GNE.NZ\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"DIS, Long, 2025-10-20 (Price: 111.96)\",\n      \"Backtested Strategy CAGR [%]\": \"6.23%\",\n      \"CAGR of Buy and Hold [%]\": \"11.61%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-5.38%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.46,\n      \"Sharpe Ratio of Buy and Hold\": 0.39,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"DIS\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"DIS, Long, 2025-10-21 (Price: 114.3)\",\n      \"Backtested Strategy CAGR [%]\": \"6.23%\",\n      \"CAGR of Buy and Hold [%]\": \"11.61%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-5.38%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.46,\n      \"Sharpe Ratio of Buy and Hold\": 0.39,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"DIS\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"DIS, Long, 2025-10-22 (Price: 113.08)\",\n      \"Backtested Strategy CAGR [%]\": \"6.23%\",\n      \"CAGR of Buy and Hold [%]\": \"11.61%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-5.38%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.46,\n      \"Sharpe Ratio of Buy and Hold\": 0.39,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"DIS\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"NZDCAD=X, Short, 2025-10-19 (Price: 0.8043)\",\n      \"Backtested Strategy CAGR [%]\": \"5.5%\",\n      \"CAGR of Buy and Hold [%]\": \"5.4%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"0.1%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.33,\n      \"Sharpe Ratio of Buy and Hold\": -0.44,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"NZDCAD=X\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-19\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"PPH, Long, 2025-10-21 (Price: 92.1)\",\n      \"Backtested Strategy CAGR [%]\": \"11.38%\",\n      \"CAGR of Buy and Hold [%]\": \"7.16%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"4.22%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.31,\n      \"Sharpe Ratio of Buy and Hold\": 0.27,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"PPH\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"TRENDPULSE\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"PPH, Long, 2025-10-20 (Price: 92.37)\",\n      \"Backtested Strategy CAGR [%]\": \"3.96%\",\n      \"CAGR of Buy and Hold [%]\": \"2.28%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"1.68%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.66,\n      \"Sharpe Ratio of Buy and Hold\": -0.08,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"PPH\",\n      \"_function\": \"TRENDPULSE\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"TRENDPULSE\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"PPH, Long, 2025-10-21 (Price: 92.1)\",\n      \"Backtested Strategy CAGR [%]\": \"3.96%\",\n      \"CAGR of Buy and Hold [%]\": \"2.28%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"1.68%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.66,\n      \"Sharpe Ratio of Buy and Hold\": -0.08,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"PPH\",\n      \"_function\": \"TRENDPULSE\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"TRENDPULSE\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"PPH, Long, 2025-10-22 (Price: 92.34)\",\n      \"Backtested Strategy CAGR [%]\": \"3.96%\",\n      \"CAGR of Buy and Hold [%]\": \"2.28%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"1.68%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.66,\n      \"Sharpe Ratio of Buy and Hold\": -0.08,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"PPH\",\n      \"_function\": \"TRENDPULSE\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"MTY.TO, Long, 2025-10-20 (Price: 34.56)\",\n      \"Backtested Strategy CAGR [%]\": \"11.32%\",\n      \"CAGR of Buy and Hold [%]\": \"7.98%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"3.34%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.34,\n      \"Sharpe Ratio of Buy and Hold\": 0.31,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"MTY.TO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"NKE, Long, 2025-10-20 (Price: 67.62)\",\n      \"Backtested Strategy CAGR [%]\": \"13.3%\",\n      \"CAGR of Buy and Hold [%]\": \"14.3%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-1.0%\",\n      \"Backtested Strategy Sharpe Ratio\": 1.27,\n      \"Sharpe Ratio of Buy and Hold\": 0.48,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"NKE\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"NKE, Long, 2025-10-21 (Price: 68.36)\",\n      \"Backtested Strategy CAGR [%]\": \"13.3%\",\n      \"CAGR of Buy and Hold [%]\": \"14.3%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-1.0%\",\n      \"Backtested Strategy Sharpe Ratio\": 1.27,\n      \"Sharpe Ratio of Buy and Hold\": 0.48,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"NKE\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"NKE, Long, 2025-10-22 (Price: 69.08)\",\n      \"Backtested Strategy CAGR [%]\": \"13.3%\",\n      \"CAGR of Buy and Hold [%]\": \"14.3%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-1.0%\",\n      \"Backtested Strategy Sharpe Ratio\": 1.27,\n      \"Sharpe Ratio of Buy and Hold\": 0.48,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"NKE\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"GBPSGD=X, Long, 2025-10-20 (Price: 1.7339)\",\n      \"Backtested Strategy CAGR [%]\": \"4.4%\",\n      \"CAGR of Buy and Hold [%]\": \"-2.48%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"6.88%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.41,\n      \"Sharpe Ratio of Buy and Hold\": -0.97,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"GBPSGD=X\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"GBPSGD=X, Long, 2025-10-21 (Price: 1.734)\",\n      \"Backtested Strategy CAGR [%]\": \"4.4%\",\n      \"CAGR of Buy and Hold [%]\": \"-2.48%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"6.88%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.41,\n      \"Sharpe Ratio of Buy and Hold\": -0.97,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"GBPSGD=X\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"GBPSGD=X, Long, 2025-10-22 (Price: 1.7323)\",\n      \"Backtested Strategy CAGR [%]\": \"4.4%\",\n      \"CAGR of Buy and Hold [%]\": \"-2.48%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"6.88%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.41,\n      \"Sharpe Ratio of Buy and Hold\": -0.97,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"GBPSGD=X\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"IWM, Long, 2025-10-20 (Price: 248.16)\",\n      \"Backtested Strategy CAGR [%]\": \"6.13%\",\n      \"CAGR of Buy and Hold [%]\": \"6.14%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-0.01%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.65,\n      \"Sharpe Ratio of Buy and Hold\": 0.2,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"IWM\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"IWM, Long, 2025-10-21 (Price: 246.99)\",\n      \"Backtested Strategy CAGR [%]\": \"6.13%\",\n      \"CAGR of Buy and Hold [%]\": \"6.14%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-0.01%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.65,\n      \"Sharpe Ratio of Buy and Hold\": 0.2,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"IWM\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"IWM, Long, 2025-10-22 (Price: 243.34)\",\n      \"Backtested Strategy CAGR [%]\": \"6.13%\",\n      \"CAGR of Buy and Hold [%]\": \"6.14%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-0.01%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.65,\n      \"Sharpe Ratio of Buy and Hold\": 0.2,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"IWM\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"SUM.NZ, Long, 2025-10-20 (Price: 11.6)\",\n      \"Backtested Strategy CAGR [%]\": \"7.21%\",\n      \"CAGR of Buy and Hold [%]\": \"16.0%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-8.79%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.81,\n      \"Sharpe Ratio of Buy and Hold\": 0.56,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"SUM.NZ\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"SUM.NZ, Long, 2025-10-21 (Price: 11.65)\",\n      \"Backtested Strategy CAGR [%]\": \"7.21%\",\n      \"CAGR of Buy and Hold [%]\": \"16.0%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-8.79%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.81,\n      \"Sharpe Ratio of Buy and Hold\": 0.56,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"SUM.NZ\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"SUM.NZ, Long, 2025-10-22 (Price: 11.6)\",\n      \"Backtested Strategy CAGR [%]\": \"7.21%\",\n      \"CAGR of Buy and Hold [%]\": \"16.0%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"-8.79%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.81,\n      \"Sharpe Ratio of Buy and Hold\": 0.56,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"SUM.NZ\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"^VIX, Short, 2025-10-20 (Price: 18.23)\",\n      \"Backtested Strategy CAGR [%]\": \"11.36%\",\n      \"CAGR of Buy and Hold [%]\": \"5.5%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"5.86%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.09,\n      \"Sharpe Ratio of Buy and Hold\": 0.21,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"^VIX\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"^VIX, Short, 2025-10-21 (Price: 17.87)\",\n      \"Backtested Strategy CAGR [%]\": \"11.36%\",\n      \"CAGR of Buy and Hold [%]\": \"5.5%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"5.86%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.09,\n      \"Sharpe Ratio of Buy and Hold\": 0.21,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"^VIX\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"^VIX, Short, 2025-10-22 (Price: 18.6)\",\n      \"Backtested Strategy CAGR [%]\": \"11.36%\",\n      \"CAGR of Buy and Hold [%]\": \"5.5%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"5.86%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.09,\n      \"Sharpe Ratio of Buy and Hold\": 0.21,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"^VIX\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"NVO, Long, 2025-10-20 (Price: 55.74)\",\n      \"Backtested Strategy CAGR [%]\": \"15.56%\",\n      \"CAGR of Buy and Hold [%]\": \"13.68%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"1.88%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.26,\n      \"Sharpe Ratio of Buy and Hold\": 0.52,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"NVO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"NVO, Long, 2025-10-21 (Price: 54.78)\",\n      \"Backtested Strategy CAGR [%]\": \"15.56%\",\n      \"CAGR of Buy and Hold [%]\": \"13.68%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"1.88%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.26,\n      \"Sharpe Ratio of Buy and Hold\": 0.52,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"NVO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"NVO, Long, 2025-10-22 (Price: 53.38)\",\n      \"Backtested Strategy CAGR [%]\": \"15.56%\",\n      \"CAGR of Buy and Hold [%]\": \"13.68%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"1.88%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.26,\n      \"Sharpe Ratio of Buy and Hold\": 0.52,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"NVO\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"BYDDY, Short, 2025-10-20 (Price: 13.65)\",\n      \"Backtested Strategy CAGR [%]\": \"15.98%\",\n      \"CAGR of Buy and Hold [%]\": \"5.4%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"10.58%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.53,\n      \"Sharpe Ratio of Buy and Hold\": 0.4,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"BYDDY\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"BYDDY, Short, 2025-10-21 (Price: 13.28)\",\n      \"Backtested Strategy CAGR [%]\": \"15.98%\",\n      \"CAGR of Buy and Hold [%]\": \"5.4%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"10.58%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.53,\n      \"Sharpe Ratio of Buy and Hold\": 0.4,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"BYDDY\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"BYDDY, Short, 2025-10-22 (Price: 13.21)\",\n      \"Backtested Strategy CAGR [%]\": \"15.98%\",\n      \"CAGR of Buy and Hold [%]\": \"5.4%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"10.58%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.53,\n      \"Sharpe Ratio of Buy and Hold\": 0.4,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"BYDDY\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"USCI, Long, 2025-10-20 (Price: 76.8508)\",\n      \"Backtested Strategy CAGR [%]\": \"4.11%\",\n      \"CAGR of Buy and Hold [%]\": \"2.83%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"1.28%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.32,\n      \"Sharpe Ratio of Buy and Hold\": -0.04,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"USCI\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-20\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"USCI, Long, 2025-10-21 (Price: 76.78)\",\n      \"Backtested Strategy CAGR [%]\": \"4.11%\",\n      \"CAGR of Buy and Hold [%]\": \"2.83%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"1.28%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.32,\n      \"Sharpe Ratio of Buy and Hold\": -0.04,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"USCI\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"USCI, Long, 2025-10-22 (Price: 78.0652)\",\n      \"Backtested Strategy CAGR [%]\": \"4.11%\",\n      \"CAGR of Buy and Hold [%]\": \"2.83%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"1.28%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.32,\n      \"Sharpe Ratio of Buy and Hold\": -0.04,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"USCI\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-22\"\n    },\n    {\n      \"Function\": \"FRACTAL TRACK\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"HOOD, Long, 2025-10-21 (Price: 131.84)\",\n      \"Backtested Strategy CAGR [%]\": \"101.75%\",\n      \"CAGR of Buy and Hold [%]\": \"34.23%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"67.52%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.95,\n      \"Sharpe Ratio of Buy and Hold\": 0.97,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"HOOD\",\n      \"_function\": \"FRACTAL TRACK\",\n      \"_date\": \"2025-10-21\"\n    },\n    {\n      \"Function\": \"OSCILLATOR DELTA\",\n      \"Symbol, Signal, Signal Date/Price[$]\": \"MX.TO, Long, 2025-10-22 (Price: 48.71)\",\n      \"Backtested Strategy CAGR [%]\": \"18.47%\",\n      \"CAGR of Buy and Hold [%]\": \"1.01%\",\n      \"CAGR difference (Strategy - Buy and Hold) [%]\": \"17.46%\",\n      \"Backtested Strategy Sharpe Ratio\": 0.36,\n      \"Sharpe Ratio of Buy and Hold\": 0.2,\n      \"_signal_type\": \"entry\",\n      \"_asset\": \"MX.TO\",\n      \"_function\": \"OSCILLATOR DELTA\",\n      \"_date\": \"2025-10-22\"\n    }\n  ]\n}\n\n=== IMPORTANT: SIGNAL TABLE DISPLAY ===\nAt the end of your response, you MUST provide the exact 4-key identifiers for ONLY the specific signals you want to appear in the data table. \n\nFor each signal you specifically mention or analyze in your response, provide:\n\nSIGNAL_KEYS: [\n  {\"function\": \"EXACT_FUNCTION_NAME\", \"symbol\": \"SYMBOL\", \"interval\": \"Daily\", \"signal_date\": \"YYYY-MM-DD\"},\n  ...\n]\n\nCRITICAL RULES:\n1. Only include signals you specifically mention in your analysis (e.g., if you say \"top 5\", provide exactly 5 keys)\n2. Use EXACT values from the data: Function name, Symbol (first part of \"Symbol, Signal, Signal Date/Price[$]\"), and actual signal date\n3. The table will show ONLY these signals - not all processed data\n4. Always use \"Daily\" for interval unless data shows otherwise\n\nExample: If you mention \"AAPL has the highest Sharpe ratio\" and \"MSFT shows strong CAGR\", provide:\nSIGNAL_KEYS: [\n  {\"function\": \"FRACTAL TRACK\", \"symbol\": \"AAPL\", \"interval\": \"Daily\", \"signal_date\": \"2025-10-16\"},\n  {\"function\": \"BAND MATRIX\", \"symbol\": \"MSFT\", \"interval\": \"Daily\", \"signal_date\": \"2025-10-15\"}\n]\n",
+      "timestamp": "2025-10-23T16:13:13.668073",
+      "metadata": {
+        "input_type": "smart_query",
+        "selected_signal_types": [
+          "entry"
+        ],
+        "assets": null,
+        "functions": null,
+        "from_date": "2025-10-18",
+        "to_date": "2025-10-23",
+        "columns_by_signal_type": {
+          "entry": [
+            "Function",
+            "Symbol, Signal, Signal Date/Price[$]",
+            "Backtested Strategy Sharpe Ratio",
+            "Sharpe Ratio of Buy and Hold",
+            "Backtested Strategy CAGR [%]",
+            "CAGR of Buy and Hold [%]",
+            "CAGR difference (Strategy - Buy and Hold) [%]"
+          ]
+        },
+        "reasoning_by_signal_type": {
+          "entry": "To determine the top 5 signals based on Sharpe Ratio and CAGR difference, we need columns that provide the backtested strategy Sharpe Ratio, Sharpe Ratio of buy and hold, backtested strategy CAGR, and the CAGR difference. These metrics will allow us to rank the signals and identify the top performers."
+        },
+        "rows_fetched": 100,
+        "signal_types_with_data": [
+          "entry"
+        ],
+        "model": "gpt-4o",
+        "tokens_used": {
+          "prompt": 17738,
+          "completion": 1221,
+          "total": 18959
+        },
+        "finish_reason": "stop",
+        "batch_processing_used": true,
+        "batch_count": 1,
+        "batch_mode": "single",
+        "full_signal_tables": {},
+        "signals_table": [
+          {
+            "Symbol": "FXI",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$40.49",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "AAPL",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$262.24",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "AAPL",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$262.77",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "AAPL",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$258.45",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "WPM",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-22",
+            "Price": "$97.13",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "PFE",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$24.69",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "PFE",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$24.85",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "PFE",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$24.72",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "INFY",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$16.91",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "INFY",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$17.41",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "INFY",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$17.47",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "INFY",
+            "Function": "OSCILLATOR DELTA",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$16.91",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "UBER",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$93.7",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "UBER",
+            "Function": "OSCILLATOR DELTA",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$93.7",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "MCY.NZ",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$6.65",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "MA",
+            "Function": "OSCILLATOR DELTA",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$566.36",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "TCS.NS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-19",
+            "Price": "$2962.2",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "BAC",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$52.04",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "BAC",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$51.52",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "BAC",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$51.1",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "BRK-B",
+            "Function": "OSCILLATOR DELTA",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$494.08",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "WIPRO.NS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$241.24",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "WIPRO.NS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$241.36",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "WIPRO.NS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$241.36",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ETH-USD",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-19",
+            "Price": "$3984.6497",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ETH-USD",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$3984.9019",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ETH-USD",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$3924.886",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ETH-USD",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$3734.8792",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "IBKR",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$66.27",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "TRI.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$225.74",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "TRI.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$225.71",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "TRI.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$228.2",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "IEI",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$120.25",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "IEI",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$120.36",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "IEI",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$120.38",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "EEM",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$54.92",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "EEM",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$54.31",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "EEM",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$54.26",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ORCL",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$277.18",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ORCL",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$275.15",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SJ.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$79.76",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SJ.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$80.12",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SJ.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$78.12",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "CNQ.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$42.23",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "CNQ.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$41.91",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "CNQ.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$42.45",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "XLE",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$86.89",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "XLE",
+            "Function": "OSCILLATOR DELTA",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$86.89",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "MEL.NZ",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$5.98",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SBUX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$84.53",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SBUX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$85.9",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SBUX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$85.5",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "JETS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$25.49",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "JETS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$25.61",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "JETS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$25.19",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ASML",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$1042.15",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ASML",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$1025.02",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ASML",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$1011.565",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SOXX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$292.97",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SOXX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$291.33",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SOXX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$284.13",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "TFII.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$135.16",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "TFII.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$134.69",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "TFII.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$130.82",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "GNE.NZ",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$2.47",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "DIS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$111.96",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "DIS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$114.3",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "DIS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$113.08",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "NZDCAD=X",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-19",
+            "Price": "$0.8043",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "PPH",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$92.1",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "PPH",
+            "Function": "TRENDPULSE",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$92.37",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "PPH",
+            "Function": "TRENDPULSE",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$92.1",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "PPH",
+            "Function": "TRENDPULSE",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$92.34",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "MTY.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$34.56",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "NKE",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$67.62",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "NKE",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$68.36",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "NKE",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$69.08",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "GBPSGD=X",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$1.7339",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "GBPSGD=X",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$1.734",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "GBPSGD=X",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$1.7323",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "IWM",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$248.16",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "IWM",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$246.99",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "IWM",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$243.34",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SUM.NZ",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$11.6",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SUM.NZ",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$11.65",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SUM.NZ",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$11.6",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "^VIX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-20",
+            "Price": "$18.23",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "^VIX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-21",
+            "Price": "$17.87",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "^VIX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-22",
+            "Price": "$18.6",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "NVO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$55.74",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "NVO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$54.78",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "NVO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$53.38",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "BYDDY",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-20",
+            "Price": "$13.65",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "BYDDY",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-21",
+            "Price": "$13.28",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "BYDDY",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-22",
+            "Price": "$13.21",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "USCI",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$76.8508",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "USCI",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$76.78",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "USCI",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$78.0652",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "HOOD",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$131.84",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "MX.TO",
+            "Function": "OSCILLATOR DELTA",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$48.71",
+            "Status": "Unknown"
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "## Top 5 Signals Based on Sharpe Ratio and CAGR Difference\n\nTo determine the top 5 signals, I analyzed the data based on two metrics: **Backtested Strategy Sharpe Ratio** and **CAGR Difference (Strategy - Buy and Hold)**. Below are the top signals identified:\n\n### Top 5 Signals by Sharpe Ratio\n\n1. **MA (Mastercard)**\n   - **Function**: OSCILLATOR DELTA\n   - **Signal Date**: 2025-10-20\n   - **Price**: 566.36\n   - **Backtested Strategy Sharpe Ratio**: **1.26**\n   - **CAGR Difference**: 10.91%\n\n2. **BRK-B (Berkshire Hathaway)**\n   - **Function**: OSCILLATOR DELTA\n   - **Signal Date**: 2025-10-20\n   - **Price**: 494.08\n   - **Backtested Strategy Sharpe Ratio**: **1.04**\n   - **CAGR Difference**: 11.14%\n\n3. **NKE (Nike)**\n   - **Function**: FRACTAL TRACK\n   - **Signal Date**: 2025-10-20\n   - **Price**: 67.62\n   - **Backtested Strategy Sharpe Ratio**: **1.27**\n   - **CAGR Difference**: -1.0%\n\n4. **HOOD (Robinhood Markets)**\n   - **Function**: FRACTAL TRACK\n   - **Signal Date**: 2025-10-21\n   - **Price**: 131.84\n   - **Backtested Strategy Sharpe Ratio**: **0.95**\n   - **CAGR Difference**: 67.52%\n\n5. **SUM.NZ**\n   - **Function**: FRACTAL TRACK\n   - **Signal Date**: 2025-10-20\n   - **Price**: 11.6\n   - **Backtested Strategy Sharpe Ratio**: **0.81**\n   - **CAGR Difference**: -8.79%\n\n### Top 5 Signals by CAGR Difference\n\n1. **HOOD (Robinhood Markets)**\n   - **Function**: FRACTAL TRACK\n   - **Signal Date**: 2025-10-21\n   - **Price**: 131.84\n   - **CAGR Difference**: **67.52%**\n   - **Backtested Strategy Sharpe Ratio**: 0.95\n\n2. **IBKR (Interactive Brokers)**\n   - **Function**: FRACTAL TRACK\n   - **Signal Date**: 2025-10-21\n   - **Price**: 66.27\n   - **CAGR Difference**: **37.68%**\n   - **Backtested Strategy Sharpe Ratio**: 0.7\n\n3. **UBER (Uber Technologies)**\n   - **Function**: FRACTAL TRACK\n   - **Signal Date**: 2025-10-20\n   - **Price**: 93.7\n   - **CAGR Difference**: **29.95%**\n   - **Backtested Strategy Sharpe Ratio**: 0.54\n\n4. **MX.TO**\n   - **Function**: OSCILLATOR DELTA\n   - **Signal Date**: 2025-10-22\n   - **Price**: 48.71\n   - **CAGR Difference**: **17.46%**\n   - **Backtested Strategy Sharpe Ratio**: 0.36\n\n5. **INFY (Infosys)**\n   - **Function**: OSCILLATOR DELTA\n   - **Signal Date**: 2025-10-20\n   - **Price**: 16.91\n   - **CAGR Difference**: **13.68%**\n   - **Backtested Strategy Sharpe Ratio**: 0.52\n\n### Signal Table\n\nBelow are the specific signals that have been highlighted:\n\n```json\nSIGNAL_KEYS: [\n  {\"function\": \"OSCILLATOR DELTA\", \"symbol\": \"MA\", \"interval\": \"Daily\", \"signal_date\": \"2025-10-20\"},\n  {\"function\": \"OSCILLATOR DELTA\", \"symbol\": \"BRK-B\", \"interval\": \"Daily\", \"signal_date\": \"2025-10-20\"},\n  {\"function\": \"FRACTAL TRACK\", \"symbol\": \"NKE\", \"interval\": \"Daily\", \"signal_date\": \"2025-10-20\"},\n  {\"function\": \"FRACTAL TRACK\", \"symbol\": \"HOOD\", \"interval\": \"Daily\", \"signal_date\": \"2025-10-21\"},\n  {\"function\": \"FRACTAL TRACK\", \"symbol\": \"SUM.NZ\", \"interval\": \"Daily\", \"signal_date\": \"2025-10-20\"},\n  {\"function\": \"FRACTAL TRACK\", \"symbol\": \"IBKR\", \"interval\": \"Daily\", \"signal_date\": \"2025-10-21\"},\n  {\"function\": \"FRACTAL TRACK\", \"symbol\": \"UBER\", \"interval\": \"Daily\", \"signal_date\": \"2025-10-20\"},\n  {\"function\": \"OSCILLATOR DELTA\", \"symbol\": \"MX.TO\", \"interval\": \"Daily\", \"signal_date\": \"2025-10-22\"},\n  {\"function\": \"OSCILLATOR DELTA\", \"symbol\": \"INFY\", \"interval\": \"Daily\", \"signal_date\": \"2025-10-20\"}\n]\n```\n\nThese signals reflect the top performers based on their Sharpe Ratios and CAGR differences, providing key insights into their potential investment opportunities.",
+      "timestamp": "2025-10-23T16:13:25.344086",
+      "metadata": {
+        "input_type": "smart_query",
+        "selected_signal_types": [
+          "entry"
+        ],
+        "assets": null,
+        "functions": null,
+        "from_date": "2025-10-18",
+        "to_date": "2025-10-23",
+        "columns_by_signal_type": {
+          "entry": [
+            "Function",
+            "Symbol, Signal, Signal Date/Price[$]",
+            "Backtested Strategy Sharpe Ratio",
+            "Sharpe Ratio of Buy and Hold",
+            "Backtested Strategy CAGR [%]",
+            "CAGR of Buy and Hold [%]",
+            "CAGR difference (Strategy - Buy and Hold) [%]"
+          ]
+        },
+        "reasoning_by_signal_type": {
+          "entry": "To determine the top 5 signals based on Sharpe Ratio and CAGR difference, we need columns that provide the backtested strategy Sharpe Ratio, Sharpe Ratio of buy and hold, backtested strategy CAGR, and the CAGR difference. These metrics will allow us to rank the signals and identify the top performers."
+        },
+        "rows_fetched": 100,
+        "signal_types_with_data": [
+          "entry"
+        ],
+        "model": "gpt-4o",
+        "tokens_used": {
+          "prompt": 17738,
+          "completion": 1221,
+          "total": 18959
+        },
+        "finish_reason": "stop",
+        "batch_processing_used": true,
+        "batch_count": 1,
+        "batch_mode": "single",
+        "full_signal_tables": {},
+        "signals_table": [
+          {
+            "Symbol": "FXI",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$40.49",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "AAPL",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$262.24",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "AAPL",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$262.77",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "AAPL",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$258.45",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "WPM",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-22",
+            "Price": "$97.13",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "PFE",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$24.69",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "PFE",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$24.85",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "PFE",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$24.72",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "INFY",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$16.91",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "INFY",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$17.41",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "INFY",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$17.47",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "INFY",
+            "Function": "OSCILLATOR DELTA",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$16.91",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "UBER",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$93.7",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "UBER",
+            "Function": "OSCILLATOR DELTA",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$93.7",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "MCY.NZ",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$6.65",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "MA",
+            "Function": "OSCILLATOR DELTA",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$566.36",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "TCS.NS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-19",
+            "Price": "$2962.2",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "BAC",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$52.04",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "BAC",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$51.52",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "BAC",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$51.1",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "BRK-B",
+            "Function": "OSCILLATOR DELTA",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$494.08",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "WIPRO.NS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$241.24",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "WIPRO.NS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$241.36",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "WIPRO.NS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$241.36",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ETH-USD",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-19",
+            "Price": "$3984.6497",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ETH-USD",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$3984.9019",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ETH-USD",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$3924.886",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ETH-USD",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$3734.8792",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "IBKR",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$66.27",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "TRI.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$225.74",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "TRI.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$225.71",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "TRI.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$228.2",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "IEI",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$120.25",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "IEI",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$120.36",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "IEI",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$120.38",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "EEM",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$54.92",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "EEM",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$54.31",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "EEM",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$54.26",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ORCL",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$277.18",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ORCL",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$275.15",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SJ.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$79.76",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SJ.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$80.12",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SJ.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$78.12",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "CNQ.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$42.23",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "CNQ.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$41.91",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "CNQ.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$42.45",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "XLE",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$86.89",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "XLE",
+            "Function": "OSCILLATOR DELTA",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$86.89",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "MEL.NZ",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$5.98",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SBUX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$84.53",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SBUX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$85.9",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SBUX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$85.5",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "JETS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$25.49",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "JETS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$25.61",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "JETS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$25.19",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ASML",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$1042.15",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ASML",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$1025.02",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "ASML",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$1011.565",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SOXX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$292.97",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SOXX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$291.33",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SOXX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$284.13",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "TFII.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$135.16",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "TFII.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$134.69",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "TFII.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$130.82",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "GNE.NZ",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$2.47",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "DIS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$111.96",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "DIS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$114.3",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "DIS",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$113.08",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "NZDCAD=X",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-19",
+            "Price": "$0.8043",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "PPH",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$92.1",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "PPH",
+            "Function": "TRENDPULSE",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$92.37",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "PPH",
+            "Function": "TRENDPULSE",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$92.1",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "PPH",
+            "Function": "TRENDPULSE",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$92.34",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "MTY.TO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$34.56",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "NKE",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$67.62",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "NKE",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$68.36",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "NKE",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$69.08",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "GBPSGD=X",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$1.7339",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "GBPSGD=X",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$1.734",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "GBPSGD=X",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$1.7323",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "IWM",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$248.16",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "IWM",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$246.99",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "IWM",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$243.34",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SUM.NZ",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$11.6",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SUM.NZ",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$11.65",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "SUM.NZ",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$11.6",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "^VIX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-20",
+            "Price": "$18.23",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "^VIX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-21",
+            "Price": "$17.87",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "^VIX",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-22",
+            "Price": "$18.6",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "NVO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$55.74",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "NVO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$54.78",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "NVO",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$53.38",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "BYDDY",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-20",
+            "Price": "$13.65",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "BYDDY",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-21",
+            "Price": "$13.28",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "BYDDY",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Short",
+            "Signal_Date": "2025-10-22",
+            "Price": "$13.21",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "USCI",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-20",
+            "Price": "$76.8508",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "USCI",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$76.78",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "USCI",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$78.0652",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "HOOD",
+            "Function": "FRACTAL TRACK",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-21",
+            "Price": "$131.84",
+            "Status": "Unknown"
+          },
+          {
+            "Symbol": "MX.TO",
+            "Function": "OSCILLATOR DELTA",
+            "Signal_Type": "ENTRY",
+            "Signal_Direction": "Long",
+            "Signal_Date": "2025-10-22",
+            "Price": "$48.71",
+            "Status": "Unknown"
+          }
+        ]
+      }
+    }
+  ]
+}

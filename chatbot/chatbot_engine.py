@@ -618,8 +618,45 @@ class ChatbotEngine:
                     total_rows += len(signal_data[signal_type])
             
             if not fetched_data:
-                logger.warning("No data fetched for the query")
-                return "No data found matching your criteria.", {"warning": "no_data"}
+                logger.warning("No data fetched for the initial date range, trying to expand search...")
+                
+                # Try expanding the date range for queries like "top N signals" where date is less important
+                if any(keyword in user_message.lower() for keyword in ['top', 'best', 'highest', 'lowest']):
+                    logger.info("Query seems to be asking for 'top/best' signals - expanding date range")
+                    
+                    # Expand to last 30 days
+                    from datetime import datetime, timedelta
+                    expanded_from_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+                    expanded_to_date = datetime.now().strftime('%Y-%m-%d')
+                    
+                    logger.info(f"Retrying with expanded date range: {expanded_from_date} to {expanded_to_date}")
+                    
+                    # Retry fetching with expanded date range
+                    for signal_type in selected_signal_types:
+                        if signal_type not in columns_by_signal_type:
+                            continue
+                        
+                        required_cols = columns_by_signal_type[signal_type]
+                        if not required_cols:
+                            continue
+                        
+                        signal_data = self.smart_data_fetcher.fetch_data(
+                            signal_types=[signal_type],
+                            required_columns=required_cols,
+                            assets=assets,
+                            functions=functions,
+                            from_date=expanded_from_date,
+                            to_date=expanded_to_date,
+                            limit_rows=MAX_ROWS_TO_INCLUDE
+                        )
+                        
+                        if signal_data and signal_type in signal_data:
+                            fetched_data[signal_type] = signal_data[signal_type]
+                            total_rows += len(signal_data[signal_type])
+                
+                if not fetched_data:
+                    logger.warning("No data fetched even with expanded date range")
+                    return "No data found matching your criteria. Please try a different date range or criteria.", {"warning": "no_data"}
             
             # Format the fetched data for the LLM
             data_context_parts = []
@@ -656,6 +693,32 @@ class ChatbotEngine:
                     complete_message += f"\n  Reasoning: {reasoning_by_signal_type.get(signal_type, '')}"
             
             complete_message += f"\n\n=== DATA CONTEXT ===\n{data_context}"
+            
+            # Add signal key instruction for table display
+            complete_message += f"""
+
+=== IMPORTANT: SIGNAL TABLE DISPLAY ===
+At the end of your response, you MUST provide the exact 4-key identifiers for ONLY the specific signals you want to appear in the data table. 
+
+For each signal you specifically mention or analyze in your response, provide:
+
+SIGNAL_KEYS: [
+  {{"function": "EXACT_FUNCTION_NAME", "symbol": "SYMBOL", "interval": "Daily", "signal_date": "YYYY-MM-DD"}},
+  ...
+]
+
+CRITICAL RULES:
+1. Only include signals you specifically mention in your analysis (e.g., if you say "top 5", provide exactly 5 keys)
+2. Use EXACT values from the data: Function name, Symbol (first part of "Symbol, Signal, Signal Date/Price[$]"), and actual signal date
+3. The table will show ONLY these signals - not all processed data
+4. Always use "Daily" for interval unless data shows otherwise
+
+Example: If you mention "AAPL has the highest Sharpe ratio" and "MSFT shows strong CAGR", provide:
+SIGNAL_KEYS: [
+  {{"function": "FRACTAL TRACK", "symbol": "AAPL", "interval": "Daily", "signal_date": "2025-10-16"}},
+  {{"function": "BAND MATRIX", "symbol": "MSFT", "interval": "Daily", "signal_date": "2025-10-15"}}
+]
+"""
             
             if additional_context:
                 complete_message += f"\n\n=== ADDITIONAL CONTEXT ===\n{additional_context}"

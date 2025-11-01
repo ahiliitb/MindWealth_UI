@@ -164,8 +164,35 @@ class SignalExtractor:
                 mentioned_signal_types.add(signal_type)
                 logger.info(f"Found {signal_type} signals mentioned in AI response")
         
-        # Strategy 2: Extract 4-key data from appropriate signal types
-        if fetched_data:
+        # Strategy 2: Extract specific signals mentioned in GPT's response
+        # Parse GPT response to find specific signals it referenced
+        specific_signals_mentioned = self._extract_specific_signals_from_response(ai_response)
+        
+        if specific_signals_mentioned:
+            # Use only the specific signals GPT mentioned
+            used_signals['signal_keys'] = specific_signals_mentioned
+            for function, symbol, interval, signal_date in specific_signals_mentioned:
+                used_signals['functions'].add(function)
+                used_signals['symbols'].add(symbol)
+                used_signals['intervals'].add(interval)
+                used_signals['dates'].add(signal_date)
+            
+            # Determine signal types from mentioned signal types OR default to 'entry'
+            # This ensures tables are generated for the specific signals
+            if mentioned_signal_types:
+                used_signals['signal_types'].update(mentioned_signal_types)
+            else:
+                # Default to 'entry' when specific signals are mentioned but no explicit signal type
+                used_signals['signal_types'].add('entry')
+            
+            logger.info(f"Found {len(specific_signals_mentioned)} specific signals mentioned in GPT response")
+            logger.info(f"Will generate tables for signal types: {used_signals['signal_types']}")
+            
+            # When we have specific signals, we should ONLY process those - skip the fallback data processing
+            return used_signals
+        
+        elif fetched_data:
+            # Fallback: If no specific signals found, extract from available data
             # If specific signal types were mentioned, use only those
             # If no signal types mentioned, use ALL available signal types (default behavior)
             signal_types_to_process = mentioned_signal_types if mentioned_signal_types else set(fetched_data.keys())
@@ -232,6 +259,124 @@ class SignalExtractor:
                    f"Signal Keys: {len(used_signals['signal_keys'])}")
         
         return used_signals
+
+    def _extract_specific_signals_from_response(self, ai_response: str) -> List[Tuple[str, str, str, str]]:
+        """
+        Parse GPT's response to extract specific signals it mentioned.
+        
+        Primary Strategy: Look for SIGNAL_KEYS JSON format
+        Fallback: Parse text patterns for signal mentions
+        
+        Returns:
+            List of (function, symbol, interval, signal_date) tuples for signals specifically mentioned
+        """
+        specific_signals = []
+        
+        # Strategy 1: Look for SIGNAL_KEYS JSON format (new primary method)
+        signal_keys_pattern = r'SIGNAL_KEYS:\s*\[(.*?)\]'
+        signal_keys_match = re.search(signal_keys_pattern, ai_response, re.DOTALL)
+        
+        if signal_keys_match:
+            try:
+                import json
+                # Extract the JSON array content
+                keys_content = signal_keys_match.group(1).strip()
+                
+                # Try to parse as JSON array
+                # First, wrap it properly if needed
+                if not keys_content.startswith('['):
+                    keys_content = f'[{keys_content}]'
+                else:
+                    keys_content = f'[{keys_content}]'
+                
+                # Parse each signal key object
+                signal_objects = json.loads(keys_content)
+                
+                for signal_obj in signal_objects:
+                    if isinstance(signal_obj, dict) and all(key in signal_obj for key in ['function', 'symbol', 'interval', 'signal_date']):
+                        function = signal_obj['function'].strip()
+                        symbol = signal_obj['symbol'].strip()
+                        interval = signal_obj['interval'].strip()
+                        signal_date = signal_obj['signal_date'].strip()
+                        
+                        specific_signals.append((function, symbol.upper(), interval, signal_date))
+                
+                logger.info(f"Successfully parsed {len(specific_signals)} signals from SIGNAL_KEYS format")
+                
+                if specific_signals:
+                    return specific_signals
+                    
+            except (json.JSONDecodeError, KeyError, ValueError) as e:
+                logger.warning(f"Failed to parse SIGNAL_KEYS JSON: {e}")
+                # Continue to fallback strategies
+        
+        # Strategy 2: Fallback - Look for table-like structures or formatted signal lists
+        # Pattern: SYMBOL, Signal/Function, Date patterns
+        symbol_signal_patterns = [
+            # Match: "AAPL, Long, 2025-10-16" or "AAPL FRACTAL TRACK 2025-10-16"
+            r'([A-Z]{2,5})[,\s]+([A-Z\s]+)[,\s]+(\d{4}-\d{2}-\d{2})',
+            # Match: "AAPL FRACTAL TRACK" (without date)
+            r'([A-Z]{2,5})\s+(FRACTAL\s+TRACK|BOLLINGER\s+BAND|MATRIX\s+DIVERGENCE|BREAKOUT\s+MATRIX)',
+            # Match: Function Symbol Date
+            r'(FRACTAL\s+TRACK|BOLLINGER\s+BAND|MATRIX\s+DIVERGENCE|BREAKOUT\s+MATRIX)\s+([A-Z]{2,5})\s+(\d{4}-\d{2}-\d{2})'
+        ]
+        
+        for pattern in symbol_signal_patterns:
+            matches = re.findall(pattern, ai_response, re.IGNORECASE)
+            for match in matches:
+                if len(match) == 3:
+                    symbol, function_or_signal, date = match
+                    # Clean up function name
+                    function = function_or_signal.upper().strip()
+                    if function in ['LONG', 'SHORT', 'BUY', 'SELL']:
+                        function = 'FRACTAL TRACK'  # Default function for basic signals
+                    
+                    specific_signals.append((function, symbol.upper(), 'Daily', date))
+                elif len(match) == 2:
+                    symbol, function = match
+                    specific_signals.append((function.upper(), symbol.upper(), 'Daily', 'Unknown'))
+        
+        # Strategy 3: Look for numbered lists or bullet points mentioning specific signals
+        # Pattern: "1. AAPL" or "- MSFT" followed by signal details
+        list_pattern = r'(?:^\s*[\d\-\*\+]\s*\.?\s*|^[\-\*\+]\s*)([A-Z]{2,5})'
+        list_matches = re.findall(list_pattern, ai_response, re.MULTILINE)
+        
+        # For each symbol found in lists, try to find associated function/date in nearby text
+        for symbol in list_matches:
+            # Look for function mentions near this symbol (within 200 chars)
+            symbol_pos = ai_response.find(symbol)
+            if symbol_pos != -1:
+                nearby_text = ai_response[max(0, symbol_pos-100):symbol_pos+100]
+                
+                # Find function in nearby text
+                function_matches = re.findall(r'(FRACTAL\s+TRACK|BOLLINGER\s+BAND|MATRIX\s+DIVERGENCE|BREAKOUT\s+MATRIX)', nearby_text, re.IGNORECASE)
+                date_matches = re.findall(r'(\d{4}-\d{2}-\d{2})', nearby_text)
+                
+                function = function_matches[0].upper() if function_matches else 'FRACTAL TRACK'
+                date = date_matches[0] if date_matches else 'Unknown'
+                
+                specific_signals.append((function, symbol.upper(), 'Daily', date))
+        
+        # Strategy 4: Look for explicit mentions of "top N" signals
+        # If GPT mentions "top 5" or similar, try to extract exactly those signals
+        top_n_pattern = r'(?:top|best)\s+(\d+)'
+        top_n_matches = re.findall(top_n_pattern, ai_response, re.IGNORECASE)
+        
+        if top_n_matches and specific_signals:
+            # Limit to the number mentioned (e.g., "top 5" -> limit to 5 signals)
+            max_signals = int(top_n_matches[0])
+            specific_signals = specific_signals[:max_signals]
+        
+        # Remove duplicates while preserving order
+        seen = set()
+        unique_signals = []
+        for signal in specific_signals:
+            if signal not in seen:
+                seen.add(signal)
+                unique_signals.append(signal)
+        
+        logger.info(f"Extracted {len(unique_signals)} specific signals from GPT response using fallback patterns")
+        return unique_signals
 
     def _extract_signal_key(self, row: pd.Series) -> Optional[Tuple[str, str, str, str]]:
         """

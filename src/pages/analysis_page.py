@@ -4,9 +4,11 @@ General analysis page for CSV data files
 
 import streamlit as st
 import pandas as pd
+import os
 
 from ..components.cards import create_summary_cards, create_strategy_cards
 from ..utils.data_loader import load_data_from_file
+from ..utils.file_discovery import extract_date_from_filename
 from .performance_page import create_performance_summary_page
 from .breadth_page import create_breadth_page
 
@@ -14,6 +16,17 @@ from .breadth_page import create_breadth_page
 def create_analysis_page(data_file, page_title):
     """Create an analysis page similar to Signal Analysis for any CSV file"""
     st.title(f"📈 {page_title}")
+    
+
+    # Extract and display date from filename (skip for performance pages, virtual trading, and chatbot)
+    pages_without_date = ['Latest Performance', 'Forward Testing Performance']
+    if page_title not in pages_without_date:
+        filename = os.path.basename(data_file)
+        file_date = extract_date_from_filename(filename)
+        if file_date:
+            formatted_date = file_date.strftime('%B %d, %Y')
+            st.markdown(f"**📅 Report Date: {formatted_date}**")
+    
     st.markdown("---")
     
     # Load data from the specific file
