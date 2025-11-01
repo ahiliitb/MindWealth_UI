@@ -44,7 +44,7 @@ def create_breadth_page(data_file, page_title):
     
     # Insert SBI graph (single chart) after cards and before the table
     st.markdown("---")
-    st.markdown("### 📊 Bullish Signal Breadth Indicator (SBI)")
+    st.markdown("### 📊 Bullish SBI Chart")
     try:
         # Reuse the plotting logic from test_breadth_plot.py
         sbi_df = pd.read_csv(BREADTH_SIGNAL_STORE_CSV_PATH_US, index_col=False)
@@ -105,7 +105,7 @@ def create_breadth_page(data_file, page_title):
                 yaxis_title='Percentage (%)',
                 legend=dict(
                     orientation='h',
-                    yanchor='bottom', y=1.02,
+                    yanchor='bottom', y=1.05,
                     xanchor='right', x=1,
                     bgcolor='rgba(255,255,255,0.95)',
                     bordercolor='#333', borderwidth=1,

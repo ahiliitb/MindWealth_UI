@@ -15,9 +15,26 @@ from .breadth_page import create_breadth_page
 
 def create_analysis_page(data_file, page_title):
     """Create an analysis page similar to Signal Analysis for any CSV file"""
+    # Load data first to check page type before displaying title
+    df = load_data_from_file(f'{data_file}', page_title)
+    
+    if df.empty:
+        st.warning(f"No data available for {page_title}")
+        return
+    
+    # Check if this is a breadth data page (after processing) - handle separately
+    if 'Function' in df.columns and 'Bullish_Asset_Percentage' in df.columns and 'Bullish_Signal_Percentage' in df.columns:
+        create_breadth_page(data_file, page_title)
+        return
+    
+    # Check if this is a performance summary page (after processing)
+    if 'Strategy' in df.columns and 'Interval' in df.columns and 'Total_Trades' in df.columns:
+        create_performance_summary_page(data_file, page_title)
+        return
+    
+    # Display title and date for regular analysis pages
     st.title(f"📈 {page_title}")
     
-
     # Extract and display date from filename (skip for performance pages, virtual trading, and chatbot)
     pages_without_date = ['Latest Performance', 'Forward Testing Performance']
     if page_title not in pages_without_date:
@@ -28,23 +45,6 @@ def create_analysis_page(data_file, page_title):
             st.markdown(f"**📅 Report Date: {formatted_date}**")
     
     st.markdown("---")
-    
-    # Load data from the specific file
-    df = load_data_from_file(f'{data_file}', page_title)
-    
-    if df.empty:
-        st.warning(f"No data available for {page_title}")
-        return
-    
-    # Check if this is a performance summary page (after processing)
-    if 'Strategy' in df.columns and 'Interval' in df.columns and 'Total_Trades' in df.columns:
-        create_performance_summary_page(data_file, page_title)
-        return
-    
-    # Check if this is a breadth data page (after processing)
-    if 'Function' in df.columns and 'Bullish_Asset_Percentage' in df.columns and 'Bullish_Signal_Percentage' in df.columns:
-        create_breadth_page(data_file, page_title)
-        return
     
     # Add interval and position type extraction
     def extract_interval(row):
