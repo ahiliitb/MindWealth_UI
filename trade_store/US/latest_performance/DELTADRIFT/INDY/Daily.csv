@@ -1,0 +1,2 @@
+Function,Symbol,Signal,Interval,Entry Date,Entry Price,Exit Date,Exit Price,Profit [%],Holding Period (days),Backtested Win Rate [%],Backtested Number of Trades,Avg Backtested Holding Period (days)
+DELTADRIFT,INDY,Long,Daily,2025-08-01,51.77,2025-08-18,52.52,1.4487154722812439,11,70.0,10,6

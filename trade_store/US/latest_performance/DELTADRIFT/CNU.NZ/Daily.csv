@@ -1,0 +1,2 @@
+Function,Symbol,Signal,Interval,Entry Date,Entry Price,Exit Date,Exit Price,Profit [%],Holding Period (days),Backtested Win Rate [%],Backtested Number of Trades,Avg Backtested Holding Period (days)
+DELTADRIFT,CNU.NZ,Long,Daily,2025-10-16,9.11,2025-10-21,9.28,1.866081229418221,3,81.82,11,8
