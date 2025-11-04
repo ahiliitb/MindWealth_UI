@@ -313,9 +313,17 @@ class DataProcessor:
                             try:
                                 df = pd.read_csv(file_path, encoding=CSV_ENCODING)
                                 
+                                # Check if DataFrame is empty
+                                if df.empty:
+                                    logger.warning(f"Empty CSV file: {file_path}")
+                                    continue
+                                
                                 # Add ticker column if not present
                                 if 'Symbol' not in df.columns and 'Ticker' not in df.columns:
                                     df['Symbol'] = ticker
+                                elif 'Ticker' in df.columns and 'Symbol' not in df.columns:
+                                    # Rename Ticker to Symbol for consistency
+                                    df['Symbol'] = df['Ticker']
                                 
                                 # Add date column if not present
                                 if 'Date' not in df.columns:
@@ -328,10 +336,37 @@ class DataProcessor:
                                 # Add data type column
                                 df['DataType'] = data_type
                                 
-                                all_dfs.append(df)
+                                # Ensure all string columns are properly encoded
+                                for col in df.columns:
+                                    if df[col].dtype == 'object':
+                                        # Convert to string and handle any encoding issues
+                                        df[col] = df[col].astype(str).replace('nan', pd.NA)
                                 
+                                all_dfs.append(df)
+                                logger.debug(f"Loaded {len(df)} rows from {file_path}")
+                                
+                            except UnicodeDecodeError as e:
+                                logger.error(f"Encoding error loading file {file_path}: {e}. Trying with errors='ignore'")
+                                try:
+                                    df = pd.read_csv(file_path, encoding=CSV_ENCODING, encoding_errors='ignore')
+                                    # Apply same processing as above
+                                    if 'Symbol' not in df.columns and 'Ticker' not in df.columns:
+                                        df['Symbol'] = ticker
+                                    elif 'Ticker' in df.columns and 'Symbol' not in df.columns:
+                                        df['Symbol'] = df['Ticker']
+                                    if 'Date' not in df.columns:
+                                        df['Date'] = date_str
+                                    if 'Function' not in df.columns:
+                                        df['Function'] = function_name
+                                    df['DataType'] = data_type
+                                    all_dfs.append(df)
+                                except Exception as e2:
+                                    logger.error(f"Failed to load file {file_path} even with encoding errors='ignore': {e2}")
+                                    continue
                             except Exception as e:
                                 logger.error(f"Error loading file {file_path}: {e}")
+                                import traceback
+                                logger.error(traceback.format_exc())
                                 continue
                 
                 if not all_dfs:
