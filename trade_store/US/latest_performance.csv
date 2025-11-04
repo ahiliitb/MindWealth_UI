@@ -1,29 +1,30 @@
 Strategy,Interval,Signal Type,Total Analysed Trades,Win Percentage,Holding Period (days) (Max./Min./Avg.),Profit [%] (Best/Worst/Avg.),Avg Backtested Win Rate [%],Avg Backtested Holding Period (days),Percentage of Open Trades
-ALTITUDE ALPHA,Monthly,Long,11,81.82%,565 days/106 days/287 days,80.23%/-25.5%/52.21%,78.47%,418 days,9.09%
-ALTITUDE ALPHA,Quarterly,Long,15,80.0%,2217 days/195 days/864 days,84.88%/-31.4%/49.34%,83.49%,898 days,0.0%
-ALTITUDE ALPHA,Weekly,Long,11,63.64%,679 days/74 days/291 days,68.42%/-30.94%/32.21%,85.02%,493 days,0.0%
-ALTITUDE ALPHA,Yearly,Long,1,100.0%,1000 days/1000 days/1000 days,64.78%/64.78%/64.78%,71.43%,610 days,100.0%
-ALTITUDE ALPHA,Daily,Long,1,0.0%,124 days/124 days/124 days,-23.63%/-23.63%/-23.63%,75.0%,304 days,0.0%
-BAND MATRIX,Daily,Long,76,76.32%,387 days/22 days/130 days,94.22%/-46.83%/10.42%,81.07%,119 days,0.0%
-BAND MATRIX,Weekly,Long,5,100.0%,799 days/184 days/521 days,44.63%/2.53%/15.21%,82.67%,521 days,0.0%
-BASELINEDIVERGENCE,Weekly,Long,20,85.0%,174 days/44 days/106 days,47.99%/-3.55%/13.87%,86.37%,80 days,0.0%
-DELTADRIFT,Weekly,Long,37,97.3%,134 days/4 days/39 days,15.04%/-31.5%/7.18%,89.99%,33 days,0.0%
-DELTADRIFT,Daily,Long,112,80.36%,52 days/1 days/11 days,22.83%/-27.31%/1.92%,82.65%,9 days,0.0%
-FRACTAL TRACK,Daily,Long,289,94.12%,905 days/4 days/221 days,370.36%/-3.6%/26.48%,94.44%,222 days,0.35%
-FRACTAL TRACK,Weekly,Long,50,94.0%,1904 days/49 days/558 days,533.55%/-5.31%/58.3%,93.51%,532 days,2.0%
-FRACTAL TRACK,Quarterly,Long,9,88.89%,3977 days/326 days/1658 days,1130.69%/-18.82%/276.57%,95.63%,1373 days,0.0%
-FRACTAL TRACK,Monthly,Long,43,83.72%,6608 days/107 days/1335 days,1463.04%/-39.0%/205.22%,89.18%,1261 days,11.63%
-FRACTAL TRACK,Monthly,Short,7,71.43%,87 days/21 days/46 days,8.58%/-23.74%/1.01%,91.24%,42 days,0.0%
-FRACTAL TRACK,Weekly,Short,14,50.0%,84 days/4 days/27 days,6.89%/-14.86%/-2.76%,87.64%,24 days,7.14%
-FRACTAL TRACK,Daily,Short,117,48.72%,58 days/1 days/7 days,9.06%/-14.69%/-0.71%,88.84%,8 days,0.0%
-FRACTAL TRACK,Quarterly,Short,1,0.0%,23 days/23 days/23 days,-26.78%/-26.78%/-26.78%,87.5%,69 days,100.0%
-OSCILLATOR DELTA,Daily,Long,78,76.92%,255 days/1 days/41 days,18.38%/-15.53%/3.45%,77.81%,38 days,0.0%
-OSCILLATOR DELTA,Daily,Short,12,83.33%,17 days/1 days/5 days,1.96%/-3.14%/0.38%,86.6%,5 days,0.0%
-PULSEGAUGE,Weekly,Long,22,63.64%,559 days/19 days/122 days,30.25%/-30.33%/7.53%,80.5%,153 days,9.09%
-PULSEGAUGE,Weekly,Short,3,100.0%,54 days/54 days/54 days,4.22%/3.4%/3.92%,87.83%,88 days,0.0%
-SIGMASHELL,Daily,Long,137,83.21%,253 days/27 days/75 days,109.22%/-36.98%/9.67%,85.5%,83 days,0.73%
-TRENDPULSE,Weekly,Long,113,96.46%,399 days/19 days/86 days,50.54%/-21.75%/7.74%,89.59%,74 days,1.77%
-TRENDPULSE,Monthly,Long,32,90.62%,956 days/107 days/267 days,194.68%/-38.33%/27.87%,85.69%,238 days,12.5%
-TRENDPULSE,Daily,Long,279,88.89%,219 days/3 days/30 days,39.76%/-21.83%/3.15%,89.41%,19 days,0.0%
-TRENDPULSE,Quarterly,Long,6,83.33%,1435 days/325 days/698 days,118.85%/-46.51%/28.12%,98.48%,610 days,16.67%
-TRENDPULSE,Daily,Short,2,0.0%,10 days/7 days/8 days,-5.84%/-6.09%/-5.97%,88.89%,8 days,0.0%
+ALTITUDE ALPHA,Quarterly,Long,19,84.21%,3847 days/195 days/1010 days,113.06%/-31.4%/54.86%,81.74%,934 days,10.53%
+ALTITUDE ALPHA,Monthly,Long,10,80.0%,565 days/106 days/281 days,80.23%/-25.5%/51.32%,79.26%,412 days,0.0%
+ALTITUDE ALPHA,Daily,Long,3,66.67%,200 days/103 days/142 days,73.05%/-23.63%/37.5%,75.0%,216 days,0.0%
+ALTITUDE ALPHA,Weekly,Long,13,61.54%,1294 days/49 days/359 days,68.42%/-30.94%/29.66%,82.3%,552 days,0.0%
+ALTITUDE ALPHA,Yearly,Long,2,50.0%,1001 days/480 days/740 days,64.98%/-20.47%/22.25%,73.22%,743 days,100.0%
+BAND MATRIX,Daily,Long,69,82.61%,387 days/22 days/122 days,94.22%/-46.83%/11.54%,83.02%,121 days,0.0%
+BAND MATRIX,Weekly,Long,5,100.0%,814 days/184 days/524 days,72.96%/2.53%/27.77%,86.67%,485 days,0.0%
+BASELINEDIVERGENCE,Weekly,Long,27,88.89%,174 days/44 days/87 days,47.99%/-1.34%/11.28%,87.51%,73 days,14.81%
+DELTADRIFT,Weekly,Long,39,94.87%,134 days/4 days/40 days,15.04%/-31.5%/6.36%,88.95%,34 days,0.0%
+DELTADRIFT,Daily,Long,112,83.04%,52 days/1 days/11 days,22.83%/-27.31%/2.29%,82.9%,9 days,0.0%
+FRACTAL TRACK,Weekly,Long,55,94.55%,1904 days/49 days/541 days,533.55%/-5.31%/62.79%,94.49%,543 days,0.0%
+FRACTAL TRACK,Daily,Long,288,94.1%,905 days/4 days/218 days,370.36%/-3.6%/25.33%,96.19%,227 days,0.0%
+FRACTAL TRACK,Quarterly,Long,13,92.31%,3977 days/326 days/1698 days,1130.69%/-18.82%/225.92%,93.89%,1571 days,15.38%
+FRACTAL TRACK,Monthly,Long,45,84.44%,6608 days/107 days/1293 days,1463.25%/-39.0%/203.36%,91.39%,1153 days,0.0%
+FRACTAL TRACK,Monthly,Short,7,85.71%,172 days/21 days/46 days,8.58%/-38.7%/-0.1%,89.4%,37 days,0.0%
+FRACTAL TRACK,Weekly,Short,6,50.0%,84 days/14 days/32 days,6.89%/-12.13%/-3.0%,85.69%,24 days,0.0%
+FRACTAL TRACK,Daily,Short,56,48.21%,55 days/1 days/7 days,7.74%/-12.47%/-0.47%,89.16%,7 days,0.0%
+FRACTAL TRACK,Quarterly,Short,1,0.0%,90 days/90 days/90 days,-2.31%/-2.31%/-2.31%,85.71%,105 days,100.0%
+OSCILLATOR DELTA,Daily,Long,151,68.21%,333 days/0 days/44 days,17.78%/-15.53%/1.44%,80.94%,40 days,0.0%
+OSCILLATOR DELTA,Daily,Short,18,83.33%,17 days/1 days/4 days,6.35%/-3.14%/0.54%,87.28%,4 days,0.0%
+PULSEGAUGE,Weekly,Long,49,73.47%,589 days/9 days/155 days,46.21%/-30.33%/12.52%,83.0%,140 days,0.0%
+PULSEGAUGE,Weekly,Short,8,75.0%,69 days/49 days/55 days,6.76%/-6.96%/1.5%,80.57%,63 days,0.0%
+SIGMASHELL,Daily,Long,121,85.95%,313 days/30 days/73 days,49.99%/-34.38%/9.33%,84.77%,72 days,0.83%
+TRENDPULSE,Weekly,Long,129,95.35%,414 days/19 days/94 days,59.52%/-21.75%/8.78%,88.77%,77 days,0.0%
+TRENDPULSE,Monthly,Long,53,92.45%,1283 days/107 days/286 days,195.86%/-57.97%/27.02%,87.34%,225 days,1.89%
+TRENDPULSE,Daily,Long,298,88.26%,219 days/3 days/30 days,39.76%/-21.83%/3.24%,88.5%,20 days,0.0%
+TRENDPULSE,Quarterly,Long,15,86.67%,1435 days/325 days/609 days,124.5%/-46.51%/39.58%,93.41%,535 days,6.67%
+TRENDPULSE,Monthly,Short,1,100.0%,281 days/281 days/281 days,6.25%/6.25%/6.25%,90.0%,189 days,0.0%
+TRENDPULSE,Quarterly,Short,1,100.0%,415 days/415 days/415 days,11.17%/11.17%/11.17%,100.0%,406 days,100.0%
