@@ -515,13 +515,28 @@ def main():
     print("  - chatbot/data/breadth/YYYY-MM-DD.csv (market breadth)\n")
     
     # Convert outstanding_signal.csv (signals)
+    # Handle both naming conventions: outstanding_signal.csv and YYYY-MM-DD_outstanding_signal.csv
     print("-" * 80)
     print("Converting SIGNAL data (outstanding_signal.csv)")
     print("-" * 80)
     
-    signal_file = Path("trade_store/US/outstanding_signal.csv")
+    # Try to find the most recent outstanding_signal file
+    signal_file = None
     
-    if signal_file.exists():
+    # First try exact match
+    signal_file_exact = Path("trade_store/US/outstanding_signal.csv")
+    if signal_file_exact.exists():
+        signal_file = signal_file_exact
+    else:
+        # Try pattern matching for date_name.csv format
+        signal_pattern_files = list(Path("trade_store/US").glob("*_outstanding_signal.csv"))
+        if signal_pattern_files:
+            # Sort by modification time and get the most recent
+            signal_pattern_files.sort(key=lambda x: x.stat().st_mtime, reverse=True)
+            signal_file = signal_pattern_files[0]
+            print(f"ℹ Found dated file: {signal_file.name}")
+    
+    if signal_file and signal_file.exists():
         convert_signal_file_to_data_structure(
             input_file=signal_file,
             signal_type="signal",
@@ -529,16 +544,31 @@ def main():
             overwrite=False
         )
     else:
-        print(f"⚠ File not found: {signal_file}")
+        print(f"⚠ File not found: outstanding_signal.csv (tried exact match and date_name.csv pattern)")
     
     # Convert target_signal.csv (targets)
+    # Handle both naming conventions: target_signal.csv and YYYY-MM-DD_target_signal.csv
     print("\n" + "-" * 80)
     print("Converting TARGET data (target_signal.csv)")
     print("-" * 80)
     
-    target_file = Path("trade_store/US/target_signal.csv")
+    # Try to find the most recent target_signal file
+    target_file = None
     
-    if target_file.exists():
+    # First try exact match
+    target_file_exact = Path("trade_store/US/target_signal.csv")
+    if target_file_exact.exists():
+        target_file = target_file_exact
+    else:
+        # Try pattern matching for date_name.csv format
+        target_pattern_files = list(Path("trade_store/US").glob("*_target_signal.csv"))
+        if target_pattern_files:
+            # Sort by modification time and get the most recent
+            target_pattern_files.sort(key=lambda x: x.stat().st_mtime, reverse=True)
+            target_file = target_pattern_files[0]
+            print(f"ℹ Found dated file: {target_file.name}")
+    
+    if target_file and target_file.exists():
         convert_signal_file_to_data_structure(
             input_file=target_file,
             signal_type="target",
@@ -546,22 +576,38 @@ def main():
             overwrite=False
         )
     else:
-        print(f"⚠ File not found: {target_file}")
+        print(f"⚠ File not found: target_signal.csv (tried exact match and date_name.csv pattern)")
     
     # Convert breadth.csv (market-wide breadth report)
+    # Handle both naming conventions: breadth.csv and YYYY-MM-DD_breadth.csv
     print("\n" + "-" * 80)
     print("Converting BREADTH data (breadth.csv)")
     print("-" * 80)
     
-    breadth_file = Path("trade_store/US/breadth.csv")
+    # Try to find the most recent breadth file
+    breadth_file = None
     
-    if breadth_file.exists():
+    # First try exact match
+    breadth_file_exact = Path("trade_store/US/breadth.csv")
+    if breadth_file_exact.exists():
+        breadth_file = breadth_file_exact
+    else:
+        # Try pattern matching for date_name.csv format (excluding breadth_us.csv)
+        breadth_pattern_files = [f for f in Path("trade_store/US").glob("*_breadth.csv") 
+                                if "breadth_us" not in f.name]
+        if breadth_pattern_files:
+            # Sort by modification time and get the most recent
+            breadth_pattern_files.sort(key=lambda x: x.stat().st_mtime, reverse=True)
+            breadth_file = breadth_pattern_files[0]
+            print(f"ℹ Found dated file: {breadth_file.name}")
+    
+    if breadth_file and breadth_file.exists():
         convert_breadth_report(
             input_file=breadth_file,
             output_base_dir="chatbot/data"
         )
     else:
-        print(f"⚠ File not found: {breadth_file}")
+        print(f"⚠ File not found: breadth.csv (tried exact match and date_name.csv pattern)")
     
     print("\n" + "="*80)
     print("✓ Conversion Complete!")

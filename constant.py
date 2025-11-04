@@ -19,12 +19,14 @@ LATEST_PERFORMANCE_CSV_PATH_US = "./trade_store/US/latest_performance.csv"
 FORWARD_BACKTESTING_CSV_PATH_US = "./trade_store/US/forward_backtesting.csv"
 
 BREADTH_CSV_PATH_US = "./trade_store/US/breadth.csv"
+# Breadth SBI consolidated CSV (for single SBI graph)
+BREADTH_SIGNAL_STORE_CSV_PATH_US = "./trade_store/US/breadth_us.csv"
 
 TARGET_SIGNAL_CSV_PATH_US = "./trade_store/US/target_signal.csv"
 
 NEW_SIGNAL_CSV_PATH_US = "./trade_store/US/new_signal.csv"
 
-# TEXT FILE PATHS
-CLAUDE_OUTPUT_TXT_PATH = "./trade_store/US/claude output.txt"
-BOX_CLAUDE_OUTPUT_TXT_PATH = "./trade_store/US/box claude output.txt"
+# GPT REPORT PATHS
+GPT_SIGNALS_REPORT_TXT_PATH_US = "./trade_store/US/gpt_signals_report.txt"
+GPT_SIGNALS_REPORT_CSV_PATH_US = "./trade_store/US/gpt_signals_report.csv"
 

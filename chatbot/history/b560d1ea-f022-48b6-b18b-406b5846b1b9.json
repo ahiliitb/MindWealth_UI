@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "session_id": "b560d1ea-f022-48b6-b18b-406b5846b1b9",
+    "title": "give me the top 3 FRACTAL TRACK signals",
+    "created_at": "2025-10-23T15:52:16.825049",
+    "last_updated": "2025-10-23T15:52:23.641132",
+    "message_count": 3
+  },
+  "conversation": [
+    {
+      "role": "system",
+      "content": "You are an expert financial trading analyst assistant for MindWealth. \nYou help users analyze stock market data, trading signals, and provide insights based on historical data.\n\nYour capabilities include:\n- Analyzing stock price movements and trends\n- Interpreting trading signals and technical indicators\n- Providing insights on market performance\n- Comparing multiple tickers\n- Identifying patterns and opportunities\n\nIMPORTANT OUTPUT FORMATTING REQUIREMENTS:\n1. ALWAYS use proper Markdown formatting\n2. ALWAYS include spaces between words and punctuation\n3. Use bullet points (- or •) for lists\n4. Use **bold** for emphasis\n5. Use headers (##, ###) to organize sections\n6. Use line breaks between paragraphs\n7. Format numbers with proper spacing: \"245.27 is significantly above the track level (169.28)\"\n8. NEVER concatenate words without spaces\n\nWhen analyzing data:\n1. Be precise and data-driven in your analysis\n2. Highlight key trends and patterns\n3. Provide actionable insights when possible\n4. Use technical analysis terminology appropriately\n5. Consider the time period and context of the data\n6. Structure your response with clear sections and proper spacing\n\nCRITICAL: Always format your response in clean, readable Markdown with proper spacing.\nAlways base your responses on the actual data provided and avoid speculation.\n",
+      "timestamp": "2025-10-23T15:52:16.852677"
+    },
+    {
+      "role": "user",
+      "content": "give me the top 3 FRACTAL TRACK signals",
+      "timestamp": "2025-10-23T15:52:17.829671",
+      "metadata": {
+        "tickers": [],
+        "tickers_auto_extracted": [],
+        "from_date": "2025-10-20",
+        "to_date": "2025-10-23",
+        "functions": [
+          "FRACTAL TRACK"
+        ],
+        "functions_auto_extracted": [
+          "FRACTAL TRACK"
+        ],
+        "signal_types": [],
+        "model": "gpt-4o",
+        "tokens_used": {
+          "prompt": 290,
+          "completion": 378,
+          "total": 668
+        },
+        "finish_reason": "stop",
+        "batch_processing_used": true,
+        "batch_count": 1,
+        "batch_mode": "single",
+        "full_signal_tables": {},
+        "signals_table": []
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "To provide an analysis of the top 3 Fractal Track signals, I would need specific data on the stock tickers and their corresponding Fractal Track signals. \n\nHowever, I can guide you on how to analyze and interpret Fractal Track signals:\n\n## Analyzing Fractal Track Signals\n\n### Understanding Fractal Tracks\n\n- Fractal Track signals are used in technical analysis to identify potential reversal points in the market.\n- These signals are often based on recurring patterns that represent changes in market sentiment.\n\n### Key Components\n\n1. **Bearish Fractal Signal:**\n   - Typically marked when a high point is surrounded by two lower high points.\n   - Indicates potential reversal from an uptrend to a downtrend.\n\n2. **Bullish Fractal Signal:**\n   - Formed when a low point is surrounded by two higher low points.\n   - Suggests a potential reversal from a downtrend to an uptrend.\n\n### Steps to Analyze\n\n1. **Identify Reversal Points:**\n   - Look for patterns where the price creates a peak (bearish) or a trough (bullish) with the necessary surrounding candlesticks.\n\n2. **Confirm with Other Indicators:**\n   - Use additional indicators like Moving Averages or RSI to confirm the Fractal signal.\n\n3. **Assess Market Context:**\n   - Consider the overall trend and recent price action to gauge the signal's reliability.\n\n### Actionable Insights\n\n- **For Bullish Fractals:**\n  - Consider entering long positions if confirmed by other indicators and the overall market trend is supportive.\n\n- **For Bearish Fractals:**\n  - Consider shorting or exiting long positions if additional indicators align with the signal and the market context supports a downturn.\n\nIf you provide specific data or tickers, I can give a more detailed analysis based on the Fractal Track signals you are interested in.",
+      "timestamp": "2025-10-23T15:52:23.641108",
+      "metadata": {
+        "tickers": [],
+        "tickers_auto_extracted": [],
+        "from_date": "2025-10-20",
+        "to_date": "2025-10-23",
+        "functions": [
+          "FRACTAL TRACK"
+        ],
+        "functions_auto_extracted": [
+          "FRACTAL TRACK"
+        ],
+        "signal_types": [],
+        "model": "gpt-4o",
+        "tokens_used": {
+          "prompt": 290,
+          "completion": 378,
+          "total": 668
+        },
+        "finish_reason": "stop",
+        "batch_processing_used": true,
+        "batch_count": 1,
+        "batch_mode": "single",
+        "full_signal_tables": {},
+        "signals_table": []
+      }
+    }
+  ]
+}

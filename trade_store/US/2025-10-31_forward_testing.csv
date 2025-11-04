@@ -1,0 +1,23 @@
+Strategy,Interval,Signal Type,Total Analysed Trades,Win Percentage,Holding Period (days) (Max./Min./Avg.),Profit [%] (Best/Worst/Avg.),Avg Backtested Win Rate [%],Avg Backtested Holding Period (days),Percentage of Open Trades
+ALTITUDE ALPHA,Weekly,Long,11,81.82%,559 days/49 days/199 days,65.59%/-23.43%/39.66%,82.42%,491 days,36.36%
+ALTITUDE ALPHA,Monthly,Long,18,66.67%,1284 days/0 days/308 days,100.8%/-28.35%/32.3%,79.47%,447 days,27.78%
+ALTITUDE ALPHA,Quarterly,Long,3,66.67%,414 days/327 days/377 days,83.72%/-23.27%/43.38%,75.0%,685 days,33.33%
+ALTITUDE ALPHA,Yearly,Long,3,66.67%,1043 days/0 days/521 days,88.73%/0.0%/54.08%,85.71%,465 days,33.33%
+BAND MATRIX,Daily,Long,25,76.0%,258 days/15 days/79 days,53.29%/-10.24%/10.7%,83.78%,125 days,16.0%
+BAND MATRIX,Weekly,Long,3,100.0%,314 days/99 days/184 days,38.96%/21.47%/28.65%,100.0%,638 days,66.67%
+DELTADRIFT,Daily,Long,30,76.67%,34 days/0 days/11 days,11.7%/-11.79%/1.35%,83.82%,6 days,0.0%
+DELTADRIFT,Weekly,Long,1,100.0%,74 days/74 days/74 days,8.6%/8.6%/8.6%,100.0%,75 days,0.0%
+FRACTAL TRACK,Weekly,Long,12,83.33%,419 days/79 days/226 days,70.72%/-9.19%/23.34%,89.83%,704 days,75.0%
+FRACTAL TRACK,Daily,Long,25,68.0%,464 days/5 days/110 days,164.82%/-6.86%/14.87%,97.1%,109 days,48.0%
+FRACTAL TRACK,Monthly,Long,5,100.0%,739 days/89 days/357 days,62.83%/7.83%/32.44%,88.76%,1084 days,60.0%
+FRACTAL TRACK,Quarterly,Long,2,100.0%,610 days/544 days/577 days,59.28%/40.29%/49.78%,90.0%,1582 days,100.0%
+FRACTAL TRACK,Quarterly,Short,2,50.0%,65 days/65 days/65 days,34.84%/-15.39%/9.72%,92.85%,91 days,0.0%
+FRACTAL TRACK,Weekly,Short,4,50.0%,14 days/4 days/9 days,7.05%/-3.48%/1.42%,89.61%,13 days,0.0%
+FRACTAL TRACK,Monthly,Short,1,100.0%,86 days/86 days/86 days,3.18%/3.18%/3.18%,88.89%,180 days,0.0%
+OSCILLATOR DELTA,Daily,Long,22,50.0%,105 days/0 days/23 days,13.83%/-14.48%/-1.17%,78.34%,25 days,0.0%
+PULSEGAUGE,Weekly,Long,14,78.57%,309 days/34 days/121 days,30.25%/-9.24%/14.57%,83.93%,131 days,35.71%
+SIGMASHELL,Daily,Long,21,90.48%,116 days/32 days/67 days,40.01%/-6.84%/11.74%,84.56%,84 days,0.0%
+TRENDPULSE,Daily,Long,41,95.12%,102 days/3 days/19 days,8.7%/-13.77%/2.57%,89.26%,15 days,0.0%
+TRENDPULSE,Monthly,Long,10,80.0%,459 days/0 days/235 days,35.59%/-5.76%/11.57%,85.86%,202 days,50.0%
+TRENDPULSE,Weekly,Long,21,76.19%,354 days/19 days/84 days,29.61%/-11.38%/3.84%,92.49%,65 days,28.57%
+TRENDPULSE,Monthly,Short,2,0.0%,217 days/86 days/151 days,-5.32%/-16.93%/-11.12%,88.24%,225 days,0.0%

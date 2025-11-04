@@ -59,6 +59,15 @@ else
     echo "⚠️  virtual_trading_short.csv not found in $SOURCE_VIRTUAL_TRADING_DIR"
 fi
 
+# Copy breadth_us.csv from trade_store to trade_store/US
+echo "📊 Copying breadth_us.csv..."
+if [ -f "$SOURCE_VIRTUAL_TRADING_DIR/breadth_us.csv" ]; then
+    cp "$SOURCE_VIRTUAL_TRADING_DIR/breadth_us.csv" "$TARGET_TRADE_DIR/breadth_us.csv"
+    echo "✅ Copied breadth_us.csv → breadth_us.csv"
+else
+    echo "⚠️  breadth_us.csv not found in $SOURCE_VIRTUAL_TRADING_DIR"
+fi
+
 
 # Convert signals to data structure
 echo "🔄 Converting signals to chatbot data structure..."

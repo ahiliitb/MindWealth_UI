@@ -11,8 +11,10 @@ from src.pages import (
     create_analysis_page,
     create_text_file_page,
     create_virtual_trading_page,
-    render_chatbot_page
+    render_chatbot_page,
+    create_trade_details_page
 )
+from src.pages.horizontal_page import create_horizontal_page
 from src.utils import discover_csv_files
 
 # Set page config
@@ -94,6 +96,7 @@ def main():
         "🤖 AI Chatbot": "chatbot",
         "Virtual Trading": "virtual_trading",
         "AI Output": "text_files",
+        "Trade Details": "trade_details",
     }
     
     # Add CSV files in the specified order
@@ -115,11 +118,16 @@ def main():
         create_virtual_trading_page()
     elif page == "AI Output":
         create_text_file_page()
+    elif page == "Trade Details":
+        create_trade_details_page()
     else:
         # Create analysis page for CSV files
         csv_file = page_options[page]
         if csv_file and csv_file not in ["text_files", "virtual_trading", "chatbot"]:
-            create_analysis_page(csv_file, page)
+            if page == 'Horizontal':
+                create_horizontal_page(csv_file, page)
+            else:
+                create_analysis_page(csv_file, page)
         else:
             st.error(f"No data file found for {page}")
 

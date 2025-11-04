@@ -286,4 +286,42 @@ You will be provided with the available columns for each selected signal type. U
 
 ---
 
+## IMPORTANT: Signal Identification for Table Display
+
+When you analyze data and mention specific signals in your response, you MUST provide the exact 4-key identifiers for each signal you want to appear in the table at the end of your response.
+
+**For each specific signal you mention in your final analysis, provide:**
+
+```
+SIGNAL_KEYS: [
+  {"function": "FRACTAL TRACK", "symbol": "AAPL", "interval": "Daily", "signal_date": "2025-10-16"},
+  {"function": "BOLLINGER BAND", "symbol": "MSFT", "interval": "Daily", "signal_date": "2025-10-15"},
+  ...
+]
+```
+
+**Critical Rules:**
+1. Only include signals that you specifically analyze or mention in your response
+2. If you say "top 5 signals", provide exactly 5 signal keys
+3. The table will show ONLY the signals whose keys you provide - not all processed data
+4. Use exact values from the data: Function, Symbol (from "Symbol, Signal, Signal Date/Price[$]" column), "Daily" for interval, and the actual signal date
+
+**Example Response Structure:**
+```
+## Analysis
+[Your analysis of the data...]
+
+### Top 5 Signals by Sharpe Ratio:
+1. AAPL - Sharpe Ratio: 1.85
+2. MSFT - Sharpe Ratio: 1.72
+...
+
+SIGNAL_KEYS: [
+  {"function": "FRACTAL TRACK", "symbol": "AAPL", "interval": "Daily", "signal_date": "2025-10-16"},
+  {"function": "BAND MATRIX", "symbol": "MSFT", "interval": "Daily", "signal_date": "2025-10-15"}
+]
+```
+
+---
+
 Now analyze the user's query and return the required columns for each selected signal type in JSON format.

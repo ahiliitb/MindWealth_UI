@@ -1,0 +1,2 @@
+Function,Symbol,Signal,Interval,Entry Date,Entry Price,Exit Date,Exit Price,Profit [%],Holding Period (days),Backtested Win Rate [%],Backtested Number of Trades,Avg Backtested Holding Period (days)
+FRACTAL TRACK,^NZ50,Long,Weekly,2025-04-06,12225.2803,2025-11-02,13548.3203,10.822164952733223,149,100.0,17,888
