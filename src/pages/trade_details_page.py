@@ -149,27 +149,65 @@ def create_trade_details_page():
             # Create three columns for selection
             col1, col2, col3 = st.columns(3)
             
+            # Initialize session state keys for this folder
+            function_key = f"function_{folder_name}"
+            interval_key = f"interval_{folder_name}"
+            assets_key = f"assets_{folder_name}"
+            
+            # Initialize session state if not exists
+            if function_key not in st.session_state:
+                st.session_state[function_key] = None
+            if interval_key not in st.session_state:
+                st.session_state[interval_key] = None
+            if assets_key not in st.session_state:
+                st.session_state[assets_key] = []
+            
             with col1:
+                # Get default function from session state if available and valid
+                default_function_idx = 0
+                if st.session_state[function_key] and st.session_state[function_key] in structure['functions']:
+                    default_function_idx = structure['functions'].index(st.session_state[function_key])
+                
                 selected_function = st.selectbox(
                     "Select Function",
                     options=structure['functions'],
-                    key=f"function_{folder_name}",
+                    index=default_function_idx,
+                    key=f"function_select_{folder_name}",
                     help="Choose a trading function/strategy"
                 )
+                
+                # Update session state
+                function_changed = selected_function != st.session_state.get(function_key)
+                if function_changed:
+                    st.session_state[function_key] = selected_function
+                    # Clear interval when function changes (assets will be validated later)
+                    st.session_state[interval_key] = None
             
             # Get available intervals for the selected function
             available_intervals = get_available_intervals_for_function(folder_path, selected_function)
             
             with col2:
                 if available_intervals:
+                    # Get default interval from session state if available and valid
+                    default_interval_idx = 0
+                    if st.session_state[interval_key] and st.session_state[interval_key] in available_intervals:
+                        default_interval_idx = available_intervals.index(st.session_state[interval_key])
+                    
                     selected_interval = st.selectbox(
                         "Select Interval",
                         options=available_intervals,
-                        key=f"interval_{folder_name}_{selected_function}",
+                        index=default_interval_idx,
+                        key=f"interval_select_{folder_name}_{selected_function}",
                         help="Choose a time interval"
                     )
+                    
+                    # Update session state (assets will be validated later, not cleared)
+                    interval_changed = selected_interval != st.session_state.get(interval_key)
+                    if interval_changed:
+                        st.session_state[interval_key] = selected_interval
                 else:
                     selected_interval = None
+                    st.session_state[interval_key] = None
                     st.info("No intervals available")
             
             with col3:
@@ -193,132 +231,210 @@ def create_trade_details_page():
                             filtered_assets = available_assets
                         
                         if filtered_assets:
-                            selected_asset = st.selectbox(
-                                "Select Asset",
-                                options=filtered_assets,
-                                key=f"asset_{folder_name}_{selected_function}_{selected_interval}",
-                                help="Choose an asset/ticker"
+                            # Add "All Assets" option at the beginning
+                            options_with_all = ["All Assets"] + filtered_assets
+                            
+                            # Get stored assets from session state, but filter to only include valid ones
+                            # This preserves assets across function/interval changes
+                            stored_assets = st.session_state.get(assets_key, [])
+                            valid_stored_assets = [a for a in stored_assets if a in filtered_assets]
+                            
+                            # Use valid stored assets as default, preserving selections
+                            selected_assets = st.multiselect(
+                                "Select Asset(s)",
+                                options=options_with_all,
+                                default=valid_stored_assets,
+                                key=f"asset_multiselect_{folder_name}_{selected_function}_{selected_interval}",
+                                help="Choose one or more assets/tickers. Select 'All Assets' to include all available assets."
                             )
+                            
+                            # Handle "All Assets" selection
+                            if "All Assets" in selected_assets:
+                                selected_assets = filtered_assets
+                            
+                            # Always update session state with current valid selections
+                            # This preserves assets even when function/interval changes
+                            valid_selected_assets = [a for a in selected_assets if a in filtered_assets and a != "All Assets"]
+                            if valid_selected_assets:
+                                st.session_state[assets_key] = valid_selected_assets
+                            elif selected_assets:
+                                # If "All Assets" was selected, store all filtered assets
+                                st.session_state[assets_key] = filtered_assets
+                            
+                            # Clear selection button
+                            if st.button(
+                                "Clear Selection",
+                                key=f"clear_assets_{folder_name}_{selected_function}_{selected_interval}",
+                                help="Clear all asset selections"
+                            ):
+                                st.session_state[assets_key] = []
+                                st.rerun()
+                            
+                            if not selected_assets:
+                                st.info("Please select at least one asset")
                         else:
-                            selected_asset = None
+                            selected_assets = []
+                            # Don't clear stored assets if search filters them out
                             st.info("No assets found matching search")
                     else:
-                        selected_asset = None
+                        selected_assets = []
+                        # Don't clear stored assets if no assets available (might be temporary)
                         st.info(f"No assets available for {selected_interval} interval")
                 else:
-                    selected_asset = None
+                    selected_assets = []
+                    # Don't clear stored assets when waiting for interval selection
                     st.info("Please select an interval first")
             
-            # Load and display data
-            if selected_function and selected_interval and selected_asset:
-                # Verify the file exists for this combination
-                csv_path = os.path.join(folder_path, selected_function, selected_asset, f"{selected_interval}.csv")
+            # Load and display data for multiple assets
+            if selected_function and selected_interval and selected_assets:
+                # Load data for all selected assets
+                all_dataframes = {}
+                missing_assets = []
                 
-                if not os.path.exists(csv_path):
-                    st.warning(f"Data file not found: {csv_path}")
-                else:
+                for selected_asset in selected_assets:
+                    csv_path = os.path.join(folder_path, selected_function, selected_asset, f"{selected_interval}.csv")
+                    
+                    if not os.path.exists(csv_path):
+                        missing_assets.append(selected_asset)
+                        continue
+                    
                     df = load_trade_data(folder_path, selected_function, selected_asset, selected_interval)
                     
                     if df is not None and not df.empty:
+                        # Add asset column to distinguish data
+                        if 'Asset' not in df.columns:
+                            df['Asset'] = selected_asset
+                        all_dataframes[selected_asset] = df
+                
+                if missing_assets:
+                    st.warning(f"Data files not found for: {', '.join(missing_assets)}")
+                
+                if all_dataframes:
+                    # Combine all dataframes if multiple assets selected
+                    if len(all_dataframes) > 1:
+                        combined_df = pd.concat(all_dataframes.values(), ignore_index=True)
                         st.markdown("---")
-                        st.markdown(f"### 📈 Trade Data: {selected_function} - {selected_asset} - {selected_interval}")
+                        st.markdown(f"### 📈 Trade Data: {selected_function} - {len(selected_assets)} Assets - {selected_interval}")
+                        st.markdown(f"**Selected Assets:** {', '.join(selected_assets)}")
+                    else:
+                        # Single asset - use the first (and only) dataframe
+                        asset_name = list(all_dataframes.keys())[0]
+                        combined_df = all_dataframes[asset_name]
+                        st.markdown("---")
+                        st.markdown(f"### 📈 Trade Data: {selected_function} - {asset_name} - {selected_interval}")
+                    
+                    # Check if Signal column exists and get unique signal types
+                    if 'Signal' in combined_df.columns:
+                        unique_signals = combined_df['Signal'].unique()
+                        # Filter out any NaN or empty values
+                        unique_signals = [s for s in unique_signals if pd.notna(s) and str(s).strip() != '']
                         
-                        # Check if Signal column exists and get unique signal types
-                        if 'Signal' in df.columns:
-                            unique_signals = df['Signal'].unique()
-                            # Filter out any NaN or empty values
-                            unique_signals = [s for s in unique_signals if pd.notna(s) and str(s).strip() != '']
-                            
-                            # Normalize signal types: Buy -> Long, Sell -> Short
-                            # Create mapping for tab names
-                            signal_mapping = {
-                                'Buy': 'Long',
-                                'Sell': 'Short',
-                                'Long': 'Long',
-                                'Short': 'Short'
-                            }
-                            
-                            # Get normalized tab names (Long, Short)
-                            normalized_tabs = set()
-                            for signal in unique_signals:
-                                signal_str = str(signal).strip()
-                                if signal_str in signal_mapping:
-                                    normalized_tabs.add(signal_mapping[signal_str])
-                                else:
-                                    # Keep other signal types as-is
-                                    normalized_tabs.add(signal_str)
-                            
-                            # Sort tabs: Long first, then Short, then others
-                            tab_order = ['Long', 'Short']
-                            normalized_tabs_list = sorted(normalized_tabs, key=lambda x: (
-                                tab_order.index(x) if x in tab_order else 999,
-                                x
-                            ))
-                            
-                            if normalized_tabs_list:
-                                # Create tabs with normalized names
-                                signal_tabs = st.tabs([f"{tab_name}" for tab_name in normalized_tabs_list])
-                                
-                                for idx, tab_name in enumerate(normalized_tabs_list):
-                                    with signal_tabs[idx]:
-                                        # Filter data based on tab name
-                                        # Long tab: filter Buy OR Long
-                                        # Short tab: filter Sell OR Short
-                                        if tab_name == 'Long':
-                                            filtered_df = df[df['Signal'].isin(['Buy', 'Long'])].copy()
-                                        elif tab_name == 'Short':
-                                            filtered_df = df[df['Signal'].isin(['Sell', 'Short'])].copy()
-                                        else:
-                                            # For other signal types, filter exactly
-                                            filtered_df = df[df['Signal'] == tab_name].copy()
-                                        
-                                        if not filtered_df.empty:
-                                            st.markdown(f"### {tab_name} Signals ({len(filtered_df)} trades)")
-                                            
-                                            # Display the filtered CSV data table
-                                            st.dataframe(filtered_df, use_container_width=True, height=600)
-                                            
-                                            # Download button for filtered data
-                                            csv_data = filtered_df.to_csv(index=False)
-                                            st.download_button(
-                                                label=f"📥 Download {tab_name} CSV",
-                                                data=csv_data,
-                                                file_name=f"{selected_function}_{selected_asset}_{selected_interval}_{tab_name}.csv",
-                                                mime="text/csv",
-                                                key=f"download_{folder_name}_{selected_function}_{selected_asset}_{selected_interval}_{tab_name}"
-                                            )
-                                        else:
-                                            st.info(f"No {tab_name} signals found")
+                        # Normalize signal types: Buy -> Long, Sell -> Short
+                        # Create mapping for tab names
+                        signal_mapping = {
+                            'Buy': 'Long',
+                            'Sell': 'Short',
+                            'Long': 'Long',
+                            'Short': 'Short'
+                        }
+                        
+                        # Get normalized tab names (Long, Short)
+                        normalized_tabs = set()
+                        for signal in unique_signals:
+                            signal_str = str(signal).strip()
+                            if signal_str in signal_mapping:
+                                normalized_tabs.add(signal_mapping[signal_str])
                             else:
-                                # No signal types found, show all data
-                                st.dataframe(df, use_container_width=True, height=600)
-                                
-                                # Download button
-                                csv_data = df.to_csv(index=False)
-                                st.download_button(
-                                    label="📥 Download CSV",
-                                    data=csv_data,
-                                    file_name=f"{selected_function}_{selected_asset}_{selected_interval}.csv",
-                                    mime="text/csv",
-                                    key=f"download_{folder_name}_{selected_function}_{selected_asset}_{selected_interval}"
-                                )
+                                # Keep other signal types as-is
+                                normalized_tabs.add(signal_str)
+                        
+                        # Sort tabs: Long first, then Short, then others
+                        tab_order = ['Long', 'Short']
+                        normalized_tabs_list = sorted(normalized_tabs, key=lambda x: (
+                            tab_order.index(x) if x in tab_order else 999,
+                            x
+                        ))
+                        
+                        if normalized_tabs_list:
+                            # Create tabs with normalized names
+                            signal_tabs = st.tabs([f"{tab_name}" for tab_name in normalized_tabs_list])
+                            
+                            for idx, tab_name in enumerate(normalized_tabs_list):
+                                with signal_tabs[idx]:
+                                    # Filter data based on tab name
+                                    # Long tab: filter Buy OR Long
+                                    # Short tab: filter Sell OR Short
+                                    if tab_name == 'Long':
+                                        filtered_df = combined_df[combined_df['Signal'].isin(['Buy', 'Long'])].copy()
+                                    elif tab_name == 'Short':
+                                        filtered_df = combined_df[combined_df['Signal'].isin(['Sell', 'Short'])].copy()
+                                    else:
+                                        # For other signal types, filter exactly
+                                        filtered_df = combined_df[combined_df['Signal'] == tab_name].copy()
+                                    
+                                    if not filtered_df.empty:
+                                        # Show asset breakdown if multiple assets
+                                        if len(selected_assets) > 1:
+                                            asset_counts = filtered_df['Asset'].value_counts()
+                                            st.markdown(f"#### {tab_name} Signals - {len(filtered_df)} total trades")
+                                            st.markdown("**Breakdown by Asset:**")
+                                            for asset, count in asset_counts.items():
+                                                st.markdown(f"- {asset}: {count} trades")
+                                            st.markdown("---")
+                                        else:
+                                            st.markdown(f"### {tab_name} Signals ({len(filtered_df)} trades)")
+                                        
+                                        # Display the filtered CSV data table
+                                        st.dataframe(filtered_df, use_container_width=True, height=600)
+                                        
+                                        # Download button for filtered data
+                                        csv_data = filtered_df.to_csv(index=False)
+                                        assets_str = "_".join(selected_assets[:3])  # Limit filename length
+                                        if len(selected_assets) > 3:
+                                            assets_str += f"_and_{len(selected_assets)-3}_more"
+                                        st.download_button(
+                                            label=f"📥 Download {tab_name} CSV",
+                                            data=csv_data,
+                                            file_name=f"{selected_function}_{assets_str}_{selected_interval}_{tab_name}.csv",
+                                            mime="text/csv",
+                                            key=f"download_{folder_name}_{selected_function}_{selected_interval}_{tab_name}_{idx}"
+                                        )
+                                    else:
+                                        st.info(f"No {tab_name} signals found")
                         else:
-                            # No Signal column, show all data
-                            st.dataframe(df, use_container_width=True, height=600)
+                            # No signal types found, show all data
+                            st.dataframe(combined_df, use_container_width=True, height=600)
                             
                             # Download button
-                            csv_data = df.to_csv(index=False)
+                            csv_data = combined_df.to_csv(index=False)
+                            assets_str = "_".join(selected_assets[:3])
+                            if len(selected_assets) > 3:
+                                assets_str += f"_and_{len(selected_assets)-3}_more"
                             st.download_button(
                                 label="📥 Download CSV",
                                 data=csv_data,
-                                file_name=f"{selected_function}_{selected_asset}_{selected_interval}.csv",
+                                file_name=f"{selected_function}_{assets_str}_{selected_interval}.csv",
                                 mime="text/csv",
-                                key=f"download_{folder_name}_{selected_function}_{selected_asset}_{selected_interval}"
+                                key=f"download_{folder_name}_{selected_function}_{selected_interval}_combined"
                             )
-                    elif df is not None and df.empty:
-                        st.info("No data available for the selected combination")
                     else:
-                        st.error("Failed to load data")
+                        # No Signal column, show all data
+                        st.dataframe(combined_df, use_container_width=True, height=600)
+                        
+                        # Download button
+                        csv_data = combined_df.to_csv(index=False)
+                        assets_str = "_".join(selected_assets[:3])
+                        if len(selected_assets) > 3:
+                            assets_str += f"_and_{len(selected_assets)-3}_more"
+                        st.download_button(
+                            label="📥 Download CSV",
+                            data=csv_data,
+                            file_name=f"{selected_function}_{assets_str}_{selected_interval}.csv",
+                            mime="text/csv",
+                            key=f"download_{folder_name}_{selected_function}_{selected_interval}_no_signal"
+                        )
+                elif not missing_assets:
+                    st.info("No data available for the selected combination")
             else:
-                st.info("Please select Function, Interval, and Asset to view trade data")
+                st.info("Please select Function, Interval, and at least one Asset to view trade data")
 
