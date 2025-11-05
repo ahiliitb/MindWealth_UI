@@ -83,6 +83,16 @@ st.markdown("""
 
 def main():
     """Main application entry point"""
+    # Add refresh button at the top
+    col1, col2 = st.columns([10, 1])
+    with col1:
+        st.title("📈 Trading Strategy Analysis")
+    with col2:
+        if st.button("🔄 Refresh", help="Refresh data and reload page"):
+            st.cache_data.clear()
+            st.cache_resource.clear()
+            st.rerun()
+    
     # Sidebar Navigation
     st.sidebar.title("Navigation")
     st.sidebar.markdown("**Select Page**")

@@ -18,7 +18,6 @@ from ..parsers import (
 )
 
 
-@st.cache_data
 def load_data_from_file(file_path, page_name="Unknown"):
     """Load and process trading data from any CSV file with specific parsers"""
     try:
