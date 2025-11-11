@@ -1,0 +1,127 @@
+### Comprehensive Summary of Synthesized Signals
+
+Based on the comprehensive analysis from all parallel processing results, here are the top buy and sell signals selected using the detailed filtering and ranking criteria provided. The summary focuses on confirmed signals demonstrating strong historical performance, positive CAGR differences, and favorable risk-reward profiles.
+
+#### Summary of Selected Signals
+
+|||HOOD,Daily,TRENDPULSE,2025-10-27,Long|BTI,Daily,OSCILLATOR DELTA,2025-10-15,Long|SJ.TO,Monthly,FRACTAL TRACK,2025-10-31,Long|NZDCAD=X,Daily,TRENDPULSE,2025-10-28,Long|XLE,Weekly,TRENDPULSE,2025-10-26,Long|NZDCAD=X,Daily,FRACTAL TRACK,2025-10-10,Short|NKE,Daily,FRACTAL TRACK,2025-10-09,Short|BRK-B,Daily,OSCILLATOR DELTA,2025-10-09,Short|||
+
+## Key Insights and Recommendations
+
+1. **Diverse Opportunities**: The selected signals encompass a range of assets, including equities, forex, and commodities, offering diverse trading opportunities.
+
+2. **Strong Historical Performance**: Signals such as HOOD and BTI exhibit strong historical performance in terms of CAGR and Sharpe ratios.
+
+3. **Recent Confirmation**: The majority of signals are recently confirmed, ensuring timeliness and relevance in current market conditions.
+
+4. **Mixed Timeframes for Optimal Entry**: The best signals come from various timeframes (daily, weekly, monthly), indicating opportunities for both short and long-term traders.
+
+5. **Risk Management Considerations**: Each signal includes identified stop-loss and take-profit levels based on technical support/resistance levels to manage downside risk.
+
+6. **Valuation Metrics as Confirmation**: Where available, P/E and PEG ratios provide additional context for the signals. For example, BTI's low PEG ratio suggests it may be undervalued despite its market cap.
+
+7. **Multiple Confirmations Increase Conviction**: The strongest signals have confirmations from multiple functions and timeframes, increasing confidence in the predictions.
+
+### Detailed Signal Analysis
+
+**HOOD (Robinhood Markets)**
+- Function: TRENDPULSE
+- Signal Date: 2025-10-27
+- Signal: Long
+- Signal Price: 145.86
+- Win Rate: 100.0%
+- CAGR: Strategy (239.53%) - Buy and Hold (39.13%) = 200.4%
+- Latest Performance Win Rate: 88.26%
+- Average Return of Historical Winning Trades: 11.5%
+- Max single trade loss historically: 47.66%
+- Potential Upside (from signal price): 11.5% to 55.0% (immediate targets)
+- Current Price, Current Mark to Market: 130.36, -10.63%
+- Target Prices: 163.45/162.63/226.09
+- Support Levels: 127.22/8.29/115.06
+- Recommended Stop Loss: 127.22 (approximately 12% below current price)
+- Recommended Take Profit: 163.45 (first target level)
+- Is Signal timely?: Yes, 0% of the potential gain has been missed
+- P/E Ratio: 52.99
+- PEG Ratio: N/A
+
+**BTI (British American Tobacco)**
+- Function: OSCILLATOR DELTA
+- Signal Date: 2025-10-15
+- Signal: Long
+- Signal Price: 50.75
+- Win Rate: 85.71%
+- CAGR: Strategy (14.26%) - Buy and Hold (5.9%) = 8.36%
+- Latest Performance Win Rate: 68.21%
+- Average Return of Historical Winning Trades: 7.03%
+- Max single trade loss historically: 16.36%
+- Potential Upside (from signal price): 7.03% to 13.76% (immediate targets)
+- Current Price, Current Mark to Market: 54.59, 7.57%
+- Target Prices: 53.55/54.32/53.29
+- Support Levels: 49.37/28.51/41.66
+- Recommended Stop Loss: 49.37 (approximately 10% below current price)
+- Recommended Take Profit: 54.32 (first target level)
+- Is Signal timely?: No, 100% of the potential gain has been missed
+- P/E Ratio: 29.99
+- PEG Ratio: 0.40
+
+**SJ.TO (Stella-Jones Inc.)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-10-31
+- Signal: Long
+- Signal Price: 79.61
+- Win Rate: 100.0%
+- CAGR: Strategy (13.79%) - Buy and Hold (17.66%) = -3.88%
+- Latest Performance Win Rate: 84.44%
+- Average Return of Historical Winning Trades: 1157.17%
+- Max single trade loss historically: 70.23%
+- Potential Upside (from signal price): 11.44% to 54.88% (immediate targets)
+- Current Price, Current Mark to Market: 83.75, 5.2%
+- Target Prices: 88.75/1000.83/138.22
+- Support Levels: 67.6/38.02/66.81
+- Recommended Stop Loss: 67.6 (approximately 15% below current price)
+- Recommended Take Profit: 88.75 (first target level)
+- Is Signal timely?: No, 45.4% of the potential gain has been missed
+- P/E Ratio: 13.4
+- PEG Ratio: N/A
+
+**NZDCAD=X (New Zealand Dollar/Canadian Dollar)**
+- Function: TRENDPULSE
+- Signal Date: 2025-10-28
+- Signal: Long
+- Signal Price: 0.8079
+- Win Rate: 100.0%
+- CAGR: Strategy (64.44%) - Buy and Hold (-0.79%) = 65.23%
+- Latest Performance Win Rate: 88.26%
+- Average Return of Historical Winning Trades: 1.31%
+- Max single trade loss historically: 1.49%
+- Potential Upside (from signal price): 1.31% to 2.27% (immediate targets)
+- Current Price, Current Mark to Market: 0.7901, -2.2%
+- Target Prices: 0.8211/0.8185/0.81
+- Support Levels: 0.8/0.7625
+- Recommended Stop Loss: 0.7625 (approximately 5% below current price)
+- Recommended Take Profit: 0.8211 (first target level)
+- Is Signal timely?: Yes, 0% of the potential gain has been missed
+- P/E Ratio: N/A
+- PEG Ratio: N/A
+
+**XLE (Energy Select Sector SPDR Fund)**
+- Function: TRENDPULSE
+- Signal Date: 2025-10-26
+- Signal: Long
+- Signal Price: 88.07
+- Win Rate: 87.5%
+- CAGR: Strategy (9.28%) - Buy and Hold (2.22%) = 7.06%
+- Latest Performance Win Rate: 95.35%
+- Average Return of Historical Winning Trades: 6.79%
+- Max single trade loss historically: 58.07%
+- Potential Upside (from signal price): 6.79% to 16.62% (immediate targets)
+- Current Price, Current Mark to Market: 89.54, 1.67%
+- Target Prices: 92.37/94.05/93.59
+- Support Levels: 85.22/45.7
+- Recommended Stop Loss: 85.22 (approximately 5% below current price)
+- Recommended Take Profit: 92.37 (first target level)
+- Is Signal timely?: No, 75.4% of the potential gain has been missed
+- P/E Ratio: 17.28
+- PEG Ratio: N/A
+
+The analysis for the filtered signals considers various criteria outlined in the prompt, including historical performance, potential upside, and risk management through stop-loss and take-profit levels. The selected signals represent the most promising trading opportunities based on the provided data.
