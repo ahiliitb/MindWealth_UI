@@ -47,7 +47,7 @@ def load_data_from_file(file_path, page_name="Unknown"):
             'new_signal': parse_new_signal,
             'target_signal': parse_target_signals,
             'latest_performance': parse_latest_performance,
-            'forward_backtesting': parse_forward_backtesting
+            'forward_backtesting': parse_forward_backtesting  # Also handles forward_testing.csv
         }
         
         if csv_type in parser_mapping:

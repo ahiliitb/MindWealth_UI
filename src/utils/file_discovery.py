@@ -63,7 +63,8 @@ def detect_csv_structure(file_path):
         'new_signal.csv': 'new_signal',
         'target_signal.csv': 'target_signal',
         'latest_performance.csv': 'latest_performance',
-        'forward_backtesting.csv': 'forward_backtesting'
+        'forward_backtesting.csv': 'forward_backtesting',
+        'forward_testing.csv': 'forward_backtesting'  # Use same parser as forward_backtesting
     }
     
     return file_mapping.get(base_filename, 'unknown')
@@ -124,36 +125,38 @@ def discover_csv_files():
         
         # Create a mapping from base filename to filepath
         # If multiple dated versions exist, prefer the most recent
+        # For forward_testing.csv and latest_performance.csv, ONLY use non-dated versions
         file_mapping = {}
+        
+        # Files that MUST use non-dated versions only
+        non_dated_only_files = ['latest_performance.csv', 'forward_testing.csv']
+        
         for file_path in csv_file_paths:
             filename = os.path.basename(file_path)
             base_filename = get_base_filename(filename)
             
             if base_filename in base_name_mapping:
-                # Files that should NOT use dated versions (prefer non-dated)
-                non_dated_files = ['latest_performance.csv', 'forward_backtesting.csv', 'forward_testing.csv']
+                current_date = extract_date_from_filename(filename)
                 
-                # If we haven't seen this base file, or this one is more recent
+                # For forward_testing.csv and latest_performance.csv, skip any dated versions
+                if base_filename in non_dated_only_files:
+                    if current_date:
+                        # Skip dated versions of these files
+                        continue
+                
+                # If we haven't seen this base file, add it
                 if base_filename not in file_mapping:
                     file_mapping[base_filename] = file_path
                 else:
-                    current_date = extract_date_from_filename(filename)
                     existing_date = extract_date_from_filename(os.path.basename(file_mapping[base_filename]))
                     
-                    # For specific files, prefer non-dated versions
-                    if base_filename in non_dated_files:
-                        # Prefer non-dated file if available
-                        if not current_date and existing_date:
+                    # For forward_testing.csv and latest_performance.csv, only keep non-dated
+                    if base_filename in non_dated_only_files:
+                        # If existing is dated and current is not, replace it
+                        if existing_date and not current_date:
                             file_mapping[base_filename] = file_path
-                        elif current_date and not existing_date:
-                            # Keep existing non-dated file
-                            pass
-                        elif not current_date and not existing_date:
-                            # Both non-dated, keep first one found
-                            pass
-                        elif current_date and existing_date:
-                            # Both dated, keep first one found (don't prefer newer)
-                            pass
+                        # If both are non-dated, keep first one found
+                        # If current is dated, skip it (already handled above)
                     else:
                         # For other files, prefer dated versions (existing logic)
                         if current_date and existing_date:
