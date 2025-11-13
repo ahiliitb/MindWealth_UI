@@ -79,7 +79,7 @@ if [ -d "$TARGET_TRADE_DIR" ]; then
                 fi
                 
                 # Check if we already have a file for this base name
-                existing_date=$(grep "^${base_name}:" "$KEEP_FILES" 2>/dev/null | cut -d: -f3)
+                existing_date=$(grep -F "^${base_name}:" "$KEEP_FILES" 2>/dev/null | cut -d: -f3)
                 
                 if [ -z "$existing_date" ]; then
                     # First file for this base name, add it
@@ -88,7 +88,9 @@ if [ -d "$TARGET_TRADE_DIR" ]; then
                     # Compare dates - keep the newer one
                     if [ "$date_part" \> "$existing_date" ]; then
                         # New file is newer, update the entry
-                        sed -i.bak "/^${base_name}:/d" "$KEEP_FILES" 2>/dev/null || sed -i "" "/^${base_name}:/d" "$KEEP_FILES" 2>/dev/null || sed -i "/^${base_name}:/d" "$KEEP_FILES"
+                        tmp_keep=$(mktemp)
+                        grep -Fv "^${base_name}:" "$KEEP_FILES" > "$tmp_keep" 2>/dev/null || true
+                        mv "$tmp_keep" "$KEEP_FILES"
                         echo "${base_name}:${filename}:${date_part}" >> "$KEEP_FILES"
                     fi
                 fi
@@ -155,7 +157,7 @@ if [ -d "$TARGET_TRADE_DIR" ]; then
                 base_name="${BASH_REMATCH[2]}"
                 
                 # Check if we already have a file for this base name
-                existing_date=$(grep "^${base_name}:" "$KEEP_FILES" 2>/dev/null | cut -d: -f3)
+                existing_date=$(grep -F "^${base_name}:" "$KEEP_FILES" 2>/dev/null | cut -d: -f3)
                 
                 if [ -z "$existing_date" ]; then
                     # First file for this base name, add it
@@ -164,7 +166,9 @@ if [ -d "$TARGET_TRADE_DIR" ]; then
                     # Compare dates - keep the newer one
                     if [ "$date_part" \> "$existing_date" ]; then
                         # New file is newer, update the entry
-                        sed -i.bak "/^${base_name}:/d" "$KEEP_FILES" 2>/dev/null || sed -i "" "/^${base_name}:/d" "$KEEP_FILES" 2>/dev/null || sed -i "/^${base_name}:/d" "$KEEP_FILES"
+                        tmp_keep=$(mktemp)
+                        grep -Fv "^${base_name}:" "$KEEP_FILES" > "$tmp_keep" 2>/dev/null || true
+                        mv "$tmp_keep" "$KEEP_FILES"
                         echo "${base_name}:${filename}:${date_part}" >> "$KEEP_FILES"
                     fi
                 fi

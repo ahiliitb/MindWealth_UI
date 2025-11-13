@@ -26,6 +26,7 @@ from .history_manager import HistoryManager
 from .function_extractor import FunctionExtractor
 from .ticker_extractor import TickerExtractor
 from .column_selector import ColumnSelector
+from .signal_type_selector import SignalTypeSelector
 from .smart_data_fetcher import SmartDataFetcher
 from .signal_extractor import SignalExtractor
 
@@ -87,6 +88,7 @@ class ChatbotEngine:
         self.function_extractor = FunctionExtractor(api_key=self.api_key)
         self.ticker_extractor = TickerExtractor(api_key=self.api_key)
         self.column_selector = ColumnSelector(api_key=self.api_key)
+        self.signal_type_selector = SignalTypeSelector(api_key=self.api_key)
         self.smart_data_fetcher = SmartDataFetcher()
         self.signal_extractor = SignalExtractor()
         
@@ -123,6 +125,13 @@ class ChatbotEngine:
         except Exception as e:
             logger.error(f"Error calling OpenAI API: {e}")
             return f"Error: {str(e)}"
+    
+    def determine_signal_types(self, user_message: str) -> Tuple[List[str], str]:
+        """
+        Determine which signal types should be fetched for a given user message.
+        """
+        selected, reasoning = self.signal_type_selector.select_signal_types(user_message)
+        return selected, reasoning
     
     def query(
         self,
@@ -202,6 +211,15 @@ class ChatbotEngine:
             # REGULAR QUERY MODE: Load fresh data
             logger.info("Regular query mode: Loading fresh data")
             
+            signal_type_reasoning = ""
+            if not signal_types:
+                signal_types, signal_type_reasoning = self.determine_signal_types(user_message)
+            else:
+                signal_types = [stype for stype in signal_types if stype]
+                if not signal_types:
+                    signal_types, signal_type_reasoning = self.determine_signal_types(user_message)
+            selected_signal_types = signal_types
+
             # Auto-extract tickers if enabled and not provided
             extracted_tickers = None
             if tickers is None and auto_extract_tickers:
@@ -514,7 +532,8 @@ class ChatbotEngine:
         to_date: Optional[str] = None,
         functions: Optional[List[str]] = None,
         additional_context: Optional[str] = None,
-        auto_extract_tickers: bool = False
+        auto_extract_tickers: bool = False,
+        signal_type_reasoning: Optional[str] = None
     ) -> Tuple[str, Dict]:
         """
         Process a query using the two-stage smart column selection system.
@@ -539,6 +558,15 @@ class ChatbotEngine:
             logger.info("="*60)
             logger.info("SMART QUERY MODE - Two-stage column selection")
             logger.info("="*60)
+
+            signal_type_reasoning = signal_type_reasoning or ""
+            if selected_signal_types:
+                selected_signal_types = [stype for stype in selected_signal_types if stype]
+            else:
+                selected_signal_types = []
+
+            if not selected_signal_types:
+                selected_signal_types, signal_type_reasoning = self.determine_signal_types(user_message)
             
             # Auto-extract tickers if enabled and not provided
             if assets is None and auto_extract_tickers:
@@ -618,6 +646,60 @@ class ChatbotEngine:
                     total_rows += len(signal_data[signal_type])
             
             if not fetched_data:
+                if from_date or to_date:
+                    logger.warning("No data fetched for explicit date range; skipping automatic expansion.")
+                    human_from = from_date or "start"
+                    human_to = to_date or "end"
+                    message = f"No data found for the selected date range ({human_from} to {human_to}). Please try a different range or adjust your filters."
+                    return message, {"warning": "no_data", "from_date": from_date, "to_date": to_date}
+                
+                logger.warning("No data fetched for the initial date range, trying to expand search...")
+                
+                # Try expanding the date range for queries like "top N signals" where date is less important
+                if any(keyword in user_message.lower() for keyword in ['top', 'best', 'highest', 'lowest']):
+                    logger.info("Query seems to be asking for 'top/best' signals - expanding date range")
+                    
+                    # Expand to last 30 days
+                    from datetime import datetime, timedelta
+                    expanded_from_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+                    expanded_to_date = datetime.now().strftime('%Y-%m-%d')
+                    
+                    logger.info(f"Retrying with expanded date range: {expanded_from_date} to {expanded_to_date}")
+                    
+                    # Retry fetching with expanded date range
+                    for signal_type in selected_signal_types:
+                        if signal_type not in columns_by_signal_type:
+                            continue
+                        
+                        required_cols = columns_by_signal_type[signal_type]
+                        if not required_cols:
+                            continue
+                        
+                        signal_data = self.smart_data_fetcher.fetch_data(
+                            signal_types=[signal_type],
+                            required_columns=required_cols,
+                            assets=assets,
+                            functions=functions,
+                            from_date=expanded_from_date,
+                            to_date=expanded_to_date,
+                            limit_rows=MAX_ROWS_TO_INCLUDE
+                        )
+                        
+                        if signal_data and signal_type in signal_data:
+                            fetched_data[signal_type] = signal_data[signal_type]
+                            total_rows += len(signal_data[signal_type])
+                
+                if not fetched_data:
+                    logger.warning("No data fetched even with expanded date range")
+                    return "No data found matching your criteria. Please try a different date range or criteria.", {"warning": "no_data"}
+            if not fetched_data:
+                if from_date or to_date:
+                    logger.warning("No data fetched for explicit date range; skipping automatic expansion.")
+                    human_from = from_date or "start"
+                    human_to = to_date or "end"
+                    message = f"No data found for the selected date range ({human_from} to {human_to}). Please try a different range or adjust your filters."
+                    return message, {"warning": "no_data", "from_date": from_date, "to_date": to_date}
+                
                 logger.warning("No data fetched for the initial date range, trying to expand search...")
                 
                 # Try expanding the date range for queries like "top N signals" where date is less important
@@ -734,7 +816,8 @@ SIGNAL_KEYS: [
                 "columns_by_signal_type": columns_by_signal_type,
                 "reasoning_by_signal_type": reasoning_by_signal_type,
                 "rows_fetched": total_rows,
-                "signal_types_with_data": list(fetched_data.keys())
+                "signal_types_with_data": list(fetched_data.keys()),
+                "signal_type_reasoning": signal_type_reasoning,
             }
             
             # Add user message to history
@@ -806,7 +889,8 @@ SIGNAL_KEYS: [
         to_date: Optional[str] = None,
         functions: Optional[List[str]] = None,
         additional_context: Optional[str] = None,
-        auto_extract_tickers: bool = False
+        auto_extract_tickers: bool = False,
+        signal_type_reasoning: Optional[str] = None
     ) -> Tuple[str, Dict]:
         """
         Process a follow-up query with intelligent column selection.
@@ -826,6 +910,7 @@ SIGNAL_KEYS: [
             functions: Optional list of function names to filter
             additional_context: Any additional text context to include
             auto_extract_tickers: If True and assets=None, use GPT to extract asset names
+            signal_type_reasoning: Optional explanation for pre-selected signal types
             
         Returns:
             Tuple of (response_text, metadata_dict)
@@ -837,6 +922,14 @@ SIGNAL_KEYS: [
             logger.info("SMART FOLLOW-UP QUERY - Intelligent context reuse")
             logger.info("="*60)
             
+            signal_type_reasoning = signal_type_reasoning or ""
+            if not selected_signal_types:
+                selected_signal_types, signal_type_reasoning = self.determine_signal_types(user_message)
+            else:
+                selected_signal_types = [stype for stype in selected_signal_types if stype]
+                if not selected_signal_types:
+                    selected_signal_types, signal_type_reasoning = self.determine_signal_types(user_message)
+
             # Get last N exchanges from history
             history_messages = self.history_manager.get_messages_for_api(max_pairs=FOLLOWUP_HISTORY_LENGTH)
             
@@ -850,7 +943,8 @@ SIGNAL_KEYS: [
                     to_date=to_date,
                     functions=functions,
                     additional_context=additional_context,
-                    auto_extract_tickers=auto_extract_tickers
+                    auto_extract_tickers=auto_extract_tickers,
+                    signal_type_reasoning=signal_type_reasoning
                 )
             
             logger.info(f"Retrieved {len(history_messages)} messages from history")
@@ -1135,7 +1229,8 @@ NOTE: All required data is already in the conversation history.
                     "assets": assets,
                     "from_date": from_date,
                     "to_date": to_date,
-                    "functions": functions
+                    "functions": functions,
+                    "signal_type_reasoning": signal_type_reasoning,
                 }
                 
             else:
@@ -1165,7 +1260,8 @@ NOTE: All required data is already in the conversation history.
                     "assets": assets,
                     "from_date": from_date,
                     "to_date": to_date,
-                    "functions": functions
+                    "functions": functions,
+                    "signal_type_reasoning": signal_type_reasoning,
                 }
             
             # Add user message to history

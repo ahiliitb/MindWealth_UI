@@ -13,7 +13,13 @@ project_root = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from chatbot import ChatbotEngine, SessionManager
+from chatbot.signal_type_selector import SIGNAL_TYPE_DESCRIPTIONS, DEFAULT_SIGNAL_TYPES
 from chatbot.config import MAX_CHATS_DISPLAY
+
+def get_signal_type_label(signal_type: str, uppercase: bool = False) -> str:
+    """Return a user-facing label for a signal type key."""
+    title = SIGNAL_TYPE_DESCRIPTIONS.get(signal_type, (signal_type.replace("_", " ").title(), ""))[0]
+    return title.upper() if uppercase else title
 
 
 def apply_table_styling():
@@ -296,6 +302,12 @@ def render_chatbot_page():
     
     # Get available tickers
     available_tickers = chatbot.get_available_tickers()
+
+    # Initialize signal type session defaults
+    if 'last_signal_types' not in st.session_state:
+        st.session_state.last_signal_types = DEFAULT_SIGNAL_TYPES.copy()
+    if 'last_signal_reason' not in st.session_state:
+        st.session_state.last_signal_reason = "Default selection: entry, exit, target."
     
     # --- SIDEBAR QUERY CONFIGURATION ---
     st.sidebar.header("📊 Query Configuration")
@@ -327,53 +339,32 @@ def render_chatbot_page():
             help="End date for data (default: today)"
         )
     
-    # Signal Type selection (4 types)
-    st.sidebar.subheader("Select Signal Types")
+    # Signal Type selection is AI-driven
+    st.sidebar.subheader("Signal Types (auto-selected)")
+    st.sidebar.caption("The assistant reads your question and chooses the relevant signal categories.")
     
-    col_sig1, col_sig2 = st.sidebar.columns(2)
+    signal_selection_placeholder = st.sidebar.empty()
     
-    with col_sig1:
-        include_entry = st.checkbox(
-            "Entry Signals",
-            value=True,
-            help="Open positions (no exit yet)"
-        )
-        include_exit = st.checkbox(
-            "Exit Signals",
-            value=False,
-            help="Completed trades (with exit dates)"
-        )
+    def render_signal_selection(selected, reasoning):
+        with signal_selection_placeholder.container():
+            selection_text = ", ".join(get_signal_type_label(sig) for sig in selected) if selected else "None"
+            st.markdown(f"**AI Selection:** {selection_text}")
+            if reasoning:
+                st.caption(f"💡 {reasoning}")
     
-    with col_sig2:
-        include_target = st.checkbox(
-            "Target Achieved",
-            value=False,
-            help="Target price achievements (90%+ gains)"
-        )
-        include_breadth = st.checkbox(
-            "Bullish Breadth Index",
-            value=False,
-            help="Market-wide sentiment analysis"
-        )
+    last_signal_types = st.session_state.get("last_signal_types", DEFAULT_SIGNAL_TYPES)
+    last_signal_reason = st.session_state.get("last_signal_reason", "")
+    render_signal_selection(last_signal_types, last_signal_reason)
     
-    # Build signal_types list
-    selected_signal_types = []
-    if include_entry:
-        selected_signal_types.append("entry")
-    if include_exit:
-        selected_signal_types.append("exit")
-    if include_target:
-        selected_signal_types.append("target")
-    if include_breadth:
-        selected_signal_types.append("breadth")
-    
-    # If nothing selected, include entry/exit/target (not breadth by default)
-    if not selected_signal_types:
-        selected_signal_types = ["entry", "exit", "target"]
+    with st.sidebar.expander("Available Signal Types", expanded=False):
+        for key, (title, description) in SIGNAL_TYPE_DESCRIPTIONS.items():
+            st.markdown(f"**{title}**")
+            st.markdown(description)
     
     # Auto-extract functions is always enabled (no manual selection)
     use_auto_extract = True
     selected_functions = None
+    selected_signal_types = list(last_signal_types)
     
     # Smart batch processing is always enabled
     import chatbot.config as config
@@ -384,7 +375,6 @@ def render_chatbot_page():
         'tickers': tuple(sorted(selected_tickers)) if selected_tickers else None,
         'from_date': from_date.strftime('%Y-%m-%d'),
         'to_date': to_date.strftime('%Y-%m-%d'),
-        'signal_types': tuple(sorted(selected_signal_types)) if selected_signal_types else None,
         'functions': tuple(sorted(selected_functions)) if selected_functions else None
     }
     
@@ -396,6 +386,8 @@ def render_chatbot_page():
         chatbot.history_manager.update_session_title("New Chat")
         st.session_state.chat_history = []
         st.session_state.last_settings = current_settings
+        st.session_state.last_signal_types = DEFAULT_SIGNAL_TYPES.copy()
+        st.session_state.last_signal_reason = "Default selection: entry, exit, target."
         st.rerun()
     
     # Now render chat history sidebar AFTER query configuration
@@ -437,7 +429,7 @@ def render_chatbot_page():
                         # Display each signal type in separate sections
                         for signal_type, signal_df in full_signal_tables.items():
                             if not signal_df.empty:
-                                st.markdown(f"#### {signal_type.upper()} Signals ({len(signal_df)} records)")
+                                st.markdown(f"#### {get_signal_type_label(signal_type, uppercase=True)} Signals ({len(signal_df)} records)")
                                 
                                 # Display the complete table with all columns and enhanced styling
                                 display_styled_dataframe(
@@ -481,6 +473,12 @@ def render_chatbot_page():
                     # Check if it's a smart query
                     if msg_metadata.get('input_type') == 'smart_query':
                         with st.expander("📊 Smart Query Details", expanded=False):
+                            signal_types_meta = msg_metadata.get('selected_signal_types', [])
+                            signal_reason_meta = msg_metadata.get('signal_type_reasoning', '')
+                            if signal_types_meta:
+                                st.markdown(f"**AI Signal Types:** {', '.join(get_signal_type_label(sig) for sig in signal_types_meta)}")
+                                if signal_reason_meta:
+                                    st.caption(f"💡 {signal_reason_meta}")
                             # Show column selection per signal type
                             st.subheader("🎯 Column Selection by Signal Type")
                             columns_by_type = msg_metadata.get('columns_by_signal_type', {})
@@ -489,7 +487,7 @@ def render_chatbot_page():
                                 if signal_type in columns_by_type:
                                     cols = columns_by_type[signal_type]
                                     reasoning = reasoning_by_type.get(signal_type, '')
-                                    st.markdown(f"**{signal_type.upper()}** ({len(cols)} columns)")
+                                    st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)}** ({len(cols)} columns)")
                                     st.caption(f"💡 {reasoning}")
                                     with st.expander(f"View {signal_type} columns"):
                                         for col in cols:
@@ -545,6 +543,14 @@ def render_chatbot_page():
     user_input = st.chat_input("Ask a question about your trading signals...")
     
     if user_input:
+        ai_signal_types, ai_reason = chatbot.determine_signal_types(user_input)
+        if not ai_signal_types:
+            ai_signal_types = DEFAULT_SIGNAL_TYPES.copy()
+        selected_signal_types = list(ai_signal_types)
+        st.session_state.last_signal_types = selected_signal_types
+        st.session_state.last_signal_reason = ai_reason
+        render_signal_selection(selected_signal_types, ai_reason)
+        
         # Add user message to history (store clean user input for UI display)
         st.session_state.chat_history.append({
             'role': 'user',
@@ -558,6 +564,10 @@ def render_chatbot_page():
         
         # Get AI response
         with st.chat_message("assistant"):
+            selection_text = ", ".join(get_signal_type_label(sig) for sig in selected_signal_types)
+            st.markdown(f"**AI Signal Type Selection:** {selection_text}")
+            if ai_reason:
+                st.caption(f"💡 {ai_reason}")
             with st.spinner("🤔 Analyzing your query with conversation context..."):
                 try:
                     # Always use smart follow-up query to maintain conversation context (like ChatGPT)
@@ -568,7 +578,8 @@ def render_chatbot_page():
                         from_date=from_date.strftime('%Y-%m-%d'),
                         to_date=to_date.strftime('%Y-%m-%d'),
                         functions=selected_functions if not use_auto_extract else None,
-                        auto_extract_tickers=use_auto_extract_tickers
+                        auto_extract_tickers=use_auto_extract_tickers,
+                        signal_type_reasoning=ai_reason
                     )
                     
                     # Display response
@@ -582,7 +593,7 @@ def render_chatbot_page():
                         # Display each signal type in separate sections
                         for signal_type, signal_df in full_signal_tables.items():
                             if not signal_df.empty:
-                                st.markdown(f"#### {signal_type.upper()} Signals ({len(signal_df)} records)")
+                                st.markdown(f"#### {get_signal_type_label(signal_type, uppercase=True)} Signals ({len(signal_df)} records)")
                                 
                                 # Display the complete table with all columns and enhanced styling
                                 display_styled_dataframe(
@@ -637,6 +648,12 @@ def render_chatbot_page():
                     
                     if input_type in ['smart_query', 'smart_followup']:
                         with st.expander("📊 Smart Query Details", expanded=False):
+                            selection_list = metadata.get('selected_signal_types', [])
+                            selection_reason = metadata.get('signal_type_reasoning', '')
+                            if selection_list:
+                                st.markdown(f"**AI Signal Types:** {', '.join(get_signal_type_label(sig) for sig in selection_list)}")
+                                if selection_reason:
+                                    st.caption(f"💡 {selection_reason}")
                             # Show follow-up specific info if applicable
                             if input_type == 'smart_followup':
                                 followup_mode = metadata.get('followup_mode', 'unknown')
@@ -695,13 +712,13 @@ def render_chatbot_page():
                                     existing_count = len(existing_cols)
                                     
                                     if new_count > 0 and existing_count > 0:
-                                        st.markdown(f"**{signal_type.upper()}** ({total_cols} columns: {new_count} new ✨ + {existing_count} existing 📦)")
+                                        st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)}** ({total_cols} columns: {new_count} new ✨ + {existing_count} existing 📦)")
                                     elif new_count > 0:
-                                        st.markdown(f"**{signal_type.upper()}** ({total_cols} columns: all new ✨)")
+                                        st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)}** ({total_cols} columns: all new ✨)")
                                     elif existing_count > 0:
-                                        st.markdown(f"**{signal_type.upper()}** ({total_cols} columns: all existing 📦)")
+                                        st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)}** ({total_cols} columns: all existing 📦)")
                                     else:
-                                        st.markdown(f"**{signal_type.upper()}** ({total_cols} columns)")
+                                        st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)}** ({total_cols} columns)")
                                     
                                     st.caption(f"💡 {reasoning}")
                                     
