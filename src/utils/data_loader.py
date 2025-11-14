@@ -47,8 +47,28 @@ def load_data_from_file(file_path, page_name="Unknown"):
             'new_signal': parse_new_signal,
             'target_signal': parse_target_signals,
             'latest_performance': parse_latest_performance,
-            'forward_backtesting': parse_forward_backtesting  # Also handles forward_testing.csv
+            'forward_backtesting': parse_forward_backtesting,  # Also handles forward_testing.csv
+            'forward_testing': parse_forward_backtesting  # Direct mapping for forward_testing.csv (same as latest_performance structure)
         }
+        
+        # Fallback: if detection failed but filename matches known patterns, use appropriate parser
+        if csv_type not in parser_mapping:
+            import os
+            filename = os.path.basename(file_path)
+            base_filename = filename
+            # Check for dated filename pattern
+            if filename.startswith(('2024-', '2025-', '2026-')):
+                parts = filename.split('_', 1)
+                if len(parts) > 1:
+                    base_filename = parts[1]
+            
+            # Direct filename check for forward_testing.csv
+            if 'forward_testing.csv' in base_filename.lower():
+                csv_type = 'forward_testing'
+            elif 'latest_performance.csv' in base_filename.lower():
+                csv_type = 'latest_performance'
+            elif 'forward_backtesting.csv' in base_filename.lower():
+                csv_type = 'forward_backtesting'
         
         if csv_type in parser_mapping:
             return parser_mapping[csv_type](df)
