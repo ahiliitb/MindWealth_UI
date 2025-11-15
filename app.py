@@ -12,7 +12,8 @@ from src.pages import (
     create_text_file_page,
     create_virtual_trading_page,
     render_chatbot_page,
-    create_trade_details_page
+    create_trade_details_page,
+    create_f_stack_page
 )
 from src.pages.horizontal_page import create_horizontal_page
 from src.utils import discover_csv_files
@@ -136,6 +137,8 @@ def main():
         if csv_file and csv_file not in ["text_files", "virtual_trading", "chatbot"]:
             if page == 'Horizontal':
                 create_horizontal_page(csv_file, page)
+            elif page == 'F-Stack':
+                create_f_stack_page(csv_file, page)
             else:
                 create_analysis_page(csv_file, page)
         else:

@@ -8,6 +8,33 @@ import pandas as pd
 from ..components.cards import create_performance_summary_cards, create_performance_cards
 from ..utils.data_loader import load_data_from_file
 
+DETAILED_TABLE_ONLY_PAGES = {"Latest Performance", "Forward Testing Performance"}
+
+
+def display_summary_metrics_basic(df, tab_name):
+    """Display summary/average metrics without card UI."""
+    if df.empty:
+        return
+    
+    st.markdown(f"### 🎯 Summary Metrics - {tab_name}")
+    
+    avg_win_rate = df['Win_Percentage'].mean()
+    total_trades = df['Total_Trades'].sum()
+    avg_profit = df['Avg_Profit'].mean()
+    avg_holding = df['Avg_Holding_Days'].mean()
+    
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Avg Win Rate", f"{avg_win_rate:.1f}%")
+    with col2:
+        st.metric("Total Trades", f"{int(total_trades):,}")
+    with col3:
+        st.metric("Avg Profit", f"{avg_profit:.1f}%")
+    with col4:
+        st.metric("Avg Holding Days", f"{avg_holding:.0f}")
+    
+    st.markdown("---")
+
 
 def create_performance_summary_page(data_file, page_title):
     """Create a performance summary page for CSV files with different structure"""
@@ -78,19 +105,28 @@ def create_performance_summary_page(data_file, page_title):
             st.warning(f"No {tab_name} data matches the selected filters. Please adjust your filters.")
             return
         
-        # Performance summary cards
-        st.markdown(f"### 🎯 Performance Summary - {tab_name}")
-        create_performance_summary_cards(filtered_df)
+        show_cards = page_title not in DETAILED_TABLE_ONLY_PAGES
         
-        st.markdown("---")
-        
-        # Performance cards
-        create_performance_cards(filtered_df)
-        
-        st.markdown("---")
+        if show_cards:
+            # Performance summary cards
+            st.markdown(f"### 🎯 Performance Summary - {tab_name}")
+            create_performance_summary_cards(filtered_df)
+            
+            st.markdown("---")
+            
+            # Performance cards
+            create_performance_cards(filtered_df)
+            
+            st.markdown("---")
+        else:
+            display_summary_metrics_basic(filtered_df, tab_name)
         
         # Data table - Original CSV format
-        st.markdown(f"### 📋 Detailed Data Table - {tab_name} (Original CSV Format)")
+        if show_cards:
+            detail_heading = f"### 📋 Detailed Data Table - {tab_name} (Original CSV Format)"
+        else:
+            detail_heading = f"### 📋 Detailed Performance Table - {tab_name}"
+        st.markdown(detail_heading)
         
         # Create a dataframe with original CSV data
         csv_data = []

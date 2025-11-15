@@ -271,7 +271,7 @@ def convert_signal_file_to_data_structure(
     # Parse each row
     # Note: For signals, we'll determine entry/exit folder per-row based on exit date
     if signal_type == "target":
-        output_base = Path(output_base_dir) / "target"
+        output_base = Path(output_base_dir) / "portfolio_target_achieved"
         output_base.mkdir(parents=True, exist_ok=True)
     # For signals, we create both entry and exit folders
     elif signal_type == "signal":
@@ -283,7 +283,7 @@ def convert_signal_file_to_data_structure(
     # For targets, set up master CSV path
     master_csv_path = None
     if signal_type == "target":
-        master_csv_path = Path(output_base_dir) / "target" / "all_targets.csv"
+        master_csv_path = Path(output_base_dir) / "portfolio_target_achieved" / "all_targets.csv"
     
     processed = 0
     skipped = 0
@@ -346,8 +346,8 @@ def convert_signal_file_to_data_structure(
         if signal_type == "target":
             # For targets, always use current date and target folder
             date_to_use = datetime.now().strftime("%Y-%m-%d")
-            row_signal_type = "target_achieved"
-            output_base = Path(output_base_dir) / "target"
+            row_signal_type = "portfolio_target_achieved"
+            output_base = Path(output_base_dir) / "portfolio_target_achieved"
         elif exit_date:
             # For signals with exit, use exit date and EXIT folder
             date_to_use = exit_date
@@ -432,7 +432,7 @@ def convert_signal_file_to_data_structure(
         print(f"  ... and {len(created_symbols) - 10} more")
     
     if signal_type == "target":
-        print(f"\n✓ Output structure: chatbot/data/target/{{asset}}/{{function}}/YYYY-MM-DD.csv")
+        print(f"\n✓ Output structure: chatbot/data/portfolio_target_achieved/{{asset}}/{{function}}/YYYY-MM-DD.csv")
     else:
         print(f"\n✓ Output structures:")
         print(f"   - chatbot/data/entry/{{asset}}/{{function}}/YYYY-MM-DD.csv")
@@ -511,7 +511,7 @@ def main():
     print("Structure:")
     print("  - chatbot/data/entry/{asset}/{function}/YYYY-MM-DD.csv (open positions)")
     print("  - chatbot/data/exit/{asset}/{function}/YYYY-MM-DD.csv (completed trades)")
-    print("  - chatbot/data/target/{asset}/{function}/YYYY-MM-DD.csv (target achievements)")
+    print("  - chatbot/data/portfolio_target_achieved/{asset}/{function}/YYYY-MM-DD.csv (portfolio target achieved)")
     print("  - chatbot/data/breadth/YYYY-MM-DD.csv (market breadth)\n")
     
     # Convert outstanding_signal.csv (signals)
@@ -615,10 +615,10 @@ def main():
     print("\nData structure created (4 signal types):")
     print("  1. ENTRY:   chatbot/data/entry/{asset}/{function}/YYYY-MM-DD.csv")
     print("  2. EXIT:    chatbot/data/exit/{asset}/{function}/YYYY-MM-DD.csv")
-    print("  3. TARGET:  chatbot/data/target/{asset}/{function}/YYYY-MM-DD.csv")
+    print("  3. TARGET:  chatbot/data/portfolio_target_achieved/{asset}/{function}/YYYY-MM-DD.csv")
     print("  4. BREADTH: chatbot/data/breadth/YYYY-MM-DD.csv")
     print("\nMaster files:")
-    print("  - chatbot/data/target/all_targets.csv (target deduplication)")
+    print("  - chatbot/data/portfolio_target_achieved/all_targets.csv (portfolio target deduplication)")
     print()
 
 

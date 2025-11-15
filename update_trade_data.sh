@@ -69,15 +69,15 @@ if [ -d "$TARGET_TRADE_DIR" ]; then
     while IFS= read -r base_name; do
         # Skip empty lines
         [ -z "$base_name" ] && continue
-        
-        # Skip cleanup for forward_testing.csv and latest_performance.csv
-        if [ "$base_name" = "forward_testing.csv" ] || [ "$base_name" = "latest_performance.csv" ]; then
-            continue
-        fi
-        
+                
+                # Skip cleanup for forward_testing.csv and latest_performance.csv
+                if [ "$base_name" = "forward_testing.csv" ] || [ "$base_name" = "latest_performance.csv" ]; then
+                    continue
+                fi
+                
         # Find all files for this base name using find (more reliable than glob)
         matching_files=$(find . -maxdepth 1 -type f -name "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_${base_name}" 2>/dev/null)
-        
+                
         if [ -n "$matching_files" ]; then
             # Get the latest file (first when sorted descending by filename)
             latest_file=$(echo "$matching_files" | sed 's|^\./||' | sort -r | head -1)
@@ -118,7 +118,7 @@ if [ -d "$TARGET_TRADE_DIR" ]; then
         
         # Find all files for this base name using find (more reliable than glob)
         matching_files=$(find . -maxdepth 1 -type f -name "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_${base_name}" 2>/dev/null)
-        
+                
         if [ -n "$matching_files" ]; then
             # Get the latest file (first when sorted descending by filename)
             latest_file=$(echo "$matching_files" | sed 's|^\./||' | sort -r | head -1)

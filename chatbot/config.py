@@ -33,9 +33,9 @@ BASE_DIR = project_root
 CHATBOT_DATA_DIR = BASE_DIR / "chatbot" / "data"
 CHATBOT_ENTRY_DIR = CHATBOT_DATA_DIR / "entry"  # Entry signals (no exit yet)
 CHATBOT_EXIT_DIR = CHATBOT_DATA_DIR / "exit"  # Exit signals (completed trades)
-CHATBOT_TARGET_DIR = CHATBOT_DATA_DIR / "target"  # Target achievements
+CHATBOT_TARGET_DIR = CHATBOT_DATA_DIR / "portfolio_target_achieved"  # Portfolio target achieved signals
 CHATBOT_BREADTH_DIR = CHATBOT_DATA_DIR / "breadth"  # Breadth reports (market-wide)
-TARGET_MASTER_CSV = CHATBOT_TARGET_DIR / "all_targets.csv"  # Master target file for dedup
+TARGET_MASTER_CSV = CHATBOT_TARGET_DIR / "all_targets.csv"  # Master portfolio target file for dedup
 STOCK_DATA_DIR = BASE_DIR / "trade_store" / "stock_data"
 HISTORY_DIR = BASE_DIR / "chatbot" / "history"
 

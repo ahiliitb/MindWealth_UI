@@ -10,6 +10,7 @@ from .text_file_page import create_text_file_page
 from .virtual_trading_page import create_virtual_trading_page
 from .chatbot_page import render_chatbot_page
 from .trade_details_page import create_trade_details_page
+from .f_stack_page import create_f_stack_page
 
 __all__ = [
     'create_top_signals_dashboard',
@@ -19,6 +20,7 @@ __all__ = [
     'create_text_file_page',
     'create_virtual_trading_page',
     'render_chatbot_page',
-    'create_trade_details_page'
+    'create_trade_details_page',
+    'create_f_stack_page'
 ]
 

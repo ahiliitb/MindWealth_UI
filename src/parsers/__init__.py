@@ -19,7 +19,8 @@ from .advanced_parsers import (
     parse_outstanding_exit_signal,
     parse_new_signal,
     parse_target_signals,
-    parse_breadth
+    parse_breadth,
+    parse_f_stack_analyzer
 )
 
 from .performance_parsers import (
@@ -48,6 +49,7 @@ __all__ = [
     'parse_new_signal',
     'parse_target_signals',
     'parse_breadth',
+    'parse_f_stack_analyzer',
     'parse_latest_performance',
     'parse_forward_backtesting',
     'parse_signal_csv',

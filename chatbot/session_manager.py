@@ -75,11 +75,25 @@ class SessionManager:
                     metadata = data.get("metadata", {})
                     conversation = data.get("conversation", [])
                     
-                    # Get first user message for preview
-                    first_user_msg = next(
-                        (msg.get("content", "")[:100] for msg in conversation if msg.get("role") == "user"),
-                        ""
-                    )
+                    def _extract_preview(message: Dict) -> str:
+                        metadata = message.get("metadata") or {}
+                        preview_text = metadata.get("display_prompt") or message.get("content", "")
+                        if 'FOLLOW-UP QUESTION:' in preview_text:
+                            preview_text = preview_text.split('FOLLOW-UP QUESTION:', 1)[1].strip()
+                        elif 'User Query:' in preview_text:
+                            preview_text = preview_text.split('User Query:', 1)[1].strip()
+                        if '===' in preview_text:
+                            preview_text = preview_text.split('===', 1)[0].strip()
+                        return preview_text.strip()
+                    
+                    first_user_msg = ""
+                    for msg in conversation:
+                        if msg.get("role") == "user":
+                            first_user_msg = _extract_preview(msg)
+                            break
+                    
+                    if len(first_user_msg) > 240:
+                        first_user_msg = first_user_msg[:237] + "..."
                     
                     # Count messages
                     user_messages = len([m for m in conversation if m.get("role") == "user"])

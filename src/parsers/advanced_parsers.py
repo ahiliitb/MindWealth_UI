@@ -7,6 +7,38 @@ import re
 from .base_parsers import parse_detailed_signal_csv
 
 
+def _to_float(value, default=0.0):
+    try:
+        if isinstance(value, str):
+            value = value.replace('%', '').replace(',', '').strip()
+        return float(value)
+    except Exception:
+        return default
+
+
+def _to_int(value, default=0):
+    try:
+        if isinstance(value, str):
+            value = value.replace(',', '').strip()
+        return int(float(value))
+    except Exception:
+        return default
+
+
+def _parse_date_price_field(value):
+    value_str = str(value)
+    match = re.search(r'([0-9]{4}-[0-9]{2}-[0-9]{2})\s*\(Price:\s*([^)]+)\)', value_str)
+    if match:
+        date_part = match.group(1).strip()
+        price_part = match.group(2).strip()
+        try:
+            price_value = float(price_part.replace(',', ''))
+        except Exception:
+            price_value = 0
+        return date_part, price_value
+    return "Unknown", 0
+
+
 def parse_outstanding_signal(df):
     """Parse outstanding_signal.csv"""
     return parse_detailed_signal_csv(df)
@@ -59,55 +91,93 @@ def parse_target_signals(df, page_name="Unknown"):
     processed_data = []
     
     for _, row in df.iterrows():
-        # Target Signal CSV has different structure with separate columns
-        # Get symbol directly from Symbol column (use direct indexing for pandas Series)
-        symbol = str(row['Symbol']) if 'Symbol' in row.index else 'Unknown'
+        # Target Signal CSV has different structure with combined fields
+        symbol_info = str(row.get('Symbol, Signal, Signal Date/Price[$]', '')).strip()
 
+        symbol = "Unknown"
+        signal_type = "Unknown"
+        signal_date = "Unknown"
+        signal_price = 0
+
+        if symbol_info:
+            parts = [part.strip() for part in symbol_info.split(',')]
+            if parts:
+                symbol = parts[0]
+            if len(parts) >= 2:
+                signal_type = parts[1].title()
+
+            date_match = re.search(r'([0-9]{4}-[0-9]{2}-[0-9]{2})\s*\(Price:\s*([^)]+)\)', symbol_info)
+            if date_match:
+                signal_date = date_match.group(1).strip()
+                try:
+                    signal_price = float(date_match.group(2).strip())
+                except:
+                    signal_price = 0
         
         # Get function and interval from separate columns
         function = str(row['Function']) if 'Function' in row.index else 'Unknown'
         interval = str(row['Interval']) if 'Interval' in row.index else 'Unknown'
         
-        # Parse entry signal date and price from "Entry Signal Date/Price[$]"
-        entry_info = row['Entry Signal Date/Price[$]'] if 'Entry Signal Date/Price[$]' in row.index else ''
+        # If entry column exists, prefer its date/price for historical accuracy
+        entry_info = row.get('Entry Signal Date/Price[$]', '')
         entry_match = re.search(r'([^(]+)\(Price:\s*([^)]+)\)', str(entry_info))
-        
         if entry_match:
             signal_date = entry_match.group(1).strip()
             try:
                 signal_price = float(entry_match.group(2).strip())
             except:
-                signal_price = 0
-        else:
-            signal_date, signal_price = "Unknown", 0
+                signal_price = signal_price or 0
         
-        # Target signals are always "Long" (targets are for upside)
-        signal_type = "Long"
+        if not signal_type or signal_type == "Unknown":
+            signal_type = "Long"
         
         # Parse current trading date and price
-        current_info = row.get('Current Trading Date/Price[$]', '')
-        current_match = re.search(r'([^(]+)\(Price:\s*([^)]+)\)', str(current_info))
-        if current_match:
-            current_date = current_match.group(1).strip()
-            try:
-                current_price = float(current_match.group(2).strip())
-            except:
-                current_price = 0
-        else:
-            current_date, current_price = "Unknown", 0
+        current_date, current_price = _parse_date_price_field(row.get('Current Trading Date/Price[$]', ''))
         
         # Parse win rate and number of trades
-        win_rate_info = row.get('Number of Trades/Historic Win Rate [%]', '')
-        win_rate_match = re.search(r'([0-9]+)/([0-9.]+)%', str(win_rate_info))
+        win_rate = 0
+        num_trades = 0
+        win_rate_info = None
+        if 'Win Rate [%], History Tested, Number of Trades' in row.index:
+            win_rate_info = row['Win Rate [%], History Tested, Number of Trades']
+        elif 'Number of Trades/Historic Win Rate [%]' in row.index:
+            win_rate_info = row['Number of Trades/Historic Win Rate [%]']
         
-        if win_rate_match:
-            try:
-                num_trades = int(win_rate_match.group(1))
-                win_rate = float(win_rate_match.group(2))
-            except:
-                win_rate, num_trades = 0, 0
-        else:
-            win_rate, num_trades = 0, 0
+        if win_rate_info:
+            info_str = str(win_rate_info)
+            percent_match = re.search(r'([0-9.]+)\s*%', info_str)
+            if percent_match:
+                try:
+                    win_rate = float(percent_match.group(1))
+                except:
+                    win_rate = 0
+            
+            parts = [p.strip() for p in info_str.split(',')]
+            if parts:
+                # Fallback: check for pattern trades/win rate (e.g., "22/95.45%")
+                slash_match = re.search(r'([0-9]+)\s*/\s*([0-9.]+)%', info_str)
+                if slash_match:
+                    try:
+                        num_trades = int(slash_match.group(1))
+                        win_rate = float(slash_match.group(2))
+                    except:
+                        pass
+                elif len(parts) >= 3:
+                    # Last part should be number of trades
+                    trades_candidate = parts[-1]
+                    trades_match = re.search(r'([0-9]+)', trades_candidate)
+                    if trades_match:
+                        try:
+                            num_trades = int(trades_match.group(1))
+                        except:
+                            num_trades = 0
+                elif not num_trades:
+                    trades_match = re.search(r'([0-9]+)\s+trades', info_str, re.IGNORECASE)
+                    if trades_match:
+                        try:
+                            num_trades = int(trades_match.group(1))
+                        except:
+                            num_trades = 0
         
         # Parse gain and holding period
         gain_info = row.get('% Gain, Holding Period (days)', '')
@@ -157,22 +227,11 @@ def parse_target_signals(df, page_name="Unknown"):
         # Parse remaining potential exit prices
         exit_prices = row.get('Remaining Potential Exit Prices [$]', 'N/A')
         
-        # Calculate performance metrics (simplified)
-        strategy_cagr = 0
-        buy_hold_cagr = 0
-        strategy_sharpe = 0
-        buy_hold_sharpe = 0
-        
-        # Try to extract from performance data if available
-        performance_info = row.get('Latest Past 6 Months Performance[%]/No. of Analysed Trades/Avg Holding Period (days) (Across ALL Assets)', '')
-        if performance_info and '/' in str(performance_info):
-            try:
-                perf_parts = str(performance_info).split('/')
-                if len(perf_parts) >= 1:
-                    # Use performance percentage as a rough CAGR estimate
-                    strategy_cagr = float(perf_parts[0].replace('%', ''))
-            except:
-                pass
+        # Performance metrics
+        strategy_cagr = _to_float(row.get('Backtested Strategy CAGR [%]', 0))
+        buy_hold_cagr = _to_float(row.get('CAGR of Buy and Hold [%]', 0))
+        strategy_sharpe = _to_float(row.get('Backtested Strategy Sharpe Ratio', 0))
+        buy_hold_sharpe = _to_float(row.get('Sharpe Ratio of Buy and Hold', 0))
         
         processed_data.append({
             'Symbol': symbol,
@@ -198,6 +257,56 @@ def parse_target_signals(df, page_name="Unknown"):
             'Buy_Hold_CAGR': buy_hold_cagr,
             'Strategy_Sharpe': strategy_sharpe,
             'Buy_Hold_Sharpe': buy_hold_sharpe,
+            'Raw_Data': row.to_dict()
+        })
+    
+    return pd.DataFrame(processed_data)
+
+
+def parse_f_stack_analyzer(df, page_name="F-Stack"):
+    """Parse F-Stack Analyzer CSV files."""
+    processed_data = []
+    
+    for _, row in df.iterrows():
+        symbol = str(row.get('Symbol', 'Unknown')).strip()
+        signal = str(row.get('Signal', 'Unknown')).title()
+        
+        signal_date, signal_price = _parse_date_price_field(row.get('Signal Date/Price($)', ''))
+        latest_date, latest_price = _parse_date_price_field(row.get('Latest Trading Date/Price($)', ''))
+        
+        current_extension = _to_float(row.get('Current Extension Level($)', 0))
+        current_band_range = str(row.get('Current Band Price Range($)', 'N/A'))
+        current_band_width = _to_float(row.get('Width of Current Band(%)', 0))
+        band_composition = str(row.get('Band Composition (Extension Level(%) of Low($)-High($) & ..)', 'N/A'))
+        
+        trading_days = _to_int(row.get('Trading Days between signal date and Latest Trading date', 0))
+        price_vs_signal = str(row.get('Price on Latest Trading day vs signal date', 'N/A'))
+        
+        next_band_level = _to_float(row.get('Next Band Price Level($)', 0))
+        next_band_range = str(row.get('Next Band Price Range($)', 'N/A'))
+        next_fib_ret = str(row.get('Next Fib Ret [%] (Price Level [$]/Retracement Level [%]/Upmove [$])', 'N/A'))
+        next_fib_vs_price = str(row.get('Next Fib Ret [%] Price Level vs Price on Latest Trading day', 'N/A'))
+        next_band_vs_price = str(row.get('Next Band Price Level vs Price on Latest Trading day', 'N/A'))
+        
+        processed_data.append({
+            'Symbol': symbol,
+            'Signal': signal,
+            'Signal_Date': signal_date,
+            'Signal_Price': signal_price,
+            'Latest_Date': latest_date,
+            'Latest_Price': latest_price,
+            'Interval': str(row.get('Interval', 'Unknown')),
+            'Current_Extension_Level': current_extension,
+            'Current_Band_Range': current_band_range,
+            'Current_Band_Width': current_band_width,
+            'Band_Composition': band_composition,
+            'Trading_Days': trading_days,
+            'Price_vs_Signal': price_vs_signal,
+            'Next_Band_Level': next_band_level,
+            'Next_Band_Range': next_band_range,
+            'Next_Fib_Ret': next_fib_ret,
+            'Next_Fib_vs_Price': next_fib_vs_price,
+            'Next_Band_vs_Price': next_band_vs_price,
             'Raw_Data': row.to_dict()
         })
     

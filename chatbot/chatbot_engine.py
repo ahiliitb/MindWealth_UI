@@ -3,7 +3,7 @@ Main chatbot engine for processing queries and generating responses.
 """
 
 import logging
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Any
 from openai import OpenAI
 import time
 
@@ -133,6 +133,14 @@ class ChatbotEngine:
         selected, reasoning = self.signal_type_selector.select_signal_types(user_message)
         return selected, reasoning
     
+    def _prepare_user_metadata(self, metadata: Optional[Dict[str, Any]], user_message: str) -> Dict[str, Any]:
+        """
+        Create a safe copy of metadata with the original user prompt for UI display.
+        """
+        meta_copy: Dict[str, Any] = dict(metadata) if metadata else {}
+        meta_copy["display_prompt"] = (user_message or "").strip()
+        return meta_copy
+    
     def query(
         self,
         user_message: str,
@@ -156,7 +164,7 @@ class ChatbotEngine:
             from_date: Start date for data filtering (YYYY-MM-DD)
             to_date: End date for data filtering (YYYY-MM-DD)
             functions: List of function names to filter (None = auto-extract or all functions)
-            signal_types: List of signal types to filter (entry_exit, target_achieved) - from UI checkboxes
+            signal_types: List of signal types to filter (entry_exit, portfolio_target_achieved, breadth) - from UI checkboxes
             additional_context: Any additional text context to include
             dedup_columns: Columns to use for deduplication (None = use config default)
             auto_extract_functions: If True and functions=None, use GPT-4o-mini to extract
@@ -179,7 +187,11 @@ class ChatbotEngine:
                 }
                 
                 # Add user message to history
-                self.history_manager.add_message("user", user_message, metadata)
+                self.history_manager.add_message(
+                    "user",
+                    user_message,
+                    self._prepare_user_metadata(metadata, user_message)
+                )
                 
                 # Get conversation history for API
                 messages = self.history_manager.get_messages_for_api()
@@ -219,7 +231,7 @@ class ChatbotEngine:
                 if not signal_types:
                     signal_types, signal_type_reasoning = self.determine_signal_types(user_message)
             selected_signal_types = signal_types
-
+            
             # Auto-extract tickers if enabled and not provided
             extracted_tickers = None
             if tickers is None and auto_extract_tickers:
@@ -324,7 +336,7 @@ class ChatbotEngine:
                 # signal_types controls which folders to load from:
                 # - ['entry'] → entry/ folder only (open positions)
                 # - ['exit'] → exit/ folder only (completed trades)
-                # - ['target'] → target/ folder only (target achievements)
+                # - ['target'] → portfolio_target_achieved/ folder only (portfolio target achieved)
                 # - Multiple or None → load from selected folders
                 stock_data = self.data_processor.load_stock_data(
                     tickers, from_date, to_date, dedup_columns, functions, stock_signal_types
@@ -373,7 +385,11 @@ class ChatbotEngine:
                     no_signal_message += "\n\n💡 *Try expanding your date range or adjusting search criteria.*"
                     
                     metadata["no_data_found"] = True
-                    self.history_manager.add_message("user", user_message, metadata)
+                    self.history_manager.add_message(
+                        "user",
+                        user_message,
+                        self._prepare_user_metadata(metadata, user_message)
+                    )
                     self.history_manager.add_message("assistant", no_signal_message, metadata)
                     
                     return no_signal_message, metadata
@@ -403,7 +419,11 @@ class ChatbotEngine:
                 no_signal_message += "\n\n💡 *Try adjusting your search criteria or date range.*"
                 
                 metadata["no_data_found"] = True
-                self.history_manager.add_message("user", user_message, metadata)
+                self.history_manager.add_message(
+                    "user",
+                    user_message,
+                    self._prepare_user_metadata(metadata, user_message)
+                )
                 self.history_manager.add_message("assistant", no_signal_message, metadata)
                 
                 return no_signal_message, metadata
@@ -420,7 +440,11 @@ class ChatbotEngine:
                 complete_message += f"\n\nAdditional Context:\n{additional_context}"
             
             # Add user message to history
-            self.history_manager.add_message("user", complete_message, metadata)
+            self.history_manager.add_message(
+                "user",
+                complete_message,
+                self._prepare_user_metadata(metadata, user_message)
+            )
             
             # Get conversation history for API
             messages = self.history_manager.get_messages_for_api()
@@ -821,7 +845,11 @@ SIGNAL_KEYS: [
             }
             
             # Add user message to history
-            self.history_manager.add_message("user", complete_message, metadata)
+            self.history_manager.add_message(
+                "user",
+                complete_message,
+                self._prepare_user_metadata(metadata, user_message)
+            )
             
             # Get conversation history for API
             messages = self.history_manager.get_messages_for_api()
@@ -929,7 +957,7 @@ SIGNAL_KEYS: [
                 selected_signal_types = [stype for stype in selected_signal_types if stype]
                 if not selected_signal_types:
                     selected_signal_types, signal_type_reasoning = self.determine_signal_types(user_message)
-
+            
             # Get last N exchanges from history
             history_messages = self.history_manager.get_messages_for_api(max_pairs=FOLLOWUP_HISTORY_LENGTH)
             
@@ -1265,7 +1293,11 @@ NOTE: All required data is already in the conversation history.
                 }
             
             # Add user message to history
-            self.history_manager.add_message("user", complete_message, metadata)
+            self.history_manager.add_message(
+                "user",
+                complete_message,
+                self._prepare_user_metadata(metadata, user_message)
+            )
             
             # Build conversation context: include summary of messages older than MAX_HISTORY_LENGTH pairs
             # and include the last MAX_HISTORY_LENGTH pairs in full.
@@ -1453,7 +1485,11 @@ NOTE: All required data is already in the conversation history.
         metadata = {"input_type": "csv_text"}
         
         # Add user message to history
-        self.history_manager.add_message("user", complete_message, metadata)
+        self.history_manager.add_message(
+            "user",
+            complete_message,
+            self._prepare_user_metadata(metadata, user_message)
+        )
         
         # Get conversation history for API
         messages = self.history_manager.get_messages_for_api()

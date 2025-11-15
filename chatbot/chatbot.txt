@@ -35,8 +35,8 @@ The system has data organized in the following signal types:
 
 ---
 
-### 3. TARGET SIGNALS
-**Purpose:** Tracks target achievements for trades. Shows when price targets are hit and provides target-related analytics.
+### 3. PORTFOLIO TARGET ACHIEVED SIGNALS
+**Purpose:** Tracks when portfolio targets are reached and captures the follow-up risk posture for those positions. Provides analytics on realized targets, remaining upside, and protective actions.
 
 **Use Cases:**
 - Monitor target achievement progress
@@ -87,7 +87,7 @@ Your response MUST be a valid JSON object with the following structure:
   },
   "target": {
     "required_columns": ["Column Name 1", "Column Name 2", ...],
-    "reasoning": "Why these columns are needed for target signals"
+    "reasoning": "Why these columns are needed for portfolio target achieved signals"
   },
   "breadth": {
     "required_columns": ["Column Name 1", "Column Name 2", ...],
@@ -180,7 +180,7 @@ You will be provided with the available columns for each selected signal type. U
 
 ---
 
-### Example 3: Entry + Target Signals
+### Example 3: Entry + Portfolio Target Achieved Signals
 
 **User Query:** "What are the targets for my open positions?"  
 **User Selected:** ["entry", "target"]
@@ -206,7 +206,7 @@ You will be provided with the available columns for each selected signal type. U
       "Target Hit Date",
       "Distance to Target"
     ],
-    "reasoning": "For target signals, we need specific target achievement data including which targets were hit and when."
+    "reasoning": "For portfolio target achieved signals, we need specific target achievement data including which targets were hit, when they were reached, and the associated follow-up context."
   }
 }
 ```
@@ -270,7 +270,7 @@ You will be provided with the available columns for each selected signal type. U
       "Target Level",
       "Target Hit Date"
     ],
-    "reasoning": "For target signals, show which targets have been achieved."
+    "reasoning": "For portfolio target achieved signals, show which targets have been achieved and their timing."
   },
   "breadth": {
     "required_columns": [

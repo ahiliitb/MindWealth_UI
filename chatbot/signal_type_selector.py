@@ -29,9 +29,9 @@ SIGNAL_TYPE_DESCRIPTIONS = {
         "Relevant for reviewing performance, closed trades, or outcomes."
     ),
     "target": (
-        "Target Achieved",
-        "Signals where price targets have been hit or high-conviction targets are outlined. "
-        "Helpful when the request mentions profit-taking, targets, or milestones."
+        "Portfolio Target Achieved",
+        "Signals that capture portfolio positions where targets have been hit and next risk actions are defined. "
+        "Use when the user wants to understand realized targets, remaining upside, or protective moves for their portfolio."
     ),
     "breadth": (
         "Market Breadth",

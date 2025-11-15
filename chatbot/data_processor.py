@@ -49,14 +49,14 @@ class DataProcessor:
         
     def get_available_tickers(self) -> List[str]:
         """
-        Get list of available ticker/asset symbols from entry, exit, and target folders.
+        Get list of available ticker/asset symbols from entry, exit, and portfolio_target_achieved folders.
         
         Returns:
             List of ticker symbols
         """
         try:
             if self.use_new_structure:
-                # Get folder names from entry/, exit/, and target/
+                # Get folder names from entry/, exit/, and portfolio_target_achieved/
                 tickers = set()
                 
                 if self.entry_data_dir.exists():
@@ -83,7 +83,7 @@ class DataProcessor:
     
     def get_available_functions(self, ticker: Optional[str] = None) -> List[str]:
         """
-        Get list of available function names from entry, exit, and target folders.
+        Get list of available function names from entry, exit, and portfolio_target_achieved folders.
         
         Args:
             ticker: Optional ticker to get functions for. If None, gets all unique functions.
@@ -98,7 +98,7 @@ class DataProcessor:
             functions = set()
             
             if ticker:
-                # Get functions for specific ticker from entry, exit, and target
+                # Get functions for specific ticker from entry, exit, and portfolio_target_achieved
                 for base_dir in [self.entry_data_dir, self.exit_data_dir, self.target_data_dir]:
                     if base_dir.exists():
                         ticker_dir = base_dir / ticker
@@ -107,7 +107,7 @@ class DataProcessor:
                             functions.update(function_dirs)
                 return sorted(list(functions))
             else:
-                # Get all unique functions across all tickers from entry, exit, and target
+                # Get all unique functions across all tickers from entry, exit, and portfolio_target_achieved
                 for base_dir in [self.entry_data_dir, self.exit_data_dir, self.target_data_dir]:
                     if base_dir.exists():
                         for ticker_dir in base_dir.iterdir():
@@ -127,7 +127,7 @@ class DataProcessor:
         function: Optional[str] = None
     ) -> List[str]:
         """
-        Get list of available dates for a specific ticker and function from entry, exit, and target.
+        Get list of available dates for a specific ticker and function from entry, exit, and portfolio_target_achieved folders.
         
         Args:
             ticker: Ticker/asset symbol
@@ -139,7 +139,7 @@ class DataProcessor:
         try:
             dates = set()
             
-            # Check entry, exit, and target directories
+            # Check entry, exit, and portfolio_target_achieved directories
             for base_dir in [self.entry_data_dir, self.exit_data_dir, self.target_data_dir]:
                 if not base_dir.exists():
                     continue
@@ -210,8 +210,8 @@ class DataProcessor:
         signal_types: Optional[List[str]] = None
     ) -> Dict[str, pd.DataFrame]:
         """
-        Load stock data from new structure: chatbot/data/{signal|target}/{asset}/{function}/YYYY-MM-DD.csv
-        Loads from signal and/or target folders based on signal_types parameter.
+        Load stock data from new structure: chatbot/data/{entry|exit|portfolio_target_achieved}/{asset}/{function}/YYYY-MM-DD.csv
+        Loads from entry/exit and/or portfolio target achieved folders based on signal_types parameter.
         
         Args:
             tickers: List of ticker/asset symbols
@@ -220,9 +220,9 @@ class DataProcessor:
             dedup_columns: Columns to use for deduplication (placeholder)
             functions: List of function names to filter (None = all functions)
             signal_types: List of signal types - controls which folders to load from:
-                         - ['entry_exit'] → load from signal/ folder only
-                         - ['target_achieved'] → load from target/ folder only
-                         - None or [] → load from both (fallback)
+                         - ['entry_exit'] → load from entry/exit folders
+                        - ['portfolio_target_achieved'] → load from portfolio_target_achieved/ folder only
+                         - None or [] → load from all folders (fallback)
             
         Returns:
             Dictionary mapping ticker to combined DataFrame
@@ -260,13 +260,13 @@ class DataProcessor:
                     # Note: breadth is handled separately, not asset-specific
                     logger.info(f"Loading based on signal_types {signal_types}: {[name for name, _ in base_dirs_to_load]}")
                 else:
-                    # No signal_types specified - load from entry, exit, and target (fallback)
+                    # No signal_types specified - load from entry, exit, and portfolio_target_achieved (fallback)
                     base_dirs_to_load = [
                         ('entry', self.entry_data_dir),
                         ('exit', self.exit_data_dir),
                         ('target', self.target_data_dir)
                     ]
-                    logger.info(f"No signal_types specified - loading from entry, exit, and target folders")
+                    logger.info(f"No signal_types specified - loading from entry, exit, and portfolio_target_achieved folders")
                 
                 # Load data for each function from selected folders
                 all_dfs = []
@@ -408,14 +408,6 @@ class DataProcessor:
                 
                 result[ticker] = combined_df
                 
-                # Count by SignalType (entry_exit vs target_achieved)
-                if 'SignalType' in combined_df.columns:
-                    entry_exit_count = len(combined_df[combined_df['SignalType'] == 'entry_exit'])
-                    target_count = len(combined_df[combined_df['SignalType'] == 'target_achieved'])
-                    logger.info(f"Loaded {len(combined_df)} rows for {ticker} (entry_exit: {entry_exit_count}, target_achieved: {target_count})")
-                else:
-                    logger.info(f"Loaded {len(combined_df)} rows for {ticker}")
-                
             except Exception as e:
                 logger.error(f"Error loading data for {ticker}: {e}")
                 import traceback
@@ -509,9 +501,9 @@ class DataProcessor:
             dedup_columns: Columns to use for deduplication
             functions: List of function names to filter (None = all functions)
             signal_types: List of signal types - controls which folders to load from:
-                         - ['entry_exit'] → load from signal/ folder only
-                         - ['target_achieved'] → load from target/ folder only
-                         - ['entry_exit', 'target_achieved'] → load from both
+                         - ['entry_exit'] → load from entry/exit folders
+                        - ['portfolio_target_achieved'] → load from portfolio_target_achieved/ folder only
+                         - ['entry_exit', 'portfolio_target_achieved'] → load from both
             
         Returns:
             Dictionary mapping ticker to DataFrame (includes DataType column: 'signal' or 'target')

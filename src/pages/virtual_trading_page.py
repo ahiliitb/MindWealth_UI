@@ -47,7 +47,9 @@ def create_virtual_trading_page():
     # Function filter
     st.sidebar.markdown("**Functions:**")
     if st.sidebar.button("All", key="select_all_functions_vt", help="Select all functions", use_container_width=True):
-        st.session_state['selected_functions_vt'] = list(df['Function'].unique())
+        all_functions = list(df['Function'].unique())
+        st.session_state['selected_functions_vt'] = all_functions
+        st.session_state["functions_multiselect_vt"] = all_functions
     
     if 'selected_functions_vt' not in st.session_state:
         st.session_state['selected_functions_vt'] = list(df['Function'].unique())
@@ -71,7 +73,9 @@ def create_virtual_trading_page():
     # Symbol filter
     st.sidebar.markdown("**Symbols:**")
     if st.sidebar.button("All", key="select_all_symbols_vt", help="Select all symbols", use_container_width=True):
-        st.session_state['selected_symbols_vt'] = list(df['Symbol'].unique())
+        all_symbols = list(df['Symbol'].unique())
+        st.session_state['selected_symbols_vt'] = all_symbols
+        st.session_state["symbols_multiselect_vt"] = all_symbols
     
     if 'selected_symbols_vt' not in st.session_state:
         st.session_state['selected_symbols_vt'] = list(df['Symbol'].unique())
@@ -181,11 +185,7 @@ def display_interval_tabs(df, position_name, trade_status):
             # Display summary metrics
             display_virtual_trading_metrics(interval_df, interval, position_name)
             
-            # Display trades in cards
-            display_virtual_trading_cards(interval_df, interval, position_name)
-            
             # Display detailed data table
-            st.markdown("---")
             st.markdown("### 📊 Detailed Data Table")
             
             # Prepare dataframe for display (remove internal Position column if needed, or keep it)
@@ -212,7 +212,7 @@ def display_interval_tabs(df, position_name, trade_status):
                 display_df,
                 use_container_width=True,
                 hide_index=True,
-                height=400
+                height=min(900, max(500, (len(display_df) + 1) * 35))
             )
 
 
@@ -290,97 +290,4 @@ def display_virtual_trading_metrics(df, interval, position_name):
     
     st.markdown("---")
 
-
-def display_virtual_trading_cards(df, interval, position_name):
-    """Display virtual trading cards in scrollable container"""
-    
-    if df.empty:
-        st.info(f"No trades available for {interval} - {position_name}")
-        return
-    
-    # Create scrollable container for cards
-    with st.container(height=1000, border=True):
-        for idx, row in df.iterrows():
-            # Determine card color based on status and profit
-            status = row.get('Status', 'Unknown')
-            profit_str = str(row.get('Realised/Unrealised Profit', '0%'))
-            
-            # Parse profit
-            try:
-                profit_val = float(profit_str.replace('%', '').strip())
-            except:
-                profit_val = 0
-            
-            # Create expander title
-            profit_indicator = "🟢" if profit_val > 0 else "🔴" if profit_val < 0 else "⚪"
-            
-            expander_title = f"{profit_indicator} {row['Function']} - {row['Symbol']} | {row['Interval']} | {row['Signal']} | {status}"
-            
-            with st.expander(expander_title, expanded=False):
-                st.markdown("**📋 Trade Information**")
-                
-                # Create three columns
-                col1, col2, col3 = st.columns(3)
-                
-                with col1:
-                    st.markdown("**🎯 Entry Details**")
-                    st.write(f"**Function:** {row['Function']}")
-                    st.write(f"**Symbol:** {row['Symbol']}")
-                    st.write(f"**Signal:** {row['Signal']}")
-                    st.write(f"**Interval:** {row['Interval']}")
-                    st.write(f"**Entry Date:** {row['Entry Date']}")
-                    st.write(f"**Entry Price:** ${row['Entry Price']:.4f}" if pd.notna(row['Entry Price']) else "**Entry Price:** N/A")
-                
-                with col2:
-                    st.markdown("**📊 Exit & Current Status**")
-                    st.write(f"**Status:** {status}")
-                    
-                    if pd.notna(row['Exit Date']) and str(row['Exit Date']).strip():
-                        st.write(f"**Exit Date:** {row['Exit Date']}")
-                        if pd.notna(row['Exit Price']):
-                            st.write(f"**Exit Price:** ${row['Exit Price']:.4f}")
-                    else:
-                        st.write(f"**Exit Date:** Not yet exited")
-                    
-                    if pd.notna(row['Current Price']):
-                        st.write(f"**Current Price:** ${row['Current Price']:.4f}")
-                    
-                    if pd.notna(row['Holding Period']) and str(row['Holding Period']).strip():
-                        st.write(f"**Holding Period:** {row['Holding Period']}")
-                
-                with col3:
-                    st.markdown("**💰 Performance**")
-                    
-                    # Display profit with color
-                    if profit_val > 0:
-                        st.markdown(f"**Profit:** <span style='color: green; font-weight: bold;'>{profit_str}</span>", unsafe_allow_html=True)
-                    elif profit_val < 0:
-                        st.markdown(f"**Profit:** <span style='color: red; font-weight: bold;'>{profit_str}</span>", unsafe_allow_html=True)
-                    else:
-                        st.write(f"**Profit:** {profit_str}")
-                    
-                    # Display Backtested Win Rate if available
-                    if 'Backtested Win Rate [%]' in row.index and pd.notna(row['Backtested Win Rate [%]']):
-                        win_rate = row['Backtested Win Rate [%]']
-                        st.write(f"**Backtested Win Rate:** {win_rate:.2f}%")
-                    
-                    # Calculate days in trade if entry date is available
-                    if pd.notna(row['Entry Date']):
-                        try:
-                            from datetime import datetime
-                            entry_dt = pd.to_datetime(row['Entry Date'])
-                            if pd.notna(row['Exit Date']) and str(row['Exit Date']).strip():
-                                exit_dt = pd.to_datetime(row['Exit Date'])
-                                days_in_trade = (exit_dt - entry_dt).days
-                            else:
-                                days_in_trade = (datetime.now() - entry_dt).days
-                            st.write(f"**Days in Trade:** {days_in_trade}")
-                        except:
-                            pass
-                    
-                    # Show if trade is realized or unrealized
-                    if status == 'Open':
-                        st.info("📌 **Unrealised Profit**")
-                    else:
-                        st.success("✅ **Realised Profit**")
 

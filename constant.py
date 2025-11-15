@@ -26,6 +26,9 @@ TARGET_SIGNAL_CSV_PATH_US = "./trade_store/US/target_signal.csv"
 
 NEW_SIGNAL_CSV_PATH_US = "./trade_store/US/new_signal.csv"
 
+# CSV PATHS for India-specific reports
+F_STACK_ANALYZER_REPORT_CSV_PATH_INDIA = "./trade_store/INDIA/F-Stack-Analyzer.csv"
+
 # GPT REPORT PATHS
 GPT_SIGNALS_REPORT_TXT_PATH_US = "./trade_store/US/gpt_signals_report.txt"
 GPT_SIGNALS_REPORT_CSV_PATH_US = "./trade_store/US/gpt_signals_report.csv"

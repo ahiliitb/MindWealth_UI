@@ -23,6 +23,24 @@ def get_signal_type_label(signal_type: str, uppercase: bool = False) -> str:
     return title.upper() if uppercase else title
 
 
+def extract_user_prompt(content: str, metadata: Optional[dict] = None) -> str:
+    """Return the original user prompt without appended data payloads."""
+    if metadata and metadata.get("display_prompt"):
+        return metadata["display_prompt"]
+    
+    cleaned = content or ""
+    
+    if 'FOLLOW-UP QUESTION:' in cleaned:
+        cleaned = cleaned.split('FOLLOW-UP QUESTION:', 1)[1].strip()
+    elif 'User Query:' in cleaned:
+        cleaned = cleaned.split('User Query:', 1)[1].strip()
+    
+    if '===' in cleaned:
+        cleaned = cleaned.split('===', 1)[0].strip()
+    
+    return cleaned
+
+
 def apply_table_styling():
     """Apply custom CSS styling for larger table fonts."""
     st.markdown("""
@@ -283,35 +301,15 @@ def render_chatbot_page():
             # Convert history to chat format - clean user messages for display
             for msg in history_manager.get_full_history():
                 if msg['role'] in ['user', 'assistant']:
+                    metadata = msg.get('metadata', {}) or {}
                     content = msg['content']
-                    # For user messages, extract just the original query from the full content
                     if msg['role'] == 'user':
-                        # Extract original query from different message formats
-                        if 'FOLLOW-UP QUESTION:' in content:
-                            # Extract the follow-up question part
-                            lines = content.split('\n')
-                            for line in lines:
-                                if line.startswith('FOLLOW-UP QUESTION:'):
-                                    content = line.replace('FOLLOW-UP QUESTION:', '').strip()
-                                    break
-                        elif 'User Query:' in content:
-                            # Extract from "User Query: ..." format
-                            lines = content.split('\n')
-                            for line in lines:
-                                if line.startswith('User Query:'):
-                                    content = line.replace('User Query:', '').strip()
-                                    break
-                        # If content still contains data blocks, try to extract just the question
-                        elif '===' in content:
-                            # Find content before first data block
-                            parts = content.split('===')
-                            if parts:
-                                content = parts[0].strip()
+                        content = extract_user_prompt(content, metadata)
                     
                     st.session_state.chat_history.append({
                         'role': msg['role'],
                         'content': content,
-                        'metadata': msg.get('metadata', {})
+                        'metadata': metadata
                     })
             
             st.session_state.last_settings = None
@@ -581,8 +579,8 @@ def render_chatbot_page():
         # Add user message to history (store clean user input for UI display)
         st.session_state.chat_history.append({
             'role': 'user',
-            'content': user_input,  # Store the clean user input, not the full message with data
-            'original_input': user_input  # Keep original for reference
+            'content': user_input,
+            'metadata': {'display_prompt': user_input}
         })
         
         # Display user message immediately

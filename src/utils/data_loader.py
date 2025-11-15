@@ -13,7 +13,7 @@ from ..parsers import (
     parse_bollinger_band, parse_distance, parse_fib_ret, parse_general_divergence,
     parse_new_high, parse_stochastic_divergence, parse_sigma, parse_sentiment,
     parse_trendline, parse_outstanding_signal, parse_outstanding_exit_signal,
-    parse_new_signal, parse_target_signals, parse_breadth,
+    parse_new_signal, parse_target_signals, parse_breadth, parse_f_stack_analyzer,
     parse_latest_performance, parse_forward_backtesting, parse_signal_csv
 )
 
@@ -46,6 +46,7 @@ def load_data_from_file(file_path, page_name="Unknown"):
             'outstanding_exit_signal': parse_outstanding_exit_signal,
             'new_signal': parse_new_signal,
             'target_signal': parse_target_signals,
+            'f_stack_analyzer': parse_f_stack_analyzer,
             'latest_performance': parse_latest_performance,
             'forward_backtesting': parse_forward_backtesting,  # Also handles forward_testing.csv
             'forward_testing': parse_forward_backtesting  # Direct mapping for forward_testing.csv (same as latest_performance structure)

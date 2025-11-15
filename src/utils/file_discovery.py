@@ -64,7 +64,8 @@ def detect_csv_structure(file_path):
         'target_signal.csv': 'target_signal',
         'latest_performance.csv': 'latest_performance',
         'forward_backtesting.csv': 'forward_backtesting',
-        'forward_testing.csv': 'forward_backtesting'  # Use same parser as forward_backtesting
+        'forward_testing.csv': 'forward_backtesting',  # Use same parser as forward_backtesting
+        'F-Stack-Analyzer.csv': 'f_stack_analyzer'
     }
     
     return file_mapping.get(base_filename, 'unknown')
@@ -85,11 +86,12 @@ def discover_csv_files():
         'TrendPulse',
         'Signal Breadth Indicator (SBI)',
         'Outstanding Signals',
-        'Outstanding Target',
+        'Portfolio Risk Management',
         'Outstanding Signals Exit',
         'New Signals',
         'Latest Performance',
         'Forward Testing Performance',
+        'F-Stack',
         'Horizontal'
     ]
     
@@ -111,7 +113,8 @@ def discover_csv_files():
         'latest_performance.csv': 'Latest Performance',
         'forward_backtesting.csv': 'Forward Testing Performance',
         'forward_testing.csv': 'Forward Testing Performance',  # Alternative filename
-        'target_signal.csv': 'Outstanding Target',
+        'target_signal.csv': 'Portfolio Risk Management',
+        'F-Stack-Analyzer.csv': 'F-Stack',
         'Horizontal.csv': 'Horizontal'
     }
     
@@ -184,6 +187,38 @@ def discover_csv_files():
                 else:
                     selected_base = candidates[0]  # Use first found
                 csv_files[page_name] = file_mapping[selected_base]
+    
+    india_trade_store_path = "./trade_store/INDIA"
+    if os.path.exists(india_trade_store_path):
+        f_stack_pattern = os.path.join(india_trade_store_path, "*.csv")
+        selected_f_stack_file = None
+        selected_f_stack_date = None
+        
+        for file_path in glob.glob(f_stack_pattern):
+            filename = os.path.basename(file_path)
+            base_filename = get_base_filename(filename)
+            if base_filename != 'F-Stack-Analyzer.csv':
+                continue
+            
+            current_date = extract_date_from_filename(filename)
+            
+            if selected_f_stack_file is None:
+                selected_f_stack_file = file_path
+                selected_f_stack_date = current_date
+            else:
+                if current_date and selected_f_stack_date:
+                    if current_date > selected_f_stack_date:
+                        selected_f_stack_file = file_path
+                        selected_f_stack_date = current_date
+                elif current_date and not selected_f_stack_date:
+                    selected_f_stack_file = file_path
+                    selected_f_stack_date = current_date
+                elif not selected_f_stack_date and not current_date:
+                    # keep first non-dated file
+                    pass
+        
+        if selected_f_stack_file:
+            csv_files['F-Stack'] = selected_f_stack_file
     
     return csv_files
 

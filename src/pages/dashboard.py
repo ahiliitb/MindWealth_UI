@@ -38,7 +38,7 @@ def create_top_signals_dashboard():
     with col2:
         st.markdown("**Signal & Performance Pages:**")
         signal_pages = [
-            "Outstanding Signals", "Outstanding Target", "Outstanding Signals Exit",
+            "Outstanding Signals", "Portfolio Risk Management", "Outstanding Signals Exit",
             "New Signals", "Latest Performance", "Forward Testing Performance"
         ]
         for page in signal_pages:

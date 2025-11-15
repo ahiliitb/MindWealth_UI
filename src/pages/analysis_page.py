@@ -78,7 +78,9 @@ def create_analysis_page(data_file, page_title):
     # Function filter with select all button
     st.sidebar.markdown("**Functions:**")
     if st.sidebar.button("All", key=f"select_all_functions_{page_title}", help="Select all functions", use_container_width=True):
-        st.session_state[f'selected_functions_{page_title}'] = list(df['Function'].unique())
+        all_functions = list(df['Function'].unique())
+        st.session_state[f'selected_functions_{page_title}'] = all_functions
+        st.session_state[f"functions_multiselect_{page_title}"] = all_functions
     
     # Initialize session state for functions
     if f'selected_functions_{page_title}' not in st.session_state:
@@ -105,7 +107,9 @@ def create_analysis_page(data_file, page_title):
     # Symbol filter with select all button
     st.sidebar.markdown("**Symbols:**")
     if st.sidebar.button("All", key=f"select_all_symbols_{page_title}", help="Select all symbols", use_container_width=True):
-        st.session_state[f'selected_symbols_{page_title}'] = list(df['Symbol'].unique())
+        all_symbols = list(df['Symbol'].unique())
+        st.session_state[f'selected_symbols_{page_title}'] = all_symbols
+        st.session_state[f"symbols_multiselect_{page_title}"] = all_symbols
     
     # Initialize session state for symbols
     if f'selected_symbols_{page_title}' not in st.session_state:
