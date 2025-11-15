@@ -6,6 +6,7 @@ import streamlit as st
 import sys
 from pathlib import Path
 from datetime import datetime, timedelta
+from typing import Any, Optional
 import pandas as pd
 
 # Add project root to path
@@ -131,6 +132,32 @@ def display_styled_dataframe(df, height=400, key_suffix=""):
         column_config=column_config,
         key=f"styled_df_{key_suffix}_{hash(str(df.shape))}"  # Unique key
     )
+
+
+def _coerce_to_dataframe(data: Any) -> Optional[pd.DataFrame]:
+    """Best-effort conversion of legacy signal tables to pandas DataFrame."""
+    if data is None:
+        return None
+
+    if isinstance(data, pd.DataFrame):
+        return data
+
+    try:
+        if isinstance(data, list):
+            # Empty list -> empty DataFrame
+            if not data:
+                return pd.DataFrame()
+            return pd.DataFrame(data)
+
+        if isinstance(data, dict):
+            # Dict of iterables (column mapping) or a single record
+            if any(isinstance(v, (list, tuple, set)) for v in data.values()):
+                return pd.DataFrame(data)
+            return pd.DataFrame([data])
+    except Exception:
+        return None
+
+    return None
 
 
 def render_chat_history_sidebar():
@@ -459,7 +486,7 @@ def render_chatbot_page():
                     
                     else:
                         # Fallback to legacy simple table
-                        signals_df = msg_metadata.get('signals_table')
+                        signals_df = _coerce_to_dataframe(msg_metadata.get('signals_table'))
                         if signals_df is not None and not signals_df.empty:
                             with st.expander(f"Signals Referenced ({len(signals_df)} signals)", expanded=False):
                                 # Use styled dataframe for legacy tables too
@@ -623,7 +650,7 @@ def render_chatbot_page():
                     
                     else:
                         # Fallback to legacy simple table if full tables not available
-                        signals_df = metadata.get('signals_table')
+                        signals_df = _coerce_to_dataframe(metadata.get('signals_table'))
                         if signals_df is not None and not signals_df.empty:
                             st.markdown("### 📊 Signals Referenced in Analysis")
                             st.dataframe(

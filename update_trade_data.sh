@@ -58,160 +58,97 @@ cp "$SOURCE_TRADE_DIR"/*.txt "$TARGET_TRADE_DIR"/ 2>/dev/null || echo "⚠️  N
 # This ensures we keep only the latest dated file for each base name
 echo "🧹 Cleaning up old dated files (keeping only latest for each base name)..."
 if [ -d "$TARGET_TRADE_DIR" ]; then
-    cd "$TARGET_TRADE_DIR"
+    cd "$TARGET_TRADE_DIR" || { echo "❌ Error: Cannot cd to $TARGET_TRADE_DIR"; exit 1; }
     
-    # Create a temporary file to track files to keep
-    KEEP_FILES=$(mktemp)
+    # Process CSV files: Find latest file for each base name and delete older ones
+    # Count files before cleanup
+    files_before=$(find . -maxdepth 1 -type f -name "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_*.csv" 2>/dev/null | wc -l | tr -d ' ')
     
-    # Process all CSV files matching date pattern (YYYY-MM-DD_*.csv)
-    # Exclude forward_testing.csv and latest_performance.csv from cleanup
-    for file in [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_*.csv; do
-        if [ -f "$file" ]; then
-            # Extract date and base name (e.g., 2025-11-06_new_signal.csv -> date: 2025-11-06, base: new_signal.csv)
-            filename=$(basename "$file")
-            if [[ $filename =~ ^([0-9]{4}-[0-9]{2}-[0-9]{2})_(.+)$ ]]; then
-                date_part="${BASH_REMATCH[1]}"
-                base_name="${BASH_REMATCH[2]}"
-                
-                # Skip cleanup for forward_testing.csv and latest_performance.csv
-                if [ "$base_name" = "forward_testing.csv" ] || [ "$base_name" = "latest_performance.csv" ]; then
-                    continue
-                fi
-                
-                # Check if we already have a file for this base name
-                existing_date=$(grep -F "^${base_name}:" "$KEEP_FILES" 2>/dev/null | cut -d: -f3)
-                
-                if [ -z "$existing_date" ]; then
-                    # First file for this base name, add it
-                    echo "${base_name}:${filename}:${date_part}" >> "$KEEP_FILES"
-                else
-                    # Compare dates - keep the newer one
-                    if [ "$date_part" \> "$existing_date" ]; then
-                        # New file is newer, update the entry
-                        tmp_keep=$(mktemp)
-                        grep -Fv "^${base_name}:" "$KEEP_FILES" > "$tmp_keep" 2>/dev/null || true
-                        mv "$tmp_keep" "$KEEP_FILES"
-                        echo "${base_name}:${filename}:${date_part}" >> "$KEEP_FILES"
+    # Get all unique base names from dated CSV files
+    # Use process substitution to avoid subshell issues
+    while IFS= read -r base_name; do
+        # Skip empty lines
+        [ -z "$base_name" ] && continue
+        
+        # Skip cleanup for forward_testing.csv and latest_performance.csv
+        if [ "$base_name" = "forward_testing.csv" ] || [ "$base_name" = "latest_performance.csv" ]; then
+            continue
+        fi
+        
+        # Find all files for this base name using find (more reliable than glob)
+        matching_files=$(find . -maxdepth 1 -type f -name "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_${base_name}" 2>/dev/null)
+        
+        if [ -n "$matching_files" ]; then
+            # Get the latest file (first when sorted descending by filename)
+            latest_file=$(echo "$matching_files" | sed 's|^\./||' | sort -r | head -1)
+            
+            if [ -n "$latest_file" ] && [ -f "$latest_file" ]; then
+                # Delete all other files with the same base name
+                echo "$matching_files" | sed 's|^\./||' | while IFS= read -r file; do
+                    [ -z "$file" ] && continue
+                    if [ -f "$file" ] && [ "$file" != "$latest_file" ]; then
+                        rm -f "$file" && echo "  🗑️  Deleted old file: $file (keeping $latest_file)"
                     fi
-                fi
+                done
             fi
         fi
-    done
+    done < <(find . -maxdepth 1 -type f -name "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_*.csv" 2>/dev/null | \
+        sed 's|^\./||' | \
+        sed 's/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_//' | \
+        sort -u)
     
-    # Collect CSV files to keep
-    CSV_FILES_TO_KEEP=""
-    if [ -f "$KEEP_FILES" ]; then
-        while IFS=: read -r base_name filename date_part; do
-            CSV_FILES_TO_KEEP="$CSV_FILES_TO_KEEP $filename"
-        done < "$KEEP_FILES"
-    fi
-    
-    # Delete old dated CSV files (keep only the latest for each base name)
-    # Exclude forward_testing.csv and latest_performance.csv from deletion
-    deleted_count=0
-    for file in [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_*.csv; do
-        if [ -f "$file" ]; then
-            # Extract base name to check if it should be excluded
-            filename=$(basename "$file")
-            if [[ $filename =~ ^([0-9]{4}-[0-9]{2}-[0-9]{2})_(.+)$ ]]; then
-                base_name="${BASH_REMATCH[2]}"
-                
-                # Skip deletion for forward_testing.csv and latest_performance.csv
-                if [ "$base_name" = "forward_testing.csv" ] || [ "$base_name" = "latest_performance.csv" ]; then
-                    continue
-                fi
-            fi
-            
-            # Check if this file should be kept
-            should_keep=false
-            for keep_file in $CSV_FILES_TO_KEEP; do
-                if [ "$file" = "$keep_file" ]; then
-                    should_keep=true
-                    break
-                fi
-            done
-            
-            if [ "$should_keep" = false ]; then
-                rm -f "$file"
-                deleted_count=$((deleted_count + 1))
-            fi
-        fi
-    done
+    # Count files after cleanup
+    files_after=$(find . -maxdepth 1 -type f -name "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_*.csv" 2>/dev/null | wc -l | tr -d ' ')
+    deleted_count=$((files_before - files_after))
     
     if [ $deleted_count -gt 0 ]; then
-        echo "✅ Deleted $deleted_count old dated CSV file(s)"
+        echo "✅ Deleted $deleted_count old dated CSV file(s) (kept latest for each base name)"
     else
-        echo "ℹ️  No old dated CSV files to delete"
+        echo "ℹ️  No old dated CSV files to delete (all files are already the latest)"
     fi
     
-    # Clean up temporary file and process TXT files
-    rm -f "$KEEP_FILES" "$KEEP_FILES.bak" 2>/dev/null
-    KEEP_FILES=$(mktemp)
+    # Process TXT files the same way
+    # Count files before cleanup
+    txt_files_before=$(find . -maxdepth 1 -type f -name "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_*.txt" 2>/dev/null | wc -l | tr -d ' ')
     
-    # Process all TXT files matching date pattern (YYYY-MM-DD_*.txt)
-    for file in [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_*.txt; do
-        if [ -f "$file" ]; then
-            filename=$(basename "$file")
-            if [[ $filename =~ ^([0-9]{4}-[0-9]{2}-[0-9]{2})_(.+)$ ]]; then
-                date_part="${BASH_REMATCH[1]}"
-                base_name="${BASH_REMATCH[2]}"
-                
-                # Check if we already have a file for this base name
-                existing_date=$(grep -F "^${base_name}:" "$KEEP_FILES" 2>/dev/null | cut -d: -f3)
-                
-                if [ -z "$existing_date" ]; then
-                    # First file for this base name, add it
-                    echo "${base_name}:${filename}:${date_part}" >> "$KEEP_FILES"
-                else
-                    # Compare dates - keep the newer one
-                    if [ "$date_part" \> "$existing_date" ]; then
-                        # New file is newer, update the entry
-                        tmp_keep=$(mktemp)
-                        grep -Fv "^${base_name}:" "$KEEP_FILES" > "$tmp_keep" 2>/dev/null || true
-                        mv "$tmp_keep" "$KEEP_FILES"
-                        echo "${base_name}:${filename}:${date_part}" >> "$KEEP_FILES"
-                    fi
-                fi
-            fi
-        fi
-    done
-    
-    # Collect TXT files to keep
-    TXT_FILES_TO_KEEP=""
-    if [ -f "$KEEP_FILES" ]; then
-        while IFS=: read -r base_name filename date_part; do
-            TXT_FILES_TO_KEEP="$TXT_FILES_TO_KEEP $filename"
-        done < "$KEEP_FILES"
-    fi
-    
-    # Delete old dated TXT files (keep only the latest for each base name)
-    deleted_txt_count=0
-    for file in [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_*.txt; do
-        if [ -f "$file" ]; then
-            # Check if this file should be kept
-            should_keep=false
-            for keep_file in $TXT_FILES_TO_KEEP; do
-                if [ "$file" = "$keep_file" ]; then
-                    should_keep=true
-                    break
-                fi
-            done
+    # Get all unique base names from dated TXT files
+    while IFS= read -r base_name; do
+        # Skip empty lines
+        [ -z "$base_name" ] && continue
+        
+        # Find all files for this base name using find (more reliable than glob)
+        matching_files=$(find . -maxdepth 1 -type f -name "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_${base_name}" 2>/dev/null)
+        
+        if [ -n "$matching_files" ]; then
+            # Get the latest file (first when sorted descending by filename)
+            latest_file=$(echo "$matching_files" | sed 's|^\./||' | sort -r | head -1)
             
-            if [ "$should_keep" = false ]; then
-                rm -f "$file"
-                deleted_txt_count=$((deleted_txt_count + 1))
+            if [ -n "$latest_file" ] && [ -f "$latest_file" ]; then
+                # Delete all other files with the same base name
+                echo "$matching_files" | sed 's|^\./||' | while IFS= read -r file; do
+                    [ -z "$file" ] && continue
+                    if [ -f "$file" ] && [ "$file" != "$latest_file" ]; then
+                        rm -f "$file" && echo "  🗑️  Deleted old file: $file (keeping $latest_file)"
+                    fi
+                done
             fi
         fi
-    done
+    done < <(find . -maxdepth 1 -type f -name "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_*.txt" 2>/dev/null | \
+        sed 's|^\./||' | \
+        sed 's/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_//' | \
+        sort -u)
+    
+    # Count files after cleanup
+    txt_files_after=$(find . -maxdepth 1 -type f -name "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_*.txt" 2>/dev/null | wc -l | tr -d ' ')
+    deleted_txt_count=$((txt_files_before - txt_files_after))
     
     if [ $deleted_txt_count -gt 0 ]; then
-        echo "✅ Deleted $deleted_txt_count old dated TXT file(s)"
+        echo "✅ Deleted $deleted_txt_count old dated TXT file(s) (kept latest for each base name)"
     fi
     
-    # Clean up temporary file
-    rm -f "$KEEP_FILES" "$KEEP_FILES.bak" 2>/dev/null
-    
-    cd "$SCRIPT_DIR"
+    cd "$SCRIPT_DIR" || true
+else
+    echo "⚠️  Warning: Target trade directory $TARGET_TRADE_DIR does not exist, skipping cleanup"
 fi
 
 # Copy virtual trading CSV files specifically (from trade_store root, not US subfolder)
