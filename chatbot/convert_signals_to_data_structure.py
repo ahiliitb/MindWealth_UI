@@ -87,31 +87,122 @@ def parse_exit_signal_column(value):
         return None, None
 
 
-def get_dedup_columns():
+def parse_interval_from_status(value):
     """
-    Get deduplication columns from environment variable.
+    Parse the interval from "Interval, Confirmation Status" column.
+    
+    Example: "Daily, is CONFIRMED on 2025-11-18" -> "Daily"
+    Example: "Weekly, Nullified" -> "Weekly"
+    
+    Args:
+        value: Value from "Interval, Confirmation Status" column
+    
+    Returns:
+        Interval string (e.g., "Daily", "Weekly") or None
+    """
+    try:
+        if not value or pd.isna(value):
+            return None
+        
+        # Split by comma and take the first part (interval)
+        parts = str(value).split(',')
+        if parts:
+            interval = parts[0].strip()
+            return interval if interval else None
+        
+        return None
+        
+    except Exception as e:
+        print(f"  ⚠ Error parsing interval: {e}")
+        return None
+
+
+def is_confirmed_signal(confirmation_status_value):
+    """
+    Check if the confirmation status indicates the signal is or was confirmed.
+    
+    Only accepts:
+    - "is CONFIRMED" (current confirmed status)
+    - "was CONFIRMED" (previously confirmed status)
+    
+    Rejects:
+    - "will be confirmed"
+    - "nullified"
+    - Any other status
+    
+    Args:
+        confirmation_status_value: Value from "Interval, Confirmation Status" column
+            Example: "Daily, is CONFIRMED on 2025-11-18"
+    
+    Returns:
+        True if signal is confirmed, False otherwise
+    """
+    try:
+        if not confirmation_status_value or pd.isna(confirmation_status_value):
+            return False
+        
+        status_str = str(confirmation_status_value).strip()
+        
+        # Check for "is CONFIRMED" or "was CONFIRMED" (case-insensitive)
+        # Using regex to match these patterns
+        confirmed_pattern = re.search(r'\b(is|was)\s+CONFIRMED\b', status_str, re.IGNORECASE)
+        
+        if confirmed_pattern:
+            return True
+        
+        return False
+        
+    except Exception as e:
+        print(f"  ⚠ Error checking confirmation status: {e}")
+        return False
+
+
+def get_dedup_columns(signal_type="entry"):
+    """
+    Get deduplication columns based on signal type.
+    
+    Different signal types use different deduplication keys:
+    - entry: Date, Symbol, Interval, Signal
+    - exit: Exit Signal Date, Symbol, Signal, Interval, Signal Date
+    - target: Symbol, Signal, Interval, Signal Date, Target for which Price has achieved over 90 percent of gain %, Backtested Target Exit Date, Exit Signal Date/Price[$]
+    - breadth: Date
+    
+    Args:
+        signal_type: Type of signal ('entry', 'exit', 'target', 'breadth')
     
     Returns:
         List of column names to use for deduplication
     """
-    dedup_cols_str = os.getenv("DEDUP_COLUMNS", "Date,Symbol,Close")
+    if signal_type == "entry":
+        dedup_cols_str = os.getenv("ENTRY_DEDUP_COLUMNS", "Date,Symbol,Interval,Signal")
+    elif signal_type == "exit":
+        dedup_cols_str = os.getenv("EXIT_DEDUP_COLUMNS", "Exit Signal Date,Symbol,Signal,Interval,Signal Date")
+    elif signal_type == "target":
+        dedup_cols_str = os.getenv("TARGET_DEDUP_COLUMNS", "Symbol,Signal,Interval,Signal Date,Target for which Price has achieved over 90 percent of gain %,Backtested Target Exit Date,Exit Signal Date/Price[$]")
+    elif signal_type == "breadth":
+        dedup_cols_str = os.getenv("BREADTH_DEDUP_COLUMNS", "Date")
+    else:
+        # Fallback to entry defaults
+        dedup_cols_str = os.getenv("DEDUP_COLUMNS", "Date,Symbol,Interval,Signal")
+    
     dedup_cols = [col.strip() for col in dedup_cols_str.split(",")]
     return dedup_cols
 
 
-def deduplicate_dataframe(df, dedup_columns=None):
+def deduplicate_dataframe(df, dedup_columns=None, signal_type="entry"):
     """
     Remove duplicates from dataframe based on specified columns.
     
     Args:
         df: DataFrame to deduplicate
-        dedup_columns: List of column names to check for duplicates
+        dedup_columns: List of column names to check for duplicates (if None, uses signal_type to get defaults)
+        signal_type: Type of signal ('entry', 'exit', 'target', 'breadth') - used if dedup_columns is None
         
     Returns:
         Deduplicated DataFrame
     """
     if dedup_columns is None:
-        dedup_columns = get_dedup_columns()
+        dedup_columns = get_dedup_columns(signal_type)
     
     # Only use columns that exist in the dataframe
     available_cols = [col for col in dedup_columns if col in df.columns]
@@ -235,6 +326,8 @@ def convert_signal_file_to_data_structure(
     For signals: Splits into entry/ and exit/ folders based on exit date:
         - If exit date exists → exit/ folder (completed trades)
         - If no exit yet → entry/ folder (open positions)
+        - Only entry signals with "is CONFIRMED" or "was CONFIRMED" status are processed
+        - Exit signals are always processed (they're completed trades)
     
     For targets: Checks against master CSV before storing.
     
@@ -245,9 +338,8 @@ def convert_signal_file_to_data_structure(
         overwrite: Whether to overwrite existing files
         dedup_columns: List of columns for deduplication (uses .env if None)
     """
-    if dedup_columns is None:
-        dedup_columns = get_dedup_columns()
-        print(f"ℹ Deduplication columns from .env: {', '.join(dedup_columns)}")
+    # Note: dedup_columns parameter is now handled per-row based on signal type (entry/exit/target/breadth)
+    # Each signal type uses different deduplication keys
     print("\n" + "="*80)
     print(f"CONVERTING: {input_file}")
     print("="*80 + "\n")
@@ -288,6 +380,7 @@ def convert_signal_file_to_data_structure(
     processed = 0
     skipped = 0
     duplicates_rejected = 0
+    unconfirmed_skipped = 0
     created_symbols = set()
     created_functions = set()
     signals_with_exit = 0
@@ -299,13 +392,25 @@ def convert_signal_file_to_data_structure(
         symbol_column = df.columns[0]  # "Symbol"
         function_column = df.columns[10]  # "Function"
         exit_column = None  # No exit column for targets
+        confirmation_column = None  # No confirmation column for targets
         use_current_date = True  # Use current date for targets
     else:
         # For signal files, function is first column, symbol is in column 1
         function_column = df.columns[0]  # Function name
         symbol_column = df.columns[1]
         exit_column = df.columns[2] if len(df.columns) > 2 else None
+        # Find "Interval, Confirmation Status" column (usually column 5)
+        confirmation_column = None
+        for col in df.columns:
+            if "Confirmation Status" in col or "confirmation" in col.lower():
+                confirmation_column = col
+                break
         use_current_date = False
+        
+        if confirmation_column:
+            print(f"✓ Confirmation column found: '{confirmation_column}'")
+        else:
+            print(f"⚠ Warning: Confirmation Status column not found. All signals will be processed.")
     
     for idx, row in df.iterrows():
         # For targets, check duplicate first
@@ -322,9 +427,14 @@ def convert_signal_file_to_data_structure(
         
         # Parse symbol based on file type
         if signal_type == "target":
-            # For targets, symbol is directly in the column
-            symbol = row[symbol_column]
-            signal_date = datetime.now().strftime("%Y-%m-%d")  # Use current date for targets
+            # For targets, parse the compound column "Symbol, Signal, Signal Date/Price[$]"
+            symbol_data = row[symbol_column]
+            symbol, signal_date, sig_type, price = parse_symbol_signal_column(symbol_data)
+            if not symbol or not signal_date:
+                # Fallback: try to get symbol directly if parsing fails
+                symbol = row[symbol_column] if pd.notna(row[symbol_column]) else ""
+                signal_date = datetime.now().strftime("%Y-%m-%d")
+                sig_type = ""
         else:
             # For signals, parse the compound column
             symbol_data = row[symbol_column]
@@ -341,6 +451,15 @@ def convert_signal_file_to_data_structure(
         if signal_type != "target" and exit_column and exit_column in row.index:
             exit_data = row[exit_column]
             exit_date, exit_price = parse_exit_signal_column(exit_data)
+        
+        # For entry signals (signals without exit), check confirmation status
+        # Exit signals are always processed (they're completed trades)
+        if signal_type == "signal" and not exit_date and confirmation_column and confirmation_column in row.index:
+            confirmation_status = row[confirmation_column]
+            if not is_confirmed_signal(confirmation_status):
+                unconfirmed_skipped += 1
+                skipped += 1
+                continue  # Skip unconfirmed entry signals
         
         # Determine which folder and date to use based on signal type and exit date
         if signal_type == "target":
@@ -360,6 +479,66 @@ def convert_signal_file_to_data_structure(
             signals_no_exit += 1
             row_signal_type = "entry"  # Open position
             output_base = entry_base
+        
+        # Extract columns for deduplication based on signal type
+        if signal_type == "signal":
+            # Extract Interval from "Interval, Confirmation Status" column
+            if confirmation_column and confirmation_column in row.index:
+                interval = parse_interval_from_status(row[confirmation_column])
+                row['Interval'] = interval if interval else ""
+            else:
+                row['Interval'] = ""
+            
+            # Extract Signal (Long/Short) from parsed symbol data
+            # We already parsed sig_type from parse_symbol_signal_column
+            row['Signal'] = sig_type if sig_type else ""
+            
+            # Add Symbol column for deduplication
+            row['Symbol'] = symbol if symbol else ""
+            
+            if row_signal_type == "entry":
+                # For entry signals: Date, Symbol, Interval, Signal
+                row['Date'] = signal_date if signal_date else ""
+            elif row_signal_type == "exit":
+                # For exit signals: Exit Signal Date, Symbol, Signal, Interval, Signal Date
+                row['Exit Signal Date'] = exit_date if exit_date else ""
+                row['Signal Date'] = signal_date if signal_date else ""
+        elif signal_type == "target":
+            # For targets: Symbol, Signal, Interval, Signal Date, Target for which Price has achieved over 90 percent of gain %,
+            # Backtested Target Exit Date, Exit Signal Date/Price[$]
+            
+            # Extract Symbol, Signal, and Signal Date (already parsed above)
+            row['Symbol'] = symbol if symbol else ""
+            row['Signal'] = sig_type if sig_type else ""
+            row['Signal Date'] = signal_date if signal_date else ""
+            
+            # Extract Interval (column 2 in target CSV)
+            interval_column = df.columns[2] if len(df.columns) > 2 else None
+            if interval_column and interval_column in row.index:
+                row['Interval'] = str(row[interval_column]).strip() if pd.notna(row[interval_column]) else ""
+            else:
+                row['Interval'] = ""
+            
+            # Extract "Target for which Price has achieved over 90 percent of gain %" (column 3)
+            target_column = df.columns[3] if len(df.columns) > 3 else None
+            if target_column and target_column in row.index:
+                row['Target for which Price has achieved over 90 percent of gain %'] = str(row[target_column]).strip() if pd.notna(row[target_column]) else ""
+            else:
+                row['Target for which Price has achieved over 90 percent of gain %'] = ""
+            
+            # Extract "Backtested Target Exit Date" (column 4)
+            backtested_exit_column = df.columns[4] if len(df.columns) > 4 else None
+            if backtested_exit_column and backtested_exit_column in row.index:
+                row['Backtested Target Exit Date'] = str(row[backtested_exit_column]).strip() if pd.notna(row[backtested_exit_column]) else ""
+            else:
+                row['Backtested Target Exit Date'] = ""
+            
+            # Extract "Exit Signal Date/Price[$]" (column 5)
+            exit_signal_column = df.columns[5] if len(df.columns) > 5 else None
+            if exit_signal_column and exit_signal_column in row.index:
+                row['Exit Signal Date/Price[$]'] = str(row[exit_signal_column]).strip() if pd.notna(row[exit_signal_column]) else ""
+            else:
+                row['Exit Signal Date/Price[$]'] = ""
         
         # Add SignalType column to the row
         row['SignalType'] = row_signal_type
@@ -383,9 +562,11 @@ def convert_signal_file_to_data_structure(
                 existing_df = pd.read_csv(output_file)
                 new_row_df = pd.DataFrame([row])
                 
-                # Combine and deduplicate
+                # Combine and deduplicate using the appropriate signal type
                 combined_df = pd.concat([existing_df, new_row_df], ignore_index=True)
-                combined_df = deduplicate_dataframe(combined_df, dedup_columns)
+                # Map row_signal_type to deduplication signal_type
+                dedup_signal_type = "target" if row_signal_type == "portfolio_target_achieved" else row_signal_type
+                combined_df = deduplicate_dataframe(combined_df, dedup_columns=None, signal_type=dedup_signal_type)
                 
                 # Save deduplicated data
                 combined_df.to_csv(output_file, index=False)
@@ -398,7 +579,9 @@ def convert_signal_file_to_data_structure(
             try:
                 # Save the entire row as a new CSV
                 row_df = pd.DataFrame([row])
-                row_df = deduplicate_dataframe(row_df, dedup_columns)
+                # Map row_signal_type to deduplication signal_type
+                dedup_signal_type = "target" if row_signal_type == "portfolio_target_achieved" else row_signal_type
+                row_df = deduplicate_dataframe(row_df, dedup_columns=None, signal_type=dedup_signal_type)
                 row_df.to_csv(output_file, index=False)
                 
                 # For targets, add to master CSV
@@ -418,14 +601,21 @@ def convert_signal_file_to_data_structure(
     print(f"⚠ Rows skipped: {skipped}")
     if signal_type == "target":
         print(f"🚫 Duplicates rejected: {duplicates_rejected}")
+        print(f"   → Deduplication keys: Symbol, Signal, Interval, Signal Date, Target for which Price has achieved over 90 percent of gain %, Backtested Target Exit Date, Exit Signal Date/Price[$]")
+    if signal_type == "signal" and unconfirmed_skipped > 0:
+        print(f"🚫 Unconfirmed entry signals skipped: {unconfirmed_skipped} (only 'is CONFIRMED' or 'was CONFIRMED' are processed)")
     print(f"✓ Unique assets: {len(created_symbols)}")
     print(f"✓ Unique functions: {len(created_functions)}")
     if signal_type != "target":
         print(f"\n📂 Folder Distribution:")
         print(f"   ✓ EXIT signals (completed trades): {signals_with_exit}")
         print(f"      → Stored in: chatbot/data/exit/{{asset}}/{{function}}/{{exit_date}}.csv")
-        print(f"   ✓ ENTRY signals (open positions): {signals_no_exit}")
+        print(f"      → Deduplication keys: Exit Signal Date, Symbol, Signal, Interval, Signal Date")
+        print(f"   ✓ ENTRY signals (confirmed open positions): {signals_no_exit}")
         print(f"      → Stored in: chatbot/data/entry/{{asset}}/{{function}}/{{signal_date}}.csv")
+        print(f"      → Deduplication keys: Date, Symbol, Interval, Signal")
+        if unconfirmed_skipped > 0:
+            print(f"   ⚠ Unconfirmed entry signals filtered out: {unconfirmed_skipped}")
     print(f"\n✓ Functions: {', '.join(sorted(list(created_functions)))}")
     print(f"\n✓ Assets (sample): {', '.join(sorted(list(created_symbols)[:10]))}")
     if len(created_symbols) > 10:

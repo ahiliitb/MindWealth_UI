@@ -19,7 +19,7 @@ def create_horizontal_page(data_file: str, page_title: str):
     filename = os.path.basename(data_file)
     file_date = extract_date_from_filename(filename)
     if file_date:
-        st.markdown(f"**📅 Report Date: {file_date.strftime('%B %d, %Y')}**")
+        st.markdown(f"**📅 Report Date: {file_date.strftime('%B %d, %Y')} at 5:00 PM EST**")
 
     st.markdown("---")
 

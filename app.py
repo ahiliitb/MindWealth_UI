@@ -106,7 +106,7 @@ def main():
         "Dashboard": None,
         "🤖 AI Chatbot": "chatbot",
         "Virtual Trading": "virtual_trading",
-        "AI Output": "text_files",
+        "Claude Shortlisted Signal": "text_files",
         "Trade Details": "trade_details",
     }
     
@@ -127,7 +127,7 @@ def main():
         render_chatbot_page()
     elif page == "Virtual Trading":
         create_virtual_trading_page()
-    elif page == "AI Output":
+    elif page == "Claude Shortlisted Signal":
         create_text_file_page()
     elif page == "Trade Details":
         create_trade_details_page()

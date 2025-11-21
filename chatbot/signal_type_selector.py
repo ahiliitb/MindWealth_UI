@@ -74,24 +74,24 @@ class SignalTypeSelector:
 
         prompt = f"""You are an AI assistant that selects which trading signal categories are needed to answer a question.
 
-Available signal categories:
-{options_text}
+            Available signal categories:
+            {options_text}
 
-Selection rules:
-1. Always choose at least one category from the list.
-2. Choose only the categories that are genuinely required for the user's request.
-3. If the request is broad or unclear, default to ["entry", "exit", "target"].
-4. Select "breadth" ONLY if the user asks about overall market health, sentiment, or breadth indicators.
-5. Preserve the order: entry → exit → target → breadth.
+            Selection rules:
+            1. Always choose at least one category from the list.
+            2. Choose only the categories that are genuinely required for the user's request.
+            3. If the request is broad or unclear, default to ["entry", "exit", "target"].
+            4. Select "breadth" ONLY if the user asks about overall market health, sentiment, or breadth indicators.
+            5. Preserve the order: entry → exit → target → breadth.
 
-User query: \"\"\"{user_query}\"\"\"
+            User query: \"\"\"{user_query}\"\"\"
 
-Respond strictly as a JSON object with this schema:
-{{
-  "signal_types": ["entry", "exit"],
-  "reasoning": "Short explanation of why these categories are needed."
-}}
-"""
+            Respond strictly as a JSON object with this schema:
+            {{
+            "signal_types": ["entry", "exit"],
+            "reasoning": "Short explanation of why these categories are needed."
+            }}
+        """
 
         try:
             response = self.client.chat.completions.create(

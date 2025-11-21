@@ -140,5 +140,5 @@ MAX_CHATS_DISPLAY = int(os.getenv("MAX_CHATS_DISPLAY", "10"))  # Max number of c
 
 # Data deduplication settings
 # Placeholder column names for deduplication - will be updated based on actual data
-DEDUP_COLUMNS = os.getenv("DEDUP_COLUMNS", "Date,Symbol,Close").split(",")  # Columns to use for deduplication
+DEDUP_COLUMNS = os.getenv("DEDUP_COLUMNS", "Date,Symbol,Interval,Signal").split(",")  # Columns to use for deduplication
 

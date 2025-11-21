@@ -1,5 +1,5 @@
 """
-Text file page for displaying GPT output
+Text file page for displaying Claude output
 """
 
 import streamlit as st
@@ -18,16 +18,16 @@ from ..utils.file_discovery import extract_date_from_filename
 
 def find_latest_gpt_file(base_path, extension='txt'):
     """
-    Find the most recent GPT report file (dated or non-dated).
+    Find the most recent Claude report file (dated or non-dated).
     Returns the file path and extracted date if found.
     """
     # Get directory and base filename
     dir_path = os.path.dirname(base_path)
     base_name = os.path.basename(base_path)
     
-    # Pattern to match: YYYY-MM-DD_gpt_signals_report.ext or gpt_signals_report.ext
-    pattern_txt = os.path.join(dir_path, f"*_gpt_signals_report.{extension}")
-    pattern_base = os.path.join(dir_path, f"gpt_signals_report.{extension}")
+    # Pattern to match: YYYY-MM-DD_claude_signals_report.ext or claude_signals_report.ext
+    pattern_txt = os.path.join(dir_path, f"*_claude_signals_report.{extension}")
+    pattern_base = os.path.join(dir_path, f"claude_signals_report.{extension}")
     
     # Find all matching files
     dated_files = glob.glob(pattern_txt)
@@ -52,10 +52,10 @@ def find_latest_gpt_file(base_path, extension='txt'):
 
 
 def create_text_file_page():
-    """Create a page to display GPT Signals report: text first, then cards + table"""
-    st.title("🤖 GPT Signals Report")
+    """Create a page to display Claude Signals report: text first, then cards + table"""
+    st.title("🤖 Claude Signals Report")
     
-    # Find the latest GPT files
+    # Find the latest Claude files
     txt_file, txt_date = find_latest_gpt_file(GPT_SIGNALS_REPORT_TXT_PATH_US, 'txt')
     csv_file, csv_date = find_latest_gpt_file(GPT_SIGNALS_REPORT_CSV_PATH_US, 'csv')
     
@@ -63,17 +63,17 @@ def create_text_file_page():
     report_date = csv_date if csv_date else txt_date
     if report_date:
         formatted_date = report_date.strftime('%B %d, %Y')
-        st.markdown(f"**📅 Report Date: {formatted_date}**")
+        st.markdown(f"**📅 Report Date: {formatted_date} at 5:00 PM EST**")
     
     st.markdown("---")
     
     # 1) Text output
-    st.markdown("### 📝 GPT Analysis (Text)")
+    st.markdown("### 📝 Claude Analysis (Text)")
     txt_path = txt_file if txt_file else GPT_SIGNALS_REPORT_TXT_PATH_US
     try:
         with open(txt_path, 'r', encoding='utf-8') as file:
             content = file.read()
-            st.text_area("Report Text:", content, height=600, key="gpt_signals_text")
+            st.text_area("Report Text:", content, height=600, key="claude_signals_text")
     except FileNotFoundError:
         st.warning(f"Text report not found: {txt_path}")
     except Exception as e:
@@ -82,13 +82,13 @@ def create_text_file_page():
     st.markdown("---")
     
     # 2) CSV output: show strategy cards first, then table
-    st.markdown("### 📊 GPT Signals (Cards + Table)")
+    st.markdown("### 📊 Claude Signals (Cards + Table)")
     csv_path = csv_file if csv_file else GPT_SIGNALS_REPORT_CSV_PATH_US
     if os.path.exists(csv_path):
         try:
             raw_df = pd.read_csv(csv_path)
             if raw_df.empty:
-                st.info("No data available in GPT signals CSV.")
+                st.info("No data available in Claude signals CSV.")
                 return
             
             # Try to use the same card components as other pages if expected columns exist
@@ -124,7 +124,7 @@ def create_text_file_page():
                     create_summary_cards(df_for_cards)
                     st.markdown("---")
                 
-                create_strategy_cards(df_for_cards, page_name="GPT Signals", tab_context="gpt_signals")
+                create_strategy_cards(df_for_cards, page_name="Claude Signals", tab_context="claude_signals")
                 st.markdown("---")
             else:
                 st.info("Columns required for strategy cards not found. Showing table only.")

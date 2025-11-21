@@ -75,6 +75,17 @@ def create_f_stack_page(data_file, page_title="F-Stack"):
     st.caption(
         "Review extension levels, band composition, and upcoming targets derived from the F-Stack Analyzer report."
     )
+    
+    # Extract and display date from filename
+    from ..utils.file_discovery import extract_date_from_filename
+    import os
+    filename = os.path.basename(data_file)
+    file_date = extract_date_from_filename(filename)
+    if file_date:
+        formatted_date = file_date.strftime('%B %d, %Y')
+        st.markdown(f"**📅 Report Date: {formatted_date} at 5:00 PM EST**")
+    
+    st.markdown("---")
 
     df = load_data_from_file(data_file, page_title)
 

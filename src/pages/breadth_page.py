@@ -21,7 +21,7 @@ def create_breadth_page(data_file, page_title):
     file_date = extract_date_from_filename(filename)
     if file_date:
         formatted_date = file_date.strftime('%B %d, %Y')
-        st.markdown(f"**📅 Report Date: {formatted_date}**")
+        st.markdown(f"**📅 Report Date: {formatted_date} at 5:00 PM EST**")
     
     st.markdown("---")
     
