@@ -327,7 +327,92 @@ def render_chatbot_page():
     
     # Get available tickers
     available_tickers = chatbot.get_available_tickers()
-
+    
+    # Handle pending analysis prompt (from Analyze button)
+    if 'pending_analysis_prompt' in st.session_state and st.session_state.pending_analysis_prompt:
+        analysis_prompt = st.session_state.pending_analysis_prompt
+        analysis_asset = st.session_state.pending_analysis_asset
+        analysis_from_date = st.session_state.pending_analysis_from_date
+        analysis_to_date = st.session_state.pending_analysis_to_date
+        
+        # Clear the pending prompt
+        del st.session_state.pending_analysis_prompt
+        del st.session_state.pending_analysis_asset
+        del st.session_state.pending_analysis_from_date
+        del st.session_state.pending_analysis_to_date
+        
+        # Get AI signal type selection for the analysis
+        selected_signal_types, ai_reason = chatbot.signal_type_selector.select_signal_types(
+            user_query=analysis_prompt
+        )
+        
+        # Update session state
+        st.session_state.last_signal_types = selected_signal_types
+        st.session_state.last_signal_reason = ai_reason
+        
+        # Add user message to chat history
+        st.session_state.chat_history.append({
+            'role': 'user',
+            'content': analysis_prompt,
+            'metadata': {'display_prompt': analysis_prompt}
+        })
+        
+        # Display user message immediately
+        with st.chat_message("user"):
+            st.markdown(analysis_prompt)
+        
+        # Get AI response
+        with st.chat_message("assistant"):
+            selection_text = ", ".join(get_signal_type_label(sig) for sig in selected_signal_types)
+            st.markdown(f"**AI Signal Type Selection:** {selection_text}")
+            if ai_reason:
+                st.caption(f"💡 {ai_reason}")
+            with st.spinner("🤔 Running deep dive analysis..."):
+                try:
+                    # Use smart_followup_query to send the analysis prompt
+                    response, metadata = chatbot.smart_followup_query(
+                        user_message=analysis_prompt,
+                        selected_signal_types=selected_signal_types,
+                        assets=[analysis_asset],  # Use the selected asset
+                        from_date=analysis_from_date.strftime('%Y-%m-%d'),
+                        to_date=analysis_to_date.strftime('%Y-%m-%d'),
+                        functions=None,  # Auto-extract functions
+                        auto_extract_tickers=False,  # We're providing the asset
+                        signal_type_reasoning=ai_reason
+                    )
+                    
+                    # Display response
+                    st.markdown(response)
+                    
+                    # Display full signal tables if available
+                    full_signal_tables = metadata.get('full_signal_tables', {})
+                    if full_signal_tables:
+                        st.markdown("### 📊 Complete Signal Data Used in Analysis")
+                        
+                        for signal_type, signal_df in full_signal_tables.items():
+                            if not signal_df.empty:
+                                st.markdown(f"#### {get_signal_type_label(signal_type, uppercase=True)} Signals ({len(signal_df)} records)")
+                                display_styled_dataframe(
+                                    signal_df, 
+                                    height=min(400, (len(signal_df) + 1) * 40),
+                                    key_suffix=f"analysis_{signal_type}"
+                                )
+                    
+                    # Add to history
+                    st.session_state.chat_history.append({
+                        'role': 'assistant',
+                        'content': response,
+                        'metadata': metadata
+                    })
+                    
+                except Exception as e:
+                    st.error(f"❌ Error during analysis: {str(e)}")
+                    import traceback
+                    st.code(traceback.format_exc())
+        
+        # Rerun to update chat display
+        st.rerun()
+    
     # Initialize signal type session defaults
     if 'last_signal_types' not in st.session_state:
         st.session_state.last_signal_types = DEFAULT_SIGNAL_TYPES.copy()
@@ -363,6 +448,66 @@ def render_chatbot_page():
             value=default_to_date,
             help="End date for data (default: today)"
         )
+    
+    # Asset selection for Analyze feature
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("🔍 Deep Dive Analysis")
+    
+    # Get available assets
+    if available_tickers:
+        selected_asset = st.sidebar.selectbox(
+            "Select Asset",
+            options=[""] + sorted(available_tickers),
+            help="Choose an asset for deep dive analysis",
+            key="analyze_asset_selector"
+        )
+        
+        # Analyze button
+        analyze_button = st.sidebar.button(
+            "📊 Analyze Asset",
+            use_container_width=True,
+            type="primary",
+            disabled=not selected_asset,
+            help="Run deep dive analysis on selected asset"
+        )
+        
+        if analyze_button and selected_asset:
+            # Create a new chat session for the analysis
+            new_session_id = SessionManager.create_new_session()
+            st.session_state.current_session_id = new_session_id
+            st.session_state.chatbot_engine = None  # Will be recreated with new session
+            st.session_state.chat_history = []
+            st.session_state.last_settings = None
+            
+            # Format the analysis prompt
+            analysis_prompt = f"""Please run a deep dive on {selected_asset} covering all signals recorded over the past few weeks. Use the specified entry and / or exit-date range as the filter.
+
+Retrieve and list all signals for this period, showing each function, timeframe, and direction (long/short).
+
+Identify contradictions, such as:
+
+Short signals that have already hit targets or registered exits while higher-interval (e.g., monthly-candle) functions are still showing active longs.
+
+Overlaps between exit dates on short-term signals and open longer-term entries.
+
+Assess alignment between short-term and medium-term outlooks based strictly on the verified signals in the Streamlit reports.
+
+Determine stance — whether the current setup indicates a Buy, Hold, or Sell — using only the pre-computed data and the historically observed holding periods for each function.
+
+Important:
+
+Do not fabricate or infer new signals. Use only signals verifiable from the existing Streamlit reports.
+
+Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}"""
+            
+            # Store the prompt to send after rerun
+            st.session_state.pending_analysis_prompt = analysis_prompt
+            st.session_state.pending_analysis_asset = selected_asset
+            st.session_state.pending_analysis_from_date = from_date
+            st.session_state.pending_analysis_to_date = to_date
+            st.rerun()
+    else:
+        st.sidebar.info("No assets available. Please ensure data files are present.")
     
     # Signal Type selection is AI-driven
     st.sidebar.subheader("Signal Types (auto-selected)")
