@@ -388,10 +388,10 @@ def convert_signal_file_to_data_structure(
     
     # Handle different column structures for signal vs target
     if signal_type == "target":
-        # For target_signal.csv, Symbol is column 0, Function is column 10
-        symbol_column = df.columns[0]  # "Symbol"
-        function_column = df.columns[10]  # "Function"
-        exit_column = None  # No exit column for targets
+        # For target_signal.csv: Function (col 0), Symbol/Signal/Signal Date (col 1), Interval (col 2), Exit Signal Date/Price (col 3), etc.
+        function_column = df.columns[0]  # "Function"
+        symbol_column = df.columns[1]  # "Symbol, Signal, Signal Date/Price[$]"
+        exit_column = None  # No exit column for targets (Exit Signal Date/Price[$] is in column 3, but handled separately)
         confirmation_column = None  # No confirmation column for targets
         use_current_date = True  # Use current date for targets
     else:
@@ -519,26 +519,26 @@ def convert_signal_file_to_data_structure(
             else:
                 row['Interval'] = ""
             
-            # Extract "Target for which Price has achieved over 90 percent of gain %" (column 3)
-            target_column = df.columns[3] if len(df.columns) > 3 else None
+            # Extract "Exit Signal Date/Price[$]" (column 3 in new structure)
+            exit_signal_column = df.columns[3] if len(df.columns) > 3 else None
+            if exit_signal_column and exit_signal_column in row.index:
+                row['Exit Signal Date/Price[$]'] = str(row[exit_signal_column]).strip() if pd.notna(row[exit_signal_column]) else ""
+            else:
+                row['Exit Signal Date/Price[$]'] = ""
+            
+            # Extract "Target for which Price has achieved over 90 percent of gain %" (column 4 in new structure)
+            target_column = df.columns[4] if len(df.columns) > 4 else None
             if target_column and target_column in row.index:
                 row['Target for which Price has achieved over 90 percent of gain %'] = str(row[target_column]).strip() if pd.notna(row[target_column]) else ""
             else:
                 row['Target for which Price has achieved over 90 percent of gain %'] = ""
             
-            # Extract "Backtested Target Exit Date" (column 4)
-            backtested_exit_column = df.columns[4] if len(df.columns) > 4 else None
+            # Extract "Backtested Target Exit Date" (column 5 in new structure)
+            backtested_exit_column = df.columns[5] if len(df.columns) > 5 else None
             if backtested_exit_column and backtested_exit_column in row.index:
                 row['Backtested Target Exit Date'] = str(row[backtested_exit_column]).strip() if pd.notna(row[backtested_exit_column]) else ""
             else:
                 row['Backtested Target Exit Date'] = ""
-            
-            # Extract "Exit Signal Date/Price[$]" (column 5)
-            exit_signal_column = df.columns[5] if len(df.columns) > 5 else None
-            if exit_signal_column and exit_signal_column in row.index:
-                row['Exit Signal Date/Price[$]'] = str(row[exit_signal_column]).strip() if pd.notna(row[exit_signal_column]) else ""
-            else:
-                row['Exit Signal Date/Price[$]'] = ""
         
         # Add SignalType column to the row
         row['SignalType'] = row_signal_type
