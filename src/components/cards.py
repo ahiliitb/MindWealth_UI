@@ -303,23 +303,28 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                 with col2:
                     st.markdown("**📊 Status & Performance**")
                     
-                    # Handle confirmation status
-                    if 'Interval, Confirmation Status' in raw_data:
-                        conf_status = raw_data.get('Interval, Confirmation Status', 'N/A')
-                        if ',' in str(conf_status):
-                            st.write(f"**Confirmation Status:** {str(conf_status).split(',')[1].strip()}")
+                    # Skip Confirmation Status and Current MTM for portfolio/target pages
+                    is_portfolio_page = 'portfolio' in page_name.lower() or 'target' in page_name.lower()
+                    
+                    # Handle confirmation status (skip for portfolio pages)
+                    if not is_portfolio_page:
+                        if 'Interval, Confirmation Status' in raw_data:
+                            conf_status = raw_data.get('Interval, Confirmation Status', 'N/A')
+                            if ',' in str(conf_status):
+                                st.write(f"**Confirmation Status:** {str(conf_status).split(',')[1].strip()}")
+                            else:
+                                st.write(f"**Confirmation Status:** N/A")
                         else:
                             st.write(f"**Confirmation Status:** N/A")
-                    else:
-                        st.write(f"**Confirmation Status:** N/A")
                     
-                    # Handle current status
+                    # Handle current status (skip Current MTM for portfolio pages)
                     if 'Current_Date' in row and row['Current_Date'] != 'Unknown':
                         st.write(f"**Current Date:** {row['Current_Date']}")
                         if 'Current_Price' in row and row['Current_Price'] != 0:
                             st.write(f"**Current Price:** ${row['Current_Price']:.4f}")
                     else:
-                        st.write(f"**Current MTM:** {raw_data.get('Current Mark to Market and Holding Period', 'N/A')}")
+                        if not is_portfolio_page:
+                            st.write(f"**Current MTM:** {raw_data.get('Current Mark to Market and Holding Period', 'N/A')}")
                     
                     # Handle performance metrics
                     if 'Strategy_CAGR' in row:
@@ -339,7 +344,10 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                         
                 with col3:
                     st.markdown("**⚠️ Risk & Timing**")
-                    st.write(f"**Cancellation Level/Date:** {raw_data.get('Cancellation Level/Date', 'N/A')}")
+                    
+                    # Skip Cancellation Level/Date for portfolio pages (is_portfolio_page already defined in col2)
+                    if not is_portfolio_page:
+                        st.write(f"**Cancellation Level/Date:** {raw_data.get('Cancellation Level/Date', 'N/A')}")
                         
                     # Handle target information for target signals
                     if 'Target_Price' in row and row['Target_Price'] != 0:
@@ -370,34 +378,71 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                     if 'Exit_Prices' in row and row['Exit_Prices'] != 'N/A':
                         st.write(f"**Exit Prices:** {row['Exit_Prices']}")
                     
-                    # Handle reference upmove/downmove for fractal track and outstanding signals
-                    reference_upmove = raw_data.get('Reference Upmove or Downmove start Date/Price($), end Date/Price($)', 'N/A')
-                    if reference_upmove and reference_upmove != 'N/A' and reference_upmove != 'No Information':
-                        st.write(f"**Reference Upmove/Downmove:** {reference_upmove}")
+                    # Function-specific information - get function name first
+                    function_name = str(row.get('Function', '')).upper()
                     
-                    # Handle track level/price for fractal track and outstanding signals
-                    track_level_full = raw_data.get('Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type', 'N/A')
+                    # FRACTAL TRACK specific: Reference Upmove/Downmove and Track Level/Price
+                    if 'FRACTAL' in function_name or 'TRACK' in function_name:
+                        # Handle reference upmove/downmove for fractal track - use exact column name
+                        reference_upmove = raw_data.get('Reference Upmove or Downmove start Date/Price($), end Date/Price($)', 'N/A')
+                        if reference_upmove and reference_upmove != 'N/A' and reference_upmove != 'No Information':
+                            st.write(f"**Reference Upmove or Downmove start Date/Price($), end Date/Price($):** {reference_upmove}")
+                        
+                        # Handle track level/price for fractal track - use exact column name
+                        track_level_full = raw_data.get('Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type', 'N/A')
+                        
+                        if track_level_full and track_level_full != 'N/A' and track_level_full != 'No Information':
+                            st.write(f"**Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type:** {track_level_full}")
                     
-                    if track_level_full and track_level_full != 'N/A' and track_level_full != 'No Information':
-                        # Parse the track level data (format: "23.66% (Price: 73.2031), 5.8% above, Upmove Bounce Back")
-                        try:
-                            parts = track_level_full.split(', ')
-                            if len(parts) >= 3:
-                                track_level = parts[0].strip()  # "23.66% (Price: 73.2031)"
-                                signal_type = parts[2].strip()  # "Upmove Bounce Back"
-                                
-                                st.write(f"**Track Level:** {track_level}")
-                                st.write(f"**Signal Type:** {signal_type}")
-                            else:
-                                st.write(f"**Track Level/Price:** {track_level_full}")
-                        except:
-                            st.write(f"**Track Level/Price:** {track_level_full}")
+                    # Get function name for function-specific display
+                    function_name = str(row.get('Function', '')).upper()
                     
-                    # Handle separate signal type field if it exists
+                    # Handle separate signal type field if it exists (only if not already shown in Track Level)
                     signal_type_separate = raw_data.get('Signal Type', 'N/A')
                     if signal_type_separate and signal_type_separate != 'N/A' and signal_type_separate != 'No Information':
-                        if 'Signal Type' not in track_level_full:  # Only show if not already displayed
+                        # Check if track_level_full exists and doesn't already contain Signal Type
+                        track_level_full_check = raw_data.get('Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type', 'N/A')
+                        if 'Signal Type' not in str(track_level_full_check):  # Only show if not already displayed
                             st.write(f"**Signal Type:** {signal_type_separate}")
+                    
+                    # Function-specific information display based on function type
+                    # (function_name is already defined above for FRACTAL TRACK)
+                    
+                    # SIGMA/SIGMASHELL specific: Sigmashell, Success Rate of Past Analysis [%]
+                    if 'SIGMA' in function_name or 'SIGMASHELL' in function_name:
+                        sigmashell = raw_data.get('Sigmashell, Success Rate of Past Analysis [%]', 'N/A')
+                        if sigmashell and sigmashell != 'N/A' and sigmashell != 'No Information':
+                            st.write(f"**Sigmashell, Success Rate of Past Analysis [%]:** {sigmashell}")
+                    
+                    # BASELINE DIVERGENCE specific: Divergence observed with, Signal Type
+                    if 'BASELINE' in function_name or 'DIVERGENCE' in function_name:
+                        divergence_observed = raw_data.get('Divergence observed with, Signal Type', 'N/A')
+                        if divergence_observed and divergence_observed != 'N/A' and divergence_observed != 'No Information':
+                            st.write(f"**Divergence observed with, Signal Type:** {divergence_observed}")
+                    
+                    # ALTITUDE ALPHA specific: Maxima Broken Date/Price[$]
+                    if 'ALTITUDE' in function_name or 'ALPHA' in function_name:
+                        maxima_broken = raw_data.get('Maxima Broken Date/Price[$]', 'N/A')
+                        if maxima_broken and maxima_broken != 'N/A' and maxima_broken != 'No Information':
+                            st.write(f"**Maxima Broken Date/Price[$]:** {maxima_broken}")
+                    
+                    # TRENDPULSE specific: TrendPulse Start/End and % Change in Price
+                    if 'TRENDPULSE' in function_name:
+                        # For TrendPulse, check Reference Upmove/Downmove column first (same as Fractal Track approach)
+                        # TrendPulse data is typically stored in the Reference Upmove/Downmove column
+                        reference_upmove_trendpulse = raw_data.get('Reference Upmove or Downmove start Date/Price($), end Date/Price($)', 'N/A')
+                        if reference_upmove_trendpulse and reference_upmove_trendpulse != 'N/A' and reference_upmove_trendpulse != 'No Information':
+                            st.write(f"**Reference Upmove or Downmove start Date/Price($), end Date/Price($):** {reference_upmove_trendpulse}")
+                        else:
+                            # Fallback to dedicated TrendPulse column if Reference Upmove/Downmove doesn't have data
+                            trendpulse_val = raw_data.get('TrendPulse Start/End (Date and Price($))', 'N/A')
+                            if trendpulse_val and trendpulse_val != 'N/A' and trendpulse_val != 'No Information':
+                                st.write(f"**TrendPulse Start/End (Date and Price($)):** {trendpulse_val}")
+                        
+                        # Price Change Analysis - use exact column name
+                        price_change = raw_data.get('% Change in Price on Latest Trading day vs Price on Trendpulse Breakout day/Earliest Unconfirmed Signal day/Confirmed Signal day', 'N/A')
+                        if price_change and price_change != 'N/A' and price_change != 'No Information':
+                            st.write(f"**% Change in Price on Latest Trading day vs Price on Trendpulse Breakout day/Earliest Unconfirmed Signal day/Confirmed Signal day:** {price_change}")
                     
 
 

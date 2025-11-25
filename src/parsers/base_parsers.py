@@ -28,7 +28,7 @@ def parse_signal_csv(df, function_name):
         
         # Parse win rate and number of trades
         win_rate_info = row.get('Win Rate [%], History Tested, Number of Trades', '')
-        win_rate_match = re.search(r'([0-9.]+)%.*?([0-9]+)$', str(win_rate_info))
+        win_rate_match = re.search(r'([0-9.]+)%.*?([0-9]+)', str(win_rate_info))
         
         if win_rate_match:
             try:
@@ -109,97 +109,133 @@ def parse_detailed_signal_csv(df):
     """Parse detailed signal CSV files with Function column"""
     processed_data = []
     
-    for _, row in df.iterrows():
-        # Parse symbol and signal info
-        symbol_info = row.get('Symbol, Signal, Signal Date/Price[$]', '')
-        symbol_match = re.search(r'([^,]+),\s*([^,]+),\s*([^(]+)\(Price:\s*([^)]+)\)', str(symbol_info))
-        
-        if symbol_match:
-            symbol = symbol_match.group(1).strip()
-            signal_type = symbol_match.group(2).strip()
-            signal_date = symbol_match.group(3).strip()
-            try:
-                signal_price = float(symbol_match.group(4).strip())
-            except:
-                signal_price = 0
-        else:
-            symbol, signal_type, signal_date, signal_price = "Unknown", "Unknown", "Unknown", 0
-        
-        # Parse win rate and number of trades
-        win_rate_info = row.get('Win Rate [%], History Tested, Number of Trades', '')
-        win_rate_match = re.search(r'([0-9.]+)%.*?([0-9]+)$', str(win_rate_info))
-        
-        if win_rate_match:
-            try:
-                win_rate = float(win_rate_match.group(1))
-                num_trades = int(win_rate_match.group(2))
-            except:
+    for idx, row in df.iterrows():
+        try:
+            # Parse symbol and signal info
+            symbol_info = row.get('Symbol, Signal, Signal Date/Price[$]', '')
+            symbol_match = re.search(r'([^,]+),\s*([^,]+),\s*([^(]+)\(Price:\s*([^)]+)\)', str(symbol_info))
+            
+            if symbol_match:
+                symbol = symbol_match.group(1).strip()
+                signal_type = symbol_match.group(2).strip()
+                signal_date = symbol_match.group(3).strip()
+                try:
+                    signal_price = float(symbol_match.group(4).strip())
+                except:
+                    signal_price = 0
+            else:
+                # Fallback: try to extract symbol from the beginning of the string
+                parts = str(symbol_info).split(',')
+                if len(parts) >= 1:
+                    symbol = parts[0].strip()
+                    signal_type = parts[1].strip() if len(parts) >= 2 else "Unknown"
+                    # Try to extract date and price from the string
+                    date_match = re.search(r'([0-9]{4}-[0-9]{2}-[0-9]{2})', str(symbol_info))
+                    signal_date = date_match.group(1) if date_match else "Unknown"
+                    price_match = re.search(r'Price:\s*([0-9.]+)', str(symbol_info))
+                    signal_price = float(price_match.group(1)) if price_match else 0
+                else:
+                    symbol, signal_type, signal_date, signal_price = "Unknown", "Unknown", "Unknown", 0
+            
+            # Parse win rate and number of trades
+            win_rate_info = row.get('Win Rate [%], History Tested, Number of Trades', '')
+            win_rate_match = re.search(r'([0-9.]+)%.*?([0-9]+)', str(win_rate_info))
+            
+            if win_rate_match:
+                try:
+                    win_rate = float(win_rate_match.group(1))
+                    num_trades = int(win_rate_match.group(2))
+                except:
+                    win_rate, num_trades = 0, 0
+            else:
                 win_rate, num_trades = 0, 0
-        else:
-            win_rate, num_trades = 0, 0
-        
-        # Parse CAGR
-        strategy_cagr = 0
-        buy_hold_cagr = 0
-        if 'Backtested Strategy CAGR [%]' in row:
-            try:
-                strategy_cagr = float(str(row['Backtested Strategy CAGR [%]']).replace('%', ''))
-            except:
-                strategy_cagr = 0
-        if 'CAGR of Buy and Hold [%]' in row:
-            try:
-                buy_hold_cagr = float(str(row['CAGR of Buy and Hold [%]']).replace('%', ''))
-            except:
-                buy_hold_cagr = 0
-        
-        # Parse Sharpe ratios
-        strategy_sharpe = 0
-        buy_hold_sharpe = 0
-        if 'Backtested Strategy Sharpe Ratio' in row:
-            try:
-                strategy_sharpe = float(row['Backtested Strategy Sharpe Ratio'])
-            except:
-                strategy_sharpe = 0
-        if 'Sharpe Ratio of Buy and Hold' in row:
-            try:
-                buy_hold_sharpe = float(row['Sharpe Ratio of Buy and Hold'])
-            except:
-                buy_hold_sharpe = 0
-        
-        # Parse returns
-        returns_info = row.get('Backtested Returns(Win Trades) [%] (Best/Worst/Avg)', '')
-        returns_match = re.search(r'([0-9.]+)%/([0-9.]+)%/([0-9.]+)%', str(returns_info))
-        
-        if returns_match:
-            try:
-                best_return = float(returns_match.group(1))
-                worst_return = float(returns_match.group(2))
-                avg_return = float(returns_match.group(3))
-            except:
+            
+            # Parse CAGR
+            strategy_cagr = 0
+            buy_hold_cagr = 0
+            if 'Backtested Strategy CAGR [%]' in row:
+                try:
+                    strategy_cagr = float(str(row['Backtested Strategy CAGR [%]']).replace('%', ''))
+                except:
+                    strategy_cagr = 0
+            if 'CAGR of Buy and Hold [%]' in row:
+                try:
+                    buy_hold_cagr = float(str(row['CAGR of Buy and Hold [%]']).replace('%', ''))
+                except:
+                    buy_hold_cagr = 0
+            
+            # Parse Sharpe ratios
+            strategy_sharpe = 0
+            buy_hold_sharpe = 0
+            if 'Backtested Strategy Sharpe Ratio' in row:
+                try:
+                    strategy_sharpe = float(row['Backtested Strategy Sharpe Ratio'])
+                except:
+                    strategy_sharpe = 0
+            if 'Sharpe Ratio of Buy and Hold' in row:
+                try:
+                    buy_hold_sharpe = float(row['Sharpe Ratio of Buy and Hold'])
+                except:
+                    buy_hold_sharpe = 0
+            
+            # Parse returns
+            returns_info = row.get('Backtested Returns(Win Trades) [%] (Best/Worst/Avg)', '')
+            returns_match = re.search(r'([0-9.]+)%/([0-9.]+)%/([0-9.]+)%', str(returns_info))
+            
+            if returns_match:
+                try:
+                    best_return = float(returns_match.group(1))
+                    worst_return = float(returns_match.group(2))
+                    avg_return = float(returns_match.group(3))
+                except:
+                    best_return, worst_return, avg_return = 0, 0, 0
+            else:
                 best_return, worst_return, avg_return = 0, 0, 0
-        else:
-            best_return, worst_return, avg_return = 0, 0, 0
-        
-        processed_data.append({
-            'Function': row.get('Function', 'Unknown'),
-            'Symbol': symbol,
-            'Signal_Type': signal_type,
-            'Signal_Date': signal_date,
-            'Signal_Price': signal_price,
-            'Win_Rate': win_rate,
-            'Num_Trades': num_trades,
-            'Strategy_CAGR': strategy_cagr,
-            'Buy_Hold_CAGR': buy_hold_cagr,
-            'Strategy_Sharpe': strategy_sharpe,
-            'Buy_Hold_Sharpe': buy_hold_sharpe,
-            'Best_Return': best_return,
-            'Worst_Return': worst_return,
-            'Avg_Return': avg_return,
-            'Exit_Status': row.get('Exit Signal Date/Price[$]', 'N/A'),
-            'Current_MTM': row.get('Current Mark to Market and Holding Period', 'N/A'),
-            'Confirmation_Status': row.get('Interval, Confirmation Status', 'N/A'),
-            'Raw_Data': row.to_dict()
-        })
+            
+            processed_data.append({
+                'Function': row.get('Function', 'Unknown'),
+                'Symbol': symbol,
+                'Signal_Type': signal_type,
+                'Signal_Date': signal_date,
+                'Signal_Price': signal_price,
+                'Win_Rate': win_rate,
+                'Num_Trades': num_trades,
+                'Strategy_CAGR': strategy_cagr,
+                'Buy_Hold_CAGR': buy_hold_cagr,
+                'Strategy_Sharpe': strategy_sharpe,
+                'Buy_Hold_Sharpe': buy_hold_sharpe,
+                'Best_Return': best_return,
+                'Worst_Return': worst_return,
+                'Avg_Return': avg_return,
+                'Exit_Status': row.get('Exit Signal Date/Price[$]', 'N/A'),
+                'Current_MTM': row.get('Current Mark to Market and Holding Period', 'N/A'),
+                'Confirmation_Status': row.get('Interval, Confirmation Status', 'N/A'),
+                'Raw_Data': row.to_dict()
+            })
+        except Exception as e:
+            # Log error but still add the row with default values to ensure no data is lost
+            import sys
+            print(f"Warning: Error parsing row {idx}: {e}", file=sys.stderr)
+            processed_data.append({
+                'Function': row.get('Function', 'Unknown'),
+                'Symbol': 'Unknown',
+                'Signal_Type': 'Unknown',
+                'Signal_Date': 'Unknown',
+                'Signal_Price': 0,
+                'Win_Rate': 0,
+                'Num_Trades': 0,
+                'Strategy_CAGR': 0,
+                'Buy_Hold_CAGR': 0,
+                'Strategy_Sharpe': 0,
+                'Buy_Hold_Sharpe': 0,
+                'Best_Return': 0,
+                'Worst_Return': 0,
+                'Avg_Return': 0,
+                'Exit_Status': row.get('Exit Signal Date/Price[$]', 'N/A'),
+                'Current_MTM': row.get('Current Mark to Market and Holding Period', 'N/A'),
+                'Confirmation_Status': row.get('Interval, Confirmation Status', 'N/A'),
+                'Raw_Data': row.to_dict()
+            })
     
     return pd.DataFrame(processed_data)
 

@@ -29,8 +29,18 @@ def parse_symbol_signal_column(value):
     Returns: ("ETH-USD", "2025-10-10", "Long", 4369.1436)
     """
     try:
+        # Handle NaN, None, or empty values
+        if value is None or pd.isna(value):
+            return None, None, None, None
+        
+        # Convert to string to handle any numeric types
+        value_str = str(value).strip()
+        
+        if not value_str or value_str.lower() in ['nan', 'none', '']:
+            return None, None, None, None
+        
         # Split by comma
-        parts = [p.strip() for p in value.split(',')]
+        parts = [p.strip() for p in value_str.split(',')]
         
         if len(parts) < 3:
             return None, None, None, None
@@ -68,16 +78,26 @@ def parse_exit_signal_column(value):
     Returns: (exit_date, exit_price) or (None, None) if no exit
     """
     try:
+        # Handle NaN, None, or empty values
+        if value is None or pd.isna(value):
+            return None, None
+        
+        # Convert to string to handle any numeric types
+        value_str = str(value).strip()
+        
+        if not value_str or value_str.lower() in ['nan', 'none', '']:
+            return None, None
+        
         # Check if no exit
-        if not value or "No Exit Yet" in str(value):
+        if "No Exit Yet" in value_str:
             return None, None
         
         # Extract date using regex
-        date_match = re.search(r'(\d{4}-\d{2}-\d{2})', str(value))
+        date_match = re.search(r'(\d{4}-\d{2}-\d{2})', value_str)
         exit_date = date_match.group(1) if date_match else None
         
         # Extract price using regex
-        price_match = re.search(r'Price:\s*([\d.]+)', str(value))
+        price_match = re.search(r'Price:\s*([\d.]+)', value_str)
         exit_price = float(price_match.group(1)) if price_match else None
         
         return exit_date, exit_price
@@ -388,10 +408,17 @@ def convert_signal_file_to_data_structure(
     
     # Handle different column structures for signal vs target
     if signal_type == "target":
-        # For target_signal.csv: Function (col 0), Symbol/Signal/Signal Date (col 1), Interval (col 2), Exit Signal Date/Price (col 3), etc.
+        # For target_signal.csv column order:
+        # col 0: Function
+        # col 1: "Symbol, Signal, Signal Date/Price[$]"
+        # col 2: Interval
+        # col 3: Exit Signal Date/Price[$]
+        # col 4: Target for which Price has achieved over 90 percent of gain %
+        # col 5: Backtested Target Exit Date
+        # col 6+: Other columns...
         function_column = df.columns[0]  # "Function"
         symbol_column = df.columns[1]  # "Symbol, Signal, Signal Date/Price[$]"
-        exit_column = None  # No exit column for targets (Exit Signal Date/Price[$] is in column 3, but handled separately)
+        exit_column = None  # Exit Signal Date/Price[$] is in column 3, but handled separately in target parsing section
         confirmation_column = None  # No confirmation column for targets
         use_current_date = True  # Use current date for targets
     else:
@@ -429,16 +456,29 @@ def convert_signal_file_to_data_structure(
         if signal_type == "target":
             # For targets, parse the compound column "Symbol, Signal, Signal Date/Price[$]"
             symbol_data = row[symbol_column]
-            symbol, signal_date, sig_type, price = parse_symbol_signal_column(symbol_data)
+            if pd.notna(symbol_data):
+                symbol, signal_date, sig_type, price = parse_symbol_signal_column(symbol_data)
+            else:
+                symbol, signal_date, sig_type, price = None, None, None, None
+            
             if not symbol or not signal_date:
                 # Fallback: try to get symbol directly if parsing fails
-                symbol = row[symbol_column] if pd.notna(row[symbol_column]) else ""
+                if pd.notna(row[symbol_column]):
+                    symbol = str(row[symbol_column]).strip()
+                    # Try to extract symbol from the beginning if it's a compound field
+                    if ',' in symbol:
+                        symbol = symbol.split(',')[0].strip()
+                else:
+                    symbol = ""
                 signal_date = datetime.now().strftime("%Y-%m-%d")
                 sig_type = ""
         else:
             # For signals, parse the compound column
             symbol_data = row[symbol_column]
-            symbol, signal_date, sig_type, price = parse_symbol_signal_column(symbol_data)
+            if pd.notna(symbol_data):
+                symbol, signal_date, sig_type, price = parse_symbol_signal_column(symbol_data)
+            else:
+                symbol, signal_date, sig_type, price = None, None, None, None
         
         if not symbol or not signal_date:
             skipped += 1
@@ -450,16 +490,24 @@ def convert_signal_file_to_data_structure(
         
         if signal_type != "target" and exit_column and exit_column in row.index:
             exit_data = row[exit_column]
-            exit_date, exit_price = parse_exit_signal_column(exit_data)
+            if pd.notna(exit_data):
+                exit_date, exit_price = parse_exit_signal_column(exit_data)
+            else:
+                exit_date, exit_price = None, None
         
         # For entry signals (signals without exit), check confirmation status
         # Exit signals are always processed (they're completed trades)
         if signal_type == "signal" and not exit_date and confirmation_column and confirmation_column in row.index:
             confirmation_status = row[confirmation_column]
-            if not is_confirmed_signal(confirmation_status):
+            if pd.notna(confirmation_status) and not is_confirmed_signal(confirmation_status):
                 unconfirmed_skipped += 1
                 skipped += 1
                 continue  # Skip unconfirmed entry signals
+            elif pd.isna(confirmation_status):
+                # If confirmation status is NaN, skip the signal (can't verify it's confirmed)
+                unconfirmed_skipped += 1
+                skipped += 1
+                continue
         
         # Determine which folder and date to use based on signal type and exit date
         if signal_type == "target":
@@ -504,36 +552,45 @@ def convert_signal_file_to_data_structure(
                 row['Exit Signal Date'] = exit_date if exit_date else ""
                 row['Signal Date'] = signal_date if signal_date else ""
         elif signal_type == "target":
-            # For targets: Symbol, Signal, Interval, Signal Date, Target for which Price has achieved over 90 percent of gain %,
+            # For targets deduplication: Symbol, Signal, Interval, Signal Date, 
+            # Target for which Price has achieved over 90 percent of gain %,
             # Backtested Target Exit Date, Exit Signal Date/Price[$]
+            # 
+            # Column order in target_signal.csv:
+            # col 0: Function
+            # col 1: "Symbol, Signal, Signal Date/Price[$]"
+            # col 2: Interval
+            # col 3: Exit Signal Date/Price[$]
+            # col 4: Target for which Price has achieved over 90 percent of gain %
+            # col 5: Backtested Target Exit Date
             
-            # Extract Symbol, Signal, and Signal Date (already parsed above)
+            # Extract Symbol, Signal, and Signal Date (already parsed above from col 1)
             row['Symbol'] = symbol if symbol else ""
             row['Signal'] = sig_type if sig_type else ""
             row['Signal Date'] = signal_date if signal_date else ""
             
-            # Extract Interval (column 2 in target CSV)
+            # Extract Interval (column 2)
             interval_column = df.columns[2] if len(df.columns) > 2 else None
             if interval_column and interval_column in row.index:
                 row['Interval'] = str(row[interval_column]).strip() if pd.notna(row[interval_column]) else ""
             else:
                 row['Interval'] = ""
             
-            # Extract "Exit Signal Date/Price[$]" (column 3 in new structure)
+            # Extract "Exit Signal Date/Price[$]" (column 3)
             exit_signal_column = df.columns[3] if len(df.columns) > 3 else None
             if exit_signal_column and exit_signal_column in row.index:
                 row['Exit Signal Date/Price[$]'] = str(row[exit_signal_column]).strip() if pd.notna(row[exit_signal_column]) else ""
             else:
                 row['Exit Signal Date/Price[$]'] = ""
             
-            # Extract "Target for which Price has achieved over 90 percent of gain %" (column 4 in new structure)
+            # Extract "Target for which Price has achieved over 90 percent of gain %" (column 4)
             target_column = df.columns[4] if len(df.columns) > 4 else None
             if target_column and target_column in row.index:
                 row['Target for which Price has achieved over 90 percent of gain %'] = str(row[target_column]).strip() if pd.notna(row[target_column]) else ""
             else:
                 row['Target for which Price has achieved over 90 percent of gain %'] = ""
             
-            # Extract "Backtested Target Exit Date" (column 5 in new structure)
+            # Extract "Backtested Target Exit Date" (column 5)
             backtested_exit_column = df.columns[5] if len(df.columns) > 5 else None
             if backtested_exit_column and backtested_exit_column in row.index:
                 row['Backtested Target Exit Date'] = str(row[backtested_exit_column]).strip() if pd.notna(row[backtested_exit_column]) else ""
@@ -630,6 +687,232 @@ def convert_signal_file_to_data_structure(
     print("="*80 + "\n")
     
     return processed, skipped, created_symbols
+
+
+def get_latest_price_from_stock_data(symbol, stock_data_dir="trade_store/stock_data"):
+    """
+    Get the latest (most recent) price from stock_data CSV file.
+    
+    Args:
+        symbol: Stock symbol (e.g., "TSLA", "WMT", "^NDX")
+        stock_data_dir: Directory containing stock_data CSV files
+    
+    Returns:
+        Tuple of (latest_date, latest_price) or (None, None) if not found
+    """
+    try:
+        stock_data_path = Path(stock_data_dir) / f"{symbol}.csv"
+        
+        if not stock_data_path.exists():
+            return None, None
+        
+        # Read the stock data CSV
+        stock_df = pd.read_csv(stock_data_path)
+        
+        if stock_df.empty or 'Close' not in stock_df.columns:
+            return None, None
+        
+        # Get the most recent row (last row, assuming data is sorted by date)
+        latest_row = stock_df.iloc[-1]
+        latest_date = latest_row.get('Date', None)
+        latest_price = latest_row.get('Close', None)
+        
+        if pd.isna(latest_date) or pd.isna(latest_price):
+            return None, None
+        
+        return str(latest_date), float(latest_price)
+        
+    except Exception as e:
+        print(f"  ⚠ Error reading stock data for {symbol}: {e}")
+        return None, None
+
+
+def parse_current_price_column(value):
+    """
+    Parse the "Current Trading Date/Price[$], Current Price vs Signal" column.
+    
+    Example: "2025-11-18 (Price: 401.25), 0.0% below"
+    Returns: (date, price, percentage_change) or (None, None, None)
+    """
+    try:
+        if not value or pd.isna(value):
+            return None, None, None
+        
+        value_str = str(value).strip()
+        
+        # Extract date
+        date_match = re.search(r'(\d{4}-\d{2}-\d{2})', value_str)
+        date = date_match.group(1) if date_match else None
+        
+        # Extract price
+        price_match = re.search(r'Price:\s*([\d.]+)', value_str)
+        price = float(price_match.group(1)) if price_match else None
+        
+        # Extract percentage change (optional)
+        pct_match = re.search(r'([\d.]+)%\s*(above|below)', value_str)
+        percentage = None
+        if pct_match:
+            pct_value = float(pct_match.group(1))
+            direction = pct_match.group(2)
+            percentage = pct_value if direction == 'above' else -pct_value
+        
+        return date, price, percentage
+        
+    except Exception as e:
+        print(f"  ⚠ Error parsing current price: {value} - {e}")
+        return None, None, None
+
+
+def calculate_price_change_percentage(current_price, signal_price):
+    """
+    Calculate percentage change between current price and signal price.
+    
+    Args:
+        current_price: Current/live price
+        signal_price: Original signal price
+    
+    Returns:
+        Percentage change string (e.g., "5.2% above" or "3.1% below")
+    """
+    if not current_price or not signal_price or signal_price == 0:
+        return "0.0% below"
+    
+    try:
+        change_pct = ((current_price - signal_price) / signal_price) * 100
+        
+        if change_pct >= 0:
+            return f"{change_pct:.2f}% above"
+        else:
+            return f"{abs(change_pct):.2f}% below"
+            
+    except Exception as e:
+        return "0.0% below"
+
+
+def update_current_prices_in_data_files(data_base_dir="chatbot/data", stock_data_dir="trade_store/stock_data"):
+    """
+    Update current prices in all chatbot data files using live prices from stock_data.
+    
+    This function:
+    1. Scans all CSV files in chatbot/data (entry, exit, portfolio_target_achieved)
+    2. For each file, extracts symbols and updates "Current Trading Date/Price[$], Current Price vs Signal" column
+    3. Uses the latest price from stock_data CSV files
+    
+    Args:
+        data_base_dir: Base directory for chatbot data (default: chatbot/data)
+        stock_data_dir: Directory containing stock_data CSV files (default: trade_store/stock_data)
+    """
+    print("\n" + "="*80)
+    print("UPDATING CURRENT PRICES FROM LIVE STOCK DATA")
+    print("="*80 + "\n")
+    
+    data_base = Path(data_base_dir)
+    stock_data_base = Path(stock_data_dir)
+    
+    if not data_base.exists():
+        print(f"✗ Data directory not found: {data_base_dir}")
+        return
+    
+    if not stock_data_base.exists():
+        print(f"✗ Stock data directory not found: {stock_data_dir}")
+        return
+    
+    # Find all CSV files in entry, exit, and portfolio_target_achieved folders
+    csv_files = []
+    for folder in ['entry', 'exit', 'portfolio_target_achieved']:
+        folder_path = data_base / folder
+        if folder_path.exists():
+            csv_files.extend(folder_path.rglob("*.csv"))
+    
+    if not csv_files:
+        print("⚠ No CSV files found to update")
+        return
+    
+    print(f"✓ Found {len(csv_files)} CSV files to process")
+    
+    updated_count = 0
+    skipped_count = 0
+    price_not_found_count = 0
+    
+    current_price_column = "Current Trading Date/Price[$], Current Price vs Signal"
+    
+    for csv_file in csv_files:
+        try:
+            # Skip master files
+            if csv_file.name == "all_targets.csv":
+                continue
+            
+            df = pd.read_csv(csv_file)
+            
+            if df.empty:
+                continue
+            
+            # Check if the current price column exists
+            if current_price_column not in df.columns:
+                skipped_count += 1
+                continue
+            
+            file_updated = False
+            
+            # Process each row
+            for idx, row in df.iterrows():
+                # Extract symbol from the row
+                symbol = None
+                
+                # Try to get symbol from different possible columns
+                if 'Symbol' in row.index:
+                    symbol_val = row['Symbol']
+                    if pd.notna(symbol_val):
+                        symbol = str(symbol_val).strip()
+                elif 'Symbol, Signal, Signal Date/Price[$]' in row.index:
+                    symbol_data = row['Symbol, Signal, Signal Date/Price[$]']
+                    if pd.notna(symbol_data):
+                        symbol, _, _, _ = parse_symbol_signal_column(symbol_data)
+                
+                if not symbol or pd.isna(symbol) or symbol == '':
+                    continue
+                
+                # Get latest price from stock_data
+                latest_date, latest_price = get_latest_price_from_stock_data(symbol, stock_data_dir)
+                
+                if latest_date is None or latest_price is None:
+                    price_not_found_count += 1
+                    continue
+                
+                # Extract signal price to calculate percentage change
+                signal_price = None
+                if 'Symbol, Signal, Signal Date/Price[$]' in row.index:
+                    symbol_data = row['Symbol, Signal, Signal Date/Price[$]']
+                    if pd.notna(symbol_data):
+                        _, _, _, signal_price = parse_symbol_signal_column(symbol_data)
+                
+                # Calculate percentage change
+                if signal_price:
+                    price_change_str = calculate_price_change_percentage(latest_price, signal_price)
+                else:
+                    price_change_str = "0.0% below"
+                
+                # Update the current price column
+                new_current_price_value = f"{latest_date} (Price: {latest_price:.4f}), {price_change_str}"
+                df.at[idx, current_price_column] = new_current_price_value
+                file_updated = True
+            
+            # Save updated file if changes were made
+            if file_updated:
+                df.to_csv(csv_file, index=False)
+                updated_count += 1
+                
+        except Exception as e:
+            print(f"  ⚠ Error updating {csv_file}: {e}")
+            skipped_count += 1
+    
+    print("\n" + "-"*80)
+    print("PRICE UPDATE SUMMARY")
+    print("-"*80)
+    print(f"✓ Files updated: {updated_count}")
+    print(f"⚠ Files skipped: {skipped_count}")
+    print(f"⚠ Symbols with no price data: {price_not_found_count}")
+    print("="*80 + "\n")
 
 
 def convert_breadth_report(
@@ -799,6 +1082,15 @@ def main():
     else:
         print(f"⚠ File not found: breadth.csv (tried exact match and date_name.csv pattern)")
     
+    # Update current prices in all chatbot data files using live prices from stock_data
+    print("\n" + "-" * 80)
+    print("Updating current prices from live stock data")
+    print("-" * 80)
+    update_current_prices_in_data_files(
+        data_base_dir="chatbot/data",
+        stock_data_dir="trade_store/stock_data"
+    )
+    
     print("\n" + "="*80)
     print("✓ Conversion Complete!")
     print("="*80)
@@ -809,6 +1101,7 @@ def main():
     print("  4. BREADTH: chatbot/data/breadth/YYYY-MM-DD.csv")
     print("\nMaster files:")
     print("  - chatbot/data/portfolio_target_achieved/all_targets.csv (portfolio target deduplication)")
+    print("\n✓ Current prices updated from live stock data")
     print()
 
 

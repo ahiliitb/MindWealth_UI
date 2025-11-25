@@ -48,14 +48,21 @@ def create_analysis_page(data_file, page_title):
     
     # Add interval and position type extraction
     def extract_interval(row):
+        # First check if Interval is already in the row (from parser)
+        if 'Interval' in row.index and pd.notna(row.get('Interval')):
+            interval = str(row['Interval']).strip()
+            if interval and interval != 'Unknown':
+                return interval
+        
+        # Fallback to Raw_Data
         interval_info = row['Raw_Data'].get('Interval, Confirmation Status', 'Unknown')
-        if interval_info == 'Unknown':
+        if interval_info == 'Unknown' or not interval_info:
             interval_info = row['Raw_Data'].get('Interval', 'Unknown')
         if ',' in str(interval_info):
             interval = str(interval_info).split(',')[0].strip()
         else:
             interval = str(interval_info).strip()
-        return interval
+        return interval if interval else 'Unknown'
     
     def extract_position_type(row):
         signal_info = row['Raw_Data'].get('Symbol, Signal, Signal Date/Price[$]', '')
@@ -143,14 +150,14 @@ def create_analysis_page(data_file, page_title):
         key=f"win_rate_slider_{page_title}"
     )
     
-    # Sharpe ratio filter
+    # Sharpe ratio filter - allow negative values by default
     min_sharpe_ratio = st.sidebar.slider(
         "Min Strategy Sharpe Ratio",
-        min_value=0.0,
+        min_value=-5.0,
         max_value=5.0,
-        value=0.0,
+        value=-5.0,
         step=0.1,
-        help="Minimum Strategy Sharpe Ratio threshold",
+        help="Minimum Strategy Sharpe Ratio threshold (default: -5.0 to show all)",
         key=f"sharpe_ratio_slider_{page_title}"
     )
     
@@ -193,9 +200,23 @@ def create_analysis_page(data_file, page_title):
             if csv_data:
                 original_df = pd.DataFrame(csv_data)
                 
+                # Columns to exclude from detail table (only show in strategy cards if not "No Information")
+                columns_to_exclude = [
+                    'Sigmashell, Success Rate of Past Analysis [%]',
+                    'Divergence observed with, Signal Type',
+                    'Maxima Broken Date/Price[$]',
+                    'Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type',
+                    'Reference Upmove or Downmove start Date/Price($), end Date/Price($)',
+                    '% Change in Price on Latest Trading day vs Price on Trendpulse Breakout day/Earliest Unconfirmed Signal day/Confirmed Signal day'
+                ]
+                
+                # Remove excluded columns if they exist
+                columns_to_display = [col for col in original_df.columns if col not in columns_to_exclude]
+                filtered_original_df = original_df[columns_to_display]
+                
                 # Display with better formatting
                 st.dataframe(
-                    original_df,
+                    filtered_original_df,
                     use_container_width=True,
                     height=600,
                     column_config={
@@ -203,73 +224,138 @@ def create_analysis_page(data_file, page_title):
                             col,
                             width="medium",
                             help=f"Original CSV column: {col}"
-                        ) for col in original_df.columns
+                        ) for col in filtered_original_df.columns
                     }
                 )
         
         # ALL Intervals
         with interval_tab1:
-            filtered_df = position_df[
-                (position_df['Function'].isin(functions)) &
-                (position_df['Symbol'].isin(symbols)) &
-                (position_df['Win_Rate'] >= min_win_rate) &
-                (position_df['Strategy_Sharpe'] >= min_sharpe_ratio)
-            ]
+            # Fill NaN values with 0 to ensure they pass filters
+            position_df_filtered = position_df.copy()
+            position_df_filtered['Win_Rate'] = position_df_filtered['Win_Rate'].fillna(0)
+            position_df_filtered['Strategy_Sharpe'] = position_df_filtered['Strategy_Sharpe'].fillna(0)
+            
+            # Ensure Symbol column doesn't have NaN values that would cause filtering issues
+            if 'Symbol' in position_df_filtered.columns:
+                position_df_filtered['Symbol'] = position_df_filtered['Symbol'].fillna('')
+            
+            # Build filter conditions
+            filter_mask = pd.Series([True] * len(position_df_filtered), index=position_df_filtered.index)
+            
+            # Function filter
+            if 'Function' in position_df_filtered.columns:
+                filter_mask = filter_mask & position_df_filtered['Function'].isin(functions)
+            
+            # Symbol filter
+            if 'Symbol' in position_df_filtered.columns:
+                filter_mask = filter_mask & position_df_filtered['Symbol'].isin(symbols)
+            
+            # Win Rate filter
+            if 'Win_Rate' in position_df_filtered.columns:
+                filter_mask = filter_mask & (position_df_filtered['Win_Rate'] >= min_win_rate)
+            
+            # Strategy Sharpe filter - handle NaN and ensure comparison works correctly
+            if 'Strategy_Sharpe' in position_df_filtered.columns:
+                # Replace NaN with a very negative number so they pass the filter if min_sharpe_ratio allows
+                sharpe_series = position_df_filtered['Strategy_Sharpe'].fillna(-999)
+                filter_mask = filter_mask & (sharpe_series >= min_sharpe_ratio)
+            
+            filtered_df = position_df_filtered[filter_mask]
             display_tab_content(filtered_df, "ALL Intervals")
         
         # Daily
         with interval_tab2:
-            daily_df = position_df[position_df['Interval'].str.contains('Daily', case=False, na=False)]
-            filtered_df = daily_df[
-                (daily_df['Function'].isin(functions)) &
-                (daily_df['Symbol'].isin(symbols)) &
-                (daily_df['Win_Rate'] >= min_win_rate) &
-                (daily_df['Strategy_Sharpe'] >= min_sharpe_ratio)
-            ]
+            daily_df = position_df[position_df['Interval'].str.contains('Daily', case=False, na=False)].copy()
+            daily_df['Win_Rate'] = daily_df['Win_Rate'].fillna(0)
+            daily_df['Strategy_Sharpe'] = daily_df['Strategy_Sharpe'].fillna(0)
+            if 'Symbol' in daily_df.columns:
+                daily_df['Symbol'] = daily_df['Symbol'].fillna('')
+            filter_mask = pd.Series([True] * len(daily_df), index=daily_df.index)
+            if 'Function' in daily_df.columns:
+                filter_mask = filter_mask & daily_df['Function'].isin(functions)
+            if 'Symbol' in daily_df.columns:
+                filter_mask = filter_mask & daily_df['Symbol'].isin(symbols)
+            if 'Win_Rate' in daily_df.columns:
+                filter_mask = filter_mask & (daily_df['Win_Rate'] >= min_win_rate)
+            if 'Strategy_Sharpe' in daily_df.columns:
+                filter_mask = filter_mask & (daily_df['Strategy_Sharpe'] >= min_sharpe_ratio)
+            filtered_df = daily_df[filter_mask]
             display_tab_content(filtered_df, "Daily")
         
         # Weekly
         with interval_tab3:
-            weekly_df = position_df[position_df['Interval'].str.contains('Weekly', case=False, na=False)]
-            filtered_df = weekly_df[
-                (weekly_df['Function'].isin(functions)) &
-                (weekly_df['Symbol'].isin(symbols)) &
-                (weekly_df['Win_Rate'] >= min_win_rate) &
-                (weekly_df['Strategy_Sharpe'] >= min_sharpe_ratio)
-            ]
+            weekly_df = position_df[position_df['Interval'].str.contains('Weekly', case=False, na=False)].copy()
+            weekly_df['Win_Rate'] = weekly_df['Win_Rate'].fillna(0)
+            weekly_df['Strategy_Sharpe'] = weekly_df['Strategy_Sharpe'].fillna(0)
+            if 'Symbol' in weekly_df.columns:
+                weekly_df['Symbol'] = weekly_df['Symbol'].fillna('')
+            filter_mask = pd.Series([True] * len(weekly_df), index=weekly_df.index)
+            if 'Function' in weekly_df.columns:
+                filter_mask = filter_mask & weekly_df['Function'].isin(functions)
+            if 'Symbol' in weekly_df.columns:
+                filter_mask = filter_mask & weekly_df['Symbol'].isin(symbols)
+            if 'Win_Rate' in weekly_df.columns:
+                filter_mask = filter_mask & (weekly_df['Win_Rate'] >= min_win_rate)
+            if 'Strategy_Sharpe' in weekly_df.columns:
+                filter_mask = filter_mask & (weekly_df['Strategy_Sharpe'] >= min_sharpe_ratio)
+            filtered_df = weekly_df[filter_mask]
             display_tab_content(filtered_df, "Weekly")
         
         # Monthly
         with interval_tab4:
-            monthly_df = position_df[position_df['Interval'].str.contains('Monthly', case=False, na=False)]
-            filtered_df = monthly_df[
-                (monthly_df['Function'].isin(functions)) &
-                (monthly_df['Symbol'].isin(symbols)) &
-                (monthly_df['Win_Rate'] >= min_win_rate) &
-                (monthly_df['Strategy_Sharpe'] >= min_sharpe_ratio)
-            ]
+            monthly_df = position_df[position_df['Interval'].str.contains('Monthly', case=False, na=False)].copy()
+            monthly_df['Win_Rate'] = monthly_df['Win_Rate'].fillna(0)
+            monthly_df['Strategy_Sharpe'] = monthly_df['Strategy_Sharpe'].fillna(0)
+            if 'Symbol' in monthly_df.columns:
+                monthly_df['Symbol'] = monthly_df['Symbol'].fillna('')
+            filter_mask = pd.Series([True] * len(monthly_df), index=monthly_df.index)
+            if 'Function' in monthly_df.columns:
+                filter_mask = filter_mask & monthly_df['Function'].isin(functions)
+            if 'Symbol' in monthly_df.columns:
+                filter_mask = filter_mask & monthly_df['Symbol'].isin(symbols)
+            if 'Win_Rate' in monthly_df.columns:
+                filter_mask = filter_mask & (monthly_df['Win_Rate'] >= min_win_rate)
+            if 'Strategy_Sharpe' in monthly_df.columns:
+                filter_mask = filter_mask & (monthly_df['Strategy_Sharpe'] >= min_sharpe_ratio)
+            filtered_df = monthly_df[filter_mask]
             display_tab_content(filtered_df, "Monthly")
         
         # Quarterly
         with interval_tab5:
-            quarterly_df = position_df[position_df['Interval'].str.contains('Quarterly', case=False, na=False)]
-            filtered_df = quarterly_df[
-                (quarterly_df['Function'].isin(functions)) &
-                (quarterly_df['Symbol'].isin(symbols)) &
-                (quarterly_df['Win_Rate'] >= min_win_rate) &
-                (quarterly_df['Strategy_Sharpe'] >= min_sharpe_ratio)
-            ]
+            quarterly_df = position_df[position_df['Interval'].str.contains('Quarterly', case=False, na=False)].copy()
+            quarterly_df['Win_Rate'] = quarterly_df['Win_Rate'].fillna(0)
+            quarterly_df['Strategy_Sharpe'] = quarterly_df['Strategy_Sharpe'].fillna(0)
+            if 'Symbol' in quarterly_df.columns:
+                quarterly_df['Symbol'] = quarterly_df['Symbol'].fillna('')
+            filter_mask = pd.Series([True] * len(quarterly_df), index=quarterly_df.index)
+            if 'Function' in quarterly_df.columns:
+                filter_mask = filter_mask & quarterly_df['Function'].isin(functions)
+            if 'Symbol' in quarterly_df.columns:
+                filter_mask = filter_mask & quarterly_df['Symbol'].isin(symbols)
+            if 'Win_Rate' in quarterly_df.columns:
+                filter_mask = filter_mask & (quarterly_df['Win_Rate'] >= min_win_rate)
+            if 'Strategy_Sharpe' in quarterly_df.columns:
+                filter_mask = filter_mask & (quarterly_df['Strategy_Sharpe'] >= min_sharpe_ratio)
+            filtered_df = quarterly_df[filter_mask]
             display_tab_content(filtered_df, "Quarterly")
         
         # Yearly
         with interval_tab6:
-            yearly_df = position_df[position_df['Interval'].str.contains('Yearly', case=False, na=False)]
-            filtered_df = yearly_df[
-                (yearly_df['Function'].isin(functions)) &
-                (yearly_df['Symbol'].isin(symbols)) &
-                (yearly_df['Win_Rate'] >= min_win_rate) &
-                (yearly_df['Strategy_Sharpe'] >= min_sharpe_ratio)
-            ]
+            yearly_df = position_df[position_df['Interval'].str.contains('Yearly', case=False, na=False)].copy()
+            yearly_df['Win_Rate'] = yearly_df['Win_Rate'].fillna(0)
+            yearly_df['Strategy_Sharpe'] = yearly_df['Strategy_Sharpe'].fillna(0)
+            if 'Symbol' in yearly_df.columns:
+                yearly_df['Symbol'] = yearly_df['Symbol'].fillna('')
+            filter_mask = pd.Series([True] * len(yearly_df), index=yearly_df.index)
+            if 'Function' in yearly_df.columns:
+                filter_mask = filter_mask & yearly_df['Function'].isin(functions)
+            if 'Symbol' in yearly_df.columns:
+                filter_mask = filter_mask & yearly_df['Symbol'].isin(symbols)
+            if 'Win_Rate' in yearly_df.columns:
+                filter_mask = filter_mask & (yearly_df['Win_Rate'] >= min_win_rate)
+            if 'Strategy_Sharpe' in yearly_df.columns:
+                filter_mask = filter_mask & (yearly_df['Strategy_Sharpe'] >= min_sharpe_ratio)
+            filtered_df = yearly_df[filter_mask]
             display_tab_content(filtered_df, "Yearly")
     
     # ALL Positions Tab
