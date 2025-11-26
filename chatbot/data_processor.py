@@ -523,13 +523,14 @@ class DataProcessor:
         """
         Load breadth report data for the specified date range.
         Breadth data is market-wide (not asset-specific).
+        Loads ALL breadth files within the date range and combines them.
         
         Args:
             from_date: Start date in YYYY-MM-DD format
             to_date: End date in YYYY-MM-DD format
             
         Returns:
-            DataFrame with breadth data or None if no data found
+            Combined DataFrame with breadth data from all dates in range, or None if no data found
         """
         if not self.breadth_data_dir.exists():
             logger.warning(f"Breadth directory not found: {self.breadth_data_dir}")
@@ -547,6 +548,13 @@ class DataProcessor:
         for file_path in csv_files:
             file_date = file_path.stem  # filename without extension (YYYY-MM-DD)
             
+            # Validate date format
+            try:
+                datetime.strptime(file_date, DATE_FORMAT)
+            except ValueError:
+                logger.warning(f"Invalid date format in breadth file: {file_path.name}")
+                continue
+            
             # Check if date is within range
             include_file = True
             if from_date and file_date < from_date:
@@ -561,23 +569,86 @@ class DataProcessor:
             logger.info(f"No breadth reports found in date range {from_date} to {to_date}")
             return None
         
-        # Sort by date (most recent first)
-        files_to_load.sort(reverse=True)
+        # Sort by date (oldest first to maintain chronological order)
+        files_to_load.sort()
         
-        # Load the most recent breadth report
-        most_recent_date, most_recent_file = files_to_load[0]
+        # Load ALL breadth reports in the date range and combine them
+        all_dfs = []
+        for file_date, file_path in files_to_load:
+            try:
+                df = pd.read_csv(file_path, encoding=CSV_ENCODING)
+                
+                # Check if DataFrame is empty
+                if df.empty:
+                    logger.warning(f"Empty breadth CSV file: {file_path}")
+                    continue
+                
+                # Ensure Date column is set to the file date
+                df['Date'] = file_date
+                df['DataType'] = 'breadth'
+                
+                all_dfs.append(df)
+                logger.debug(f"Loaded breadth report from {file_date}: {len(df)} functions")
+                
+            except UnicodeDecodeError as e:
+                logger.error(f"Encoding error loading breadth file {file_path}: {e}. Trying with errors='ignore'")
+                try:
+                    df = pd.read_csv(file_path, encoding=CSV_ENCODING, encoding_errors='ignore')
+                    if not df.empty:
+                        df['Date'] = file_date
+                        df['DataType'] = 'breadth'
+                        all_dfs.append(df)
+                except Exception as e2:
+                    logger.error(f"Failed to load breadth file {file_path} even with encoding errors='ignore': {e2}")
+                    continue
+            except Exception as e:
+                logger.error(f"Error loading breadth report {file_path}: {e}")
+                import traceback
+                logger.error(traceback.format_exc())
+                continue
         
-        try:
-            df = pd.read_csv(most_recent_file, encoding=CSV_ENCODING)
-            df['Date'] = most_recent_date
-            df['DataType'] = 'breadth'
-            
-            logger.info(f"Loaded breadth report from {most_recent_date}: {len(df)} functions")
-            return df
-            
-        except Exception as e:
-            logger.error(f"Error loading breadth report {most_recent_file}: {e}")
+        if not all_dfs:
+            logger.warning(f"No valid breadth data loaded for date range {from_date} to {to_date}")
             return None
+        
+        # Combine all dataframes
+        combined_df = pd.concat(all_dfs, ignore_index=True)
+        
+        # Convert Date column to datetime if present
+        if 'Date' in combined_df.columns:
+            combined_df['Date'] = pd.to_datetime(combined_df['Date'])
+        
+        # Sort by date (oldest first to show chronological progression)
+        if 'Date' in combined_df.columns:
+            combined_df = combined_df.sort_values('Date', ascending=True)
+        
+        # Limit rows if too many - but keep all dates in range
+        if len(combined_df) > MAX_ROWS_TO_INCLUDE:
+            logger.info(f"Breadth data has {len(combined_df)} rows (limit: {MAX_ROWS_TO_INCLUDE}), but keeping all dates in range")
+            # Still apply limit but try to keep representative data across all dates
+            # For breadth, we want to keep all dates, so we might need to sample within each date
+            if 'Date' in combined_df.columns:
+                # Group by date and sample if needed
+                dates = combined_df['Date'].unique()
+                rows_per_date = MAX_ROWS_TO_INCLUDE // len(dates) if len(dates) > 0 else MAX_ROWS_TO_INCLUDE
+                sampled_dfs = []
+                for date in dates:
+                    date_df = combined_df[combined_df['Date'] == date]
+                    if len(date_df) > rows_per_date:
+                        # Sample rows for this date
+                        sampled_df = date_df.sample(n=rows_per_date, random_state=42)
+                        sampled_dfs.append(sampled_df)
+                    else:
+                        sampled_dfs.append(date_df)
+                combined_df = pd.concat(sampled_dfs, ignore_index=True)
+            else:
+                # No date column, just take first MAX_ROWS_TO_INCLUDE
+                combined_df = combined_df.head(MAX_ROWS_TO_INCLUDE)
+        
+        logger.info(f"Loaded and combined breadth reports from {len(files_to_load)} dates: {len(combined_df)} total rows")
+        logger.info(f"Date range: {combined_df['Date'].min()} to {combined_df['Date'].max()}")
+        
+        return combined_df
     
     def estimate_token_count(self, text: str) -> int:
         """

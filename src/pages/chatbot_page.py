@@ -413,6 +413,170 @@ def render_chatbot_page():
         # Rerun to update chat display
         st.rerun()
     
+    # Handle pending signal insights prompt (from Signal Insights button)
+    if 'pending_insights_prompt' in st.session_state and st.session_state.pending_insights_prompt:
+        insights_prompt = st.session_state.pending_insights_prompt
+        insights_from_date = st.session_state.pending_insights_from_date
+        insights_to_date = st.session_state.pending_insights_to_date
+        
+        # Clear the pending prompt
+        del st.session_state.pending_insights_prompt
+        del st.session_state.pending_insights_from_date
+        del st.session_state.pending_insights_to_date
+        
+        # For signal insights, we only want entry signals
+        selected_signal_types = ["entry"]  # Only entry signals
+        ai_reason = "Signal Insights focuses on high-quality entry signals across all assets"
+        
+        # Update session state
+        st.session_state.last_signal_types = selected_signal_types
+        st.session_state.last_signal_reason = ai_reason
+        
+        # Add user message to chat history
+        st.session_state.chat_history.append({
+            'role': 'user',
+            'content': insights_prompt,
+            'metadata': {'display_prompt': insights_prompt}
+        })
+        
+        # Display user message immediately
+        with st.chat_message("user"):
+            st.markdown(insights_prompt)
+        
+        # Get AI response
+        with st.chat_message("assistant"):
+            selection_text = ", ".join(get_signal_type_label(sig) for sig in selected_signal_types)
+            st.markdown(f"**AI Signal Type Selection:** {selection_text}")
+            st.caption(f"💡 {ai_reason}")
+            with st.spinner("🔍 Finding high-quality entry signals..."):
+                try:
+                    # Use smart_followup_query to send the insights prompt
+                    # No specific assets - analyze all assets
+                    response, metadata = chatbot.smart_followup_query(
+                        user_message=insights_prompt,
+                        selected_signal_types=selected_signal_types,
+                        assets=None,  # Analyze all assets
+                        from_date=insights_from_date.strftime('%Y-%m-%d'),
+                        to_date=insights_to_date.strftime('%Y-%m-%d'),
+                        functions=None,  # Auto-extract functions
+                        auto_extract_tickers=True,  # Auto-extract from all assets
+                        signal_type_reasoning=ai_reason
+                    )
+                    
+                    # Display response
+                    st.markdown(response)
+                    
+                    # Display full signal tables if available
+                    full_signal_tables = metadata.get('full_signal_tables', {})
+                    if full_signal_tables:
+                        st.markdown("### 📊 Complete Signal Data Used in Analysis")
+                        
+                        for signal_type, signal_df in full_signal_tables.items():
+                            if not signal_df.empty:
+                                st.markdown(f"#### {get_signal_type_label(signal_type, uppercase=True)} Signals ({len(signal_df)} records)")
+                                display_styled_dataframe(
+                                    signal_df, 
+                                    height=min(400, (len(signal_df) + 1) * 40),
+                                    key_suffix=f"insights_{signal_type}"
+                                )
+                    
+                    # Add to history
+                    st.session_state.chat_history.append({
+                        'role': 'assistant',
+                        'content': response,
+                        'metadata': metadata
+                    })
+                    
+                except Exception as e:
+                    st.error(f"❌ Error during signal insights analysis: {str(e)}")
+                    import traceback
+                    st.code(traceback.format_exc())
+        
+        # Rerun to update chat display
+        st.rerun()
+    
+    # Handle pending breadth analysis prompt (from Breadth Analysis button)
+    if 'pending_breadth_prompt' in st.session_state and st.session_state.pending_breadth_prompt:
+        breadth_prompt = st.session_state.pending_breadth_prompt
+        breadth_from_date = st.session_state.pending_breadth_from_date
+        breadth_to_date = st.session_state.pending_breadth_to_date
+        
+        # Clear the pending prompt
+        del st.session_state.pending_breadth_prompt
+        del st.session_state.pending_breadth_from_date
+        del st.session_state.pending_breadth_to_date
+        
+        # For breadth analysis, we only want breadth signals
+        selected_signal_types = ["breadth"]  # Only breadth signals
+        ai_reason = "Breadth Analysis focuses on market breadth data and percentile analysis"
+        
+        # Update session state
+        st.session_state.last_signal_types = selected_signal_types
+        st.session_state.last_signal_reason = ai_reason
+        
+        # Add user message to chat history
+        st.session_state.chat_history.append({
+            'role': 'user',
+            'content': breadth_prompt,
+            'metadata': {'display_prompt': breadth_prompt}
+        })
+        
+        # Display user message immediately
+        with st.chat_message("user"):
+            st.markdown(breadth_prompt)
+        
+        # Get AI response
+        with st.chat_message("assistant"):
+            selection_text = ", ".join(get_signal_type_label(sig) for sig in selected_signal_types)
+            st.markdown(f"**AI Signal Type Selection:** {selection_text}")
+            st.caption(f"💡 {ai_reason}")
+            with st.spinner("📊 Analyzing breadth data and calculating percentiles..."):
+                try:
+                    # Use smart_followup_query to send the breadth analysis prompt
+                    # No specific assets - analyze all breadth data
+                    response, metadata = chatbot.smart_followup_query(
+                        user_message=breadth_prompt,
+                        selected_signal_types=selected_signal_types,
+                        assets=None,  # Breadth is market-wide, no specific assets
+                        from_date=breadth_from_date.strftime('%Y-%m-%d'),
+                        to_date=breadth_to_date.strftime('%Y-%m-%d'),
+                        functions=None,  # Auto-extract functions
+                        auto_extract_tickers=False,  # Breadth doesn't use tickers
+                        signal_type_reasoning=ai_reason
+                    )
+                    
+                    # Display response
+                    st.markdown(response)
+                    
+                    # Display full signal tables if available
+                    full_signal_tables = metadata.get('full_signal_tables', {})
+                    if full_signal_tables:
+                        st.markdown("### 📊 Complete Breadth Data Used in Analysis")
+                        
+                        for signal_type, signal_df in full_signal_tables.items():
+                            if not signal_df.empty:
+                                st.markdown(f"#### {get_signal_type_label(signal_type, uppercase=True)} Data ({len(signal_df)} records)")
+                                display_styled_dataframe(
+                                    signal_df, 
+                                    height=min(400, (len(signal_df) + 1) * 40),
+                                    key_suffix=f"breadth_{signal_type}"
+                                )
+                    
+                    # Add to history
+                    st.session_state.chat_history.append({
+                        'role': 'assistant',
+                        'content': response,
+                        'metadata': metadata
+                    })
+                    
+                except Exception as e:
+                    st.error(f"❌ Error during breadth analysis: {str(e)}")
+                    import traceback
+                    st.code(traceback.format_exc())
+        
+        # Rerun to update chat display
+        st.rerun()
+    
     # Initialize signal type session defaults
     if 'last_signal_types' not in st.session_state:
         st.session_state.last_signal_types = DEFAULT_SIGNAL_TYPES.copy()
@@ -508,6 +672,130 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
             st.rerun()
     else:
         st.sidebar.info("No assets available. Please ensure data files are present.")
+    
+    # Signal Insights button (works across all assets, entry signals only)
+    # This button is always visible, regardless of asset availability
+    st.sidebar.markdown("---")
+    signal_insights_button = st.sidebar.button(
+        "💡 Signal Insights",
+        use_container_width=True,
+        type="secondary",
+        help="Find high-quality entry signals across all assets (Sharpe >1.5, Win Rate >80%, recent horizontal breaks)"
+    )
+    
+    if signal_insights_button:
+        # Create a new chat session for the signal insights
+        new_session_id = SessionManager.create_new_session()
+        st.session_state.current_session_id = new_session_id
+        st.session_state.chatbot_engine = None  # Will be recreated with new session
+        st.session_state.chat_history = []
+        st.session_state.last_settings = None
+        
+        # Format the signal insights prompt
+        signal_insights_prompt = f"""Please analyze all ENTRY signals across all assets and functions for the date range {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}.
+
+Focus on identifying high-quality signals that meet the following criteria:
+
+1. **High Sharpe Ratio**: Strategy Sharpe Ratio > 1.5
+2. **High Win Rate (Full History)**: Win Rate > 80% based on full historical testing
+3. **High Win Rate (Recent)**: Win Rate > 85% for past 4 years
+4. **Recent Horizontal Breaks**: Signals with horizontal resistance/support breaks that occurred within the last 2-3 years
+
+For each qualifying signal, provide:
+- Asset symbol
+- Function name
+- Timeframe/Interval
+- Signal direction (Long/Short)
+- Signal date
+- Strategy Sharpe Ratio
+- Win Rate (full history and recent if available)
+- Details about horizontal breaks if applicable
+- Any other relevant performance metrics
+
+Organize the results by:
+1. Highest Sharpe Ratio signals first
+2. Then by highest Win Rate
+3. Highlight any signals with recent horizontal breaks
+
+Important:
+- Only analyze ENTRY signals (signals that are still open, no exit yet)
+- Use only signals verifiable from the existing Streamlit reports
+- Do not fabricate or infer new signals
+- Focus on signals that meet ALL or MOST of the quality criteria above
+
+Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}"""
+        
+        # Store the prompt to send after rerun
+        st.session_state.pending_insights_prompt = signal_insights_prompt
+        st.session_state.pending_insights_from_date = from_date
+        st.session_state.pending_insights_to_date = to_date
+        st.rerun()
+    
+    # Breadth Analysis button (analyzes breadth reports and identifies percentile days)
+    st.sidebar.markdown("---")
+    breadth_analysis_button = st.sidebar.button(
+        "📊 Breadth Analysis",
+        use_container_width=True,
+        type="secondary",
+        help="Analyze breadth reports and identify top/bottom 10% days (days with breadth values in bottom 10 percentile)"
+    )
+    
+    if breadth_analysis_button:
+        # Create a new chat session for the breadth analysis
+        new_session_id = SessionManager.create_new_session()
+        st.session_state.current_session_id = new_session_id
+        st.session_state.chatbot_engine = None  # Will be recreated with new session
+        st.session_state.chat_history = []
+        st.session_state.last_settings = None
+        
+        # Format the breadth analysis prompt
+        breadth_analysis_prompt = f"""Please analyze breadth report data for the date range {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}.
+
+Focus on the following analysis:
+
+1. **Breadth Ratios Analysis**:
+   - Identify days when breadth values are in the **bottom 10 percentile** (bottom 10% days)
+   - Identify days when breadth values are in the **top 10 percentile** (top 10% days)
+   - Calculate and show the breadth ratios for these extreme days
+
+2. **Breadth Signal Type Analysis**:
+   - Analyze breadth signal types and their patterns
+   - Identify any SBI (Signal Breadth Indicator) type signals if present
+   - Show how breadth values correlate with market conditions
+
+3. **Percentile Analysis**:
+   - For each day in the date range, determine if the breadth value falls below the 10th percentile
+   - List all days where breadth value is under 10 percentile
+   - Provide context on what these low breadth days indicate (e.g., oversold conditions, potential reversal signals)
+
+4. **Summary**:
+   - Total number of days analyzed
+   - Number of days in bottom 10 percentile
+   - Number of days in top 10 percentile
+   - Average breadth value for the period
+   - Trends and patterns observed
+
+For each identified day (especially bottom 10 percentile days), provide:
+- Date
+- Breadth value
+- Percentile rank
+- Function/indicator name
+- Any relevant signal type or SBI information
+- Context about what this breadth level means
+
+Important:
+- Use only breadth data verifiable from the existing Streamlit reports
+- Focus on breadth signal type and SBI type if available
+- Calculate percentiles based on historical breadth data
+- Do not fabricate or infer data
+
+Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}"""
+        
+        # Store the prompt to send after rerun
+        st.session_state.pending_breadth_prompt = breadth_analysis_prompt
+        st.session_state.pending_breadth_from_date = from_date
+        st.session_state.pending_breadth_to_date = to_date
+        st.rerun()
     
     # Signal Type selection is AI-driven
     st.sidebar.subheader("Signal Types (auto-selected)")

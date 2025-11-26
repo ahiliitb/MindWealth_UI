@@ -1,0 +1,281 @@
+# Comprehensive Signal Analysis Report
+
+These signals represent the best opportunities based on our comprehensive filtering criteria, with emphasis on confirmed signals showing strong historical performance, positive CAGR differences, and favorable risk-reward profiles.
+
+|||GILD,Daily,OSCILLATOR DELTA,2025-09-18,Long|CVS,Daily,FRACTAL TRACK,2025-11-12,Long|SOXX,Daily,BAND MATRIX,2025-11-18,Long|BABA,Daily,FRACTAL TRACK,2025-11-18,Long|AMD,Daily,FRACTAL TRACK,2025-11-11,Long|BRK-B,Weekly,TRENDPULSE,2025-11-16,Long|^GSPC,Monthly,TRENDPULSE,2025-10-31,Long|KWEB,Monthly,FRACTAL TRACK,2025-11-18,Short|META,Monthly,FRACTAL TRACK,2025-11-18,Short|ETH-USD,Monthly,FRACTAL TRACK,2025-10-31,Short|||
+
+## Key Insights and Recommendations
+
+1. **Multiple confirmation signals increase conviction** - Several assets (GILD, CVS) appear with strong signals from multiple functions and timeframes, significantly increasing confidence in these predictions.
+
+2. **Sector strength in semiconductors and technology** - Multiple semiconductor-related signals (SOXX, AMD) and technology companies show exceptional potential, suggesting sector-wide momentum.
+
+3. **Balanced timeframes for optimal entry** - The best signals come from various timeframes (daily, weekly, monthly), providing opportunities for both short and long-term traders.
+
+4. **Strong performance metrics across signals** - All selected signals demonstrate win rates above 80%, with many exceeding 95%, and positive CAGR differences compared to buy-and-hold strategies.
+
+5. **Timely signals for immediate action** - Most signals are very recent (within the last 30 days), providing optimal entry points with minimal missed upside potential.
+
+6. **Balanced long/short exposure** - While most top signals are long positions, the inclusion of high-conviction short signals (KWEB, META, ETH-USD) provides portfolio hedging opportunities.
+
+7. **Risk management considerations** - For each signal, appropriate stop-loss levels have been identified based on technical support/resistance levels, with take-profit targets derived from historical performance metrics.
+
+## BUY SIGNALS
+
+**GILD (Gilead Sciences)**
+- Function: OSCILLATOR DELTA
+- Signal Date: 2025-09-18
+- Signal: Long
+- Interval: Daily
+- Signal Price: 113.62
+- Win Rate: 84.85%
+- CAGR: Strategy (9.0%) - Buy and Hold (10.38%) = -1.38%
+- Latest Performance Win Rate: 68.21%
+- Average Return of Historical Winning Trades: 6.91%
+- Max single trade loss historically: 11.58%
+- Potential Upside (from signal price): 3.36% to 10.0% (immediate targets)
+- Target Exit Date (Farthest./Earliest./Avg.): 2026-04-27/2025-09-22/2025-11-23
+- Current Price, Current Mark to Market: 127.18, +11.93%
+- Target Prices: 117.44/121.47/124.98/120.90/121.08/140.44 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- Support Levels: No Recent Minima/56.97/104.58/96.42 based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2
+- Recommended Stop Loss: 104.58 (approximately 17.8% below current price, at the F-Stack 1 support level)
+- Recommended Take Profit: 140.44 (F-Stack 2 target, representing approximately 10.4% upside from current price)
+- Is Signal timely?: Signal has already achieved 11.93% gain, exceeding initial targets but still has potential to reach F-Stack 2 target
+- P/E Ratio: 19.18
+- PEG Ratio: 0.23
+
+**Notes**: This signal is strongly confirmed by multiple other functions (FRACTAL TRACK, TRENDPULSE) for the same asset, significantly increasing conviction. The extremely low PEG ratio (0.23) suggests substantial growth potential despite the recent price appreciation. Multiple technical targets remain above the current price.
+
+**CVS (CVS Health Corporation)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-11-12
+- Signal: Long
+- Interval: Daily
+- Signal Price: 80.26
+- Win Rate: 100.0%
+- CAGR: Strategy (30.08%) - Buy and Hold (5.19%) = 24.9%
+- Latest Performance Win Rate: 94.1%
+- Average Return of Historical Winning Trades: 13.11%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 0.51% to 13.11% (immediate targets)
+- Target Exit Date (Farthest/Earliest/Avg): 2026-10-03/2025-12-13/2026-03-09
+- Current Price, Current Mark to Market: 77.94, -2.89%
+- Target Prices: 80.67/90.78/96.25/106.05/116.37/144.35 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- Support Levels: 76.69/58.43/76.24/70.38 based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2
+- Recommended Stop Loss: 76.24 (approximately 2.2% below current price, at the F-Stack 1 support level)
+- Recommended Take Profit: 96.25 (Exit Rule target, representing approximately 23.5% upside)
+- Is Signal timely?: Yes, only 2.89% below signal price, with significant upside potential remaining
+- P/E Ratio: 205.11
+- PEG Ratio: 0.68
+
+**Notes**: This signal is highly compelling with a perfect 100% win rate across 33 historical trades. The CAGR difference of 24.9% indicates substantial outperformance compared to buy-and-hold. The current price is slightly below the signal price, offering a good entry opportunity. The PEG ratio of 0.68 suggests the stock may be undervalued despite its high P/E ratio. The signal is further confirmed by a TRENDPULSE Monthly signal.
+
+**SOXX (Semiconductor ETF)**
+- Function: BAND MATRIX
+- Signal Date: 2025-11-18
+- Signal: Long
+- Interval: Daily
+- Signal Price: 276.98
+- Win Rate: 75.0%
+- CAGR: Strategy (21.14%) - Buy and Hold (22.72%) = -1.58%
+- Latest Performance Win Rate: 82.61%
+- Average Return of Historical Winning Trades: 18.92%
+- Max single trade loss historically: 16.66%
+- Potential Upside (from signal price): 13.5% to 18.9% (immediate targets)
+- Target Exit Date (Farthest./Earliest./Avg.): 2027-06-01/2026-01-14/2026-05-12
+- Current Price, Current Mark to Market: 276.98, 0% 
+- Target Prices: 314.31/329.38/321.85/No Horizontal Resistance/320.84/358.50 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- Support Levels: 271.99/110.47/267.23/244.40/No F-Track Level/No F-Track Level based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2
+- Recommended Stop Loss: 267.00 (approximately 3.6% below current price, at the nearest F-Stack support level)
+- Recommended Take Profit: 329.38 (target based on average historical winning trades, representing 18.9% upside)
+- Is Signal timely?: Yes, signal is fresh with no missed upside potential
+- P/E Ratio: 34.93
+- PEG Ratio: N/A
+
+**Notes**: The semiconductor sector shows continued strength with multiple technical confirmations. SOXX offers a balanced risk-reward profile with modest downside risk (3.6% to nearest support) versus significant upside potential (13-19%). The BAND MATRIX function has demonstrated excellent reliability with 82.61% forward testing success rate.
+
+**BABA (Alibaba)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-11-18
+- Signal: Long
+- Interval: Daily
+- Signal Price: 159.72
+- Win Rate: 100.0%
+- CAGR: Strategy (14.96%) - Buy and Hold (-10.23%) = 25.19%
+- Latest Performance Win Rate: 94.1%
+- Average Return of Historical Winning Trades: 42.02%
+- Max single trade loss historically: -0.0%
+- Potential Upside (from signal price): 36.4% to 297.4% (range of targets)
+- Target Exit Date (Farthest./Earliest./Avg.): 2029-12-07/2026-01-22/2027-05-26
+- Current Price, Current Mark to Market: 159.72, 0%
+- Target Prices: 157.22/226.83/217.88/No Horizontal Resistance/433.82/634.70 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- Support Levels: 153.8/67.49/No F-Stack Support/No F-Stack Support/160.89/168.56 based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2
+- Recommended Stop Loss: 153.80 (approximately 3.7% below current price, at the nearest support level)
+- Recommended Take Profit: 226.83 (target based on average historical winning trades, representing 42% upside)
+- Is Signal timely?: Yes, price is just 2.62% above the track level, indicating optimal entry point
+- P/E Ratio: 18.38
+- PEG Ratio: 2.37
+
+**Notes**: BABA shows exceptional potential with a perfect 100% win rate historically and a massive CAGR advantage over buy-and-hold (+25.19%). The price is close to the 38.2% Fibonacci level, providing an ideal entry point with minimal downside risk. The long-term upside potential is substantial (42% average historical return), making this one of the strongest signals.
+
+**AMD (Advanced Micro Devices)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-11-11
+- Signal: Long
+- Interval: Daily
+- Signal Price: 237.52
+- Win Rate: 100.0%
+- CAGR: Strategy (45.33%) - Buy and Hold (25.18%) = 20.14%
+- Latest Performance Win Rate: 94.1%
+- Average Return of Historical Winning Trades: 34.16%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 1.67% to 34.16% (immediate targets)
+- Target Exit Date (Farthest./Earliest./Avg.): 2027-06-17/2025-11-21/2026-05-02
+- Current Price, Current Mark to Market: 230.29, -3.04%
+- Target Prices: 241.49/318.66/308.24/273.85/307.96 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- Support Levels: 233.54/72.65/219.06/187.34 based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2
+- Recommended Stop Loss: 219.06 (F-Stack 1 support, approximately 4.9% below current price)
+- Recommended Take Profit: 273.85 (F-Stack 1 target, representing approximately 18.9% upside from current price)
+- Is Signal timely?: Yes, price has pulled back 3.04% since signal, providing a potentially better entry point
+- P/E Ratio: 126.53
+- PEG Ratio: 0.53
+
+**Notes**: This signal is confirmed with a perfect historical win rate of 100%. The recent pullback provides a better entry point than the original signal. The extremely low PEG ratio (0.53) suggests strong growth potential despite the high P/E ratio. The 38.2% Fibonacci level is holding as support, reinforcing the technical validity of this signal.
+
+**BRK-B (Berkshire Hathaway)**
+- Function: TRENDPULSE
+- Signal Date: 2025-11-16
+- Signal: Long
+- Interval: Weekly
+- Signal Price: 508.94
+- Win Rate: 96.77%
+- CAGR: Strategy (16.54%) - Buy and Hold (12.36%) = 4.19%
+- Latest Performance Win Rate: 95.35%
+- Average Return of Historical Winning Trades: 5.43%
+- Max single trade loss historically: 13.62%
+- Potential Upside (from signal price): 4.45% to 5.43% (immediate targets)
+- Target Exit Date (Farthest./Earliest./Avg.): 2026-09-14/2025-12-20/2026-02-10
+- Current Price, Current Mark to Market: 504.37, -0.9%
+- Target Prices: 531.59/536.58/518.18/No Horizontal Resistance/630.85/709.94 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- Support Levels: 477.54/268.08/491.88/449.77 based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2
+- Recommended Stop Loss: 477.54 (approximately 5.3% below current price, at the recent minima support level)
+- Recommended Take Profit: 536.58 (average gain target, representing approximately 6.4% upside)
+- Is Signal timely?: Yes, only 0.9% below signal price with significant upside potential
+- P/E Ratio: 16.10
+- PEG Ratio: N/A
+
+**Notes**: This signal is confirmed and shows exceptional win rate (96.77%). Multiple signals for BRK-B (Weekly TRENDPULSE and Monthly FRACTAL TRACK) provide strong confirmation. The positive CAGR difference (4.19%) indicates strategy outperformance versus buy-and-hold approach.
+
+**^GSPC (S&P 500)**
+- Function: TRENDPULSE
+- Signal Date: 2025-10-31
+- Signal: Long
+- Interval: Monthly
+- Signal Price: 6840.20
+- Win Rate: 95.45%
+- CAGR: Strategy (9.69%) - Buy and Hold (6.68%) = 3.01%
+- Latest Performance Win Rate: 92.45%
+- Average Return of Historical Winning Trades: 10.39%
+- Max single trade loss historically: 7.48%
+- Potential Upside (from signal price): 8.9% to 42.8% (range of targets)
+- Target Exit Date (Farthest./Earliest./Avg.): 2028-05-01/2026-03-06/2026-08-06
+- Current Price, Current Mark to Market: 6617.31, -3.26%
+- Target Prices: 7449.66/7550.89/8982.34/No Horizontal Resistance/6767.72/9765.56 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- Support Levels: 5569.06/4128.70/6316.23/5433.20/No F-Track Level/No F-Track Level based on Recent Minima/Horizontal/F-Stack 1/F-Stack 2
+- Recommended Stop Loss: 6316.00 (approximately 4.6% below current price, at the nearest F-Stack support level)
+- Recommended Take Profit: 7550.89 (target based on average historical winning trades, representing 14.1% upside from current price)
+- Is Signal timely?: Yes, recent pullback offers improved entry point with 3.26% discount from signal price
+- P/E Ratio: N/A
+- PEG Ratio: N/A
+
+**Notes**: This monthly TRENDPULSE signal on the S&P 500 carries exceptional reliability with a 95.45% historical win rate. The recent pullback provides an attractive entry point with significant upside potential. Monthly signals tend to capture larger market moves, and the strategy has outperformed buy-and-hold by 3.01% CAGR over 20 years of testing.
+
+## SELL SIGNALS
+
+**KWEB (KraneShares CSI China Internet ETF)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-11-18
+- Signal: Short
+- Interval: Monthly
+- Signal Price: 37.84
+- Win Rate: 88.89%
+- CAGR: Strategy (21.98%) - Buy and Hold (5.3%) = 16.68%
+- Latest Performance Win Rate: 85.71%
+- Average Return of Historical Winning Trades: 6.98%
+- Max single trade loss historically: 19.33%
+- Potential Downside (from signal price): 8.09% to 32.8% (based on target levels)
+- Target Exit Date (Farthest./Earliest./Avg.): 2026-02-21/2025-12-18/2026-01-09
+- Current Price, Current Mark to Market: 37.84, 0% (brand new signal)
+- Target Prices: 34.78/35.20/25.43/24.51/No F-Stack Support/No F-Stack Support based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- Support Levels: 42.01/24.51/No F-Stack Support/No F-Stack Support based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2
+- Recommended Stop Loss: 39.39 (approximately 4% above entry price, based on F-Track Level at 38.47 plus a small buffer)
+- Recommended Take Profit: 35.20 (average historical gain target, representing 7% downside)
+- Is Signal timely?: Yes, signal is brand new with 0% mark-to-market
+- P/E Ratio: 17.40
+- PEG Ratio: N/A
+
+**Notes**: This signal is extremely timely as it was just confirmed today. The price is just below the Fractal Track level (38.47), indicating a potential breakdown. The strong CAGR difference (16.68%) and high win rate (88.89%) suggest this is a high-probability short opportunity.
+
+**META (Meta Platforms)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-11-18
+- Signal: Short
+- Interval: Monthly
+- Signal Price: 597.69
+- Win Rate: 100.0%
+- CAGR: Strategy (94.49%) - Buy and Hold (5.3%) = 89.19%
+- Latest Performance Win Rate: 85.71%
+- Average Return of Historical Winning Trades: 11.97%
+- Max single trade loss historically: 0.0%
+- Potential Downside (from signal price): 10.6% to 11.97% (immediate targets)
+- Target Exit Date (Farthest./Earliest./Avg.): 2026-02-20/2025-12-16/2026-01-10
+- Current Price, Current Mark to Market: 597.69, 0.0%
+- Target Prices: 534.22/526.15/172.79/280.19/591.21/491.51 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- Resistance Levels: 773.44/280.19/591.21/491.51/525.73/442.17 based on Recent Maxima/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2
+- Recommended Stop Loss: 628.70 (F-Track level, approximately 5.2% above current price)
+- Recommended Take Profit: 526.15 (Avg % Gain target, representing approximately 12% downside from current price)
+- Is Signal timely?: Yes, signal is brand new with no price movement yet
+- P/E Ratio: 26.47
+- PEG Ratio: 1.66
+
+**Notes**: This signal is confirmed with a perfect historical win rate of 100%. The exceptional CAGR difference (89.19%) indicates massive outperformance versus buy-and-hold. The signal is extremely timely as it was generated today. The price has broken below the 23.66% Fibonacci level, confirming the bearish pattern.
+
+**ETH-USD (Ethereum)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-10-31
+- Signal: Short
+- Interval: Monthly
+- Signal Price: 3847.08
+- Win Rate: 90%
+- CAGR: Strategy (120.83%) - Buy and Hold (5.2%) = 115.63%
+- Latest Performance Win Rate: 85.71%
+- Average Return of Historical Winning Trades: 20.42%
+- Max single trade loss historically: 38.7%
+- Potential Downside (from signal price): 0.73% to 31.47% (based on target levels)
+- Target Exit Date (Farthest./Earliest./Avg.): 2026-01-01/2025-11-30/2025-12-06
+- Current Price, Current Mark to Market: 3024.54, 21.38% (already showing significant downward movement)
+- Target Prices: 3818.99/3061.51/924.54/1370.50/3454.23/2637.92 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2
+- Support Levels: 4390.02/1370.50/3454.23/2637.92 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2
+- Recommended Stop Loss: 3455 (F-Stack 1 level, approximately 14% above current price)
+- Recommended Take Profit: 2638 (F-Stack 2 target, representing 12.8% additional downside from current price)
+- Is Signal timely?: Signal has already captured 21.38% gain, approximately 67% of the average historical winning trade (32.85%)
+- P/E Ratio: N/A
+- PEG Ratio: N/A
+
+**Notes**: This signal has already demonstrated significant success with a 21.38% mark-to-market gain in just 12 days. The extraordinary CAGR difference (115.63%) and high win rate (90%) make this a compelling short opportunity, though some profit taking might be prudent given the rapid move.
+
+## Implementation Strategy
+
+1. **Prioritize entry on recent signals** - Focus immediate capital deployment on the newest signals (SOXX, BABA, KWEB, META) that haven't yet moved significantly from their signal prices.
+
+2. **Scale into positions** - Consider scaling into positions with 1/3 of intended allocation now, 1/3 on a 2-3% pullback, and the final 1/3 on confirmation of trend continuation.
+
+3. **Set appropriate position sizes** - Allocate capital based on conviction levels, with larger positions for signals with multiple confirmations (GILD, CVS) and perfect win rates.
+
+4. **Implement trailing stops** - For positions that have already moved significantly in the right direction (ETH-USD, GILD), consider using trailing stops to protect gains while allowing for continued upside.
+
+5. **Balance sector exposure** - The current recommendations have significant technology exposure, so consider diversifying with signals from other sectors if available.
+
+6. **Monitor exit dates** - Set calendar reminders for the average expected exit dates to review positions, as historical testing suggests these timeframes offer optimal exit points.
+
+7. **Consider correlation** - While implementing these signals, be mindful of potential correlations (particularly between semiconductor positions AMD and SOXX) and adjust position sizes accordingly to manage portfolio risk.
