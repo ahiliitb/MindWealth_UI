@@ -183,6 +183,33 @@ echo "🐍 Activating virtual environment..."
 source venv/bin/activate
 python3 chatbot/convert_signals_to_data_structure.py
 
+# Update monitored trades with latest prices and exit conditions
+echo "⭐ Updating monitored trades with latest prices and exit conditions..."
+python3 -c "
+import sys
+sys.path.insert(0, '.')
+from src.utils.monitored_trades import update_monitored_trades_prices, update_monitored_trades_with_outstanding
+from src.utils.data_loader import load_data_from_file
+from constant import OUTSTANDING_SIGNAL_CSV_PATH_US
+import os
+
+# Update prices from stock data
+print('  📊 Updating current prices from stock data...')
+update_monitored_trades_prices()
+
+# Update exit conditions from outstanding signals
+print('  🔍 Checking for exit signals in outstanding signals...')
+if os.path.exists(OUTSTANDING_SIGNAL_CSV_PATH_US):
+    outstanding_df = load_data_from_file(OUTSTANDING_SIGNAL_CSV_PATH_US, 'Outstanding Signals')
+    if not outstanding_df.empty:
+        update_monitored_trades_with_outstanding(outstanding_df)
+        print('  ✅ Monitored trades updated successfully!')
+    else:
+        print('  ⚠️  Outstanding signals file is empty')
+else:
+    print('  ⚠️  Outstanding signals file not found')
+"
+
 # Git operations
 echo "🔄 Adding files to git..."
 git add .

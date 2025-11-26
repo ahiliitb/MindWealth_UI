@@ -133,7 +133,30 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
         # Display strategy cards in scrollable area
         for card_num, (idx, row) in enumerate(df.iterrows()):
             # Get raw data for extracting expander info
-            raw_data = row['Raw_Data']
+            # Handle missing Raw_Data (for monitored trades that might not have it)
+            if 'Raw_Data' in row and pd.notna(row.get('Raw_Data')):
+                raw_data = row['Raw_Data']
+                if isinstance(raw_data, str):
+                    # Try to parse if it's a string
+                    import json
+                    try:
+                        raw_data = json.loads(raw_data)
+                    except:
+                        raw_data = {}
+                elif not isinstance(raw_data, dict):
+                    raw_data = {}
+            else:
+                # Create a fallback raw_data dict from available row data
+                raw_data = {}
+                # Populate with available data
+                if 'Symbol' in row:
+                    raw_data['Symbol, Signal, Signal Date/Price[$]'] = f"{row.get('Symbol', '')}, {row.get('Signal_Type', '')}, {row.get('Signal_Date', '')} (Price: {row.get('Signal_Price', 0)})"
+                if 'Interval' in row:
+                    raw_data['Interval, Confirmation Status'] = row.get('Interval', 'Unknown')
+                if 'Exit_Date' in row and pd.notna(row.get('Exit_Date')):
+                    raw_data['Exit Signal Date/Price[$]'] = f"{row.get('Exit_Date', '')} (Price: {row.get('Exit_Price', 0)})"
+                else:
+                    raw_data['Exit Signal Date/Price[$]'] = 'No Exit Yet'
 
             # Extract interval
             interval_display = "Unknown"
@@ -188,40 +211,127 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                     "TrendPulse", "Outstanding Signals", "Outstanding Signals Exit", "New Signals"
                 ]
                 
+                # Create unique identifier for buttons (needed for both chart and add to monitored)
+                import hashlib
+                unique_str = f"{page_name}_{tab_context}_{card_num}_{row['Symbol']}_{signal_date_display}_{interval_display}_{signal_type_display}_{idx}"
+                unique_hash = hashlib.md5(unique_str.encode()).hexdigest()[:8]
+                
+                # Create button row - show chart button if charts are enabled, and add/remove buttons
+                show_chart = False
                 if page_name in chart_enabled_pages:
                     show_chart = True
                 elif 'Function' in row and row['Function'] == 'FRACTAL TRACK':
                     show_chart = True
                 
-                if show_chart:
-                    # Use a unique key with hash of all row data PLUS tab context to ensure absolute uniqueness
-                    # tab_context includes the interval tab (ALL/Daily/Weekly) making keys unique across tabs
-                    import hashlib
-                    # Create a unique identifier from multiple data points INCLUDING tab context
-                    unique_str = f"{page_name}_{tab_context}_{card_num}_{row['Symbol']}_{signal_date_display}_{interval_display}_{signal_type_display}_{idx}"
-                    # Add hash to make it even more unique (in case of exact duplicates)
-                    unique_hash = hashlib.md5(unique_str.encode()).hexdigest()[:8]
-                    chart_key = f"chart_{unique_hash}_{card_num}"
-                    if st.button(f"📊 View Interactive Chart", key=chart_key):
-                        # Route to appropriate chart based on page type
-                        if page_name == 'Outstanding Signals Exit':
-                            # Fetch original signal data and display chart with exit marker
-                            create_outstanding_exit_signal_chart(row, raw_data)
-                        elif page_name in ['Outstanding Signals', 'New Signals']:
-                            # For New Signals and Outstanding Signals, fetch original data from function CSVs
-                            create_outstanding_signal_chart(row, raw_data)
-                        elif page_name == 'Oscillator Delta':
-                            # Divergence chart with divergence line
-                            create_divergence_chart(row, raw_data)
-                        elif page_name == 'Band Matrix':
-                            # Bollinger Bands chart with BB overlay
-                            create_bollinger_band_chart(row, raw_data)
-                        elif page_name in ['Fractal Track', 'TrendPulse']:
-                            # Interactive chart with reference lines (Fibonacci for Fractal Track, TrendPulse line for TrendPulse)
-                            create_interactive_chart(row, raw_data)
-                        else:
-                            # Simple candlestick chart with buy/sell marker for all other pages
-                            create_interactive_chart(row, raw_data)
+                show_add_monitored = (page_name in ['Outstanding Signals'])
+                show_remove_monitored = (page_name == 'Monitored Trades')
+                
+                # Only create button row if at least one button should be shown
+                if show_chart or show_add_monitored or show_remove_monitored:
+                    # Determine number of columns needed
+                    num_buttons = sum([show_chart, show_add_monitored, show_remove_monitored])
+                    if num_buttons == 1:
+                        button_col1 = st.container()
+                        button_col2 = None
+                        button_col3 = None
+                    elif num_buttons == 2:
+                        button_col1, button_col2 = st.columns([1, 1])
+                        button_col3 = None
+                    else:
+                        button_col1, button_col2, button_col3 = st.columns([1, 1, 1])
+                    
+                    with button_col1:
+                        if show_chart:
+                            chart_key = f"chart_{unique_hash}_{card_num}"
+                            if st.button(f"📊 View Interactive Chart", key=chart_key):
+                                # Route to appropriate chart based on page type
+                                if page_name == 'Outstanding Signals Exit':
+                                    # Fetch original signal data and display chart with exit marker
+                                    create_outstanding_exit_signal_chart(row, raw_data)
+                                elif page_name in ['Outstanding Signals', 'New Signals']:
+                                    # For New Signals and Outstanding Signals, fetch original data from function CSVs
+                                    create_outstanding_signal_chart(row, raw_data)
+                                elif page_name == 'Oscillator Delta':
+                                    # Divergence chart with divergence line
+                                    create_divergence_chart(row, raw_data)
+                                elif page_name == 'Band Matrix':
+                                    # Bollinger Bands chart with BB overlay
+                                    create_bollinger_band_chart(row, raw_data)
+                                elif page_name in ['Fractal Track', 'TrendPulse']:
+                                    # Interactive chart with reference lines (Fibonacci for Fractal Track, TrendPulse line for TrendPulse)
+                                    create_interactive_chart(row, raw_data)
+                                else:
+                                    # Simple candlestick chart with buy/sell marker for all other pages
+                                    create_interactive_chart(row, raw_data)
+                    
+                    # Add "Add to Monitored" button for Outstanding Signals page
+                    if show_add_monitored:
+                        button_container = button_col2 if button_col2 else button_col1
+                        with button_container:
+                            add_monitored_key = f"add_monitored_{unique_hash}_{card_num}"
+                            if st.button("⭐ Add to Monitored", key=add_monitored_key):
+                                # Import here to avoid circular imports
+                                from ..utils.monitored_trades import add_trade_to_monitored, generate_trade_id
+                                
+                                # Prepare trade data
+                                trade_data = {
+                                    'Symbol': row.get('Symbol', ''),
+                                    'Function': row.get('Function', ''),
+                                    'Signal_Type': row.get('Signal_Type', ''),
+                                    'Signal_Date': row.get('Signal_Date', ''),
+                                    'Signal_Price': row.get('Signal_Price', 0),
+                                    'Interval': row.get('Interval', 'Unknown'),
+                                    'Win_Rate': row.get('Win_Rate', 0),
+                                    'Strategy_CAGR': row.get('Strategy_CAGR', 0),
+                                    'Buy_Hold_CAGR': row.get('Buy_Hold_CAGR', 0),
+                                    'Strategy_Sharpe': row.get('Strategy_Sharpe', 0),
+                                    'Buy_Hold_Sharpe': row.get('Buy_Hold_Sharpe', 0),
+                                    'Raw_Data': raw_data,  # Store original CSV data
+                                }
+                                
+                                # Extract interval from raw data if not available
+                                if trade_data['Interval'] == 'Unknown':
+                                    interval_info = raw_data.get('Interval, Confirmation Status', 'Unknown')
+                                    if ',' in str(interval_info):
+                                        trade_data['Interval'] = str(interval_info).split(',')[0].strip()
+                                    else:
+                                        trade_data['Interval'] = str(interval_info).strip()
+                                
+                                # Check if already exists
+                                trade_id = generate_trade_id(
+                                    trade_data['Symbol'],
+                                    trade_data['Signal_Date'],
+                                    trade_data['Interval'],
+                                    trade_data['Signal_Type'],
+                                    trade_data['Function']
+                                )
+                                
+                                # Try to add
+                                if add_trade_to_monitored(trade_data):
+                                    st.success(f"✅ Added {trade_data['Symbol']} to Monitored Trades!")
+                                else:
+                                    st.warning(f"⚠️ {trade_data['Symbol']} is already in Monitored Trades")
+                                st.rerun()
+                    
+                    # Add "Remove from Monitored" button for Monitored Trades page
+                    if show_remove_monitored:
+                        button_container = button_col3 if button_col3 else (button_col2 if button_col2 else button_col1)
+                        with button_container:
+                            remove_monitored_key = f"remove_monitored_{unique_hash}_{card_num}"
+                            if st.button("🗑️ Remove from Monitored", key=remove_monitored_key, type="secondary"):
+                                # Import here to avoid circular imports
+                                from ..utils.monitored_trades import remove_trade_from_monitored
+                                
+                                # Get trade ID from row
+                                trade_id = row.get('Trade_ID', '')
+                                if trade_id:
+                                    if remove_trade_from_monitored(trade_id):
+                                        st.success(f"✅ Removed {row.get('Symbol', 'trade')} from Monitored Trades!")
+                                        st.rerun()
+                                    else:
+                                        st.error(f"❌ Failed to remove trade")
+                                else:
+                                    st.warning("⚠️ Trade ID not found")
                 
                 
                 # Create three columns for better layout
@@ -248,7 +358,7 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                         st.write(f"**Signal:** {row['Signal_Type']}")
                         if 'Signal_Date' in row and row['Signal_Date'] != 'Unknown':
                             st.write(f"**Signal Date:** {row['Signal_Date']}")
-                        if 'Signal_Price' in row and row['Signal_Price'] != 0:
+                        if 'Signal_Price' in row and pd.notna(row.get('Signal_Price')) and row['Signal_Price'] != 0:
                             st.write(f"**Signal Price:** ${row['Signal_Price']:.4f}")
                     else:
                         # Fallback to raw data parsing
@@ -269,7 +379,7 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                     # Handle exit information
                     if 'Entry_Date' in row and row['Entry_Date'] != 'Unknown':
                         st.write(f"**Entry Date:** {row['Entry_Date']}")
-                        if 'Entry_Price' in row and row['Entry_Price'] != 0:
+                        if 'Entry_Price' in row and pd.notna(row.get('Entry_Price')) and row['Entry_Price'] != 0:
                             st.write(f"**Entry Price:** ${row['Entry_Price']:.4f}")
                     else:
                         st.write(f"**Exit Date & Price:** {raw_data.get('Exit Signal Date/Price[$]', 'N/A')}")
@@ -298,7 +408,10 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                             except:
                                 pass
                     
-                    st.write(f"**Win Rate:** {row['Win_Rate']:.1f}%")
+                    if 'Win_Rate' in row and pd.notna(row.get('Win_Rate')):
+                        st.write(f"**Win Rate:** {row['Win_Rate']:.1f}%")
+                    else:
+                        st.write(f"**Win Rate:** N/A")
                         
                 with col2:
                     st.markdown("**📊 Status & Performance**")
@@ -320,26 +433,26 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                     # Handle current status (skip Current MTM for portfolio pages)
                     if 'Current_Date' in row and row['Current_Date'] != 'Unknown':
                         st.write(f"**Current Date:** {row['Current_Date']}")
-                        if 'Current_Price' in row and row['Current_Price'] != 0:
+                        if 'Current_Price' in row and pd.notna(row.get('Current_Price')) and row['Current_Price'] != 0:
                             st.write(f"**Current Price:** ${row['Current_Price']:.4f}")
                     else:
                         if not is_portfolio_page:
                             st.write(f"**Current MTM:** {raw_data.get('Current Mark to Market and Holding Period', 'N/A')}")
                     
                     # Handle performance metrics
-                    if 'Strategy_CAGR' in row:
+                    if 'Strategy_CAGR' in row and pd.notna(row.get('Strategy_CAGR')):
                         st.write(f"**Strategy CAGR:** {row['Strategy_CAGR']:.2f}%")
-                    if 'Buy_Hold_CAGR' in row:
+                    if 'Buy_Hold_CAGR' in row and pd.notna(row.get('Buy_Hold_CAGR')):
                         st.write(f"**Buy & Hold CAGR:** {row['Buy_Hold_CAGR']:.2f}%")
-                    if 'Strategy_Sharpe' in row:
+                    if 'Strategy_Sharpe' in row and pd.notna(row.get('Strategy_Sharpe')):
                         st.write(f"**Strategy Sharpe:** {row['Strategy_Sharpe']:.2f}")
-                    if 'Buy_Hold_Sharpe' in row:
+                    if 'Buy_Hold_Sharpe' in row and pd.notna(row.get('Buy_Hold_Sharpe')):
                         st.write(f"**Buy & Hold Sharpe:** {row['Buy_Hold_Sharpe']:.2f}")
                         
                     # Handle gain information for target signals
-                    if 'Gain_Percentage' in row and row['Gain_Percentage'] != 0:
+                    if 'Gain_Percentage' in row and pd.notna(row.get('Gain_Percentage')) and row['Gain_Percentage'] != 0:
                         st.write(f"**Gain:** {row['Gain_Percentage']:.2f}%")
-                    if 'Holding_Days' in row and row['Holding_Days'] != 0:
+                    if 'Holding_Days' in row and pd.notna(row.get('Holding_Days')) and row['Holding_Days'] != 0:
                         st.write(f"**Holding Days:** {row['Holding_Days']} days")
                         
                 with col3:
@@ -350,7 +463,7 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                         st.write(f"**Cancellation Level/Date:** {raw_data.get('Cancellation Level/Date', 'N/A')}")
                         
                     # Handle target information for target signals
-                    if 'Target_Price' in row and row['Target_Price'] != 0:
+                    if 'Target_Price' in row and pd.notna(row.get('Target_Price')) and row['Target_Price'] != 0:
                         st.write(f"**Target Price:** ${row['Target_Price']:.4f}")
                         if 'Target_Type' in row and row['Target_Type'] != 'Unknown':
                             st.write(f"**Target Type:** {row['Target_Type']}")
@@ -558,7 +671,8 @@ def display_performance_cards_page(df):
     with st.container(height=600):  # Fixed height container that will scroll
         for idx, row in df.iterrows():
             # Create expandable card
-            with st.expander(f"📊 {row['Strategy']} - {row['Interval']} ({row['Win_Percentage']:.1f}% Win Rate)", expanded=False):
+            win_pct = row.get('Win_Percentage', 0) if pd.notna(row.get('Win_Percentage')) else 0
+            with st.expander(f"📊 {row['Strategy']} - {row['Interval']} ({win_pct:.1f}% Win Rate)", expanded=False):
                 st.markdown("**📋 Performance Metrics**")
                 
                 # Create three columns for better layout
@@ -570,14 +684,19 @@ def display_performance_cards_page(df):
                     st.write(f"**Interval:** {row['Interval']}")
                     st.write(f"**Signal Type:** {row['Signal_Type']}")
                     st.write(f"**Total Trades:** {row['Total_Trades']}")
-                    st.write(f"**Win Percentage:** {row['Win_Percentage']:.1f}%")
+                    if 'Win_Percentage' in row and pd.notna(row.get('Win_Percentage')):
+                        st.write(f"**Win Percentage:** {row['Win_Percentage']:.1f}%")
                     
                 with col2:
                     st.markdown("**📊 Profit Analysis**")
-                    st.write(f"**Best Profit:** {row['Best_Profit']:.1f}%")
-                    st.write(f"**Worst Profit:** {row['Worst_Profit']:.1f}%")
-                    st.write(f"**Average Profit:** {row['Avg_Profit']:.1f}%")
-                    st.write(f"**Avg Backtested Win Rate:** {row['Avg_Backtested_Win_Rate']:.1f}%")
+                    if 'Best_Profit' in row and pd.notna(row.get('Best_Profit')):
+                        st.write(f"**Best Profit:** {row['Best_Profit']:.1f}%")
+                    if 'Worst_Profit' in row and pd.notna(row.get('Worst_Profit')):
+                        st.write(f"**Worst Profit:** {row['Worst_Profit']:.1f}%")
+                    if 'Avg_Profit' in row and pd.notna(row.get('Avg_Profit')):
+                        st.write(f"**Average Profit:** {row['Avg_Profit']:.1f}%")
+                    if 'Avg_Backtested_Win_Rate' in row and pd.notna(row.get('Avg_Backtested_Win_Rate')):
+                        st.write(f"**Avg Backtested Win Rate:** {row['Avg_Backtested_Win_Rate']:.1f}%")
                     
                 with col3:
                     st.markdown("**⏱️ Holding Period Analysis**")

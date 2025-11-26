@@ -476,7 +476,7 @@ def convert_signal_file_to_data_structure(
             # For signals, parse the compound column
             symbol_data = row[symbol_column]
             if pd.notna(symbol_data):
-                symbol, signal_date, sig_type, price = parse_symbol_signal_column(symbol_data)
+            symbol, signal_date, sig_type, price = parse_symbol_signal_column(symbol_data)
             else:
                 symbol, signal_date, sig_type, price = None, None, None, None
         
@@ -491,7 +491,7 @@ def convert_signal_file_to_data_structure(
         if signal_type != "target" and exit_column and exit_column in row.index:
             exit_data = row[exit_column]
             if pd.notna(exit_data):
-                exit_date, exit_price = parse_exit_signal_column(exit_data)
+            exit_date, exit_price = parse_exit_signal_column(exit_data)
             else:
                 exit_date, exit_price = None, None
         

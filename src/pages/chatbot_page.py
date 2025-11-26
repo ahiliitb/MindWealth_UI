@@ -4,6 +4,7 @@ AI Chatbot Page for Trading Analysis
 
 import streamlit as st
 import sys
+import logging
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Any, Optional
@@ -16,6 +17,8 @@ sys.path.insert(0, str(project_root))
 from chatbot import ChatbotEngine, SessionManager
 from chatbot.signal_type_selector import SIGNAL_TYPE_DESCRIPTIONS, DEFAULT_SIGNAL_TYPES
 from chatbot.config import MAX_CHATS_DISPLAY
+
+logger = logging.getLogger(__name__)
 
 def get_signal_type_label(signal_type: str, uppercase: bool = False) -> str:
     """Return a user-facing label for a signal type key."""
@@ -327,7 +330,7 @@ def render_chatbot_page():
     
     # Get available tickers
     available_tickers = chatbot.get_available_tickers()
-    
+
     # Handle pending analysis prompt (from Analyze button)
     if 'pending_analysis_prompt' in st.session_state and st.session_state.pending_analysis_prompt:
         analysis_prompt = st.session_state.pending_analysis_prompt
@@ -636,6 +639,14 @@ def render_chatbot_page():
         )
         
         if analyze_button and selected_asset:
+            # Save current chat session before creating new one
+            if 'chatbot_engine' in st.session_state and st.session_state.chatbot_engine is not None:
+                try:
+                    # Ensure current session history is saved
+                    st.session_state.chatbot_engine.history_manager.save_history()
+                except Exception as e:
+                    logger.warning(f"Could not save current session: {e}")
+            
             # Create a new chat session for the analysis
             new_session_id = SessionManager.create_new_session()
             st.session_state.current_session_id = new_session_id
@@ -684,6 +695,14 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
     )
     
     if signal_insights_button:
+        # Save current chat session before creating new one
+        if 'chatbot_engine' in st.session_state and st.session_state.chatbot_engine is not None:
+            try:
+                # Ensure current session history is saved
+                st.session_state.chatbot_engine.history_manager.save_history()
+            except Exception as e:
+                logger.warning(f"Could not save current session: {e}")
+        
         # Create a new chat session for the signal insights
         new_session_id = SessionManager.create_new_session()
         st.session_state.current_session_id = new_session_id
@@ -741,6 +760,14 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
     )
     
     if breadth_analysis_button:
+        # Save current chat session before creating new one
+        if 'chatbot_engine' in st.session_state and st.session_state.chatbot_engine is not None:
+            try:
+                # Ensure current session history is saved
+                st.session_state.chatbot_engine.history_manager.save_history()
+            except Exception as e:
+                logger.warning(f"Could not save current session: {e}")
+        
         # Create a new chat session for the breadth analysis
         new_session_id = SessionManager.create_new_session()
         st.session_state.current_session_id = new_session_id

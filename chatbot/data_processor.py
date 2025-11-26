@@ -586,7 +586,7 @@ class DataProcessor:
                 # Ensure Date column is set to the file date
                 df['Date'] = file_date
                 df['DataType'] = 'breadth'
-                
+            
                 all_dfs.append(df)
                 logger.debug(f"Loaded breadth report from {file_date}: {len(df)} functions")
                 

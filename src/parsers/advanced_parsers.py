@@ -235,31 +235,31 @@ def parse_target_signals(df, page_name="Unknown"):
             buy_hold_sharpe = _to_float(row.get('Sharpe Ratio of Buy and Hold', 0))
             
             processed_data.append({
-            'Symbol': symbol,
-            'Function': function,
-            'Signal_Type': signal_type,
-            'Signal_Date': signal_date,
-            'Signal_Price': signal_price,
-            'Current_Date': current_date,
-            'Current_Price': current_price,
-            'Gain_Percentage': gain_pct,
-            'Holding_Days': holding_days,
-            'Win_Rate': win_rate,
-            'Num_Trades': num_trades,
-            'Best_Return': best_return,
-            'Worst_Return': worst_return,
-            'Avg_Return': avg_return,
-            'Target_Price': target_price,
-            'Target_Type': target_type,
-            'Next_Targets': next_targets,
-            'Exit_Prices': exit_prices,
-            'Interval': interval,
-            'Strategy_CAGR': strategy_cagr,
-            'Buy_Hold_CAGR': buy_hold_cagr,
-            'Strategy_Sharpe': strategy_sharpe,
-            'Buy_Hold_Sharpe': buy_hold_sharpe,
-            'Raw_Data': row.to_dict()
-        })
+                'Symbol': symbol,
+                'Function': function,
+                'Signal_Type': signal_type,
+                'Signal_Date': signal_date,
+                'Signal_Price': signal_price,
+                'Current_Date': current_date,
+                'Current_Price': current_price,
+                'Gain_Percentage': gain_pct,
+                'Holding_Days': holding_days,
+                'Win_Rate': win_rate,
+                'Num_Trades': num_trades,
+                'Best_Return': best_return,
+                'Worst_Return': worst_return,
+                'Avg_Return': avg_return,
+                'Target_Price': target_price,
+                'Target_Type': target_type,
+                'Next_Targets': next_targets,
+                'Exit_Prices': exit_prices,
+                'Interval': interval,
+                'Strategy_CAGR': strategy_cagr,
+                'Buy_Hold_CAGR': buy_hold_cagr,
+                'Strategy_Sharpe': strategy_sharpe,
+                'Buy_Hold_Sharpe': buy_hold_sharpe,
+                'Raw_Data': row.to_dict()
+            })
         except Exception as e:
             # Log error but still add the row with default values to ensure no data is lost
             import sys
@@ -293,8 +293,8 @@ def parse_target_signals(df, page_name="Unknown"):
                 'Buy_Hold_CAGR': 0,
                 'Strategy_Sharpe': 0,
                 'Buy_Hold_Sharpe': 0,
-                'Raw_Data': row.to_dict()
-            })
+            'Raw_Data': row.to_dict()
+        })
     
     return pd.DataFrame(processed_data)
 

@@ -15,6 +15,7 @@ from src.pages import (
     create_trade_details_page,
     create_f_stack_page
 )
+from src.pages.monitored_trades_page import create_monitored_trades_page
 from src.pages.horizontal_page import create_horizontal_page
 from src.utils import discover_csv_files
 
@@ -105,6 +106,7 @@ def main():
     page_options = {
         "Dashboard": None,
         "🤖 AI Chatbot": "chatbot",
+        "⭐ Monitored Trades": "monitored_trades",
         "Virtual Trading": "virtual_trading",
         "Claude Shortlisted Signal": "text_files",
         "Trade Details": "trade_details",
@@ -125,6 +127,8 @@ def main():
         create_top_signals_dashboard()
     elif page == "🤖 AI Chatbot":
         render_chatbot_page()
+    elif page == "⭐ Monitored Trades":
+        create_monitored_trades_page()
     elif page == "Virtual Trading":
         create_virtual_trading_page()
     elif page == "Claude Shortlisted Signal":
