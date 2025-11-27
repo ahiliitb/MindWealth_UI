@@ -476,7 +476,7 @@ def convert_signal_file_to_data_structure(
             # For signals, parse the compound column
             symbol_data = row[symbol_column]
             if pd.notna(symbol_data):
-            symbol, signal_date, sig_type, price = parse_symbol_signal_column(symbol_data)
+                symbol, signal_date, sig_type, price = parse_symbol_signal_column(symbol_data)
             else:
                 symbol, signal_date, sig_type, price = None, None, None, None
         
@@ -491,7 +491,7 @@ def convert_signal_file_to_data_structure(
         if signal_type != "target" and exit_column and exit_column in row.index:
             exit_data = row[exit_column]
             if pd.notna(exit_data):
-            exit_date, exit_price = parse_exit_signal_column(exit_data)
+                exit_date, exit_price = parse_exit_signal_column(exit_data)
             else:
                 exit_date, exit_price = None, None
         
@@ -709,18 +709,59 @@ def get_latest_price_from_stock_data(symbol, stock_data_dir="trade_store/stock_d
         # Read the stock data CSV
         stock_df = pd.read_csv(stock_data_path)
         
-        if stock_df.empty or 'Close' not in stock_df.columns:
+        if stock_df.empty:
             return None, None
         
-        # Get the most recent row (last row, assuming data is sorted by date)
+        # Find date column (case-insensitive)
+        date_col = None
+        for col in stock_df.columns:
+            if col.lower() == 'date':
+                date_col = col
+                break
+        
+        if date_col is None:
+            return None, None
+        
+        # Find price column (try Close, then Price, then any numeric column)
+        price_col = None
+        for col_name in ['Close', 'close', 'Price', 'price', 'Adj Close', 'Adj Close']:
+            if col_name in stock_df.columns:
+                price_col = col_name
+                break
+        
+        if price_col is None:
+            # Try to find any numeric column that's not the date
+            for col in stock_df.columns:
+                if col != date_col and pd.api.types.is_numeric_dtype(stock_df[col]):
+                    price_col = col
+                    break
+        
+        if price_col is None:
+            return None, None
+        
+        # Convert date column to datetime and sort to ensure we get the most recent
+        try:
+            stock_df[date_col] = pd.to_datetime(stock_df[date_col], errors='coerce')
+            stock_df = stock_df.sort_values(date_col, ascending=True)
+        except:
+            # If date parsing fails, just use the last row
+            pass
+        
+        # Get the most recent row (last row after sorting)
         latest_row = stock_df.iloc[-1]
-        latest_date = latest_row.get('Date', None)
-        latest_price = latest_row.get('Close', None)
+        latest_date = latest_row.get(date_col, None)
+        latest_price = latest_row.get(price_col, None)
         
         if pd.isna(latest_date) or pd.isna(latest_price):
             return None, None
         
-        return str(latest_date), float(latest_price)
+        # Convert date to string if it's a datetime object
+        if isinstance(latest_date, pd.Timestamp):
+            latest_date = latest_date.strftime('%Y-%m-%d')
+        else:
+            latest_date = str(latest_date)
+        
+        return latest_date, float(latest_price)
         
     except Exception as e:
         print(f"  ⚠ Error reading stock data for {symbol}: {e}")
@@ -872,7 +913,7 @@ def update_current_prices_in_data_files(data_base_dir="chatbot/data", stock_data
                 if not symbol or pd.isna(symbol) or symbol == '':
                     continue
                 
-                # Get latest price from stock_data
+                # Get latest price from stock_data (always refresh from latest stock_data)
                 latest_date, latest_price = get_latest_price_from_stock_data(symbol, stock_data_dir)
                 
                 if latest_date is None or latest_price is None:
@@ -887,12 +928,12 @@ def update_current_prices_in_data_files(data_base_dir="chatbot/data", stock_data
                         _, _, _, signal_price = parse_symbol_signal_column(symbol_data)
                 
                 # Calculate percentage change
-                if signal_price:
+                if signal_price and signal_price > 0:
                     price_change_str = calculate_price_change_percentage(latest_price, signal_price)
                 else:
                     price_change_str = "0.0% below"
                 
-                # Update the current price column
+                # Update the current price column with fresh data from stock_data
                 new_current_price_value = f"{latest_date} (Price: {latest_price:.4f}), {price_change_str}"
                 df.at[idx, current_price_column] = new_current_price_value
                 file_updated = True
