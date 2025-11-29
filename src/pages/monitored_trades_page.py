@@ -244,29 +244,49 @@ def display_monitored_trades_metrics(df, interval, position_name):
         st.metric("Total Trades", total_trades)
     
     with col2:
-        # Calculate actual win rate based on closed trades with exit
-        closed_df = df[df['Status'] == 'Closed']
-        if not closed_df.empty and 'Exit_Price' in closed_df.columns and 'Signal_Price' in closed_df.columns:
-            winning_trades = 0
-            total_with_exit = 0
-            for _, row in closed_df.iterrows():
+        # Calculate actual win rate:
+        # - For closed trades: based on actual profit (exit price vs signal price)
+        # - For open trades: based on current mark to market (current price vs signal price)
+        winning_trades = 0
+        total_trades_counted = 0
+        
+        for _, row in df.iterrows():
+            signal_price = row.get('Signal_Price', 0)
+            signal_type = str(row.get('Signal_Type', '')).upper()
+            
+            if pd.isna(signal_price) or signal_price <= 0:
+                continue
+            
+            if row['Status'] == 'Closed':
+                # For closed trades: use exit price to calculate profit
                 exit_price = row.get('Exit_Price')
-                signal_price = row.get('Signal_Price')
-                signal_type = str(row.get('Signal_Type', '')).upper()
-                
-                if pd.notna(exit_price) and pd.notna(signal_price) and signal_price > 0:
-                    total_with_exit += 1
+                if pd.notna(exit_price):
+                    total_trades_counted += 1
+                    # Calculate profit percentage
                     pnl = ((exit_price - signal_price) / signal_price) * 100
+                    # For short positions, invert the P&L
                     if signal_type == 'SHORT':
                         pnl = -pnl
+                    # If profit > 0, it's a winning trade
                     if pnl > 0:
                         winning_trades += 1
-            
-            if total_with_exit > 0:
-                actual_win_rate = (winning_trades / total_with_exit) * 100
-                st.metric("Actual Win Rate", f"{actual_win_rate:.2f}%")
-            else:
-                st.metric("Actual Win Rate", "N/A")
+            elif row['Status'] == 'Open':
+                # For open trades: use current price to calculate mark to market
+                current_price = row.get('Current_Price')
+                if pd.notna(current_price):
+                    total_trades_counted += 1
+                    # Calculate mark to market percentage
+                    mtm = ((current_price - signal_price) / signal_price) * 100
+                    # For short positions, invert the MTM
+                    if signal_type == 'SHORT':
+                        mtm = -mtm
+                    # If MTM > 0, it's currently a winning trade
+                    if mtm > 0:
+                        winning_trades += 1
+        
+        if total_trades_counted > 0:
+            actual_win_rate = (winning_trades / total_trades_counted) * 100
+            st.metric("Actual Win Rate", f"{actual_win_rate:.2f}%")
         else:
             st.metric("Actual Win Rate", "N/A")
     
