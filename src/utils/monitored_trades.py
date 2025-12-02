@@ -205,8 +205,56 @@ def get_latest_price_from_stock_data(symbol: str) -> Tuple[Optional[float], Opti
         return None, None
 
 
+def calculate_price_change_percentage(current_price, signal_price, signal_type):
+    """Calculate percentage change between current price and signal price"""
+    if not current_price or not signal_price or signal_price == 0:
+        return "0.0% below"
+    
+    try:
+        change_pct = ((current_price - signal_price) / signal_price) * 100
+        
+        # For short positions, invert the percentage
+        if str(signal_type).upper() == 'SHORT':
+            change_pct = -change_pct
+        
+        if change_pct >= 0:
+            return f"{change_pct:.2f}% above"
+        else:
+            return f"{abs(change_pct):.2f}% below"
+    except:
+        return "0.0% below"
+
+
+def calculate_holding_period(signal_date, current_date):
+    """Calculate holding period in days"""
+    try:
+        signal_dt = datetime.strptime(str(signal_date), '%Y-%m-%d')
+        current_dt = datetime.strptime(str(current_date), '%Y-%m-%d')
+        days = (current_dt - signal_dt).days
+        return max(0, days)
+    except:
+        return 0
+
+
+def calculate_mark_to_market(current_price, signal_price, signal_type):
+    """Calculate mark to market percentage"""
+    if not current_price or not signal_price or signal_price == 0:
+        return "0.0%"
+    
+    try:
+        change_pct = ((current_price - signal_price) / signal_price) * 100
+        
+        # For short positions, invert the percentage
+        if str(signal_type).upper() == 'SHORT':
+            change_pct = -change_pct
+        
+        return f"{change_pct:.2f}%"
+    except:
+        return "0.0%"
+
+
 def update_monitored_trades_prices() -> bool:
-    """Update current prices for all monitored trades"""
+    """Update current prices for all monitored trades and update Raw_Data"""
     df = load_monitored_trades()
     
     if df.empty:
@@ -225,6 +273,49 @@ def update_monitored_trades_prices() -> bool:
             df.at[idx, 'Current_Price'] = current_price
             df.at[idx, 'Current_Date'] = current_date
             df.at[idx, 'Last_Updated'] = datetime.now().isoformat()
+            
+            # Update Raw_Data if it exists
+            if 'Raw_Data' in row and pd.notna(row.get('Raw_Data')):
+                raw_data = row['Raw_Data']
+                
+                # Parse Raw_Data if it's a string
+                if isinstance(raw_data, str):
+                    try:
+                        import json
+                        raw_data = json.loads(raw_data)
+                    except:
+                        raw_data = {}
+                
+                if isinstance(raw_data, dict):
+                    # Get signal price and type for calculations
+                    signal_price = row.get('Signal_Price', 0)
+                    signal_type = row.get('Signal_Type', 'Long')
+                    signal_date = row.get('Signal_Date', '')
+                    
+                    # Calculate price change percentage
+                    price_change_str = calculate_price_change_percentage(current_price, signal_price, signal_type)
+                    
+                    # Update "Current Trading Date/Price[$], Current Price vs Signal" column
+                    current_price_col = "Current Trading Date/Price[$], Current Price vs Signal"
+                    raw_data[current_price_col] = f"{current_date} (Price: {current_price:.4f}), {price_change_str}"
+                    
+                    # Calculate holding period
+                    holding_days = calculate_holding_period(signal_date, current_date)
+                    
+                    # Calculate mark to market
+                    mtm_pct = calculate_mark_to_market(current_price, signal_price, signal_type)
+                    
+                    # Update "Current Mark to Market and Holding Period" column
+                    mtm_col = "Current Mark to Market and Holding Period"
+                    raw_data[mtm_col] = f"{mtm_pct}, {holding_days} days"
+                    
+                    # Update "Trading Days between Signal and Current Date" column
+                    trading_days_col = "Trading Days between Signal and Current Date"
+                    raw_data[trading_days_col] = f"{holding_days} days"
+                    
+                    # Save updated Raw_Data back
+                    df.at[idx, 'Raw_Data'] = raw_data
+            
             updated = True
     
     if updated:
@@ -321,6 +412,51 @@ def check_exit_signals_in_outstanding(df: pd.DataFrame, outstanding_df: pd.DataF
                     df.at[idx, 'Exit_Date'] = exit_date
                     df.at[idx, 'Exit_Price'] = exit_price
                     df.at[idx, 'Last_Updated'] = datetime.now().isoformat()
+                    
+                    # Update Raw_Data if it exists (use df.at to get current row data)
+                    if 'Raw_Data' in df.columns and pd.notna(df.at[idx, 'Raw_Data']):
+                        raw_data = df.at[idx, 'Raw_Data']
+                        
+                        # Parse Raw_Data if it's a string
+                        if isinstance(raw_data, str):
+                            try:
+                                import json
+                                raw_data = json.loads(raw_data)
+                            except:
+                                raw_data = {}
+                        
+                        if isinstance(raw_data, dict):
+                            # Update "Exit Signal Date/Price[$]" column
+                            exit_col = "Exit Signal Date/Price[$]"
+                            raw_data[exit_col] = f"{exit_date} (Price: {exit_price:.4f})"
+                            
+                            # Update current price to exit price for closed trades
+                            signal_price = df.at[idx, 'Signal_Price'] if 'Signal_Price' in df.columns else monitored_row.get('Signal_Price', 0)
+                            signal_type = df.at[idx, 'Signal_Type'] if 'Signal_Type' in df.columns else monitored_row.get('Signal_Type', 'Long')
+                            signal_date = df.at[idx, 'Signal_Date'] if 'Signal_Date' in df.columns else monitored_row.get('Signal_Date', '')
+                            
+                            # Calculate final mark to market
+                            mtm_pct = calculate_mark_to_market(exit_price, signal_price, signal_type)
+                            
+                            # Calculate holding period (from signal date to exit date)
+                            holding_days = calculate_holding_period(signal_date, exit_date)
+                            
+                            # Update "Current Mark to Market and Holding Period" column
+                            mtm_col = "Current Mark to Market and Holding Period"
+                            raw_data[mtm_col] = f"{mtm_pct}, {holding_days} days"
+                            
+                            # Update "Current Trading Date/Price[$], Current Price vs Signal" to exit info
+                            price_change_str = calculate_price_change_percentage(exit_price, signal_price, signal_type)
+                            current_price_col = "Current Trading Date/Price[$], Current Price vs Signal"
+                            raw_data[current_price_col] = f"{exit_date} (Price: {exit_price:.4f}), {price_change_str}"
+                            
+                            # Update "Trading Days between Signal and Current Date" column (use exit date as current)
+                            trading_days_col = "Trading Days between Signal and Current Date"
+                            raw_data[trading_days_col] = f"{holding_days} days"
+                            
+                            # Save updated Raw_Data back
+                            df.at[idx, 'Raw_Data'] = raw_data
+                    
                     break
                 except:
                     continue
