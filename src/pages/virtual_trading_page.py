@@ -4,7 +4,6 @@ Virtual Trading Page - Display open/closed trades with filters
 
 import streamlit as st
 import pandas as pd
-import re
 
 
 def create_virtual_trading_page():
@@ -220,7 +219,7 @@ def display_interval_tabs(df, position_name, trade_status):
 def display_virtual_trading_metrics(df, interval, position_name):
     """Display summary metrics for virtual trading"""
     
-    col1, col2, col3, col4, col5, col6 = st.columns(6)
+    col1, col2, col3, col4 = st.columns(4)
     
     with col1:
         total_trades = len(df)
@@ -278,47 +277,34 @@ def display_virtual_trading_metrics(df, interval, position_name):
             st.metric("Avg Profit", "N/A")
         
     with col4:
-        # Calculate average backtested win rate
-        if 'Backtested Win Rate [%]' in df.columns:
-            win_rates = df['Backtested Win Rate [%]'].dropna()
-            if len(win_rates) > 0:
-                avg_win_rate = win_rates.mean()
-                st.metric("Avg Backtested Win Rate", f"{avg_win_rate:.2f}%")
-            else:
-                st.metric("Avg Backtested Win Rate", "N/A")
-        else:
-            st.metric("Avg Backtested Win Rate", "N/A")
-    
-    with col5:
-        # Calculate average holding period (from Holding Period column or calculate from dates)
+        # Calculate average holding period
+        # For closed trades: Entry Date to Exit Date (actual holding period)
+        # For open trades: Entry Date to current date (mark-to-market holding period, updates daily)
         holding_periods = []
         
-        # First, try to get from Holding Period column
-        if 'Holding Period' in df.columns:
-            for val in df['Holding Period']:
-                if pd.notna(val) and str(val).strip():
-                    try:
-                        # Try to parse as number (assuming days)
-                        holding_str = str(val).strip()
-                        # Remove any non-numeric characters except decimal point
-                        holding_str = re.sub(r'[^\d.]', '', holding_str)
-                        if holding_str:
-                            holding_periods.append(float(holding_str))
-                    except:
-                        pass
-        
-        # If no holding periods from column, calculate from Entry Date and Exit Date
-        if not holding_periods and 'Entry Date' in df.columns and 'Exit Date' in df.columns:
+        if 'Entry Date' in df.columns:
+            current_date = pd.Timestamp.now()
+            
             for _, row in df.iterrows():
                 entry_date = row.get('Entry Date')
+                status = row.get('Status', 'Open')
                 exit_date = row.get('Exit Date')
-                if pd.notna(entry_date) and pd.notna(exit_date) and str(exit_date).strip():
+                
+                if pd.notna(entry_date):
                     try:
                         entry = pd.to_datetime(entry_date)
-                        exit = pd.to_datetime(exit_date)
-                        days = (exit - entry).days
-                        if days >= 0:
-                            holding_periods.append(days)
+                        
+                        # For closed trades: use Exit Date
+                        if status != 'Open' and pd.notna(exit_date) and str(exit_date).strip():
+                            exit = pd.to_datetime(exit_date)
+                            days = (exit - entry).days
+                            if days >= 0:
+                                holding_periods.append(days)
+                        # For open trades: use current date (mark-to-market)
+                        elif status == 'Open':
+                            days = (current_date - entry).days
+                            if days >= 0:
+                                holding_periods.append(days)
                     except:
                         pass
         
@@ -327,33 +313,6 @@ def display_virtual_trading_metrics(df, interval, position_name):
             st.metric("Avg Holding Period", f"{avg_holding:.1f} days")
         else:
             st.metric("Avg Holding Period", "N/A")
-    
-    with col6:
-        # Calculate average backtested holding period
-        # For backtested, we'll calculate from Entry Date and Exit Date for closed trades
-        # This represents the historical/backtested holding period
-        backtested_holding_periods = []
-        
-        if 'Entry Date' in df.columns and 'Exit Date' in df.columns:
-            for _, row in df.iterrows():
-                entry_date = row.get('Entry Date')
-                exit_date = row.get('Exit Date')
-                # Only calculate for closed trades (those with exit dates)
-                if pd.notna(entry_date) and pd.notna(exit_date) and str(exit_date).strip():
-                    try:
-                        entry = pd.to_datetime(entry_date)
-                        exit = pd.to_datetime(exit_date)
-                        days = (exit - entry).days
-                        if days >= 0:
-                            backtested_holding_periods.append(days)
-                    except:
-                        pass
-        
-        if backtested_holding_periods:
-            avg_backtested_holding = sum(backtested_holding_periods) / len(backtested_holding_periods)
-            st.metric("Avg Backtested Holding Period", f"{avg_backtested_holding:.1f} days")
-        else:
-            st.metric("Avg Backtested Holding Period", "N/A")
     
     st.markdown("---")
 
