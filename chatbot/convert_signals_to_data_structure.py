@@ -56,9 +56,13 @@ def parse_symbol_signal_column(value):
         date_match = re.search(r'(\d{4}-\d{2}-\d{2})', date_price_part)
         date = date_match.group(1) if date_match else None
         
-        # Extract price using regex
-        price_match = re.search(r'Price:\s*([\d.]+)', date_price_part)
-        price = float(price_match.group(1)) if price_match else None
+        # Extract price using regex (handle negative values and thousand separators)
+        price_match = re.search(r'Price:\s*([-]?\d+(?:\.\d+)?(?:,\d{3})*)', date_price_part)
+        if price_match:
+            price_str = price_match.group(1).replace(',', '')
+            price = float(price_str)
+        else:
+            price = None
         
         return symbol, date, signal_type, price
         
@@ -88,17 +92,21 @@ def parse_exit_signal_column(value):
         if not value_str or value_str.lower() in ['nan', 'none', '']:
             return None, None
         
-        # Check if no exit
-        if "No Exit Yet" in value_str:
+        # Check if no exit (case-insensitive)
+        if "no exit yet" in value_str.lower():
             return None, None
         
         # Extract date using regex
         date_match = re.search(r'(\d{4}-\d{2}-\d{2})', value_str)
         exit_date = date_match.group(1) if date_match else None
         
-        # Extract price using regex
-        price_match = re.search(r'Price:\s*([\d.]+)', value_str)
-        exit_price = float(price_match.group(1)) if price_match else None
+        # Extract price using regex (handle negative values and thousand separators)
+        price_match = re.search(r'Price:\s*([-]?\d+(?:\.\d+)?(?:,\d{3})*)', value_str)
+        if price_match:
+            price_str = price_match.group(1).replace(',', '')
+            exit_price = float(price_str)
+        else:
+            exit_price = None
         
         return exit_date, exit_price
         
@@ -240,10 +248,10 @@ def deduplicate_dataframe(df, dedup_columns=None, signal_type="entry"):
 
 def check_target_duplicate(row, master_csv_path):
     """
-    Check if target signal already exists in master CSV based on the three key columns.
+    Check if target signal already exists in master CSV based on key columns.
     
     Args:
-        row: DataFrame row to check
+        row: DataFrame row to check (should be enriched with Symbol, Signal Date, etc.)
         master_csv_path: Path to all_targets.csv
         
     Returns:
@@ -252,11 +260,11 @@ def check_target_duplicate(row, master_csv_path):
     import pandas as pd
     from pathlib import Path
     
-    # Target dedup columns - THESE THREE COLUMNS MUST MATCH FOR DUPLICATE
+    # Target dedup columns - Use columns that are actually created during enrichment
     dedup_cols = [
         "Symbol",
         "Target for which Price has achieved over 90 percent of gain %",
-        "Entry Signal Date/Price[$]"
+        "Signal Date"
     ]
     
     master_file = Path(master_csv_path)
@@ -289,7 +297,7 @@ def check_target_duplicate(row, master_csv_path):
             
             if match:
                 # Found exact duplicate
-                print(f"  🚫 Duplicate found: {row.get('Symbol', 'N/A')} - {row.get('Entry Signal Date/Price[$]', 'N/A')}")
+                print(f"  🚫 Duplicate found: {row.get('Symbol', 'N/A')} - {row.get('Signal Date', 'N/A')}")
                 return True
         
         return False
@@ -377,7 +385,7 @@ def convert_signal_file_to_data_structure(
     exit_column = df.columns[2] if len(df.columns) > 2 else None  # "Exit Signal Date/Price[$]"
     
     print(f"✓ Parsing column: '{symbol_column}'")
-    if exit_column:
+    if exit_column and signal_type != "target":
         print(f"✓ Exit column: '{exit_column}'")
     
     # Parse each row
@@ -440,13 +448,6 @@ def convert_signal_file_to_data_structure(
             print(f"⚠ Warning: Confirmation Status column not found. All signals will be processed.")
     
     for idx, row in df.iterrows():
-        # For targets, check duplicate first
-        if signal_type == "target" and master_csv_path:
-            is_duplicate = check_target_duplicate(row, master_csv_path)
-            if is_duplicate:
-                duplicates_rejected += 1
-                continue  # Skip this row
-        
         # Get function name
         function_name = row[function_column]
         if pd.isna(function_name) or not function_name:
@@ -472,6 +473,47 @@ def convert_signal_file_to_data_structure(
                     symbol = ""
                 signal_date = datetime.now().strftime("%Y-%m-%d")
                 sig_type = ""
+            
+            # For targets, enrich row with deduplication columns BEFORE duplicate check
+            # Extract Symbol, Signal, and Signal Date (already parsed above from col 1)
+            row['Symbol'] = symbol if symbol else ""
+            row['Signal'] = sig_type if sig_type else ""
+            row['Signal Date'] = signal_date if signal_date else ""
+            
+            # Extract Interval (column 2)
+            interval_column = df.columns[2] if len(df.columns) > 2 else None
+            if interval_column and interval_column in row.index:
+                row['Interval'] = str(row[interval_column]).strip() if pd.notna(row[interval_column]) else ""
+            else:
+                row['Interval'] = ""
+            
+            # Extract "Exit Signal Date/Price[$]" (column 3)
+            exit_signal_column = df.columns[3] if len(df.columns) > 3 else None
+            if exit_signal_column and exit_signal_column in row.index:
+                row['Exit Signal Date/Price[$]'] = str(row[exit_signal_column]).strip() if pd.notna(row[exit_signal_column]) else ""
+            else:
+                row['Exit Signal Date/Price[$]'] = ""
+            
+            # Extract "Target for which Price has achieved over 90 percent of gain %" (column 4)
+            target_column = df.columns[4] if len(df.columns) > 4 else None
+            if target_column and target_column in row.index:
+                row['Target for which Price has achieved over 90 percent of gain %'] = str(row[target_column]).strip() if pd.notna(row[target_column]) else ""
+            else:
+                row['Target for which Price has achieved over 90 percent of gain %'] = ""
+            
+            # Extract "Backtested Target Exit Date" (column 5)
+            backtested_exit_column = df.columns[5] if len(df.columns) > 5 else None
+            if backtested_exit_column and backtested_exit_column in row.index:
+                row['Backtested Target Exit Date'] = str(row[backtested_exit_column]).strip() if pd.notna(row[backtested_exit_column]) else ""
+            else:
+                row['Backtested Target Exit Date'] = ""
+            
+            # NOW check for duplicates after enrichment
+            if master_csv_path:
+                is_duplicate = check_target_duplicate(row, master_csv_path)
+                if is_duplicate:
+                    duplicates_rejected += 1
+                    continue  # Skip this row
         else:
             # For signals, parse the compound column
             symbol_data = row[symbol_column]
@@ -552,50 +594,9 @@ def convert_signal_file_to_data_structure(
                 row['Exit Signal Date'] = exit_date if exit_date else ""
                 row['Signal Date'] = signal_date if signal_date else ""
         elif signal_type == "target":
-            # For targets deduplication: Symbol, Signal, Interval, Signal Date, 
-            # Target for which Price has achieved over 90 percent of gain %,
-            # Backtested Target Exit Date, Exit Signal Date/Price[$]
-            # 
-            # Column order in target_signal.csv:
-            # col 0: Function
-            # col 1: "Symbol, Signal, Signal Date/Price[$]"
-            # col 2: Interval
-            # col 3: Exit Signal Date/Price[$]
-            # col 4: Target for which Price has achieved over 90 percent of gain %
-            # col 5: Backtested Target Exit Date
-            
-            # Extract Symbol, Signal, and Signal Date (already parsed above from col 1)
-            row['Symbol'] = symbol if symbol else ""
-            row['Signal'] = sig_type if sig_type else ""
-            row['Signal Date'] = signal_date if signal_date else ""
-            
-            # Extract Interval (column 2)
-            interval_column = df.columns[2] if len(df.columns) > 2 else None
-            if interval_column and interval_column in row.index:
-                row['Interval'] = str(row[interval_column]).strip() if pd.notna(row[interval_column]) else ""
-            else:
-                row['Interval'] = ""
-            
-            # Extract "Exit Signal Date/Price[$]" (column 3)
-            exit_signal_column = df.columns[3] if len(df.columns) > 3 else None
-            if exit_signal_column and exit_signal_column in row.index:
-                row['Exit Signal Date/Price[$]'] = str(row[exit_signal_column]).strip() if pd.notna(row[exit_signal_column]) else ""
-            else:
-                row['Exit Signal Date/Price[$]'] = ""
-            
-            # Extract "Target for which Price has achieved over 90 percent of gain %" (column 4)
-            target_column = df.columns[4] if len(df.columns) > 4 else None
-            if target_column and target_column in row.index:
-                row['Target for which Price has achieved over 90 percent of gain %'] = str(row[target_column]).strip() if pd.notna(row[target_column]) else ""
-            else:
-                row['Target for which Price has achieved over 90 percent of gain %'] = ""
-            
-            # Extract "Backtested Target Exit Date" (column 5)
-            backtested_exit_column = df.columns[5] if len(df.columns) > 5 else None
-            if backtested_exit_column and backtested_exit_column in row.index:
-                row['Backtested Target Exit Date'] = str(row[backtested_exit_column]).strip() if pd.notna(row[backtested_exit_column]) else ""
-            else:
-                row['Backtested Target Exit Date'] = ""
+            # For targets, enrichment already done above before duplicate check
+            # All columns are already set, so no additional work needed here
+            pass
         
         # Add SignalType column to the row
         row['SignalType'] = row_signal_type
@@ -658,7 +659,7 @@ def convert_signal_file_to_data_structure(
     print(f"⚠ Rows skipped: {skipped}")
     if signal_type == "target":
         print(f"🚫 Duplicates rejected: {duplicates_rejected}")
-        print(f"   → Deduplication keys: Symbol, Signal, Interval, Signal Date, Target for which Price has achieved over 90 percent of gain %, Backtested Target Exit Date, Exit Signal Date/Price[$]")
+        print(f"   → Deduplication keys: Symbol, Target for which Price has achieved over 90 percent of gain %, Signal Date")
     if signal_type == "signal" and unconfirmed_skipped > 0:
         print(f"🚫 Unconfirmed entry signals skipped: {unconfirmed_skipped} (only 'is CONFIRMED' or 'was CONFIRMED' are processed)")
     print(f"✓ Unique assets: {len(created_symbols)}")
@@ -785,9 +786,13 @@ def parse_current_price_column(value):
         date_match = re.search(r'(\d{4}-\d{2}-\d{2})', value_str)
         date = date_match.group(1) if date_match else None
         
-        # Extract price
-        price_match = re.search(r'Price:\s*([\d.]+)', value_str)
-        price = float(price_match.group(1)) if price_match else None
+        # Extract price (handle negative values and thousand separators)
+        price_match = re.search(r'Price:\s*([-]?\d+(?:\.\d+)?(?:,\d{3})*)', value_str)
+        if price_match:
+            price_str = price_match.group(1).replace(',', '')
+            price = float(price_str)
+        else:
+            price = None
         
         # Extract percentage change (optional)
         pct_match = re.search(r'([\d.]+)%\s*(above|below)', value_str)
@@ -815,7 +820,7 @@ def calculate_price_change_percentage(current_price, signal_price):
     Returns:
         Percentage change string (e.g., "5.2% above" or "3.1% below")
     """
-    if not current_price or not signal_price or signal_price == 0:
+    if current_price is None or signal_price is None or signal_price == 0:
         return "0.0% below"
     
     try:
@@ -971,7 +976,7 @@ def update_current_prices_in_data_files(data_base_dir="chatbot/data", stock_data
                             _, _, _, signal_price = parse_symbol_signal_column(symbol_data)
                     
                     # Calculate percentage change
-                    if signal_price and signal_price > 0:
+                    if signal_price is not None and signal_price > 0:
                         price_change_str = calculate_price_change_percentage(latest_price, signal_price)
                     else:
                         price_change_str = "0.0% below"
