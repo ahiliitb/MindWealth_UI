@@ -25,19 +25,19 @@ def parse_signal_csv(df, function_name):
                 signal_price = 0
         else:
             symbol, signal_type, signal_date, signal_price = "Unknown", "Unknown", "Unknown", 0
-            
-            # Parse win rate and number of trades
-            win_rate_info = row.get('Win Rate [%], History Tested, Number of Trades', '')
-            win_rate_match = re.search(r'([0-9.]+)%.*?([0-9]+)', str(win_rate_info))
-            
-            if win_rate_match:
-                try:
-                    win_rate = float(win_rate_match.group(1))
-                    num_trades = int(win_rate_match.group(2))
-                except:
-                    win_rate, num_trades = 0, 0
-            else:
+        
+        # Parse win rate and number of trades (always, regardless of symbol parsing success)
+        win_rate_info = row.get('Win Rate [%], History Tested, Number of Trades', '')
+        win_rate_match = re.search(r'([0-9.]+)%.*?([0-9]+)', str(win_rate_info))
+        
+        if win_rate_match:
+            try:
+                win_rate = float(win_rate_match.group(1))
+                num_trades = int(win_rate_match.group(2))
+            except:
                 win_rate, num_trades = 0, 0
+        else:
+            win_rate, num_trades = 0, 0
         
         # Parse CAGR
         strategy_cagr = 0
