@@ -78,10 +78,16 @@ def apply_table_styling():
         font-size: 16px !important;
         padding: 10px 12px !important;
         line-height: 1.4 !important;
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
     }
     
     .ag-cell-value {
         font-size: 16px !important;
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
     }
     
     /* Target table elements within dataframes */
@@ -102,6 +108,9 @@ def apply_table_styling():
         font-size: 16px !important;
         padding: 10px 14px !important;
         line-height: 1.4 !important;
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
     }
     
     /* Target all text elements within dataframe containers */
@@ -129,20 +138,59 @@ def apply_table_styling():
     .stApp .stDataFrame {
         font-size: 16px !important;
     }
+    
+    /* Enable text wrapping in dataframe cells */
+    .stDataFrame,
+    [data-testid="stDataFrame"] {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    /* Ensure AG Grid cells can expand vertically */
+    .ag-row {
+        min-height: auto !important;
+    }
+    
+    .ag-cell-wrapper {
+        height: auto !important;
+        min-height: 30px;
+    }
     </style>
     """, unsafe_allow_html=True)
 
 
 def display_styled_dataframe(df, height=400, key_suffix=""):
     """Display dataframe with enhanced styling and larger fonts."""
-    # Apply additional styling through column configuration
+    # Reorder columns: Symbol/Signal first, Exit Signal second, Function third
+    from ..utils.helpers import reorder_dataframe_columns, find_column_by_keywords
+    df = reorder_dataframe_columns(df)
+    
+    # Find Symbol and Exit Signal columns for pinning
+    symbol_col = find_column_by_keywords(df.columns, ['Symbol, Signal', 'Symbol'])
+    if not symbol_col:
+        for col in df.columns:
+            if 'Symbol' in col and 'Signal' in col and 'Exit' not in col:
+                symbol_col = col
+                break
+    exit_col = find_column_by_keywords(df.columns, ['Exit Signal Date', 'Exit Signal', 'Exit'])
+    
+    # Apply additional styling through column configuration with pinning and autosize
     column_config = {}
     for col in df.columns:
-        column_config[col] = st.column_config.TextColumn(
-            col,
-            width="medium",
-            help=None
-        )
+        # Pin Symbol and Exit Signal columns
+        if col == symbol_col or col == exit_col:
+            column_config[col] = st.column_config.TextColumn(
+                col,
+                help=None,
+                pinned="left"
+                # No width parameter = autosize
+            )
+        else:
+            column_config[col] = st.column_config.TextColumn(
+                col,
+                help=None
+                # No width parameter = autosize
+            )
     
     # Display with enhanced parameters
     st.dataframe(
@@ -598,15 +646,15 @@ def render_chatbot_page():
     
     col1, col2 = st.sidebar.columns(2)
     
-    # Set default dates (last 5 days)
-    default_from_date = datetime.now() - timedelta(days=5)
+    # Set default dates (last 1 month)
+    default_from_date = datetime.now() - timedelta(days=30)
     default_to_date = datetime.now()
     
     with col1:
         from_date = st.date_input(
             "From Date",
             value=default_from_date,
-            help="Start date for data (default: 5 days ago)"
+            help="Start date for data (default: 1 month ago)"
         )
     
     with col2:
@@ -1110,21 +1158,56 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
                         # Fallback to legacy simple table if full tables not available
                         signals_df = _coerce_to_dataframe(metadata.get('signals_table'))
                         if signals_df is not None and not signals_df.empty:
+                            # Reorder columns: Symbol/Signal first, Exit Signal second, Function third
+                            from ..utils.helpers import reorder_dataframe_columns, find_column_by_keywords
+                            signals_df = reorder_dataframe_columns(signals_df)
+                            
+                            # Find Symbol and Exit Signal columns for pinning
+                            symbol_col = find_column_by_keywords(signals_df.columns, ['Symbol, Signal', 'Symbol'])
+                            if not symbol_col:
+                                for col in signals_df.columns:
+                                    if 'Symbol' in col and 'Signal' in col and 'Exit' not in col:
+                                        symbol_col = col
+                                        break
+                            exit_col = find_column_by_keywords(signals_df.columns, ['Exit Signal Date', 'Exit Signal', 'Exit'])
+                            
+                            # Build column config with pinning and autosize for ALL columns
+                            column_config = {}
+                            for col in signals_df.columns:
+                                # Pin if it's Symbol or Exit column
+                                if col == symbol_col or col == exit_col:
+                                    # Handle DateColumn for Signal_Date
+                                    if col == "Signal_Date":
+                                        column_config[col] = st.column_config.DateColumn(
+                                            col,
+                                            pinned="left"
+                                            # No width parameter = autosize
+                                        )
+                                    else:
+                                        column_config[col] = st.column_config.TextColumn(
+                                            col,
+                                            pinned="left"
+                                            # No width parameter = autosize
+                                        )
+                                else:
+                                    # Handle DateColumn for Signal_Date
+                                    if col == "Signal_Date":
+                                        column_config[col] = st.column_config.DateColumn(
+                                            col
+                                            # No width parameter = autosize
+                                        )
+                                    else:
+                                        column_config[col] = st.column_config.TextColumn(
+                                            col
+                                            # No width parameter = autosize
+                                        )
+                            
                             st.markdown("### 📊 Signals Referenced in Analysis")
                             st.dataframe(
                                 signals_df,
                                 width='stretch',
                                 hide_index=True,
-                                column_config={
-                                    "Symbol": st.column_config.TextColumn("Symbol", width="small"),
-                                    "Function": st.column_config.TextColumn("Function", width="medium"),
-                                    "Signal_Type": st.column_config.TextColumn("Signal Type", width="small"),
-                                    "Signal_Direction": st.column_config.TextColumn("Direction", width="small"),
-                                    "Signal_Date": st.column_config.DateColumn("Signal Date", width="medium"),
-                                    "Price": st.column_config.TextColumn("Price", width="small"),
-                                    "Interval": st.column_config.TextColumn("Interval", width="small"),
-                                    "Status": st.column_config.TextColumn("Status", width="small")
-                                }
+                                column_config=column_config
                             )
                             st.caption(f"📈 {len(signals_df)} signal(s) were used to generate this analysis")
                     

@@ -235,10 +235,17 @@ def create_f_stack_page(data_file, page_title="F-Stack"):
     available_columns = [col for col in display_columns if col in filtered_df.columns]
     display_df = filtered_df[available_columns]
 
+    # Ensure ALL columns get autosize (no width parameter = autosize)
     st.dataframe(
         display_df,
         use_container_width=True,
         hide_index=True,
+        column_config={
+            col: st.column_config.Column(
+                col
+                # No width parameter = autosize
+            ) for col in display_df.columns
+        }
     )
 
     csv_data = display_df.to_csv(index=False).encode('utf-8')

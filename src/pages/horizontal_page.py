@@ -109,6 +109,17 @@ def create_horizontal_page(data_file: str, page_title: str):
 
     st.markdown("---")
     st.markdown("### 📋 Detailed Data Table (Original CSV)")
-    st.dataframe(df, use_container_width=True, height=600)
+    # Ensure ALL columns get autosize (no width parameter = autosize)
+    st.dataframe(
+        df, 
+        use_container_width=True, 
+        height=600,
+        column_config={
+            col: st.column_config.Column(
+                col
+                # No width parameter = autosize
+            ) for col in df.columns
+        }
+    )
 
 

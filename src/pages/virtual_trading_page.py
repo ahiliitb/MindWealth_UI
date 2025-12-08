@@ -207,11 +207,17 @@ def display_interval_tabs(df, position_name, trade_status):
                     lambda x: f"${x:.4f}" if pd.notna(x) and str(x).strip() else "N/A"
                 )
             
-            # Display the dataframe
+            # Display the dataframe with autosize for ALL columns
             st.dataframe(
                 display_df,
                 use_container_width=True,
                 hide_index=True,
+                column_config={
+                    col: st.column_config.Column(
+                        col
+                        # No width parameter = autosize
+                    ) for col in display_df.columns
+                },
                 height=min(900, max(500, (len(display_df) + 1) * 35))
             )
 

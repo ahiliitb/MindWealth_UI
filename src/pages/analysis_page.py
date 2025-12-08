@@ -214,18 +214,42 @@ def create_analysis_page(data_file, page_title):
                 columns_to_display = [col for col in original_df.columns if col not in columns_to_exclude]
                 filtered_original_df = original_df[columns_to_display]
                 
-                # Display with better formatting
+                # Reorder columns: Symbol/Signal first, Exit Signal second, Function third
+                from ..utils.helpers import reorder_dataframe_columns, find_column_by_keywords
+                filtered_original_df = reorder_dataframe_columns(filtered_original_df)
+                
+                # Find Symbol and Exit Signal columns for pinning
+                symbol_col = find_column_by_keywords(filtered_original_df.columns, ['Symbol, Signal', 'Symbol'])
+                if not symbol_col:
+                    for col in filtered_original_df.columns:
+                        if 'Symbol' in col and 'Signal' in col and 'Exit' not in col:
+                            symbol_col = col
+                            break
+                exit_col = find_column_by_keywords(filtered_original_df.columns, ['Exit Signal Date', 'Exit Signal', 'Exit'])
+                
+                # Display with better formatting, pinning, and autosize for ALL columns
+                column_config = {}
+                for col in filtered_original_df.columns:
+                    # Pin Symbol and Exit Signal columns
+                    if col == symbol_col or col == exit_col:
+                        column_config[col] = st.column_config.TextColumn(
+                            col,
+                            help=f"Original CSV column: {col}",
+                            pinned="left"
+                            # No width parameter = autosize
+                        )
+                    else:
+                        column_config[col] = st.column_config.TextColumn(
+                            col,
+                            help=f"Original CSV column: {col}"
+                            # No width parameter = autosize
+                        )
+                
                 st.dataframe(
                     filtered_original_df,
                     use_container_width=True,
                     height=600,
-                    column_config={
-                        col: st.column_config.TextColumn(
-                            col,
-                            width="medium",
-                            help=f"Original CSV column: {col}"
-                        ) for col in filtered_original_df.columns
-                    }
+                    column_config=column_config
                 )
         
         # ALL Intervals

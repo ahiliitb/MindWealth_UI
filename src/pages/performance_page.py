@@ -136,7 +136,7 @@ def create_performance_summary_page(data_file, page_title):
         if csv_data:
             original_df = pd.DataFrame(csv_data)
             
-            # Display with better formatting
+            # Display with better formatting and autosize
             st.dataframe(
                 original_df,
                 use_container_width=True,
@@ -144,8 +144,8 @@ def create_performance_summary_page(data_file, page_title):
                 column_config={
                     col: st.column_config.TextColumn(
                         col,
-                        width="medium",
                         help=f"Original CSV column: {col}"
+                        # No width parameter = autosize
                     ) for col in original_df.columns
                 }
             )

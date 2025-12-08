@@ -79,6 +79,42 @@ st.markdown("""
         color: #ffbb33;
         font-weight: bold;
     }
+    
+    /* Enable text wrapping in dataframe cells */
+    .stDataFrame,
+    [data-testid="stDataFrame"] {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    .stDataFrame td,
+    [data-testid="stDataFrame"] td,
+    .stDataFrame th,
+    [data-testid="stDataFrame"] th {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        max-width: 500px;
+    }
+    
+    /* AG Grid specific styling for text wrapping */
+    .ag-cell,
+    .ag-cell-value {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* Ensure cells can expand vertically */
+    .ag-row {
+        min-height: auto !important;
+    }
+    
+    .ag-cell-wrapper {
+        height: auto !important;
+        min-height: 30px;
+    }
 </style>
 """, unsafe_allow_html=True)
 

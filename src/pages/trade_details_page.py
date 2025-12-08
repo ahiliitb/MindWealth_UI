@@ -366,9 +366,19 @@ def create_trade_details_page():
                                             else:
                                                 st.markdown(f"### {tab_name} Signals ({len(filtered_df)} trades)")
                                             
-                                            # Display the filtered CSV data table
+                                            # Display the filtered CSV data table with autosize
                                             table_height = min(700, max(400, (len(filtered_df) + 1) * 35))
-                                            st.dataframe(filtered_df, use_container_width=True, height=table_height)
+                                            st.dataframe(
+                                                filtered_df, 
+                                                use_container_width=True, 
+                                                height=table_height,
+                                                column_config={
+                                                    col: st.column_config.Column(
+                                                        col
+                                                        # No width parameter = autosize
+                                                    ) for col in filtered_df.columns
+                                                }
+                                            )
                                             
                                             # Download button for filtered data
                                             csv_data = filtered_df.to_csv(index=False)
@@ -388,7 +398,17 @@ def create_trade_details_page():
                             # No signal types found, show all data
                             with st.container(height=850, border=True):
                                 table_height = min(700, max(400, (len(combined_df) + 1) * 35))
-                                st.dataframe(combined_df, use_container_width=True, height=table_height)
+                                st.dataframe(
+                                    combined_df, 
+                                    use_container_width=True, 
+                                    height=table_height,
+                                    column_config={
+                                        col: st.column_config.Column(
+                                            col
+                                            # No width parameter = autosize
+                                        ) for col in combined_df.columns
+                                    }
+                                )
                                 
                                 # Download button
                                 csv_data = combined_df.to_csv(index=False)
@@ -406,7 +426,17 @@ def create_trade_details_page():
                         # No Signal column, show all data
                         with st.container(height=850, border=True):
                             table_height = min(700, max(400, (len(combined_df) + 1) * 35))
-                            st.dataframe(combined_df, use_container_width=True, height=table_height)
+                            st.dataframe(
+                                combined_df, 
+                                use_container_width=True, 
+                                height=table_height,
+                                column_config={
+                                    col: st.column_config.Column(
+                                        col
+                                        # No width parameter = autosize
+                                    ) for col in combined_df.columns
+                                }
+                            )
                             
                             # Download button
                             csv_data = combined_df.to_csv(index=False)
