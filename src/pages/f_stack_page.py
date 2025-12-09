@@ -71,6 +71,10 @@ def _render_signal_cards(df):
 
 def create_f_stack_page(data_file, page_title="F-Stack"):
     """Render the F-Stack analyzer page."""
+    # Display data fetch datetime
+    from ..utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="sidebar")
+    
     st.title("📐 F-Stack Analyzer")
     st.caption(
         "Review extension levels, band composition, and upcoming targets derived from the F-Stack Analyzer report."

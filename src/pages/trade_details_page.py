@@ -116,6 +116,10 @@ def load_trade_data(base_folder, function, asset, interval):
 
 def create_trade_details_page():
     """Create the Trade Details page with tabs and selection dropdowns"""
+    # Display data fetch datetime
+    from ..utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="sidebar")
+    
     st.title("📊 Trade Details")
     st.markdown("---")
     

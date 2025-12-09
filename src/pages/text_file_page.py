@@ -53,6 +53,10 @@ def find_latest_gpt_file(base_path, extension='txt'):
 
 def create_text_file_page():
     """Create a page to display Claude Signals report: text first, then cards + table"""
+    # Display data fetch datetime
+    from ..utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="sidebar")
+    
     st.title("🤖 Claude Signals Report")
     
     # Find the latest Claude files

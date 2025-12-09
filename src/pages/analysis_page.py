@@ -80,6 +80,10 @@ def create_analysis_page(data_file, page_title):
     main_tab1, main_tab2, main_tab3 = st.tabs(["📊 ALL Positions", "📈 Long Positions", "📉 Short Positions"])
     
     # Sidebar filters (same as Signal Analysis)
+    # Display data fetch datetime
+    from ..utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="sidebar")
+    
     st.sidebar.markdown("#### 🔍 Filters")
     
     # Function filter with select all button

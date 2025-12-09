@@ -2,6 +2,9 @@
 Helper utility functions
 """
 import pandas as pd
+import json
+from pathlib import Path
+from datetime import datetime
 
 
 def find_column_by_keywords(columns, keywords):
@@ -121,4 +124,57 @@ def get_pinned_column_config(df: pd.DataFrame, base_config=None):
                 )
     
     return column_config
+
+
+def get_data_fetch_datetime(json_path="trade_store/US/data_fetch_datetime.json"):
+    """
+    Read the data fetch datetime from JSON file.
+    
+    Args:
+        json_path: Path to the data_fetch_datetime.json file
+        
+    Returns:
+        Dictionary with date, time, datetime, and timezone, or None if file not found
+    """
+    try:
+        json_file = Path(json_path)
+        if json_file.exists():
+            with open(json_file, 'r') as f:
+                data = json.load(f)
+                return data
+        return None
+    except Exception as e:
+        return None
+
+
+def display_data_fetch_info(json_path="trade_store/US/data_fetch_datetime.json", location="sidebar"):
+    """
+    Display the data fetch date and time information.
+    
+    Args:
+        json_path: Path to the data_fetch_datetime.json file
+        location: Where to display - "sidebar" or "header"
+    """
+    import streamlit as st
+    
+    datetime_info = get_data_fetch_datetime(json_path)
+    
+    if datetime_info:
+        date = datetime_info.get('date', 'N/A')
+        time = datetime_info.get('time', 'N/A')
+        datetime_str = datetime_info.get('datetime', 'N/A')
+        timezone = datetime_info.get('timezone', 'N/A')
+        
+        if location == "sidebar":
+            st.sidebar.markdown("---")
+            st.sidebar.markdown("### 📅 Data Last Updated")
+            st.sidebar.markdown(f"**Date:** {date}")
+            st.sidebar.markdown(f"**Time:** {time} {timezone}")
+            st.sidebar.caption(f"Last fetch: {datetime_str} {timezone}")
+        else:  # header
+            st.markdown(f"**📅 Data Last Updated:** {date} at {time} {timezone}")
+    else:
+        if location == "sidebar":
+            st.sidebar.markdown("---")
+            st.sidebar.caption("⚠️ Data fetch time not available")
 

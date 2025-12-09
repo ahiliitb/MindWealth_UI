@@ -135,6 +135,10 @@ def main():
     st.sidebar.title("Navigation")
     st.sidebar.markdown("**Select Page**")
     
+    # Display data fetch datetime in sidebar
+    from src.utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="sidebar")
+    
     # Dynamically discover CSV files
     csv_files = discover_csv_files()
     

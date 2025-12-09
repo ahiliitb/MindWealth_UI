@@ -13,6 +13,10 @@ from ..components.charts import create_horizontal_chart
 
 def create_horizontal_page(data_file: str, page_title: str):
     """Render the Horizontal analysis page."""
+    # Display data fetch datetime
+    from ..utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="sidebar")
+    
     st.title(f"📊 {page_title}")
 
     # Show report date from filename if available

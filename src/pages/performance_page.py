@@ -51,6 +51,10 @@ def create_performance_summary_page(data_file, page_title):
     # Create main tabs for signal types
     main_tab1, main_tab2, main_tab3 = st.tabs(["📊 ALL Signal Types", "📈 Long Signals", "📉 Short Signals"])
     
+    # Display data fetch datetime
+    from ..utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="sidebar")
+    
     # Sidebar filters for performance data
     st.sidebar.markdown("#### 🔍 Filters")
     

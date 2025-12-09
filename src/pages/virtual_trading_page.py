@@ -8,6 +8,10 @@ import pandas as pd
 
 def create_virtual_trading_page():
     """Create virtual trading page with open/closed/all trades tabs"""
+    # Display data fetch datetime
+    from ..utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="sidebar")
+    
     st.title("📈 Virtual Trading")
     st.markdown("---")
     
