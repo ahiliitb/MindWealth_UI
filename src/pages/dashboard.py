@@ -9,6 +9,10 @@ from ..utils.file_discovery import discover_csv_files
 
 def create_top_signals_dashboard():
     """Create the dashboard page"""
+    # Display data fetch datetime in sidebar (only for dashboard)
+    from ..utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="sidebar")
+    
     st.title("📊 Trading Strategy Dashboard")
     st.markdown("---")
     

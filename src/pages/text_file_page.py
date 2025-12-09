@@ -53,21 +53,15 @@ def find_latest_gpt_file(base_path, extension='txt'):
 
 def create_text_file_page():
     """Create a page to display Claude Signals report: text first, then cards + table"""
-    # Display data fetch datetime
-    from ..utils.helpers import display_data_fetch_info
-    display_data_fetch_info(location="sidebar")
-    
     st.title("🤖 Claude Signals Report")
+    
+    # Display data fetch datetime at top of page (from JSON file)
+    from ..utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="header")
     
     # Find the latest Claude files
     txt_file, txt_date = find_latest_gpt_file(GPT_SIGNALS_REPORT_TXT_PATH_US, 'txt')
     csv_file, csv_date = find_latest_gpt_file(GPT_SIGNALS_REPORT_CSV_PATH_US, 'csv')
-    
-    # Display date if found (prefer CSV date if both exist, otherwise use TXT date)
-    report_date = csv_date if csv_date else txt_date
-    if report_date:
-        formatted_date = report_date.strftime('%B %d, %Y')
-        st.markdown(f"**📅 Report Date: {formatted_date} at 5:00 PM EST**")
     
     st.markdown("---")
     

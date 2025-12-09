@@ -54,6 +54,15 @@ done
 echo "📄 Copying trade signal TXT files..."
 cp "$SOURCE_TRADE_DIR"/*.txt "$TARGET_TRADE_DIR"/ 2>/dev/null || echo "⚠️  No TXT files found in trade_store/US"
 
+# Copy data_fetch_datetime.json file
+echo "📅 Copying data fetch datetime JSON file..."
+if [ -f "$SOURCE_TRADE_DIR/data_fetch_datetime.json" ]; then
+    cp "$SOURCE_TRADE_DIR/data_fetch_datetime.json" "$TARGET_TRADE_DIR/data_fetch_datetime.json"
+    echo "✅ Copied data_fetch_datetime.json"
+else
+    echo "⚠️  data_fetch_datetime.json not found in $SOURCE_TRADE_DIR"
+fi
+
 # Clean up old dated CSV and TXT files after copying new ones
 # This ensures we keep only the latest dated file for each base name
 echo "🧹 Cleaning up old dated files (keeping only latest for each base name)..."

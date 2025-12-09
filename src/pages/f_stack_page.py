@@ -71,23 +71,15 @@ def _render_signal_cards(df):
 
 def create_f_stack_page(data_file, page_title="F-Stack"):
     """Render the F-Stack analyzer page."""
-    # Display data fetch datetime
-    from ..utils.helpers import display_data_fetch_info
-    display_data_fetch_info(location="sidebar")
-    
     st.title("📐 F-Stack Analyzer")
+    
+    # Display data fetch datetime at top of page (from JSON file)
+    from ..utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="header")
+    
     st.caption(
         "Review extension levels, band composition, and upcoming targets derived from the F-Stack Analyzer report."
     )
-    
-    # Extract and display date from filename
-    from ..utils.file_discovery import extract_date_from_filename
-    import os
-    filename = os.path.basename(data_file)
-    file_date = extract_date_from_filename(filename)
-    if file_date:
-        formatted_date = file_date.strftime('%B %d, %Y')
-        st.markdown(f"**📅 Report Date: {formatted_date} at 5:00 PM EST**")
     
     st.markdown("---")
 

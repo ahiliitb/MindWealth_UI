@@ -322,11 +322,11 @@ def render_chat_history_sidebar():
 def render_chatbot_page():
     """Render the AI Chatbot page."""
     
-    # Display data fetch datetime
-    from ..utils.helpers import display_data_fetch_info
-    display_data_fetch_info(location="sidebar")
-    
     st.title("🤖 AI Trading Analysis Chatbot")
+    
+    # Display data fetch datetime at top of page
+    from ..utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="header")
     st.markdown("Ask questions about your trading signals and get AI-powered insights!")
     
     # Apply custom styling for larger table fonts

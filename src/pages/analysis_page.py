@@ -32,17 +32,12 @@ def create_analysis_page(data_file, page_title):
         create_performance_summary_page(data_file, page_title)
         return
     
-    # Display title and date for regular analysis pages
+    # Display title
     st.title(f"📈 {page_title}")
     
-    # Extract and display date from filename (skip for performance pages, virtual trading, and chatbot)
-    pages_without_date = ['Latest Performance', 'Forward Testing Performance']
-    if page_title not in pages_without_date:
-        filename = os.path.basename(data_file)
-        file_date = extract_date_from_filename(filename)
-        if file_date:
-            formatted_date = file_date.strftime('%B %d, %Y')
-            st.markdown(f"**📅 Report Date: {formatted_date} at 5:00 PM EST**")
+    # Display data fetch datetime at top of page (from JSON file)
+    from ..utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="header")
     
     st.markdown("---")
     
@@ -80,10 +75,6 @@ def create_analysis_page(data_file, page_title):
     main_tab1, main_tab2, main_tab3 = st.tabs(["📊 ALL Positions", "📈 Long Positions", "📉 Short Positions"])
     
     # Sidebar filters (same as Signal Analysis)
-    # Display data fetch datetime
-    from ..utils.helpers import display_data_fetch_info
-    display_data_fetch_info(location="sidebar")
-    
     st.sidebar.markdown("#### 🔍 Filters")
     
     # Function filter with select all button

@@ -156,6 +156,7 @@ def display_data_fetch_info(json_path="trade_store/US/data_fetch_datetime.json",
         location: Where to display - "sidebar" or "header"
     """
     import streamlit as st
+    from datetime import datetime
     
     datetime_info = get_data_fetch_datetime(json_path)
     
@@ -171,10 +172,45 @@ def display_data_fetch_info(json_path="trade_store/US/data_fetch_datetime.json",
             st.sidebar.markdown(f"**Date:** {date}")
             st.sidebar.markdown(f"**Time:** {time} {timezone}")
             st.sidebar.caption(f"Last fetch: {datetime_str} {timezone}")
-        else:  # header
-            st.markdown(f"**📅 Data Last Updated:** {date} at {time} {timezone}")
+        else:  # header - format nicely
+            try:
+                # Parse date and time
+                date_obj = datetime.strptime(date, "%Y-%m-%d")
+                formatted_date = date_obj.strftime("%B %d, %Y")
+                
+                # Parse time and format as 12-hour with AM/PM
+                time_obj = datetime.strptime(time, "%H:%M:%S")
+                formatted_time = time_obj.strftime("%I:%M %p")
+                
+                # Get timezone abbreviation (e.g., EST, EDT)
+                tz_abbrev = timezone
+                try:
+                    import pytz
+                    tz_map = {
+                        "US/Eastern": "US/Eastern",
+                        "US/Central": "US/Central",
+                        "US/Pacific": "US/Pacific",
+                        "America/New_York": "US/Eastern",
+                        "America/Chicago": "US/Central",
+                        "America/Los_Angeles": "US/Pacific"
+                    }
+                    tz_name = tz_map.get(timezone, timezone)
+                    if tz_name in ["US/Eastern", "US/Central", "US/Pacific"]:
+                        tz = pytz.timezone(tz_name)
+                        dt = tz.localize(datetime.strptime(f"{date} {time}", "%Y-%m-%d %H:%M:%S"))
+                        tz_abbrev = dt.strftime("%Z")
+                except (ImportError, Exception):
+                    # Fallback to timezone string if pytz fails
+                    tz_abbrev = timezone
+                
+                st.markdown(f"**📅 Report Date:** {formatted_date} at {formatted_time} {tz_abbrev}")
+            except Exception:
+                # Fallback to original format if parsing fails
+                st.markdown(f"**📅 Report Date:** {date} at {time} {timezone}")
     else:
         if location == "sidebar":
             st.sidebar.markdown("---")
             st.sidebar.caption("⚠️ Data fetch time not available")
+        else:  # header
+            st.markdown("**📅 Report Date:** Not available")
 

@@ -29,11 +29,11 @@ from constant import OUTSTANDING_SIGNAL_CSV_PATH_US
 
 def create_monitored_trades_page():
     """Create the Monitored Trades page"""
-    # Display data fetch datetime
-    from ..utils.helpers import display_data_fetch_info
-    display_data_fetch_info(location="sidebar")
-    
     st.title("⭐ Monitored Trades")
+    
+    # Display data fetch datetime at top of page
+    from ..utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="header")
     st.markdown("### Personal Portfolio Analysis")
     st.markdown("---")
     

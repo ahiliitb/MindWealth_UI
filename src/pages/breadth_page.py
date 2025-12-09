@@ -14,18 +14,11 @@ from ..utils.file_discovery import extract_date_from_filename
 
 def create_breadth_page(data_file, page_title):
     """Create a specialized page for breadth data"""
-    # Display data fetch datetime
-    from ..utils.helpers import display_data_fetch_info
-    display_data_fetch_info(location="sidebar")
-    
     st.title(f"📊 {page_title}")
     
-    # Extract and display date from filename
-    filename = os.path.basename(data_file)
-    file_date = extract_date_from_filename(filename)
-    if file_date:
-        formatted_date = file_date.strftime('%B %d, %Y')
-        st.markdown(f"**📅 Report Date: {formatted_date} at 5:00 PM EST**")
+    # Display data fetch datetime at top of page (from JSON file)
+    from ..utils.helpers import display_data_fetch_info
+    display_data_fetch_info(location="header")
     
     st.markdown("---")
     
