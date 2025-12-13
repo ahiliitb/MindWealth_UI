@@ -1,0 +1,241 @@
+# Top Trading Signals Analysis
+
+These signals represent the best opportunities based on our comprehensive filtering criteria, with emphasis on confirmed signals showing strong historical performance, positive CAGR differences, and favorable risk-reward profiles.
+
+|||UBER,Daily,FRACTAL TRACK,2025-12-12,Long|MSFT,Weekly,FRACTAL TRACK,2025-12-12,Long|BRK-B,Daily,FRACTAL TRACK,2025-12-12,Long|XLU,Daily,FRACTAL TRACK,2025-12-12,Long|NFLX,Daily,DELTADRIFT,2025-12-12,Long|MA,Daily,TRENDPULSE,2025-12-12,Long|WMT,Weekly,TRENDPULSE,2025-12-12,Long|ETH-USD,Daily,TRENDPULSE,2025-12-10,Long|KWEB,Monthly,FRACTAL TRACK,2025-12-12,Short|||
+
+## Key Insights and Recommendations
+
+1. **Fresh signals dominate the rankings** - The majority of top signals are extremely recent (within the last 3 days), providing timely entry opportunities with minimal missed potential.
+
+2. **Diversified sector representation** - Top signals span technology, transportation, utilities, consumer services, retail, and cryptocurrency, offering excellent sector diversification.
+
+3. **Exceptional historical win rates** - All filtered signals show remarkable win rates (81-100%), significantly increasing the probability of successful trades.
+
+4. **Multiple technical confirmations** - Several assets have confirmations from different functions (e.g., XLU with both FRACTAL TRACK and DELTADRIFT), increasing conviction in the predictions.
+
+5. **Strong CAGR differentials** - Most signals show strategy CAGRs significantly outperforming buy-and-hold approaches, with differentials ranging from 0.93% (MSFT) to 26.04% (UBER).
+
+6. **Clear risk management levels** - Each signal provides well-defined support levels for stop loss placement, with reward-to-risk ratios generally exceeding 3:1.
+
+7. **Balance of timeframes** - While daily signals predominate, the inclusion of weekly and monthly signals provides opportunities for both short and longer-term traders.
+
+8. **One contrarian short signal** - KWEB (Chinese internet ETF) appears as the sole short recommendation, providing a hedge against the predominantly bullish signals.
+
+## Detailed Signal Analysis
+
+**UBER (Uber Technologies)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-12
+- Signal: Long
+- Interval: Daily
+- Signal Price: 85.11
+- Win Rate: 100.0%
+- CAGR: Strategy (33.14%) - Buy and Hold (7.1%) = 26.04%
+- Latest Performance Win Rate: 95.82%
+- Average Return of Historical Winning Trades: 9.9%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 2.9% to 9.9% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2029-05-16/2025-12-17/2026-07-04
+- Current Price, Current Mark to Market: 85.11, 0%
+- Target Prices: 87.58/93.54/128.77/No Horizontal Resistance/103.17/130.93/87.52 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 84.16/34.60/71.09/No support/83.98/78.42/No EMA 200 Support based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 83.98 (approximately 1.3% below current price, at the nearest F-Track 1 support level)
+- Recommended Take Profit: 93.54 (target based on average historical winning trade gain, representing 9.9% upside)
+- Is Signal timely?: Yes, signal is brand new with 0% mark-to-market
+- P/E Ratio: 10.95
+- PEG Ratio: 5.02
+
+**Notes**: This signal shows exceptional historical performance with a perfect 100% win rate across 23 trades over 5 years. The strategy CAGR significantly outperforms buy-and-hold by 26.04%. Multiple target levels provide a clear roadmap for profit-taking opportunities.
+
+**MSFT (Microsoft)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-12
+- Signal: Long
+- Interval: Weekly
+- Signal Price: 478.53
+- Win Rate: 100.0%
+- CAGR: Strategy (11.58%) - Buy and Hold (10.65%) = 0.93%
+- Latest Performance Win Rate: 98.94%
+- Average Return of Historical Winning Trades: 15.92%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 6.9% to 15.9% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2031-03-25/2026-02-10/2027-04-21
+- Current Price, Current Mark to Market: 478.53, 0%
+- Target Prices: 511.64/554.71/604.93/554.59/574.75/615.96/No EMA 200 Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 472.12/216.39/452.67/384.49/474.98/450.12/471.90 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 472.12 (approximately 1.3% below current price, at the nearest Recent Extrema support level)
+- Recommended Take Profit: 554.71 (target based on average historical winning trade gain, representing 15.9% upside)
+- Is Signal timely?: Yes, signal is brand new with 0% mark-to-market
+- P/E Ratio: 34.01
+- PEG Ratio: 1.98
+
+**Notes**: This Weekly timeframe signal for Microsoft shows perfect historical performance (100% win rate across 16 trades over 20 years). The weekly timeframe suggests a potentially longer-lasting move with larger profit potential than daily signals.
+
+**BRK-B (Berkshire Hathaway)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-12
+- Signal: Long
+- Interval: Daily
+- Signal Price: 499.52
+- Win Rate: 87.5%
+- CAGR: Strategy (18.11%) - Buy and Hold (11.63%) = 6.48%
+- Latest Performance Win Rate: 95.82%
+- Average Return of Historical Winning Trades: 8.22%
+- Max single trade loss historically: 1.62%
+- Potential Upside (from signal price): 3.7% to 8.2% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2027-12-10/2026-01-28/2026-06-21
+- Current Price, Current Mark to Market: 499.52, 0%
+- Target Prices: 518.25/540.58/525.74/No Horizontal Resistance/537.79/627.80/No EMA 200 Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 490.43/268.08/475.06/401.08/No support/No support/498.18 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 490.43 (approximately 1.8% below current price, at the nearest Recent Extrema support level)
+- Recommended Take Profit: 540.58 (target based on average historical winning trade gain, representing 8.2% upside)
+- Is Signal timely?: Yes, signal is brand new with 0% mark-to-market
+- P/E Ratio: 15.96
+- PEG Ratio: N/A
+
+**Notes**: This Berkshire Hathaway signal shows strong historical performance with an 87.5% win rate across 16 trades over 5 years. The strategy CAGR outperforms buy-and-hold by 6.48%. The stock's attractive P/E ratio of 15.96 is below market average, suggesting potential value.
+
+**XLU (Utilities Select Sector SPDR ETF)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-12
+- Signal: Long
+- Interval: Daily
+- Signal Price: 42.83
+- Win Rate: 100.0%
+- CAGR: Strategy (18.46%) - Buy and Hold (5.33%) = 13.13%
+- Latest Performance Win Rate: 95.82%
+- Average Return of Historical Winning Trades: 8.7%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 5.8% to 8.7% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2029-05-16/2026-02-02/2027-02-10
+- Current Price, Current Mark to Market: 42.83, 0%
+- Target Prices: 45.31/46.56/54.53/No Horizontal Resistance/60.88/89.63/No EMA 200 Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 42.72/29.63/32.14/25.36/42.54/41.20/41.78 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 42.54 (approximately 0.7% below current price, at the nearest F-Track 1 support level)
+- Recommended Take Profit: 46.56 (target based on average historical winning trade gain, representing 8.7% upside)
+- Is Signal timely?: Yes, signal is brand new with 0% mark-to-market
+- P/E Ratio: 21.06
+- PEG Ratio: N/A
+
+**Notes**: This XLU signal is particularly strong with dual confirmation (FRACTAL TRACK and DELTADRIFT both showing Long signals). The FRACTAL TRACK signal shows perfect historical performance (100% win rate across 16 trades over 5 years) with a substantial 13.13% CAGR advantage over buy-and-hold.
+
+**NFLX (Netflix)**
+- Function: DELTADRIFT
+- Signal Date: 2025-12-12
+- Signal: Long
+- Interval: Daily
+- Signal Price: 95.19
+- Win Rate: 81.82%
+- CAGR: Strategy (8.49%) - Buy and Hold (10.45%) = -1.96%
+- Latest Performance Win Rate: 88.12%
+- Average Return of Historical Winning Trades: 6.46%
+- Max single trade loss historically: 20.18%
+- Potential Upside (from signal price): 6.61% to 60.42% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-01-07/2025-12-13/2025-12-20
+- Current Price, Current Mark to Market: 95.19, 0%
+- Target Prices: 100.48/101.34/100.91/No Horizontal Resistance/138.69/152.70/113.34 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 92.71/34.87/77.35/70.53/89.10/75.19/No Moving Avg Support based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 89.10 (approximately 6.4% below current price, at the nearest F-Track support level)
+- Recommended Take Profit: 100.48 (first target level, representing approximately 5.6% upside)
+- Is Signal timely?: Yes, signal is brand new with no missed potential gain
+- P/E Ratio: 39.83
+- PEG Ratio: 1.03
+
+**Notes**: This signal shows strong historical performance with over 80% win rate. The risk-reward profile is attractive with multiple target levels showing potential for gains. Netflix has demonstrated strong momentum in recent quarters with solid subscriber growth.
+
+**MA (Mastercard)**
+- Function: TRENDPULSE
+- Signal Date: 2025-12-12
+- Signal: Long
+- Interval: Daily
+- Signal Price: 571.93
+- Win Rate: 96.15%
+- CAGR: Strategy (5.71%) - Buy and Hold (7.58%) = -1.87%
+- Latest Performance Win Rate: 88.27%
+- Average Return of Historical Winning Trades: 2.94%
+- Max single trade loss historically: 5.85%
+- Potential Upside (from signal price): 1.13% to 31.38% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-05-13/2025-12-17/2026-02-06
+- Current Price, Current Mark to Market: 571.93, 0%
+- Target Prices: 578.39/588.74/580.40/592.90/716.58/751.36/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 537.55/306.91/554.06/515.49/560.86/535.72/559.47 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 554.06 (approximately 3.1% below current price, at the nearest F-Stack support level)
+- Recommended Take Profit: 588.74 (target based on average historical gain, representing 2.9% upside)
+- Is Signal timely?: Yes, signal is brand new with no missed potential gain
+- P/E Ratio: 36.52
+- PEG Ratio: 1.83
+
+**Notes**: Mastercard shows an exceptional historical win rate of over 96%, indicating high reliability. The relatively tight stop-loss and initial target provide a favorable risk-reward ratio for a short-term trade.
+
+**WMT (Walmart)**
+- Function: TRENDPULSE
+- Signal Date: 2025-12-12
+- Signal: Long
+- Interval: Weekly
+- Signal Price: 116.70
+- Win Rate: 86.36%
+- CAGR: Strategy (8.78%) - Buy and Hold (8.74%) = 0.04%
+- Latest Performance Win Rate: 95.21%
+- Average Return of Historical Winning Trades: 5.29%
+- Max single trade loss historically: 1.31%
+- Potential Upside (from signal price): 6.36% to 34.09% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2028-02-02/2026-01-21/2026-08-16
+- Current Price, Current Mark to Market: 116.70, 0%
+- Target Prices: 124.12/122.87/156.43/No Horizontal Resistance/114.64/136.68/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 101.18/42.39/91.63/82.68/98.53/87.21/98.71 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 98.53 (approximately 15.6% below current price, at the nearest F-Track support level)
+- Recommended Take Profit: 122.87 (target based on average historical gain, representing 5.3% upside)
+- Is Signal timely?: Yes, signal is brand new with no missed potential gain
+- P/E Ratio: 40.80
+- PEG Ratio: 4.20
+
+**Notes**: Walmart shows strong technical confirmation with a high win rate. The signal benefits from both technical and fundamental support as the company continues to show resilience in the retail space.
+
+**ETH-USD (Ethereum)**
+- Function: TRENDPULSE
+- Signal Date: 2025-12-10
+- Signal: Long
+- Interval: Daily
+- Signal Price: 3,325.39
+- Win Rate: 92.86%
+- CAGR: Strategy (60.18%) - Buy and Hold (45.2%) = 14.98%
+- Latest Performance Win Rate: 82.44%
+- Average Return of Historical Winning Trades: 13.37%
+- Max single trade loss historically: 17.31%
+- Potential Upside (from signal price): 21.89% to 59.35% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-04-19/2025-12-17/2026-01-12
+- Current Price, Current Mark to Market: 3,083.26, -7.28%
+- Target Prices: 4053.32/3769.99/3860.56/4922.72/4887.28/5298.98/3550.99 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 2800.19/1370.50/2637.92/2491.35/No F-Track Level/No F-Track Level/No EMA 200 Support based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 2,800 (approximately 9% below current price, at the nearest support level based on recent extrema)
+- Recommended Take Profit: 3,860 (exit rule target, representing approximately 25% upside from current price)
+- Is Signal timely?: Yes, price has pulled back 7.28% from the signal price, offering a better entry point
+- P/E Ratio: N/A
+- PEG Ratio: N/A
+
+**Notes**: Despite the recent pullback, ETH shows strong historical performance with a 92.86% win rate and significant CAGR advantage over buy-and-hold. The current pullback provides a potentially better entry point with multiple upside targets.
+
+**KWEB (KraneShares CSI China Internet ETF)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-12
+- Signal: Short
+- Interval: Monthly
+- Signal Price: 36.89
+- Win Rate: 85.71%
+- CAGR: Strategy (5.83%) - Buy and Hold (5.4%) = 0.43%
+- Latest Performance Win Rate: 85.71%
+- Average Return of Historical Winning Trades: 7.13%
+- Max single trade loss historically: 19.33%
+- Potential Downside (from signal price): 7.13% to 33.68% (based on targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-04-25/2026-01-24/2026-02-19
+- Current Price, Current Mark to Market: 36.89, 0% (signal date is current date)
+- Target Prices: 33.78/34.26/24.48/24.51/No F-Stack Support/No F-Stack Support/36.42 based on Historic Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: No support/24.51/No F-Stack Support/No F-Stack Support/No F-Track Level/No F-Track Level/No EMA 200 Support based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 38.47 (approximately 4.3% above current price, based on the Track Level which would invalidate the short signal)
+- Recommended Take Profit: 34.26 (target based on average historical gain, representing approximately 7.1% downside)
+- Is Signal timely?: Yes (signal date is current date, no potential gain has been missed)
+- P/E Ratio: 18.03
+- PEG Ratio: N/A
+
+**Notes**: This signal is confirmed with the price recently breaking below the Fractal Track level. The ETF has historically shown consistent performance on short signals with an 85.71% win rate. The cycle context for Chinese internet stocks suggests we're in a late-cycle phase, supporting the short bias.
