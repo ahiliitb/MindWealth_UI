@@ -182,12 +182,17 @@ def parse_target_signals(df, page_name="Unknown"):
             
             # Parse gain and holding period
             gain_info = row.get('% Gain, Holding Period (days)', '')
-            gain_match = re.search(r'([0-9.]+)%,\s*([0-9]+)\s*days', str(gain_info))
+            
+            # Import extract_days_from_formatted_string to handle new day formats
+            from ..utils.helpers import extract_days_from_formatted_string
+            
+            gain_match = re.search(r'([0-9.]+)%,\s*([^,]+)', str(gain_info))
             
             if gain_match:
                 try:
                     gain_pct = float(gain_match.group(1))
-                    holding_days = int(gain_match.group(2))
+                    holding_period_str = gain_match.group(2).strip()
+                    holding_days = extract_days_from_formatted_string(holding_period_str)
                 except:
                     gain_pct, holding_days = 0, 0
             else:

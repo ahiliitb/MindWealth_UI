@@ -7,6 +7,7 @@ import streamlit as st
 import pandas as pd
 
 from .charts import create_interactive_chart, create_divergence_chart, create_bollinger_band_chart, create_outstanding_signal_chart, create_outstanding_exit_signal_chart
+from ..utils.helpers import format_days
 
 
 def create_summary_cards(df):
@@ -453,7 +454,7 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                     if 'Gain_Percentage' in row and pd.notna(row.get('Gain_Percentage')) and row['Gain_Percentage'] != 0:
                         st.write(f"**Gain:** {row['Gain_Percentage']:.2f}%")
                     if 'Holding_Days' in row and pd.notna(row.get('Holding_Days')) and row['Holding_Days'] != 0:
-                        st.write(f"**Holding Days:** {row['Holding_Days']} days")
+                        st.write(f"**Holding Days:** {format_days(str(int(row['Holding_Days'])))}")
                         
                 with col3:
                     st.markdown("**⚠️ Risk & Timing**")
@@ -475,7 +476,7 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                         holding_period_info = raw_data.get('Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.)', 'N/A')
                         if '/' in str(holding_period_info):
                             avg_holding = str(holding_period_info).split('/')[-1].strip()
-                            st.write(f"**Avg Holding Period:** {avg_holding} days")
+                            st.write(f"**Avg Holding Period:** {format_days(avg_holding)}")
                         else:
                             st.write(f"**Avg Holding Period:** N/A")
                         
@@ -593,9 +594,10 @@ def create_performance_summary_cards(df):
     
     with col4:
         avg_holding = df['Avg_Holding_Days'].mean()
+        formatted_avg_holding = format_days(f"{avg_holding:.0f}") if pd.notna(avg_holding) else "N/A"
         st.markdown(f"""
         <div class="metric-card">
-            <p class="metric-value">{avg_holding:.0f}</p>
+            <p class="metric-value">{formatted_avg_holding}</p>
             <p class="metric-label">Avg Holding Days</p>
         </div>
         """, unsafe_allow_html=True)
@@ -700,10 +702,10 @@ def display_performance_cards_page(df):
                     
                 with col3:
                     st.markdown("**⏱️ Holding Period Analysis**")
-                    st.write(f"**Max Holding Days:** {row['Max_Holding_Days']:.0f}")
-                    st.write(f"**Min Holding Days:** {row['Min_Holding_Days']:.0f}")
-                    st.write(f"**Avg Holding Days:** {row['Avg_Holding_Days']:.0f}")
-                    st.write(f"**Avg Backtested Holding:** {row['Avg_Backtested_Holding_Days']:.0f} days")
+                    st.write(f"**Max Holding Days:** {format_days(f'{row['Max_Holding_Days']:.0f}')}")
+                    st.write(f"**Min Holding Days:** {format_days(f'{row['Min_Holding_Days']:.0f}')}")
+                    st.write(f"**Avg Holding Days:** {format_days(f'{row['Avg_Holding_Days']:.0f}')}")
+                    st.write(f"**Avg Backtested Holding:** {format_days(f'{row['Avg_Backtested_Holding_Days']:.0f}')}")
 
 
 def create_breadth_summary_cards(df):

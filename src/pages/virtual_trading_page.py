@@ -4,6 +4,7 @@ Virtual Trading Page - Display open/closed trades with filters
 
 import streamlit as st
 import pandas as pd
+from ..utils.helpers import format_days
 
 
 def create_virtual_trading_page():
@@ -320,7 +321,7 @@ def display_virtual_trading_metrics(df, interval, position_name):
         
         if holding_periods:
             avg_holding = sum(holding_periods) / len(holding_periods)
-            st.metric("Avg Holding Period", f"{avg_holding:.1f} days")
+            st.metric("Avg Holding Period", format_days(f"{avg_holding:.1f}"))
         else:
             st.metric("Avg Holding Period", "N/A")
     

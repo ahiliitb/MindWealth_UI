@@ -7,6 +7,7 @@ import pandas as pd
 
 from ..components.cards import create_performance_summary_cards, create_performance_cards
 from ..utils.data_loader import load_data_from_file
+from ..utils.helpers import format_days
 
 DETAILED_TABLE_ONLY_PAGES = {"Latest Performance", "Forward Testing Performance"}
 
@@ -31,7 +32,7 @@ def display_summary_metrics_basic(df, tab_name):
     with col3:
         st.metric("Avg Profit", f"{avg_profit:.1f}%")
     with col4:
-        st.metric("Avg Holding Days", f"{avg_holding:.0f}")
+        st.metric("Avg Holding Days", format_days(f"{avg_holding:.0f}"))
     
     st.markdown("---")
 

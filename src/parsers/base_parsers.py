@@ -274,17 +274,46 @@ def parse_performance_csv(df):
         
         # Extract holding period information
         holding_period_str = str(row.get('Holding Period (days) (Max./Min./Avg.)', '0/0/0'))
-        holding_match = re.search(r'([0-9.]+) days/([0-9.]+) days/([0-9.]+) days', holding_period_str)
         
-        if holding_match:
+        # Import extract_days_from_formatted_string to handle new day formats
+        from ..utils.helpers import extract_days_from_formatted_string
+        
+        # Try multiple patterns to handle both old and new formats
+        # Pattern 1: Old format with "X days/Y days/Z days" (e.g., "60 days/30 days/45 days")
+        old_format_match = re.search(r'([0-9.]+)\s*days/([0-9.]+)\s*days/([0-9.]+)\s*days', holding_period_str)
+        
+        if old_format_match:
+            # Old format detected - extract numeric values directly
             try:
-                max_holding = float(holding_match.group(1))
-                min_holding = float(holding_match.group(2))
-                avg_holding = float(holding_match.group(3))
+                max_holding = float(old_format_match.group(1))
+                min_holding = float(old_format_match.group(2))
+                avg_holding = float(old_format_match.group(3))
             except:
                 max_holding, min_holding, avg_holding = 0, 0, 0
         else:
-            max_holding, min_holding, avg_holding = 0, 0, 0
+            # Try new format with units (e.g., "1.5 years (calendar days)/2.3 months (calendar days)/4.0 years (calendar days)")
+            new_format_match = re.search(r'([^/]+)/([^/]+)/([^/]+)', holding_period_str)
+            
+            if new_format_match:
+                try:
+                    max_holding = extract_days_from_formatted_string(new_format_match.group(1))
+                    min_holding = extract_days_from_formatted_string(new_format_match.group(2))
+                    avg_holding = extract_days_from_formatted_string(new_format_match.group(3))
+                except:
+                    max_holding, min_holding, avg_holding = 0, 0, 0
+            else:
+                # No match found - try to extract any numeric values
+                try:
+                    # Try to extract three numbers separated by /
+                    parts = holding_period_str.split('/')
+                    if len(parts) >= 3:
+                        max_holding = extract_days_from_formatted_string(parts[0].strip())
+                        min_holding = extract_days_from_formatted_string(parts[1].strip())
+                        avg_holding = extract_days_from_formatted_string(parts[2].strip())
+                    else:
+                        max_holding, min_holding, avg_holding = 0, 0, 0
+                except:
+                    max_holding, min_holding, avg_holding = 0, 0, 0
         
         # Extract average backtested win rate
         try:
@@ -294,7 +323,9 @@ def parse_performance_csv(df):
         
         # Extract average backtested holding period
         try:
-            avg_backtested_holding = float(str(row.get('Avg Backtested Holding Period (days)', '0')).replace(' days', ''))
+            backtested_holding_str = str(row.get('Avg Backtested Holding Period (days)', '0'))
+            # Use extract_days_from_formatted_string to handle new formats
+            avg_backtested_holding = extract_days_from_formatted_string(backtested_holding_str)
         except:
             avg_backtested_holding = 0
         

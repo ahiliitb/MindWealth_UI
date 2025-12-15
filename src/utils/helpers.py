@@ -214,3 +214,120 @@ def display_data_fetch_info(json_path="trade_store/US/data_fetch_datetime.json",
         else:  # header
             st.markdown("**📅 Report Date:** Not available")
 
+
+def format_days(days_str):
+    """
+    Format days string to appropriate unit:
+    - If < 30: output as "X days"
+    - If >= 30 and < 360: output as "X months" (30 days = 1 month)
+    - If >= 360: output as "X years" (360 days = 12 months = 1 year, 365 days = 1 year)
+    
+    Args:
+        days_str: String containing days (e.g., "15", "45", "400")
+    
+    Returns:
+        Formatted string (e.g., "15 days", "1.5 months", "1.1 years")
+    """
+    import re
+    
+    try:
+        # Extract numeric value, handling various formats
+        days_str_clean = str(days_str).strip()
+        # Remove common suffixes to extract the number
+        days_str_clean = days_str_clean.replace(" days", "").replace(" day", "").replace(" months", "").replace(" month", "").replace(" years", "").replace(" year", "").replace("(business days)", "").replace("(calendar days)", "").strip()
+        # Extract first number (handles decimals and handles cases where there might be text after)
+        match = re.search(r'(\d+\.?\d*)', days_str_clean)
+        if match:
+            days = float(match.group(1))
+        else:
+            # Fallback: try direct conversion
+            days = float(days_str_clean.split()[0] if days_str_clean.split() else days_str_clean)
+        
+        if days < 30:
+            return f"{int(days)} day{'s' if int(days) != 1 else ''}"
+        elif days < 360:
+            # 30 days = 1 month, so convert to months
+            months = days / 30
+            if months == int(months):
+                # If it's a whole number of months
+                month_int = int(months)
+                if month_int == 1:
+                    return f"1 month"
+                else:
+                    return f"{month_int} months"
+            else:
+                return f"{months:.1f} months"
+        else:
+            # >= 360 days (12 months) = 1 year, convert to years
+            # Since 30 days = 1 month, 360 days = 12 months = 1 year
+            years = days / 360  # 360 days = 1 year (12 months)
+            if years == int(years):
+                # If it's a whole number of years
+                year_int = int(years)
+                if year_int == 1:
+                    return f"1 year"
+                else:
+                    return f"{year_int} years"
+            else:
+                return f"{years:.1f} years"
+    except (ValueError, AttributeError):
+        # If parsing fails, return original string
+        return str(days_str)
+
+
+def extract_days_from_formatted_string(formatted_str):
+    """
+    Extract numeric days from a formatted string that may contain units.
+    Handles formats like "60", "2.0 months", "1.5 month", "1 year", "60 days", etc.
+    
+    Args:
+        formatted_str: String that may be formatted (e.g., "2.0 months", "60 days", "60")
+    
+    Returns:
+        Integer number of days
+    """
+    import re
+    
+    try:
+        # Clean the string
+        cleaned = str(formatted_str).strip()
+        
+        # Extract the numeric value (handles decimals)
+        match = re.search(r'(\d+\.?\d*)', cleaned)
+        if not match:
+            return 0
+        
+        numeric_value = float(match.group(1))
+        
+        # Check for units and convert to days
+        if 'year' in cleaned.lower():
+            return round(numeric_value * 360)  # 360 days = 1 year
+        elif 'month' in cleaned.lower():
+            return round(numeric_value * 30)  # 30 days = 1 month
+        elif 'day' in cleaned.lower():
+            return round(numeric_value)
+        else:
+            # No unit specified, assume it's already in days
+            return round(numeric_value)
+    except (ValueError, AttributeError, TypeError):
+        return 0
+
+
+def format_days_list(days_list_str, separator="/"):
+    """
+    Format a list of days separated by a delimiter (e.g., "10/20/30")
+    
+    Args:
+        days_list_str: String containing days separated by delimiter
+        separator: Delimiter used (default: "/")
+    
+    Returns:
+        Formatted string with each value formatted appropriately
+    """
+    try:
+        parts = str(days_list_str).split(separator)
+        formatted_parts = [format_days(part.strip()) for part in parts]
+        return separator.join(formatted_parts)
+    except:
+        return str(days_list_str)
+

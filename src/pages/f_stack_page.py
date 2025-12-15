@@ -6,6 +6,7 @@ import streamlit as st
 import pandas as pd
 
 from ..utils.data_loader import load_data_from_file
+from ..utils.helpers import format_days
 
 
 def _format_number(value, suffix=""):
@@ -58,7 +59,7 @@ def _render_signal_cards(df):
                 st.write(f"Current Band Range: {row['Current_Band_Range']}")
                 st.write(f"Band Width: {_format_number(row['Current_Band_Width'], '%')}")
                 st.write(f"Band Composition: {row['Band_Composition']}")
-                st.write(f"Trading Days Since Signal: {_format_number(row['Trading_Days'])}")
+                st.write(f"Trading Days Since Signal: {format_days(str(int(row['Trading_Days']))) if pd.notna(row['Trading_Days']) else 'N/A'}")
             
             with col3:
                 st.markdown("**Next Targets**")
@@ -198,7 +199,9 @@ def create_f_stack_page(data_file, page_title="F-Stack"):
     with col3:
         _render_metric_card(_format_number(filtered_df['Current_Band_Width'].mean(), "%"), "Avg Band Width")
     with col4:
-        _render_metric_card(_format_number(filtered_df['Trading_Days'].mean()), "Avg Trading Days")
+        avg_days = filtered_df['Trading_Days'].mean()
+        formatted_avg_days = format_days(f"{avg_days:.0f}") if pd.notna(avg_days) else "N/A"
+        _render_metric_card(formatted_avg_days, "Avg Trading Days")
 
     st.markdown("---")
 
