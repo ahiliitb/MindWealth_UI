@@ -583,6 +583,9 @@ class ChatbotEngine:
             logger.info("SMART QUERY MODE - Two-stage column selection")
             logger.info("="*60)
 
+            # Standard no-data message used by UI when there are no rows
+            NO_DATA_MESSAGE = "No Data for Particular Interval, Please change range and try again"
+
             signal_type_reasoning = signal_type_reasoning or ""
             if selected_signal_types:
                 selected_signal_types = [stype for stype in selected_signal_types if stype]
@@ -674,8 +677,8 @@ class ChatbotEngine:
                     logger.warning("No data fetched for explicit date range; skipping automatic expansion.")
                     human_from = from_date or "start"
                     human_to = to_date or "end"
-                    message = f"No data found for the selected date range ({human_from} to {human_to}). Please try a different range or adjust your filters."
-                    return message, {"warning": "no_data", "from_date": from_date, "to_date": to_date}
+                    logger.warning(f"No data for interval {human_from} to {human_to}")
+                    return NO_DATA_MESSAGE, {"warning": "no_data", "from_date": from_date, "to_date": to_date}
                 
                 logger.warning("No data fetched for the initial date range, trying to expand search...")
                 
@@ -715,54 +718,7 @@ class ChatbotEngine:
                 
                 if not fetched_data:
                     logger.warning("No data fetched even with expanded date range")
-                    return "No data found matching your criteria. Please try a different date range or criteria.", {"warning": "no_data"}
-            if not fetched_data:
-                if from_date or to_date:
-                    logger.warning("No data fetched for explicit date range; skipping automatic expansion.")
-                    human_from = from_date or "start"
-                    human_to = to_date or "end"
-                    message = f"No data found for the selected date range ({human_from} to {human_to}). Please try a different range or adjust your filters."
-                    return message, {"warning": "no_data", "from_date": from_date, "to_date": to_date}
-                
-                logger.warning("No data fetched for the initial date range, trying to expand search...")
-                
-                # Try expanding the date range for queries like "top N signals" where date is less important
-                if any(keyword in user_message.lower() for keyword in ['top', 'best', 'highest', 'lowest']):
-                    logger.info("Query seems to be asking for 'top/best' signals - expanding date range")
-                    
-                    # Expand to last 30 days
-                    from datetime import datetime, timedelta
-                    expanded_from_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
-                    expanded_to_date = datetime.now().strftime('%Y-%m-%d')
-                    
-                    logger.info(f"Retrying with expanded date range: {expanded_from_date} to {expanded_to_date}")
-                    
-                    # Retry fetching with expanded date range
-                    for signal_type in selected_signal_types:
-                        if signal_type not in columns_by_signal_type:
-                            continue
-                        
-                        required_cols = columns_by_signal_type[signal_type]
-                        if not required_cols:
-                            continue
-                        
-                        signal_data = self.smart_data_fetcher.fetch_data(
-                            signal_types=[signal_type],
-                            required_columns=required_cols,
-                            assets=assets,
-                            functions=functions,
-                            from_date=expanded_from_date,
-                            to_date=expanded_to_date,
-                            limit_rows=MAX_ROWS_TO_INCLUDE
-                        )
-                        
-                        if signal_data and signal_type in signal_data:
-                            fetched_data[signal_type] = signal_data[signal_type]
-                            total_rows += len(signal_data[signal_type])
-                
-                if not fetched_data:
-                    logger.warning("No data fetched even with expanded date range")
-                    return "No data found matching your criteria. Please try a different date range or criteria.", {"warning": "no_data"}
+                    return NO_DATA_MESSAGE, {"warning": "no_data"}
             
             # Format the fetched data for the LLM
             data_context_parts = []
@@ -1165,6 +1121,27 @@ Decision rules:
                         df = signal_data[signal_type]
                         fetched_data[signal_type] = df
                         total_rows += len(df)
+
+                # If we needed new data (e.g. filters changed) but fetched nothing,
+                # surface a clear no-data message instead of calling the model.
+                if needs_new_data and (not fetched_data or total_rows == 0):
+                    logger.warning("No data fetched for follow-up query with current filters; returning no-data message.")
+                    return (
+                        "No Data for Particular Interval, Please change range and try again",
+                        {
+                            "warning": "no_data",
+                            "input_type": "smart_followup",
+                            "followup_mode": "new_data",
+                            "needs_new_data": True,
+                            "rows_fetched": 0,
+                            "selected_signal_types": selected_signal_types,
+                            "assets": assets,
+                            "from_date": from_date,
+                            "to_date": to_date,
+                            "functions": functions,
+                            "signal_type_reasoning": signal_type_reasoning or "",
+                        },
+                    )
                 
                 if filters_changed:
                     # Case 1: Filters changed → Full data needed (different rows)
