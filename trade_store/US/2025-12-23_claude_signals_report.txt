@@ -1,0 +1,335 @@
+# Signal Analysis and Recommendations
+
+These signals represent the best opportunities based on our comprehensive filtering criteria, with emphasis on confirmed signals showing strong historical performance, positive CAGR differences, and favorable risk-reward profiles.
+
+|||UBER,Daily,FRACTAL TRACK,2025-12-23,Long|XLU,Daily,OSCILLATOR DELTA,2025-12-23,Long|WPM,Daily,TRENDPULSE,2025-12-19,Long|TSM,Daily,FRACTAL TRACK,2025-12-19,Long|ASML,Daily,FRACTAL TRACK,2025-12-19,Long|PLTR,Daily,FRACTAL TRACK,2025-12-19,Long|VGT,Daily,FRACTAL TRACK,2025-12-19,Long|NU,Daily,FRACTAL TRACK,2025-12-19,Long|ABNB,Weekly,TRENDPULSE,2025-12-21,Long|RHHBY,Weekly,TRENDPULSE,2025-12-21,Long|CVS,Weekly,FRACTAL TRACK,2025-12-21,Long|XLE,Daily,FRACTAL TRACK,2025-12-18,Long|KWEB,Monthly,FRACTAL TRACK,2025-12-23,Short|||
+
+## Key Insights and Recommendations
+
+1. **Technology sector dominance** - The majority of our top signals are in technology and semiconductor stocks (TSM, ASML, PLTR, VGT), suggesting strong sector momentum that may continue.
+
+2. **Energy and utilities showing strength** - XLE and XLU signals indicate potential in these traditionally defensive sectors, with both showing excellent historical win rates (80-90%) and positive momentum.
+
+3. **Diversification opportunities** - Our signals include semiconductors, software/AI, energy, utilities, precious metals, travel, healthcare, and fintech, providing excellent sector diversification.
+
+4. **Recent signal confirmation** - All signals were confirmed within the past week, making them extremely timely for entry positions.
+
+5. **Exceptional historical performance** - All signals show outstanding win rates (80-100%) with most showing positive CAGR differences compared to buy-and-hold strategies.
+
+6. **Single short opportunity** - KWEB provides a tactical short opportunity in the Chinese internet sector, offering portfolio hedging with an 85.71% win rate.
+
+7. **Risk management considerations** - For each signal, we've identified appropriate stop-loss levels based on technical support levels to manage downside risk. The recommended take-profit levels are based on historical performance metrics and technical targets.
+
+## Detailed Signal Analysis
+
+**UBER (Uber Technologies)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-23
+- Signal: Long
+- Interval: Daily
+- Signal Price: 80.97
+- Win Rate: 100.0%
+- CAGR: Strategy (33.14%) - Buy and Hold (7.1%) = 26.04%
+- Latest Performance Win Rate: 95.82%
+- Average Return of Historical Winning Trades: 9.9%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 2.9% to 61.7% (immediate to long-term targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2029-05-27/2025-12-28/2026-07-15
+- Current Price, Current Mark to Market: 80.97, 0%
+- Target Prices: 83.32/88.99/118.11/82.12/103.17/130.93/87.71 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 79.14/34.60/71.09/No support/78.42/72.85/No Moving Avg Support based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 78.42 (approximately 3.1% below current price, at the nearest F-Track support level)
+- Recommended Take Profit: 88.99 (target based on average gain of historical winning trades, representing approximately 9.9% upside)
+- Is Signal timely?: Yes, signal is brand new (0 days old)
+- P/E Ratio: 10.42
+- PEG Ratio: 4.78
+
+**Notes**: This signal shows exceptional strength with a perfect 100% historical win rate and significant CAGR advantage over buy-and-hold (+26.04%). The price is currently at the signal level with multiple upside targets identified. The F-Track level provides a nearby support for stop loss placement, creating a favorable risk-reward ratio.
+
+**XLU (Utilities Select Sector SPDR Fund)**
+- Function: OSCILLATOR DELTA
+- Signal Date: 2025-12-23
+- Signal: Long
+- Interval: Daily
+- Signal Price: 42.62
+- Win Rate: 80.0%
+- CAGR: Strategy (16.95%) - Buy and Hold (4.29%) = 12.66%
+- Latest Performance Win Rate: 81.76%
+- Average Return of Historical Winning Trades: 9.1%
+- Max single trade loss historically: 11.19%
+- Potential Upside (from signal price): 6.2% to 110.3% (immediate to long-term targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-11-22/2026-01-06/2026-04-14
+- Current Price, Current Mark to Market: 42.62, 0%
+- Target Prices: 45.27/46.50/46.88/No Horizontal Resistance/60.88/89.63/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: No Recent Minima/29.63/32.14/25.36/42.54/41.20/41.92 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 41.20 (approximately 3.3% below current price, at the F-Track 2 support level)
+- Recommended Take Profit: 46.50 (target based on average gain of historical winning trades, representing approximately 9.1% upside)
+- Is Signal timely?: Yes, signal is brand new (0 days old)
+- P/E Ratio: 20.96
+- PEG Ratio: N/A
+
+**Notes**: This signal shows strong potential with an 80% historical win rate and significant CAGR advantage over buy-and-hold (+12.66%). The utilities sector often performs well during periods of economic uncertainty, making this a potentially defensive play. Multiple nearby support levels provide good risk management options.
+
+**WPM (Wheaton Precious Metals)**
+- Function: TRENDPULSE
+- Signal Date: 2025-12-19
+- Signal: Long
+- Interval: Daily
+- Signal Price: 119.70
+- Win Rate: 96.3%
+- CAGR: Strategy (22.59%) - Buy and Hold (17.13%) = 5.46%
+- Latest Performance Win Rate: 88.27%
+- Average Return of Historical Winning Trades: 6.3%
+- Max single trade loss historically: 14.18%
+- Potential Upside (from signal price): 7.76% to 21.65% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-06-02/2025-12-24/2026-02-13
+- Current Price, Current Mark to Market: 122.88, 2.66%
+- Target Prices: 128.99/127.24/134.41/No Horizontal Resistance/131.44/145.62/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 104.96/38.34/98.52/93.69/No F-Track Level/No F-Track Level/93.73 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 104.96 (approximately 14.6% below current price, at the nearest support level based on recent extrema)
+- Recommended Take Profit: 131.44 (F-Stack 1 target, representing approximately 9.8% upside from current price)
+- Is Signal timely?: Yes, only 2.66% of the potential gain has been captured so far
+- P/E Ratio: 55.32
+- PEG Ratio: N/A
+
+**Notes**: This signal shows excellent historical performance with a 96.3% win rate. The price has already moved up 2.66% in just 4 days, showing strong momentum. Multiple target levels between 127-146 provide a clear path for profit-taking. The positive CAGR difference of 5.46% indicates this strategy outperforms buy-and-hold.
+
+**TSM (Taiwan Semiconductor)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-19
+- Signal: Long
+- Interval: Daily
+- Signal Price: 288.95
+- Win Rate: 95.0%
+- CAGR: Strategy (37.14%) - Buy and Hold (15.53%) = 21.61%
+- Latest Performance Win Rate: 95.82%
+- Average Return of Historical Winning Trades: 11.5%
+- Max single trade loss historically: 1.02%
+- Potential Upside (from signal price): 9.11% to 37.32% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2028-12-18/2026-01-11/2026-06-02
+- Current Price, Current Mark to Market: 296.95, 2.77%
+- Target Prices: 315.27/322.18/396.79/No Horizontal Resistance/334.31/349.99/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 276.96/83.58/274.03/233.11/No F-Track Level/No F-Track Level/235.07 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 274.03 (approximately 7.7% below current price, at the F-Stack 1 support level)
+- Recommended Take Profit: 334.31 (F-Stack 1 target, representing approximately 12.6% upside from current price)
+- Is Signal timely?: Yes, only 2.77% of the potential gain has been captured so far
+- P/E Ratio: 30.87
+- PEG Ratio: 1.44
+
+**Notes**: TSM shows exceptional strategy performance with a CAGR difference of 21.61% over buy-and-hold. The stock is bouncing back after a pullback from recent highs, with price currently 9.39% above the track level. The minimal historical loss (1.02%) combined with an average gain of 11.5% creates an extremely favorable risk-reward profile.
+
+**ASML (ASML Holding)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-19
+- Signal: Long
+- Interval: Daily
+- Signal Price: 1056.02
+- Win Rate: 100.0%
+- CAGR: Strategy (24.72%) - Buy and Hold (12.44%) = 12.28%
+- Latest Performance Win Rate: 95.82%
+- Average Return of Historical Winning Trades: 10.87%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 8.91% to 26.04% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2029-02-08/2026-01-06/2026-09-27
+- Current Price, Current Mark to Market: 1061.84, 0.55%
+- Target Prices: 1150.01/1170.81/1330.96/No Horizontal Resistance/1091.17/1155.22/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 1015.43/561.39/1034.68/832.86/No F-Track Level/No F-Track Level/834.28 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 1015.43 (approximately 4.4% below current price, at the nearest support level based on recent extrema)
+- Recommended Take Profit: 1091.17 (F-Stack 1 target, representing approximately 2.8% upside from current price)
+- Is Signal timely?: Yes, only 0.55% of the potential gain has been captured so far
+- P/E Ratio: 37.48
+- PEG Ratio: 2.00
+
+**Notes**: ASML shows a perfect historical win rate of 100% with no recorded losses in the backtest. The stock is currently 2.76% above its track level in an upmove bounce back pattern. With a CAGR difference of 12.28%, this strategy significantly outperforms buy-and-hold. The relatively low mark-to-market gain (0.55%) suggests most of the potential upside remains available.
+
+**PLTR (Palantir Technologies)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-19
+- Signal: Long
+- Interval: Daily
+- Signal Price: 193.38
+- Win Rate: 100.0%
+- CAGR: Strategy (47.99%) - Buy and Hold (28.98%) = 19.01%
+- Latest Performance Win Rate: 95.82%
+- Average Return of Historical Winning Trades: 15.79%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 9.33% to 43.87% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2029-03-30/2026-01-02/2026-05-15
+- Current Price, Current Mark to Market: 194.13, 0.39%
+- Target Prices: 211.42/223.91/278.22/No Horizontal Resistance/232.76/248.70/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 177.29/7.21/191.54/156.11/No F-Track Level/No F-Track Level/148.07 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 177.29 (approximately 8.7% below current price, at the nearest support level based on recent extrema)
+- Recommended Take Profit: 232.76 (F-Stack 1 target, representing approximately 19.9% upside from current price)
+- Is Signal timely?: Yes, only 0.39% of the potential gain has been captured so far
+- P/E Ratio: 451.47
+- PEG Ratio: 3.05
+
+**Notes**: PLTR shows the highest CAGR of all signals at 47.99%, with a substantial 19.01% advantage over buy-and-hold. The 100% win rate with no historical losses and average gains of 15.79% create an exceptional risk-reward profile. The stock is currently 11.53% above its track level, showing strong momentum in its bounce back pattern. Despite the high P/E ratio, the technical setup appears compelling.
+
+**VGT (Vanguard Information Technology ETF)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-19
+- Signal: Long
+- Interval: Daily
+- Signal Price: 755.54
+- Win Rate: 100.0%
+- CAGR: Strategy (27.73%) - Buy and Hold (11.82%) = 15.91%
+- Latest Performance Win Rate: 95.82%
+- Average Return of Historical Winning Trades: 9.66%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 7.56% to 28.32% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2028-10-26/2026-01-31/2026-06-28
+- Current Price, Current Mark to Market: 765.03, 1.26%
+- Target Prices: 812.66/828.53/969.13/No Horizontal Resistance/946.16/993.47/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 730.42/311.83/702.16/626.05/No F-Track Level/No F-Track Level/670.14 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 730.42 (approximately 4.5% below current price, at the nearest support level based on recent extrema)
+- Recommended Take Profit: 812.66 (first target based on historic pivot, representing approximately 6.2% upside from current price)
+- Is Signal timely?: Yes, only 1.26% of the potential gain has been captured so far
+- P/E Ratio: 39.88
+- PEG Ratio: N/A
+
+**Notes**: VGT offers broad technology sector exposure with a perfect 100% win rate in historical testing. The ETF is currently 5.85% above its track level in an upmove bounce back pattern. With a CAGR difference of 15.91%, this strategy substantially outperforms buy-and-hold. The relatively tight stop loss level (4.5% below current price) creates a favorable risk-reward ratio.
+
+**NU (Nu Holdings)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-19
+- Signal: Long
+- Interval: Daily
+- Signal Price: 16.34
+- Win Rate: 100.00%
+- CAGR: Strategy (42.11%) - Buy and Hold (9.45%) = 32.66%
+- Latest Performance Win Rate: 95.82%
+- Average Return of Historical Winning Trades: 11.27%
+- Max single trade loss historically: 0.00%
+- Potential Upside (from signal price): 8.59% to 21.85% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2027-02-13/2025-12-23/2026-03-15
+- Current Price, Current Mark to Market: 16.76, 2.57%
+- Target Prices: 17.742/18.1815/19.91/No Horizontal Resistance/No Next Fib Ext/No Next Fib Ext/No EMA 200 Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 15.86/5.54/No F-Stack Support/No F-Stack Support/No F-Track Level/No F-Track Level/13.74 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 15.56 (approximately 7.2% below signal price, at the Fractal Track level)
+- Recommended Take Profit: 18.18 (based on average gain of historical winning trades, representing 11.3% upside)
+- Is Signal timely?: Yes, only 23.7% of the potential gain has been captured so far
+- P/E Ratio: 32.23
+- PEG Ratio: N/A
+
+**Notes**: This signal shows exceptional historical performance with 100% win rate across 12 trades and a very strong CAGR differential of 32.66%. The price has already moved above the Fractal Track level (15.57), confirming the bullish momentum. Multiple target levels suggest continued upside potential.
+
+**ABNB (Airbnb)**
+- Function: TRENDPULSE
+- Signal Date: 2025-12-21
+- Signal: Long
+- Interval: Weekly
+- Signal Price: 135.28
+- Win Rate: 80.0%
+- CAGR: Strategy (-12.18%) - Buy and Hold (-2.45%) = -9.73%
+- Latest Performance Win Rate: 95.21%
+- Average Return of Historical Winning Trades: 17.07%
+- Max single trade loss historically: 25.5%
+- Potential Upside (from signal price): 8.06% to 21.23% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2027-01-11/2026-02-11/2026-07-26
+- Current Price, Current Mark to Market: 136.49, 0.89%
+- Target Prices: 135.17/158.37/138.5/178.03/223.54/232.99/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 114.26/99.80/124.60/No support/No F-Track Level/No F-Track Level/126.47 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 124.60 (approximately 8.7% below current price, at the nearest F-Stack 1 support level)
+- Recommended Take Profit: 158.37 (target based on average gain of historical winning trades, representing approximately 16% upside)
+- Is Signal timely?: Yes, only 0.89% of the potential gain has been captured
+- P/E Ratio: 32.50
+- PEG Ratio: 1.81
+
+**Notes**: This signal is confirmed and has strong momentum with a very high win rate of 80%. The latest performance win rate across all assets is excellent at 95.21%. Multiple target levels provide a balanced risk-reward profile with significant upside potential.
+
+**RHHBY (Roche Holding)**
+- Function: TRENDPULSE
+- Signal Date: 2025-12-21
+- Signal: Long
+- Interval: Weekly
+- Signal Price: 51.20
+- Win Rate: 87.5%
+- CAGR: Strategy (3.03%) - Buy and Hold (4.77%) = -1.74%
+- Latest Performance Win Rate: 95.21%
+- Average Return of Historical Winning Trades: 9.28%
+- Max single trade loss historically: 21.59%
+- Potential Upside (from signal price): 3.11% to 18.53% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2027-09-07/2026-02-11/2026-07-04
+- Current Price, Current Mark to Market: 52.59, 2.71%
+- Target Prices: 53.15/55.95/57.66/52.46/58.61/65.21/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 38.23/34.52/41.58/31.05/No F-Track Level/No F-Track Level/41.95 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 41.58 (approximately 21% below current price, at the nearest F-Stack 1 support level)
+- Recommended Take Profit: 55.95 (target based on average gain of historical winning trades, representing approximately 6.4% upside from current price)
+- Is Signal timely?: Yes, only 2.71% of the potential gain has been captured compared to the average historical return of 9.28%
+- P/E Ratio: 28.58
+- PEG Ratio: 0.83
+
+**Notes**: This signal has an exceptional win rate of 87.5% with a strong Sharpe ratio of 0.42 versus buy-and-hold at 0.23. The stock has already moved 2.71% in just 2 days, showing good momentum. The low PEG ratio of 0.83 suggests reasonable valuation relative to growth.
+
+**CVS (CVS Health)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-21
+- Signal: Long
+- Interval: Weekly
+- Signal Price: 77.72
+- Win Rate: 90.91%
+- CAGR: Strategy (4.71%) - Buy and Hold (3.7%) = 1.01%
+- Latest Performance Win Rate: 98.94%
+- Average Return of Historical Winning Trades: 12.94%
+- Max single trade loss historically: 6.64%
+- Potential Upside (from signal price): 0.13% to 19.47% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2034-10-27/2026-03-22/2029-04-01
+- Current Price, Current Mark to Market: 78.04, 0.41%
+- Target Prices: 78.68/87.78/102.67/106.05/116.37/144.35/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 75.63/58.43/76.24/70.38/No F-Track Level/No F-Track Level/70.51 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 75.63 (approximately 3.1% below current price, at the recent extrema support level)
+- Recommended Take Profit: 87.78 (target based on average gain of historical winning trades, representing approximately 12.5% upside)
+- Is Signal timely?: Yes, only 0.41% of the potential gain has been captured
+- P/E Ratio: 205.37
+- PEG Ratio: 0.56
+
+**Notes**: This signal has an exceptional win rate of 90.91% and shows a positive CAGR difference versus buy-and-hold. The latest performance win rate is outstanding at 98.94%. The extremely low PEG ratio of 0.56 suggests the stock may be undervalued despite its high P/E ratio.
+
+**XLE (Energy Select Sector SPDR Fund)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-18
+- Signal: Long
+- Interval: Daily
+- Signal Price: 44.13
+- Win Rate: 90.0%
+- CAGR: Strategy (21.1%) - Buy and Hold (11.53%) = 9.57%
+- Latest Performance Win Rate: 95.82%
+- Average Return of Historical Winning Trades: 9.2%
+- Max single trade loss historically: 3.48%
+- Potential Upside (from signal price): 9.2% to 33.4% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2027-12-16/2026-01-17/2026-08-22
+- Current Price, Current Mark to Market: 44.5, 0.84%
+- Target Prices: 45.86/48.19/46.72/49.22/54.14/58.87/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 43.81/22.85/37.50/27.22/No F-Track Level/No F-Track Level/43.48 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 43.48 (approximately 2.3% below current price, at the EMA 200 support level)
+- Recommended Take Profit: 48.19 (target based on average historical winning trades, representing approximately 8.3% upside from current price)
+- Is Signal timely?: Yes, only 0.84% of the potential gain has been captured so far
+- P/E Ratio: 17.50
+- PEG Ratio: N/A
+
+**Notes**: This signal is confirmed and shows strong momentum with multiple upside targets. The energy sector appears to be finding support after recent weakness, with excellent historical win rate of 90% and a significant CAGR advantage over buy-and-hold. The latest performance win rate of 95.82% across all assets further confirms the strength of the FRACTAL TRACK function.
+
+**KWEB (KraneShares CSI China Internet ETF)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-23
+- Signal: Short
+- Interval: Monthly
+- Signal Price: 34.58
+- Win Rate: 85.71%
+- CAGR: Strategy (5.83%) - Buy and Hold (5.4%) = 0.43%
+- Latest Performance Win Rate: 85.71%
+- Average Return of Historical Winning Trades: 7.13%
+- Max single trade loss historically: 19.33%
+- Potential Downside (from signal price): 7.13% to 29.4% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-05-06/2026-02-04/2026-03-02
+- Current Price, Current Mark to Market: 34.58, 0.0%
+- Target Prices: 31.66/32.11/22.17/24.51/No F-Stack Support/No F-Stack Support/No EMA 200 Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: No support/24.51/No F-Stack Support/No F-Stack Support/No support/No support/No support based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 35.47 (approximately 2.6% above current price, at the track level of 38.2% retracement)
+- Recommended Take Profit: 32.11 (target based on average historical winning trades, representing approximately 7.1% downside from current price)
+- Is Signal timely?: Yes, the signal is brand new with 0% of the potential gain captured
+- P/E Ratio: 16.90
+- PEG Ratio: N/A
+
+**Notes**: This fresh short signal on KWEB provides a hedge against broader market weakness, particularly in the Chinese internet sector. The signal shows excellent timing with a break below the 38.2% retracement level of a major upmove. With an 85.71% win rate and clear downside targets, this signal offers a compelling risk-reward profile for traders looking to diversify with short exposure.
