@@ -1,0 +1,265 @@
+# Signal Analysis and Recommendations
+
+|||UBER,Daily,FRACTAL TRACK,2025-12-23,Long|ARM,Daily,DELTADRIFT,2025-12-24,Long|DBC,Daily,FRACTAL TRACK,2025-12-24,Long|SJ.TO,Daily,FRACTAL TRACK,2025-12-24,Long|XLU,Daily,OSCILLATOR DELTA,2025-12-23,Long|WPM.TO,Daily,TRENDPULSE,2025-12-22,Long|TRI.TO,Daily,TRENDPULSE,2025-12-22,Long|INDY,Daily,DELTADRIFT,2025-12-22,Long|WPM.TO,Weekly,TRENDPULSE,2025-12-21,Long|ABNB,Weekly,TRENDPULSE,2025-12-21,Long|||
+
+## Summary
+
+These signals represent the best opportunities based on our comprehensive filtering criteria, with emphasis on confirmed signals showing strong historical performance, positive CAGR differences, favorable risk-reward profiles, and timeliness of entry. All selected signals are recent and have passed our rigorous evaluation process.
+
+### Key Insights and Recommendations
+
+1. **Diverse sector exposure** - The filtered signals provide exposure across multiple sectors: technology (ARM, UBER), commodities (DBC, WPM.TO), utilities (XLU), industrials (SJ.TO), information services (TRI.TO), emerging markets (INDY), and travel/hospitality (ABNB), offering excellent diversification benefits.
+
+2. **Strong historical win rates** - All selected signals show exceptional historical win rates (72-100%), indicating consistent performance across various market conditions.
+
+3. **Timeliness advantage** - All signals are very recent (0-5 days old), providing optimal entry points with minimal missed opportunity cost.
+
+4. **Balanced risk-reward profiles** - The selected signals offer favorable reward-to-risk ratios, with multiple technical targets providing clear exit strategies.
+
+5. **Multiple timeframe confirmations** - WPM.TO shows confirmation across both daily and weekly timeframes, increasing confidence in the predicted move.
+
+6. **Positive CAGR differentials** - Several signals (UBER, TRI.TO, INDY) show strategy CAGR outperforming buy-and-hold, indicating the effectiveness of the signal timing.
+
+7. **Varied holding periods** - The signals offer a mix of short-term (ARM: ~15 days average) and medium-term (ABNB: ~7 months average) opportunities, catering to different investment timeframes.
+
+## Detailed Signal Analysis
+
+### **UBER (Uber Technologies)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-23
+- Signal: Long
+- Interval: Daily
+- Signal Price: 80.97
+- Win Rate: 100.0%
+- CAGR: Strategy (33.14%) - Buy and Hold (7.1%) = 26.04%
+- Latest Performance Win Rate: 95.82%
+- Average Return of Historical Winning Trades: 9.9%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 2.9% to 28.2% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2029-05-27/2025-12-28/2026-07-15
+- Current Price, Current Mark to Market: 81.15, 0.22%
+- Target Prices: 83.32/88.99/118.11/82.12/99.17/103.82/87.76 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 79.14/34.60/75.97/63.38/No F-Track Level/No F-Track Level/No EMA 200 Support based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 75.97 (approximately 6.4% below current price, at F-Stack 1 support level)
+- Recommended Take Profit: 88.99 (target based on average gain of historical winning trades, representing 9.9% upside)
+- Is Signal timely?: Yes, only 0.22% of the potential gain has been realized
+- P/E Ratio: 10.44
+- PEG Ratio: 4.77
+
+**Notes**: This signal shows exceptional historical performance with 100% win rate and very strong CAGR differential (+26.04%). The signal was just confirmed yesterday with minimal price movement so far, indicating an excellent entry opportunity. Multiple target levels provide a clear roadmap for potential profit taking.
+
+### **ARM (Arm Holdings)**
+- Function: DELTADRIFT
+- Signal Date: 2025-12-24
+- Signal: Long
+- Interval: Daily
+- Signal Price: 111.55
+- Win Rate: 83.33%
+- CAGR: Strategy (17.56%) - Buy and Hold (26.25%) = -8.69%
+- Latest Performance Win Rate: 77.89%
+- Average Return of Historical Winning Trades: 10.84%
+- Max single trade loss historically: 19.77%
+- Potential Upside (from signal price): 10.84% (based on average historical return)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-02-14/2025-12-31/2026-01-14
+- Current Price, Current Mark to Market: 111.55, 0.0%
+- Target Prices: 114.19/123.64/118.92/184.93/209.66/292.82/137.56 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 96.83/No Horizontal Support/102.22/89.54/No F-Track Level/No F-Track Level/No Moving Avg Support based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 102.22 (approximately 8.4% below current price, at the nearest F-Stack 1 support level)
+- Recommended Take Profit: 123.64 (target based on average historical winning trades, representing approximately 10.8% upside)
+- Is Signal timely?: Yes, signal is brand new with no gains missed
+- P/E Ratio: 143.01
+- PEG Ratio: 1.52
+
+**Notes**: This signal is confirmed today with a strong historical win rate of 83.33%. ARM has shown consistent performance with average gains of 10.84% in winning trades. Despite the negative CAGR difference compared to buy-and-hold, the short average holding period (15 days) makes this an efficient use of capital. Multiple resistance targets provide clear exit opportunities.
+
+### **DBC (Invesco DB Commodity Index Tracking Fund)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-24
+- Signal: Long
+- Interval: Daily
+- Signal Price: 22.63
+- Win Rate: 100.0%
+- CAGR: Strategy (7.63%) - Buy and Hold (6.83%) = 0.8%
+- Latest Performance Win Rate: 56.14%
+- Average Return of Historical Winning Trades: 4.6%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 4.6% (based on average historical return)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-06-07/2026-02-04/2026-03-16
+- Current Price, Current Mark to Market: 22.63, 0.0%
+- Target Prices: 22.97/23.67/23.74/28.58/60.64/65.88/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 22.39/19.55/No F-Stack Support/No F-Stack Support/No F-Track Level/No F-Track Level/22.14 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 22.14 (approximately 2.2% below current price, at the EMA 200 support level)
+- Recommended Take Profit: 23.67 (target based on average historical winning trades, representing approximately 4.6% upside)
+- Is Signal timely?: Yes, signal is brand new with no gains missed
+- P/E Ratio: 5.47
+- PEG Ratio: N/A
+
+**Notes**: This signal has an impressive 100% win rate over 10 historical trades, though with a more modest average return of 4.6%. The perfect historical track record and positive CAGR difference make this a high-probability trade. The commodity exposure provides portfolio diversification benefits. Multiple nearby resistance levels suggest a potential for quick profits with minimal drawdown risk.
+
+### **SJ.TO (Stella-Jones Inc)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-24
+- Signal: Long
+- Interval: Daily
+- Signal Price: 86.47
+- Win Rate: 93.75%
+- CAGR: Strategy (26.35%) - Buy and Hold (9.97%) = 16.38%
+- Latest Performance Win Rate: 56.14%
+- Average Return of Historical Winning Trades: 11.67%
+- Max single trade loss historically: 0.73%
+- Potential Upside (from signal price): 11.67% (based on average historical return)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2028-07-19/2026-02-05/2026-08-11
+- Current Price, Current Mark to Market: 86.47, 0.0%
+- Target Prices: 93.31/96.56/95.4/No Horizontal Resistance/95.02/123.22/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 85.41/38.02/66.81/60.06/No F-Track Level/No F-Track Level/77.2 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 85.41 (approximately 1.2% below current price, at the nearest support from recent extrema)
+- Recommended Take Profit: 96.56 (target based on average historical winning trades, representing approximately 11.7% upside)
+- Is Signal timely?: Yes, signal is brand new with no gains missed
+- P/E Ratio: 14.15
+- PEG Ratio: N/A
+
+**Notes**: This signal shows exceptional historical performance with a 93.75% win rate and significant CAGR advantage (+16.38%) over buy-and-hold. The minimal historical loss (0.73%) and strong average return (11.67%) create an excellent risk-reward profile. The stock is trading above its track level, confirming the bullish momentum. The P/E ratio of 14.15 indicates reasonable valuation compared to peers.
+
+### **XLU (Utilities Select Sector SPDR Fund)**
+- Function: OSCILLATOR DELTA
+- Signal Date: 2025-12-23
+- Signal: Long
+- Interval: Daily
+- Signal Price: 42.62
+- Win Rate: 80.0%
+- CAGR: Strategy (16.95%) - Buy and Hold (4.29%) = 12.66%
+- Latest Performance Win Rate: 67.13%
+- Average Return of Historical Winning Trades: 9.1%
+- Max single trade loss historically: 11.19%
+- Potential Upside (from signal price): 9.1% (based on average historical return)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-11-22/2026-01-06/2026-04-14
+- Current Price, Current Mark to Market: 42.81, 0.45%
+- Target Prices: 45.27/46.5/46.88/No Horizontal Resistance/49.49/65.25/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: No Recent Minima/29.63/35.43/30.39/No F-Track Level/No F-Track Level/41.94 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 41.94 (approximately 2.0% below current price, at the EMA 200 support level)
+- Recommended Take Profit: 46.50 (target based on average historical winning trades, representing approximately 8.6% upside from current price)
+- Is Signal timely?: Yes, signal is very recent with only 0.45% of the potential gain captured
+- P/E Ratio: 21.05
+- PEG Ratio: N/A
+
+**Notes**: This signal shows strong outperformance versus buy-and-hold with a CAGR difference of +12.66%. The solid 80% win rate and moderate average return of 9.1% provide a balanced risk-reward profile. The utilities sector often performs well during periods of economic uncertainty, potentially providing defensive characteristics. The signal is already showing positive momentum with a 0.45% gain after just one day.
+
+### **WPM.TO (Wheaton Precious Metals)**
+- Function: TRENDPULSE
+- Signal Date: 2025-12-22
+- Signal: Long
+- Interval: Daily
+- Signal Price: 168.04
+- Win Rate: 78.95%
+- CAGR: Strategy (12.04%) - Buy and Hold (18.03%) = -5.99%
+- Latest Performance Win Rate: 88.27%
+- Average Return of Historical Winning Trades: 5.04%
+- Max single trade loss historically: 19.7%
+- Potential Upside (from signal price): 5.1% to 15.9% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-07-01/2025-12-30/2026-02-03
+- Current Price, Current Mark to Market: 166.29, -1.04%
+- Target Prices: 180.90/176.51/187.59/No Horizontal Resistance/178.10/194.79/No EMA 200 Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 145.49/52.78/146.15/125.95/No F-Track Level/No F-Track Level/130.56 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 145.49 (approximately 12.5% below current price, at the recent extrema support level)
+- Recommended Take Profit: 176.51 (target based on average gain of historical winning trades, representing 6.1% upside from current price)
+- Is Signal timely?: Yes, price has actually pulled back 1.04% from signal price, offering a better entry point
+- P/E Ratio: 55.25
+- PEG Ratio: N/A
+
+**Notes**: This signal is confirmed by both daily and weekly timeframes, increasing conviction. The current price pullback offers an improved entry point. Strong historical win rate and forward testing performance provide confidence despite the negative CAGR differential.
+
+### **TRI.TO (Thomson Reuters)**
+- Function: TRENDPULSE
+- Signal Date: 2025-12-22
+- Signal: Long
+- Interval: Daily
+- Signal Price: 182.89
+- Win Rate: 100.0%
+- CAGR: Strategy (14.91%) - Buy and Hold (7.98%) = 6.93%
+- Latest Performance Win Rate: 88.27%
+- Average Return of Historical Winning Trades: 3.7%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 3.7% to 148.9% (range of targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-08-22/2025-12-30/2026-03-01
+- Current Price, Current Mark to Market: 181.76, -0.62%
+- Target Prices: 195.49/189.66/235.10/240.89/293.23/455.21/239.03 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 178.26/116.89/131.25/93.02/No F-Track Level/No F-Track Level/No EMA 200 Support based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 178.26 (approximately 1.9% below current price, at the recent extrema support level)
+- Recommended Take Profit: 189.66 (target based on average gain of historical winning trades, representing 4.3% upside from current price)
+- Is Signal timely?: Yes, price has actually pulled back 0.62% from signal price, offering a slightly better entry point
+- P/E Ratio: 34.23
+- PEG Ratio: N/A
+
+**Notes**: This signal demonstrates perfect historical performance with 100% win rate and no historical losses. The strong positive CAGR differential (+6.93%) and high Sharpe ratio (1.41) indicate both outperformance and lower volatility compared to buy-and-hold. The tight stop loss level provides excellent risk-reward.
+
+### **INDY (iShares India 50 ETF)**
+- Function: DELTADRIFT
+- Signal Date: 2025-12-22
+- Signal: Long
+- Interval: Daily
+- Signal Price: 49.33
+- Win Rate: 72.73%
+- CAGR: Strategy (8.33%) - Buy and Hold (2.61%) = 5.72%
+- Latest Performance Win Rate: 88.12%
+- Average Return of Historical Winning Trades: 3.29%
+- Max single trade loss historically: 3.67%
+- Potential Upside (from signal price): 3.4% to 38.1% (range of targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-01-28/2025-12-27/2026-01-06
+- Current Price, Current Mark to Market: 49.24, -0.18%
+- Target Prices: 51.00/50.95/50.98/54.47/60.91/68.13/52.23 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 48.03/40.73/48.78/37.97/No F-Track Level/No F-Track Level/No EMA 200 Support based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 48.03 (approximately 2.5% below current price, at the recent extrema support level)
+- Recommended Take Profit: 50.95 (target based on average gain of historical winning trades, representing 3.5% upside from current price)
+- Is Signal timely?: Yes, price has only moved -0.18% from signal price
+- P/E Ratio: 22.16
+- PEG Ratio: N/A
+
+**Notes**: This signal offers exposure to India's market with a favorable risk-reward profile. The positive CAGR differential (+5.72%) indicates the strategy outperforms buy-and-hold. The relatively tight stop loss and short expected holding period (average 11 days) make this an efficient use of capital.
+
+### **WPM.TO (Wheaton Precious Metals)**
+- Function: TRENDPULSE
+- Signal Date: 2025-12-21
+- Signal: Long
+- Interval: Weekly
+- Signal Price: 164.88
+- Win Rate: 86.67%
+- CAGR: Strategy (3.49%) - Buy and Hold (6.66%) = -3.17%
+- Latest Performance Win Rate: 95.21%
+- Average Return of Historical Winning Trades: 11.19%
+- Max single trade loss historically: 14.05%
+- Potential Upside (from signal price): 6.4% to 31.0% (range of targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-06-30/2026-02-11/2026-04-12
+- Current Price, Current Mark to Market: 166.29, 0.86%
+- Target Prices: 175.40/183.33/215.83/No Horizontal Resistance/178.10/194.79/No EMA 200 Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 135.45/52.78/146.15/125.95/No F-Track Level/No F-Track Level/130.22 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 146.15 (approximately 12.1% below current price, at the F-Stack 1 support level)
+- Recommended Take Profit: 183.33 (target based on average gain of historical winning trades, representing 10.2% upside from current price)
+- Is Signal timely?: Yes, only 0.86% of the potential gain has been realized
+- P/E Ratio: 55.25
+- PEG Ratio: N/A
+
+**Notes**: This weekly signal confirms the daily signal on the same asset, significantly increasing conviction. The higher win rate (86.67%) and larger average return (11.19%) on the weekly timeframe suggest a potentially stronger move. The dual timeframe confirmation makes this one of the highest conviction signals.
+
+### **ABNB (Airbnb)**
+- Function: TRENDPULSE
+- Signal Date: 2025-12-21
+- Signal: Long
+- Interval: Weekly
+- Signal Price: 135.28
+- Win Rate: 80.0%
+- CAGR: Strategy (-12.18%) - Buy and Hold (-2.45%) = -9.73%
+- Latest Performance Win Rate: 95.21%
+- Average Return of Historical Winning Trades: 17.07%
+- Max single trade loss historically: 25.5%
+- Potential Upside (from signal price): 0% to 72.2% (range of targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2027-01-11/2026-02-11/2026-07-26
+- Current Price, Current Mark to Market: 136.78, 1.11%
+- Target Prices: 135.17/158.37/138.50/178.03/223.54/232.99/No EMA 200 Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 114.26/99.80/124.60/No support/No F-Track Level/No F-Track Level/126.47 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 124.60 (approximately 8.9% below current price, at the F-Stack 1 support level)
+- Recommended Take Profit: 158.37 (target based on average gain of historical winning trades, representing 15.8% upside from current price)
+- Is Signal timely?: Yes, only 1.11% of the potential gain has been realized
+- P/E Ratio: 32.57
+- PEG Ratio: 1.81
+
+**Notes**: Despite the negative CAGR differential, this signal shows strong historical win rate (80%) and substantial average returns on winning trades (17.07%). The excellent forward testing performance (95.21%) provides additional confidence. The risk-reward ratio is attractive with potential for significant upside.
