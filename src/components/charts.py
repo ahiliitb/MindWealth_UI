@@ -1201,6 +1201,9 @@ def fetch_original_signal_data(function, symbol, signal_date, interval, signal_t
     """
     import pandas as pd
     import csv
+    import os
+    import glob
+    from datetime import datetime
     
     # Map function names to CSV file names (case-insensitive)
     function_to_file = {
@@ -1221,7 +1224,60 @@ def fetch_original_signal_data(function, symbol, signal_date, interval, signal_t
     if not csv_file:
         return None
     
-    file_path = f'./trade_store/US/{csv_file}'
+    # Get the project root directory (two levels up from src/components/charts.py)
+    # __file__ = /path/to/project/src/components/charts.py
+    # dirname(__file__) = /path/to/project/src/components
+    # dirname(dirname(__file__)) = /path/to/project/src
+    # dirname(dirname(dirname(__file__))) = /path/to/project (project root)
+    current_file_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(os.path.dirname(current_file_dir))  # Go up 2 levels: components -> src -> project root
+    trade_store_dir = os.path.join(project_root, 'trade_store', 'US')
+    
+    # Handle date-prefixed files: search for both dated and non-dated versions
+    # Pattern: YYYY-MM-DD_Fib-Ret.csv or Fib-Ret.csv
+    non_dated_path = os.path.join(trade_store_dir, csv_file)  # Non-dated
+    dated_pattern = os.path.join(trade_store_dir, f'*_{csv_file}')  # Dated pattern
+    
+    # Find all matching files
+    matching_files = []
+    
+    # Check for non-dated version
+    if os.path.exists(non_dated_path):
+        matching_files.append((None, non_dated_path))  # (date, filepath)
+    
+    # Find dated versions using glob pattern
+    for file_path in glob.glob(dated_pattern):
+        filename = os.path.basename(file_path)
+        # Extract date from filename (YYYY-MM-DD_filename.csv)
+        # Verify the suffix matches our target file (case-insensitive)
+        if filename.lower().endswith(f'_{csv_file.lower()}'):
+            date_match = filename.split('_', 1)
+            if len(date_match) == 2:
+                try:
+                    file_date = datetime.strptime(date_match[0], '%Y-%m-%d')
+                    matching_files.append((file_date, file_path))
+                except ValueError:
+                    pass
+    
+    # Prefer the most recent dated version, fallback to non-dated
+    if not matching_files:
+        st.error(f"File not found: {csv_file} in {trade_store_dir}")
+        return None
+    
+    # Sort: dated files first (most recent first), then non-dated files
+    # Separate dated and non-dated files
+    dated_files = [(date, path) for date, path in matching_files if date is not None]
+    non_dated_files = [(date, path) for date, path in matching_files if date is None]
+    
+    # Sort dated files by date descending (most recent first)
+    dated_files.sort(key=lambda x: x[0], reverse=True)
+    
+    # Combine: dated files first, then non-dated
+    sorted_files = dated_files + non_dated_files
+    file_path = sorted_files[0][1]
+    
+    # Ensure file_path is absolute
+    file_path = os.path.abspath(file_path)
     
     try:
         # Read the CSV file
