@@ -1,0 +1,263 @@
+# Signal Analysis and Recommendations
+
+These signals represent the best opportunities based on our comprehensive filtering criteria, with emphasis on confirmed signals showing strong historical performance, positive CAGR differences, and favorable risk-reward profiles.
+
+|||ABNB,Daily,FRACTAL TRACK,2026-01-06,Long|XLY,Daily,FRACTAL TRACK,2026-01-06,Long|IWM,Daily,FRACTAL TRACK,2026-01-06,Long|ETH-USD,Daily,TRENDPULSE,2026-01-06,Long|IFT.NZ,Daily,TRENDPULSE,2026-01-06,Long|SUM.NZ,Daily,TRENDPULSE,2026-01-06,Long|NU,Daily,TRENDPULSE,2026-01-06,Long|BAC,Daily,TRENDPULSE,2026-01-05,Long|SOXX,Quarterly,TRENDPULSE,2025-12-31,Long|SFTBY,Quarterly,FRACTAL TRACK,2025-12-31,Short|||
+
+## Key Insights and Recommendations
+
+1. **Recency prioritized** - Most of our top signals are extremely recent (January 2026), providing optimal entry opportunities with minimal missed upside potential.
+
+2. **Sector diversification** - The filtered signals span consumer discretionary (ABNB, XLY), small caps (IWM), cryptocurrency (ETH-USD), infrastructure (IFT.NZ), healthcare (SUM.NZ), fintech (NU), banking (BAC), semiconductors (SOXX), and technology (SFTBY), providing excellent sector diversification.
+
+3. **Exceptional win rates** - All filtered signals demonstrate impressive historical win rates (83-100%), indicating high-probability setups with proven track records.
+
+4. **Positive CAGR differentials** - Most signals show strategy CAGR outperformance versus buy-and-hold approaches, with ABNB (+33.11%), NU (+13.02%), and SFTBY (+7.13%) showing particularly strong differentials.
+
+5. **Geographic diversification** - The recommendations include US equities, New Zealand stocks, cryptocurrency, and Japanese technology, providing good geographical diversification.
+
+6. **Balanced long/short exposure** - While most signals are long-biased, we've included one high-conviction short signal (SFTBY) to provide some portfolio protection in case of market weakness.
+
+7. **Risk management considerations** - For each signal, we've identified appropriate stop-loss levels based on technical support levels to manage downside risk. The recommended take-profit levels are based on historical performance metrics and technical targets.
+
+## Detailed Signal Analysis
+
+**ABNB (Airbnb)**
+- Function: FRACTAL TRACK
+- Signal Date: 2026-01-06
+- Signal: Long
+- Interval: Daily
+- Signal Price: 138.02
+- Win Rate: 100.00%
+- CAGR: Strategy (30.66%) - Buy and Hold (-2.45%) = 33.11%
+- Latest Performance Win Rate: 94.15%
+- Average Return of Historical Winning Trades: 14.0%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 14.0% to 21.13% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-10-24/2026-01-11/2026-04-11
+- Current Price, Current Mark to Market: 138.02, 0% (signal date = current date)
+- Target Prices: 138.089/157.3428/154.65/178.025/223.0579/259.5851/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 133.01/99.795/No F-Stack Support/No F-Stack Support/No F-Track Support/No F-Track Support/126.96 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 133.01 (approximately 3.6% below current price, at the nearest support level based on recent extrema)
+- Recommended Take Profit: 157.34 (target based on average gain of historical winning trades, representing 14.0% upside)
+- Is Signal timely?: Yes (new signal)
+- P/E Ratio: 32.86
+- PEG Ratio: 1.80
+
+**Notes**: This signal shows exceptional strength with a 100% historical win rate across 15 trades over 5 years. The CAGR differential of 33.11% strongly favors the strategy over buy-and-hold. Multiple resistance levels cluster around the 154-178 range, suggesting potential consolidation before further upside.
+
+**XLY (Consumer Discretionary Select Sector SPDR Fund)**
+- Function: FRACTAL TRACK
+- Signal Date: 2026-01-06
+- Signal: Long
+- Interval: Daily
+- Signal Price: 121.07
+- Win Rate: 93.75%
+- CAGR: Strategy (13.85%) - Buy and Hold (5.91%) = 7.94%
+- Latest Performance Win Rate: 94.15%
+- Average Return of Historical Winning Trades: 7.78%
+- Max single trade loss historically: 5.33%
+- Potential Upside (from signal price): 7.78% to 12.8% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2030-04-19/2026-02-05/2027-01-19
+- Current Price, Current Mark to Market: 121.07, 0% (signal date = current date)
+- Target Prices: 124.0483/130.4892/128.97/121.1117/125.4815/149.5056/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 118.35/66.775/97.0194/64.5812/114.8569/109.4654/111.58 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 118.35 (approximately 2.2% below current price, at the nearest support level based on recent extrema)
+- Recommended Take Profit: 130.49 (target based on average gain of historical winning trades, representing 7.8% upside)
+- Is Signal timely?: Yes (new signal)
+- P/E Ratio: 30.37
+- PEG Ratio: N/A
+
+**Notes**: XLY shows exceptional reliability with a 93.75% win rate across 16 trades over 5 years. The signal benefits from a strong Sharpe ratio of 1.09 and positive CAGR differential of 7.94%. Price is currently trading just above its track level, confirming the bullish momentum.
+
+**IWM (iShares Russell 2000 ETF)**
+- Function: FRACTAL TRACK
+- Signal Date: 2026-01-06
+- Signal: Long
+- Interval: Daily
+- Signal Price: 256.08
+- Win Rate: 100.00%
+- CAGR: Strategy (14.39%) - Buy and Hold (3.76%) = 10.63%
+- Latest Performance Win Rate: 94.15%
+- Average Return of Historical Winning Trades: 9.22%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 9.22% to 13.11% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2031-08-01/2026-03-29/2027-05-12
+- Current Price, Current Mark to Market: 256.08, 0% (signal date = current date)
+- Target Prices: 245.9904/279.6906/273.66/No Horizontal Resistance/270.9222/282.5179/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 246.16/162.3167/245.3626/196.8345/237.7412/225.1685/225.42 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 246.16 (approximately 3.9% below current price, at the nearest support level based on recent extrema)
+- Recommended Take Profit: 279.69 (target based on average gain of historical winning trades, representing 9.2% upside)
+- Is Signal timely?: Yes (new signal)
+- P/E Ratio: 18.79
+- PEG Ratio: N/A
+
+**Notes**: IWM shows perfect reliability with a 100% win rate across 13 trades over 5 years. The exceptional Sharpe ratio of 1.95 indicates excellent risk-adjusted returns. Small caps represented by IWM often lead market rallies, making this a particularly strong signal.
+
+**ETH-USD (Ethereum)**
+- Function: TRENDPULSE
+- Signal Date: 2026-01-06
+- Signal: Long
+- Interval: Daily
+- Signal Price: 3275.38
+- Win Rate: 92.86%
+- CAGR: Strategy (60.18%) - Buy and Hold (45.20%) = 14.98%
+- Latest Performance Win Rate: 91.01%
+- Average Return of Historical Winning Trades: 13.37%
+- Max single trade loss historically: 17.31%
+- Potential Upside (from signal price): 13.37% to 39.76% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-05-16/2026-01-13/2026-02-08
+- Current Price, Current Mark to Market: 3275.38, 0% (signal date = current date)
+- Target Prices: 3992.3662/3713.3034/3974.15/4922.7188/5483.4169/7318.9774/3610.67 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 2827.07/1370.4997/No F-Stack Support/No F-Stack Support/2924.9209/2446.1213/No Moving Avg Support based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 2924.92 (approximately 10.7% below current price, at the F-Track 1 support level)
+- Recommended Take Profit: 3713.30 (target based on average gain of historical winning trades, representing 13.4% upside)
+- Is Signal timely?: Yes (new signal)
+- P/E Ratio: N/A
+- PEG Ratio: N/A
+
+**Notes**: ETH-USD shows exceptional performance with a 92.86% win rate across 42 trades over 4 years. The strategy significantly outperforms buy-and-hold with a 14.98% CAGR differential. Historical winning trades have averaged 13.37% returns, with some reaching nearly 40%.
+
+**IFT.NZ (Infratil Limited)**
+- Function: TRENDPULSE
+- Signal Date: 2026-01-06
+- Signal: Long
+- Interval: Daily
+- Signal Price: 11.73
+- Win Rate: 96.0%
+- CAGR: Strategy (16.02%) - Buy and Hold (10.32%) = 5.7%
+- Latest Performance Win Rate: 91.01%
+- Average Return of Historical Winning Trades: 3.63%
+- Max single trade loss historically: 10.91%
+- Potential Upside (from signal price): 4.4% to 35.7% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-05-25/2026-01-14/2026-02-11
+- Current Price, Current Mark to Market: 11.73, 0% (signal just triggered today)
+- Target Prices: 12.32/12.16/12.25/12.83/13.88/15.92/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 10.70/7.32/11.38/9.62/No F-Track Support/No F-Track Support/11.42 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 10.70 (approximately 8.8% below current price, at the nearest support level from Recent Extrema)
+- Recommended Take Profit: 12.32 (first target level based on Historic Rise to Pivot, representing approximately 5% upside)
+- Is Signal timely?: Yes, signal just triggered today with 0% mark to market
+- P/E Ratio: 46.92
+- PEG Ratio: N/A
+
+**Notes**: This signal shows exceptional win rate (96%) with a solid CAGR advantage over buy-and-hold. The stock has multiple nearby resistance levels that could serve as profit targets, with the first target offering a reasonable 5% upside.
+
+**SUM.NZ (Summerset Group Holdings)**
+- Function: TRENDPULSE
+- Signal Date: 2026-01-06
+- Signal: Long
+- Interval: Daily
+- Signal Price: 12.41
+- Win Rate: 94.44%
+- CAGR: Strategy (16.06%) - Buy and Hold (5.58%) = 10.48%
+- Latest Performance Win Rate: 91.01%
+- Average Return of Historical Winning Trades: 4.98%
+- Max single trade loss historically: 6.4%
+- Potential Upside (from signal price): 2.3% to 49.7% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-10-02/2026-01-11/2026-02-06
+- Current Price, Current Mark to Market: 12.41, 0% (signal just triggered today)
+- Target Prices: 13.00/13.03/12.69/13.35/16.80/18.58/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 11.82/9.14/11.19/8.94/No F-Track Support/No F-Track Support/11.43 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 11.82 (approximately 4.8% below current price, at the nearest support level from Recent Extrema)
+- Recommended Take Profit: 13.00 (first target level based on Historic Rise to Pivot, representing approximately 4.8% upside)
+- Is Signal timely?: Yes, signal just triggered today with 0% mark to market
+- P/E Ratio: 8.02
+- PEG Ratio: N/A
+
+**Notes**: This signal shows one of the strongest CAGR differentials (+10.48%), indicating significant outperformance over buy-and-hold. The attractive P/E ratio of 8.02 suggests the stock may be undervalued.
+
+**NU (Nu Holdings)**
+- Function: TRENDPULSE
+- Signal Date: 2026-01-06
+- Signal: Long
+- Interval: Daily
+- Signal Price: 17.86
+- Win Rate: 100.0%
+- CAGR: Strategy (22.47%) - Buy and Hold (9.45%) = 13.02%
+- Latest Performance Win Rate: 91.01%
+- Average Return of Historical Winning Trades: 3.09%
+- Max single trade loss historically: 0% (no losing trades in history)
+- Potential Upside (from signal price): 3.1% to 37.6% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-03-29/2026-01-14/2026-02-22
+- Current Price, Current Mark to Market: 17.86, 0% (signal just triggered today)
+- Target Prices: 19.76/18.41/21.30/No Horizontal Resistance/19.32/24.58/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 15.86/5.54/16.07/No F-Stack Support/16.16/14.79/13.97 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 15.86 (approximately 11.2% below current price, at the nearest support level from Recent Extrema)
+- Recommended Take Profit: 19.76 (first target level based on Historic Rise to Pivot, representing approximately 10.6% upside)
+- Is Signal timely?: Yes, signal just triggered today with 0% mark to market
+- P/E Ratio: 34.35
+- PEG Ratio: N/A
+
+**Notes**: This signal stands out with its perfect historical win rate (100%) and substantial CAGR advantage (+13.02%). The fintech company shows strong momentum with multiple upside targets.
+
+**BAC (Bank of America)**
+- Function: TRENDPULSE
+- Signal Date: 2026-01-05
+- Signal: Long
+- Interval: Daily
+- Signal Price: 56.89
+- Win Rate: 92.86%
+- CAGR: Strategy (8.97%) - Buy and Hold (5.09%) = 3.88%
+- Latest Performance Win Rate: 91.01%
+- Average Return of Historical Winning Trades: 3.17%
+- Max single trade loss historically: 13.24%
+- Potential Upside (from signal price): 1.3% to 49.8% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-09-14/2026-01-13/2026-02-11
+- Current Price, Current Mark to Market: 57.25, 0.63% (one day after signal)
+- Target Prices: 57.65/58.69/62.66/No Horizontal Resistance/72.41/85.24/No Moving Avg Target based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 55.00/29.49/54.19/No F-Stack Support/No F-Track Level/No F-Track Level/47.83 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 55.00 (approximately 3.9% below current price, at the nearest support level from Recent Extrema)
+- Recommended Take Profit: 62.66 (target based on Exit Rule, representing approximately 9.5% upside from current price)
+- Is Signal timely?: Yes, signal is very recent with only 0.63% mark to market movement
+- P/E Ratio: 15.64
+- PEG Ratio: 1.06
+
+**Notes**: BAC offers a compelling value play with a reasonable P/E ratio (15.64) and balanced PEG ratio (1.06). The high win rate (92.86%) combined with moderate historical maximum loss (13.24%) suggests a favorable risk-reward profile.
+
+**SOXX (Semiconductor ETF)**
+- Function: TRENDPULSE
+- Signal Date: 2025-12-31
+- Signal: Long
+- Interval: Quarterly
+- Signal Price: 301.15
+- Win Rate: 100.0%
+- CAGR: Strategy (16.0%) - Buy and Hold (8.74%) = 7.26%
+- Latest Performance Win Rate: 100.0%
+- Average Return of Historical Winning Trades: 47.75%
+- Max single trade loss historically: 0.0%
+- Potential Upside (from signal price): 33.4% to 47.8% (immediate targets)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2030-09-16/2027-11-08/2028-09-16
+- Current Price, Current Mark to Market: 328.35, 9.03%
+- Target Prices: 401.85/444.95/463.42/No Horizontal/348.22/411.03/No EMA based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: 106.24/110.48/285.43/255.00/No F-Track Level/No F-Track Level/246.22 based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 285.43 (approximately 13% below current price, at the F-Stack 1 support level)
+- Recommended Take Profit: 401.85 (first target level, representing approximately 22.4% upside from current price)
+- Is Signal timely?: Yes, only 21% of the potential gain has been captured so far
+- P/E Ratio: 43.14
+- PEG Ratio: N/A
+
+**Notes**: This signal shows exceptional strength with a perfect historical win rate and strong CAGR difference of 7.26% over buy-and-hold. The semiconductor sector continues to show momentum with multiple upside targets.
+
+**SFTBY (SoftBank Group)**
+- Function: FRACTAL TRACK
+- Signal Date: 2025-12-31
+- Signal: Short
+- Interval: Quarterly
+- Signal Price: 56.70
+- Win Rate: 100.00%
+- CAGR: Strategy (12.53%) - Buy and Hold (5.40%) = 7.13%
+- Latest Performance Win Rate: 63.64%
+- Average Return of Historical Winning Trades: 17.41%
+- Max single trade loss historically: 0.00%
+- Potential Upside (from signal price): 17.41% (based on average historical winning trades)
+- Target Exit Date(Win Trades) (Max/Min/Avg.): 2026-05-14/2026-05-14/2026-05-14
+- Current Price, Current Mark to Market: 59.80, -5.47%
+- Target Prices: 50.9449/46.8285/12.77/16.82/56.3971/48.3837/46.64 based on Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/Moving Avg
+- Support Levels: No recent extrema/16.82/56.3971/48.3837/No F-Track Level/No F-Track Level/No EMA 200 Support based on Recent Extrema/Horizontal/F-Stack 1/F-Stack 2/F-Track 1/F-Track 2/Moving Avg
+- Recommended Stop Loss: 61.00 (approximately 7.6% above signal price, allowing for some volatility while protecting the position)
+- Recommended Take Profit: 46.83 (target based on average historical winning trades, representing approximately 17.4% potential gain)
+- Is Signal timely?: Yes, only 6 days old with minimal adverse movement
+- P/E Ratio: 35.18
+- PEG Ratio: 3884.15
+
+**Notes**: This short signal on SoftBank shows exceptional historical performance with a 100% win rate across 4 trades tested over 13 years. The significant CAGR differential (+7.13%) suggests this strategy significantly outperforms buy-and-hold.
