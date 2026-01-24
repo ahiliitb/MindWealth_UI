@@ -9,11 +9,19 @@ from typing import List, Dict, Optional, Union
 import logging
 from datetime import datetime
 
-from .config import (
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from config import (
     CHATBOT_ENTRY_DIR,
     CHATBOT_EXIT_DIR,
     CHATBOT_TARGET_DIR,
     CHATBOT_BREADTH_DIR,
+    CHATBOT_ENTRY_CSV,
+    CHATBOT_EXIT_CSV,
+    CHATBOT_TARGET_CSV,
+    CHATBOT_BREADTH_CSV,
     CSV_ENCODING,
     DATE_FORMAT
 )
@@ -30,14 +38,25 @@ class SmartDataFetcher:
     - Function name (trading strategy)
     - Date
     - Required columns
+
+    Supports both folder-based (legacy) and consolidated CSV (new) data structures.
     """
-    
-    def __init__(self):
+
+    def __init__(self, use_consolidated_csvs=True):
         """Initialize the smart data fetcher."""
+        self.use_consolidated_csvs = use_consolidated_csvs
+
+        # Legacy folder-based paths
         self.entry_dir = Path(CHATBOT_ENTRY_DIR)
         self.exit_dir = Path(CHATBOT_EXIT_DIR)
         self.target_dir = Path(CHATBOT_TARGET_DIR)
         self.breadth_dir = Path(CHATBOT_BREADTH_DIR)
+
+        # New consolidated CSV paths
+        self.entry_csv = Path(CHATBOT_ENTRY_CSV)
+        self.exit_csv = Path(CHATBOT_EXIT_CSV)
+        self.target_csv = Path(CHATBOT_TARGET_CSV)
+        self.breadth_csv = Path(CHATBOT_BREADTH_CSV)
     
     def fetch_data(
         self,
@@ -51,7 +70,9 @@ class SmartDataFetcher:
     ) -> Dict[str, pd.DataFrame]:
         """
         Fetch data from specified signal types with the required columns or ALL columns.
-        
+
+        Uses consolidated CSV files if available, falls back to folder-based approach.
+
         Args:
             signal_types: List of signal types to fetch from (entry, exit, target, breadth)
             required_columns: List of column names to fetch, or None to fetch ALL columns (preserves CSV structure)
@@ -60,7 +81,7 @@ class SmartDataFetcher:
             from_date: Optional start date (YYYY-MM-DD)
             to_date: Optional end date (YYYY-MM-DD)
             limit_rows: Optional limit on number of rows per signal type
-            
+
         Returns:
             Dictionary mapping signal_type to DataFrame with fetched data
             {
@@ -69,8 +90,30 @@ class SmartDataFetcher:
                 ...
             }
         """
+        # Use consolidated CSVs if enabled and available, otherwise fall back to folder-based
+        if self.use_consolidated_csvs:
+            # Check if consolidated CSVs exist for requested signal types
+            consolidated_available = all(
+                self._get_consolidated_csv_path(signal_type).exists()
+                for signal_type in signal_types
+            )
+
+            if consolidated_available:
+                logger.info("🔄 Using consolidated CSV files for data fetching")
+                return self.fetch_data_consolidated(
+                    signal_types=signal_types,
+                    required_columns=required_columns,
+                    assets=assets,
+                    functions=functions,
+                    from_date=from_date,
+                    to_date=to_date,
+                    limit_rows=limit_rows
+                )
+
+        # Fall back to folder-based approach
+        logger.info("🔄 Using folder-based data fetching (fallback)")
         result = {}
-        
+
         for signal_type in signal_types:
             try:
                 if signal_type == "breadth":
@@ -90,7 +133,7 @@ class SmartDataFetcher:
                         to_date=to_date,
                         limit_rows=limit_rows
                     )
-                
+
                 if not df.empty:
                     result[signal_type] = df
                     logger.info(f"✅ Fetched {len(df)} rows from {signal_type} with columns: {list(df.columns)}")
@@ -106,10 +149,10 @@ class SmartDataFetcher:
                     logger.warning(f"   Assets filter: {assets}")
                     logger.warning(f"   Functions filter: {functions}")
                     logger.warning(f"   Date range: {from_date} to {to_date}")
-            
+
             except Exception as e:
                 logger.error(f"Error fetching data from {signal_type}: {e}")
-        
+
         return result
     
     def _fetch_signal_type_data(
@@ -202,7 +245,238 @@ class SmartDataFetcher:
             combined_df = combined_df.head(limit_rows)
         
         return combined_df
-    
+
+    def fetch_data_consolidated(
+        self,
+        signal_types: List[str],
+        required_columns: Optional[List[str]],
+        assets: Optional[List[str]] = None,
+        functions: Optional[List[str]] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+        limit_rows: Optional[int] = None
+    ) -> Dict[str, pd.DataFrame]:
+        """
+        Fetch data from consolidated CSV files.
+
+        Args:
+            signal_types: List of signal types to fetch from (entry, exit, target, breadth)
+            required_columns: List of column names to fetch, or None to fetch ALL columns
+            assets: Optional list of asset/ticker names to filter by
+            functions: Optional list of function names to filter by
+            from_date: Optional start date (YYYY-MM-DD)
+            to_date: Optional end date (YYYY-MM-DD)
+            limit_rows: Optional limit on number of rows per signal type
+
+        Returns:
+            Dictionary mapping signal_type to DataFrame with fetched data
+        """
+        result = {}
+
+        for signal_type in signal_types:
+            try:
+                if signal_type == "breadth":
+                    df = self._fetch_breadth_data_consolidated(
+                        required_columns=required_columns,
+                        from_date=from_date,
+                        to_date=to_date,
+                        limit_rows=limit_rows
+                    )
+                else:
+                    df = self._fetch_signal_type_data_consolidated(
+                        signal_type=signal_type,
+                        required_columns=required_columns,
+                        assets=assets,
+                        functions=functions,
+                        from_date=from_date,
+                        to_date=to_date,
+                        limit_rows=limit_rows
+                    )
+
+                if not df.empty:
+                    result[signal_type] = df
+                    logger.info(f"✅ Fetched {len(df)} rows from {signal_type} (consolidated) with columns: {list(df.columns)}")
+
+            except Exception as e:
+                logger.error(f"Error fetching data from {signal_type} (consolidated): {e}")
+
+        return result
+
+    def _fetch_signal_type_data_consolidated(
+        self,
+        signal_type: str,
+        required_columns: Optional[List[str]],
+        assets: Optional[List[str]] = None,
+        functions: Optional[List[str]] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+        limit_rows: Optional[int] = None
+    ) -> pd.DataFrame:
+        """
+        Fetch data from consolidated CSV for a signal type (entry/exit/target).
+
+        Args:
+            signal_type: One of "entry", "exit", "target"
+            required_columns: List of column names to fetch, or None to fetch ALL columns
+            assets: Optional list of assets to filter by
+            functions: Optional list of functions to filter by
+            from_date: Optional start date
+            to_date: Optional end date
+            limit_rows: Optional row limit
+
+        Returns:
+            DataFrame with fetched data
+        """
+        # Get the consolidated CSV path for this signal type
+        csv_path = self._get_consolidated_csv_path(signal_type)
+        if not csv_path.exists():
+            logger.warning(f"Consolidated CSV does not exist: {csv_path}")
+            return pd.DataFrame()
+
+        try:
+            # Read the consolidated CSV
+            df = pd.read_csv(csv_path, encoding=CSV_ENCODING)
+
+            if df.empty:
+                return pd.DataFrame()
+
+            # Extract symbol from "Symbol, Signal, Signal Date/Price[$]" column
+            symbol_col = 'Symbol, Signal, Signal Date/Price[$]'
+            if symbol_col in df.columns and assets:
+                # Extract symbol (first part before comma)
+                df['_extracted_symbol'] = df[symbol_col].str.split(',').str[0].str.strip()
+                df = df[df['_extracted_symbol'].isin(assets)]
+                df = df.drop(columns=['_extracted_symbol'])
+
+            # Filter by Function column
+            if 'Function' in df.columns and functions:
+                df = df[df['Function'].isin(functions)]
+
+            # Extract and filter by signal date if needed
+            if from_date or to_date:
+                if symbol_col in df.columns:
+                    # Extract date from "Symbol, Signal, Signal Date/Price[$]" column
+                    # Format: "SYMBOL, Long/Short, YYYY-MM-DD (Price: X.XX)"
+                    import re
+                    def extract_date(text):
+                        if pd.isna(text):
+                            return None
+                        match = re.search(r'(\d{4}-\d{2}-\d{2})', str(text))
+                        return match.group(1) if match else None
+                    
+                    df['_extracted_date'] = df[symbol_col].apply(extract_date)
+                    df['_extracted_date'] = pd.to_datetime(df['_extracted_date'], errors='coerce')
+
+                    if from_date:
+                        from_date_obj = pd.to_datetime(from_date)
+                        df = df[df['_extracted_date'] >= from_date_obj]
+
+                    if to_date:
+                        to_date_obj = pd.to_datetime(to_date)
+                        df = df[df['_extracted_date'] <= to_date_obj]
+                    
+                    df = df.drop(columns=['_extracted_date'])
+
+            # Apply column selection
+            if required_columns:
+                available_columns = df.columns.tolist()
+                columns_to_keep = [col for col in required_columns if col in available_columns]
+                if columns_to_keep:
+                    df = df[columns_to_keep]
+                else:
+                    logger.warning(f"None of the required columns found in {signal_type} consolidated CSV")
+                    return pd.DataFrame()
+            # If required_columns is None, keep all columns
+
+            # Apply row limit
+            if limit_rows and len(df) > limit_rows:
+                df = df.head(limit_rows)
+
+            return df
+
+        except Exception as e:
+            logger.error(f"Error reading consolidated CSV {csv_path}: {e}")
+            return pd.DataFrame()
+
+    def _fetch_breadth_data_consolidated(
+        self,
+        required_columns: Optional[List[str]],
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+        limit_rows: Optional[int] = None
+    ) -> pd.DataFrame:
+        """
+        Fetch breadth data from consolidated CSV.
+
+        Args:
+            required_columns: List of column names to fetch, or None to fetch ALL columns
+            from_date: Optional start date
+            to_date: Optional end date
+            limit_rows: Optional row limit
+
+        Returns:
+            DataFrame with fetched data
+        """
+        if not self.breadth_csv.exists():
+            logger.warning(f"Breadth consolidated CSV does not exist: {self.breadth_csv}")
+            return pd.DataFrame()
+
+        try:
+            # Read the consolidated CSV
+            df = pd.read_csv(self.breadth_csv, encoding=CSV_ENCODING)
+
+            if df.empty:
+                return pd.DataFrame()
+
+            # Apply date filters - breadth CSV uses "Date" column (capitalized)
+            if from_date or to_date:
+                date_col = 'Date'
+                if date_col in df.columns:
+                    # Convert date to datetime for filtering
+                    df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+
+                    if from_date:
+                        from_date_obj = pd.to_datetime(from_date)
+                        df = df[df[date_col] >= from_date_obj]
+
+                    if to_date:
+                        to_date_obj = pd.to_datetime(to_date)
+                        df = df[df[date_col] <= to_date_obj]
+
+            # Apply column selection
+            if required_columns:
+                available_columns = df.columns.tolist()
+                columns_to_keep = [col for col in required_columns if col in available_columns]
+                if columns_to_keep:
+                    df = df[columns_to_keep]
+                else:
+                    logger.warning("None of the required columns found in breadth consolidated CSV")
+                    return pd.DataFrame()
+            # If required_columns is None, keep all columns
+
+            # Apply row limit
+            if limit_rows and len(df) > limit_rows:
+                df = df.head(limit_rows)
+
+            return df
+
+        except Exception as e:
+            logger.error(f"Error reading breadth consolidated CSV {self.breadth_csv}: {e}")
+            return pd.DataFrame()
+
+    def _get_consolidated_csv_path(self, signal_type: str) -> Path:
+        """Get the consolidated CSV path for a signal type."""
+        if signal_type == "entry":
+            return self.entry_csv
+        elif signal_type == "exit":
+            return self.exit_csv
+        elif signal_type == "target":
+            return self.target_csv
+        elif signal_type == "breadth":
+            return self.breadth_csv
+        else:
+            raise ValueError(f"Invalid signal type: {signal_type}")
+
     def _fetch_breadth_data(
         self,
         required_columns: Optional[List[str]],
@@ -545,6 +819,195 @@ class SmartDataFetcher:
                 }
         
         return {"signal_type": signal_type, "error": "Invalid parameters"}
+
+    def add_data_to_consolidated_csv(
+        self,
+        signal_type: str,
+        new_data: pd.DataFrame,
+        deduplicate: bool = True
+    ) -> bool:
+        """
+        Add new data to a consolidated CSV file with optional deduplication.
+        Preserves 'Signal First Origination Date' for existing records.
+
+        Args:
+            signal_type: One of "entry", "exit", "target", "breadth"
+            new_data: DataFrame with new data to add
+            deduplicate: Whether to deduplicate based on unique keys
+
+        Returns:
+            True if successful, False otherwise
+        """
+        csv_path = self._get_consolidated_csv_path(signal_type)
+
+        try:
+            # Read existing data if file exists
+            if csv_path.exists():
+                existing_data = pd.read_csv(csv_path, encoding=CSV_ENCODING)
+            else:
+                existing_data = pd.DataFrame()
+
+            # Add metadata columns if needed
+            if signal_type != "breadth":
+                # For entry/exit/target, add metadata if not present
+                if 'symbol' not in new_data.columns and 'symbol' in existing_data.columns:
+                    # Try to extract symbol from existing data patterns
+                    pass  # Will be handled by calling code
+            else:
+                # For breadth, add date metadata if not present
+                if 'date' not in new_data.columns and 'date' in existing_data.columns:
+                    pass  # Will be handled by calling code
+
+            # Add 'Signal First Origination Date' to new data if not present
+            if signal_type != "breadth" and 'Signal First Origination Date' not in new_data.columns:
+                # For new signals, use the signal_date as the first origination date
+                if 'signal_date' in new_data.columns:
+                    new_data['Signal First Origination Date'] = new_data['signal_date']
+                else:
+                    # Fallback to current date
+                    from datetime import datetime
+                    new_data['Signal First Origination Date'] = datetime.now().strftime('%Y-%m-%d')
+
+            # Combine existing and new data
+            combined_data = pd.concat([existing_data, new_data], ignore_index=True)
+
+            if deduplicate and not combined_data.empty:
+                combined_data = self._deduplicate_data_preserve_origination(combined_data, signal_type)
+
+            # Remove metadata columns before saving (they're only used for deduplication)
+            # But KEEP 'Signal First Origination Date' as it's a permanent column
+            if signal_type == "breadth":
+                # For breadth data, remove date and signal_type_meta
+                metadata_columns = ['date', 'signal_type_meta']
+            else:
+                # For other signal types, remove standard metadata columns but NOT Signal First Origination Date
+                metadata_columns = ['symbol', 'function', 'signal_date', 'signal_type', 'interval', 'asset_name', 'signal_type_meta']
+
+            columns_to_drop = [col for col in metadata_columns if col in combined_data.columns]
+            if columns_to_drop:
+                combined_data = combined_data.drop(columns=columns_to_drop)
+
+            # Save back to CSV
+            combined_data.to_csv(csv_path, index=False, encoding=CSV_ENCODING)
+            logger.info(f"✅ Added {len(new_data)} rows to {signal_type} consolidated CSV (total: {len(combined_data)} rows)")
+
+            return True
+
+        except Exception as e:
+            logger.error(f"Error adding data to {signal_type} consolidated CSV: {e}")
+            return False
+
+    def _deduplicate_data_preserve_origination(self, data: pd.DataFrame, signal_type: str) -> pd.DataFrame:
+        """
+        Deduplicate data based on unique keys for each signal type.
+        Preserves 'Signal First Origination Date' from the earliest occurrence.
+
+        Args:
+            data: DataFrame to deduplicate
+            signal_type: Signal type to determine deduplication key
+
+        Returns:
+            Deduplicated DataFrame with preserved origination dates
+        """
+        if data.empty:
+            return data
+
+        # Create unique keys
+        if signal_type == "breadth":
+            # For breadth: date + function
+            if 'date' in data.columns and 'Function' in data.columns:
+                data['unique_key'] = data.apply(
+                    lambda row: f"{row['date']}|{row.get('Function', 'Unknown')}",
+                    axis=1
+                )
+            else:
+                logger.warning("Cannot deduplicate breadth data: missing date or Function columns")
+                return data
+        else:
+            # For entry/exit/target: symbol + signal_type + asset_name + function + interval + Signal Open Price
+            required_cols = ['symbol', 'signal_type', 'asset_name', 'function', 'interval', 'Signal Open Price']
+            if all(col in data.columns for col in required_cols):
+                data['unique_key'] = data.apply(
+                    lambda row: f"{row['symbol']}|{row['signal_type']}|{row['asset_name']}|{row['function']}|{row['interval']}|{row['Signal Open Price']}",
+                    axis=1
+                )
+            else:
+                logger.warning(f"Cannot deduplicate {signal_type} data: missing required columns {required_cols}")
+                return data
+
+        # For each unique key, preserve the earliest 'Signal First Origination Date'
+        if 'Signal First Origination Date' in data.columns:
+            # Group by unique_key and get the earliest origination date
+            earliest_origination = data.groupby('unique_key')['Signal First Origination Date'].first().to_dict()
+
+            # Remove duplicates, keeping the last (most recent) occurrence
+            original_count = len(data)
+            data = data.drop_duplicates(subset=['unique_key'], keep='last')
+
+            # Restore the earliest origination date for each unique key
+            data['Signal First Origination Date'] = data['unique_key'].map(earliest_origination)
+
+            removed_count = original_count - len(data)
+            if removed_count > 0:
+                logger.info(f"🗑️ Removed {removed_count} duplicate rows from {signal_type} data (preserved origination dates)")
+        else:
+            # No origination date column, just deduplicate normally
+            original_count = len(data)
+            data = data.drop_duplicates(subset=['unique_key'], keep='last')
+            removed_count = original_count - len(data)
+            if removed_count > 0:
+                logger.info(f"🗑️ Removed {removed_count} duplicate rows from {signal_type} data")
+
+        data = data.drop(columns=['unique_key'])
+
+        return data
+
+    def _deduplicate_data(self, data: pd.DataFrame, signal_type: str) -> pd.DataFrame:
+        """
+        Deduplicate data based on unique keys for each signal type.
+
+        Args:
+            data: DataFrame to deduplicate
+            signal_type: Signal type to determine deduplication key
+
+        Returns:
+            Deduplicated DataFrame
+        """
+        if data.empty:
+            return data
+
+        if signal_type == "breadth":
+            # For breadth: date + function
+            if 'date' in data.columns and 'Function' in data.columns:
+                data['unique_key'] = data.apply(
+                    lambda row: f"{row['date']}|{row.get('Function', 'Unknown')}",
+                    axis=1
+                )
+            else:
+                logger.warning("Cannot deduplicate breadth data: missing date or Function columns")
+                return data
+        else:
+            # For entry/exit/target: symbol + signal_type + asset_name + function + interval + Signal Open Price
+            required_cols = ['symbol', 'signal_type', 'asset_name', 'function', 'interval', 'Signal Open Price']
+            if all(col in data.columns for col in required_cols):
+                data['unique_key'] = data.apply(
+                    lambda row: f"{row['symbol']}|{row['signal_type']}|{row['asset_name']}|{row['function']}|{row['interval']}|{row['Signal Open Price']}",
+                    axis=1
+                )
+            else:
+                logger.warning(f"Cannot deduplicate {signal_type} data: missing required columns {required_cols}")
+                return data
+
+        # Remove duplicates, keeping the last (most recent) occurrence
+        original_count = len(data)
+        data = data.drop_duplicates(subset=['unique_key'], keep='last')
+        data = data.drop(columns=['unique_key'])
+
+        removed_count = original_count - len(data)
+        if removed_count > 0:
+            logger.info(f"🗑️ Removed {removed_count} duplicate rows from {signal_type} data")
+
+        return data
 
 
 if __name__ == "__main__":

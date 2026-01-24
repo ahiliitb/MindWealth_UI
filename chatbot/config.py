@@ -36,6 +36,12 @@ CHATBOT_EXIT_DIR = CHATBOT_DATA_DIR / "exit"  # Exit signals (completed trades)
 CHATBOT_TARGET_DIR = CHATBOT_DATA_DIR / "portfolio_target_achieved"  # Portfolio target achieved signals
 CHATBOT_BREADTH_DIR = CHATBOT_DATA_DIR / "breadth"  # Breadth reports (market-wide)
 TARGET_MASTER_CSV = CHATBOT_TARGET_DIR / "all_targets.csv"  # Master portfolio target file for dedup
+
+# Consolidated CSV files (new system)
+CHATBOT_ENTRY_CSV = CHATBOT_DATA_DIR / "entry.csv"  # Consolidated entry data
+CHATBOT_EXIT_CSV = CHATBOT_DATA_DIR / "exit.csv"  # Consolidated exit data
+CHATBOT_TARGET_CSV = CHATBOT_DATA_DIR / "portfolio_target_achieved.csv"  # Consolidated portfolio target data
+CHATBOT_BREADTH_CSV = CHATBOT_DATA_DIR / "breadth.csv"  # Consolidated breadth data
 STOCK_DATA_DIR = BASE_DIR / "trade_store" / "stock_data"
 HISTORY_DIR = BASE_DIR / "chatbot" / "history"
 

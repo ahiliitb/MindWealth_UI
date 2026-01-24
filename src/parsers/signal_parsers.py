@@ -45,24 +45,37 @@ def parse_sigma(df):
 def parse_sentiment(df):
     """Parse sentiment.csv with specific handling for quoted first column"""
     processed_data = []
-    
+
     for _, row in df.iterrows():
+        # Check if 'Signal Open Price' column exists and has a valid value
+        signal_open_price = row.get('Signal Open Price', '')
+        if signal_open_price and str(signal_open_price).strip():
+            try:
+                signal_price = float(str(signal_open_price).strip())
+            except:
+                signal_price = 0
+        else:
+            # Fallback to parsing from the complex string
+            signal_price = 0
+
         # Parse symbol and signal info - handle quoted first column
         symbol_info = row.get('Symbol, Signal, Signal Date/Price[$]', '')
         # Remove quotes and parse
         symbol_info_clean = str(symbol_info).strip('"')
         symbol_match = re.search(r'([^,]+),\s*([^,]+),\s*([^(]+)\(Price:\s*([^)]+)\)', symbol_info_clean)
-        
+
         if symbol_match:
             symbol = symbol_match.group(1).strip()
             signal_type = symbol_match.group(2).strip()
             signal_date = symbol_match.group(3).strip()
-            try:
-                signal_price = float(symbol_match.group(4).strip())
-            except:
-                signal_price = 0
+            # Use the extracted signal_price if not already set from Signal Open Price column
+            if signal_price == 0:
+                try:
+                    signal_price = float(symbol_match.group(4).strip())
+                except:
+                    signal_price = 0
         else:
-            symbol, signal_type, signal_date, signal_price = "Unknown", "Unknown", "Unknown", 0
+            symbol, signal_type, signal_date = "Unknown", "Unknown", "Unknown"
         
         # Parse win rate and number of trades
         win_rate_info = row.get('Win Rate [%], History Tested, Number of Trades', '')

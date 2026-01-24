@@ -89,16 +89,26 @@ def parse_breadth(df):
 def parse_target_signals(df, page_name="Unknown"):
     """Parse target signals CSV (target_signal.csv) - Different column structure"""
     processed_data = []
-    
+
     for idx, row in df.iterrows():
         try:
+            # Check if 'Signal Open Price' column exists and has a valid value
+            signal_open_price = row.get('Signal Open Price', '')
+            if signal_open_price and str(signal_open_price).strip():
+                try:
+                    signal_price = float(str(signal_open_price).strip())
+                except:
+                    signal_price = 0
+            else:
+                # Fallback to parsing from the complex string
+                signal_price = 0
+
             # Target Signal CSV has different structure with combined fields
             symbol_info = str(row.get('Symbol, Signal, Signal Date/Price[$]', '')).strip()
 
             symbol = "Unknown"
             signal_type = "Unknown"
             signal_date = "Unknown"
-            signal_price = 0
 
             if symbol_info:
                 parts = [part.strip() for part in symbol_info.split(',')]
@@ -110,24 +120,28 @@ def parse_target_signals(df, page_name="Unknown"):
                 date_match = re.search(r'([0-9]{4}-[0-9]{2}-[0-9]{2})\s*\(Price:\s*([^)]+)\)', symbol_info)
                 if date_match:
                     signal_date = date_match.group(1).strip()
-                    try:
-                        signal_price = float(date_match.group(2).strip())
-                    except:
-                        signal_price = 0
-            
+                    # Use the extracted signal_price if not already set from Signal Open Price column
+                    if signal_price == 0:
+                        try:
+                            signal_price = float(date_match.group(2).strip())
+                        except:
+                            signal_price = 0
+
             # Get function and interval from separate columns
             function = str(row['Function']) if 'Function' in row.index else 'Unknown'
             interval = str(row['Interval']) if 'Interval' in row.index else 'Unknown'
-            
+
             # If entry column exists, prefer its date/price for historical accuracy
             entry_info = row.get('Entry Signal Date/Price[$]', '')
             entry_match = re.search(r'([^(]+)\(Price:\s*([^)]+)\)', str(entry_info))
             if entry_match:
                 signal_date = entry_match.group(1).strip()
-                try:
-                    signal_price = float(entry_match.group(2).strip())
-                except:
-                    signal_price = signal_price or 0
+                # Use the extracted signal_price if not already set from Signal Open Price column
+                if signal_price == 0:
+                    try:
+                        signal_price = float(entry_match.group(2).strip())
+                    except:
+                        signal_price = signal_price or 0
             
             if not signal_type or signal_type == "Unknown":
                 signal_type = "Long"

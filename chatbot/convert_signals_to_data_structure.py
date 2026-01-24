@@ -13,12 +13,15 @@ import pandas as pd
 import re
 import os
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import sys
 
 # Load environment variables
 load_dotenv()
+
+# Cache for stock data to avoid repeated file reads
+_stock_data_cache = {}
 
 
 def parse_symbol_signal_column(value):
@@ -142,6 +145,95 @@ def parse_interval_from_status(value):
         
     except Exception as e:
         print(f"  ⚠ Error parsing interval: {e}")
+        return None
+
+
+def get_interval_based_open_price(symbol, signal_date, interval, stock_data_dir="trade_store/stock_data"):
+    """
+    Get the correct open price based on the interval type.
+    
+    For Daily: Returns open price on the signal date
+    For Weekly: Returns open price on the Monday of that week
+    For Monthly: Returns open price on the first trading day of that month
+    For Quarterly: Returns open price on the first trading day of that quarter
+    
+    Args:
+        symbol: Stock symbol
+        signal_date: Signal date (YYYY-MM-DD string)
+        interval: Interval type (Daily, Weekly, Monthly, Quarterly)
+        stock_data_dir: Directory containing stock data CSVs
+    
+    Returns:
+        Open price as float with 4 decimal places, or None if not found
+    """
+    global _stock_data_cache
+    
+    try:
+        # Parse signal date
+        signal_dt = datetime.strptime(signal_date, '%Y-%m-%d')
+        
+        # Load stock data (use cache)
+        if symbol not in _stock_data_cache:
+            stock_file = Path(stock_data_dir) / f"{symbol}.csv"
+            if not stock_file.exists():
+                return None
+            
+            stock_data = pd.read_csv(stock_file)
+            if stock_data.empty:
+                return None
+            
+            stock_data['Date'] = pd.to_datetime(stock_data['Date'])
+            stock_data = stock_data.sort_values('Date')
+            _stock_data_cache[symbol] = stock_data
+        
+        stock_data = _stock_data_cache[symbol]
+        
+        # Get open price based on interval
+        if interval == 'Daily':
+            # Find exact date match
+            date_matches = stock_data[stock_data['Date'].dt.date == signal_dt.date()]
+            if not date_matches.empty:
+                return float(f"{date_matches.iloc[0]['Open']:.4f}")
+        
+        elif interval == 'Weekly':
+            # Find the week containing the signal date
+            week_start = signal_dt - timedelta(days=signal_dt.weekday())  # Monday
+            week_end = week_start + timedelta(days=6)  # Sunday
+            
+            week_data = stock_data[
+                (stock_data['Date'].dt.date >= week_start.date()) &
+                (stock_data['Date'].dt.date <= week_end.date())
+            ]
+            
+            if not week_data.empty:
+                return float(f"{week_data.iloc[0]['Open']:.4f}")
+        
+        elif interval == 'Monthly':
+            # Find data for the target month
+            month_data = stock_data[
+                (stock_data['Date'].dt.year == signal_dt.year) &
+                (stock_data['Date'].dt.month == signal_dt.month)
+            ]
+            
+            if not month_data.empty:
+                return float(f"{month_data.iloc[0]['Open']:.4f}")
+        
+        elif interval == 'Quarterly':
+            # Find data for the target quarter
+            target_quarter = (signal_dt.month - 1) // 3 + 1
+            
+            quarter_data = stock_data[
+                (stock_data['Date'].dt.year == signal_dt.year) &
+                (((stock_data['Date'].dt.month - 1) // 3 + 1) == target_quarter)
+            ]
+            
+            if not quarter_data.empty:
+                return float(f"{quarter_data.iloc[0]['Open']:.4f}")
+        
+        return None
+        
+    except Exception as e:
+        print(f"  ⚠ Error getting interval-based open price for {symbol}: {e}")
         return None
 
 
@@ -600,6 +692,34 @@ def convert_signal_file_to_data_structure(
         
         # Add SignalType column to the row
         row['SignalType'] = row_signal_type
+        
+        # Calculate and add Signal Open Price based on interval
+        if signal_type != "breadth":  # Breadth doesn't have signal open price
+            # Get interval for this signal
+            if signal_type == "signal":
+                # For signals, we already extracted interval
+                signal_interval = row.get('Interval', 'Daily')
+            elif signal_type == "target":
+                # For targets, interval is in column 2
+                signal_interval = row.get('Interval', 'Daily')
+            else:
+                signal_interval = 'Daily'
+            
+            # Calculate correct interval-based open price
+            interval_open_price = get_interval_based_open_price(
+                symbol, 
+                signal_date, 
+                signal_interval
+            )
+            
+            if interval_open_price is not None:
+                row['Signal Open Price'] = f"{interval_open_price:.4f}"
+            else:
+                # Fallback to price from signal text if interval-based price not available
+                if price is not None:
+                    row['Signal Open Price'] = f"{price:.4f}"
+                else:
+                    row['Signal Open Price'] = ""
         
         # Create asset/function directory structure
         # Structure: data/{entry|exit|target}/{asset}/{function}/YYYY-MM-DD.csv

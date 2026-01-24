@@ -927,10 +927,6 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
         st.session_state.last_signal_reason = "Default selection: entry, exit, target."
         st.rerun()
     
-    # Now render chat history sidebar AFTER query configuration
-    st.sidebar.markdown("---")
-    render_chat_history_sidebar()
-    
     if st.session_state.last_settings is not None:
         if current_settings != st.session_state.last_settings:
             logger_msg = "Settings changed - clearing backend history (chat visible)"

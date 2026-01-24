@@ -1,8 +1,8 @@
-Function,Bullish Asset vs Total Asset (%).,Bullish Signal vs Total Signal (%),Date
-FRACTAL TRACK,0.0%,0.0%,2025-10-28
-OSCILLATOR DELTA,0.0%,0%,2025-10-28
-SIGMASHELL,0.0%,0%,2025-10-28
-TRENDPULSE,0.63%,100.0%,2025-10-28
-PULSEGAUGE,0.0%,0%,2025-10-28
-BASELINEDIVERGENCE,0.0%,0%,2025-10-28
-All Function Combined,0.63%,33.33%,2025-10-28
+Function,Bullish Asset vs Total Asset (%).,Bullish Signal vs Total Signal (%),Date,Signal Open Price
+FRACTAL TRACK,0.0%,0.0%,2025-10-28,
+OSCILLATOR DELTA,0.0%,0%,2025-10-28,
+SIGMASHELL,0.0%,0%,2025-10-28,
+TRENDPULSE,0.63%,100.0%,2025-10-28,
+PULSEGAUGE,0.0%,0%,2025-10-28,
+BASELINEDIVERGENCE,0.0%,0%,2025-10-28,
+All Function Combined,0.63%,33.33%,2025-10-28,

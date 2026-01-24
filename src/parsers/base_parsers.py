@@ -9,22 +9,35 @@ import re
 def parse_signal_csv(df, function_name):
     """Parse signal CSV files with common structure"""
     processed_data = []
-    
+
     for _, row in df.iterrows():
+        # Check if 'Signal Open Price' column exists and has a valid value
+        signal_open_price = row.get('Signal Open Price', '')
+        if signal_open_price and str(signal_open_price).strip():
+            try:
+                signal_price = float(str(signal_open_price).strip())
+            except:
+                signal_price = 0
+        else:
+            # Fallback to parsing from the complex string
+            signal_price = 0
+
         # Parse symbol and signal info
         symbol_info = row.get('Symbol, Signal, Signal Date/Price[$]', '')
         symbol_match = re.search(r'([^,]+),\s*([^,]+),\s*([^(]+)\(Price:\s*([^)]+)\)', str(symbol_info))
-        
+
         if symbol_match:
             symbol = symbol_match.group(1).strip()
             signal_type = symbol_match.group(2).strip()
             signal_date = symbol_match.group(3).strip()
-            try:
-                signal_price = float(symbol_match.group(4).strip())
-            except:
-                signal_price = 0
+            # Use the extracted signal_price if not already set from Signal Open Price column
+            if signal_price == 0:
+                try:
+                    signal_price = float(symbol_match.group(4).strip())
+                except:
+                    signal_price = 0
         else:
-            symbol, signal_type, signal_date, signal_price = "Unknown", "Unknown", "Unknown", 0
+            symbol, signal_type, signal_date = "Unknown", "Unknown", "Unknown"
         
         # Parse win rate and number of trades (always, regardless of symbol parsing success)
         win_rate_info = row.get('Win Rate [%], History Tested, Number of Trades', '')
@@ -108,21 +121,34 @@ def parse_signal_csv(df, function_name):
 def parse_detailed_signal_csv(df):
     """Parse detailed signal CSV files with Function column"""
     processed_data = []
-    
+
     for idx, row in df.iterrows():
         try:
+            # Check if 'Signal Open Price' column exists and has a valid value
+            signal_open_price = row.get('Signal Open Price', '')
+            if signal_open_price and str(signal_open_price).strip():
+                try:
+                    signal_price = float(str(signal_open_price).strip())
+                except:
+                    signal_price = 0
+            else:
+                # Fallback to parsing from the complex string
+                signal_price = 0
+
             # Parse symbol and signal info
             symbol_info = row.get('Symbol, Signal, Signal Date/Price[$]', '')
             symbol_match = re.search(r'([^,]+),\s*([^,]+),\s*([^(]+)\(Price:\s*([^)]+)\)', str(symbol_info))
-            
+
             if symbol_match:
                 symbol = symbol_match.group(1).strip()
                 signal_type = symbol_match.group(2).strip()
                 signal_date = symbol_match.group(3).strip()
-                try:
-                    signal_price = float(symbol_match.group(4).strip())
-                except:
-                    signal_price = 0
+                # Use the extracted signal_price if not already set from Signal Open Price column
+                if signal_price == 0:
+                    try:
+                        signal_price = float(symbol_match.group(4).strip())
+                    except:
+                        signal_price = 0
             else:
                 # Fallback: try to extract symbol from the beginning of the string
                 parts = str(symbol_info).split(',')
@@ -133,9 +159,11 @@ def parse_detailed_signal_csv(df):
                     date_match = re.search(r'([0-9]{4}-[0-9]{2}-[0-9]{2})', str(symbol_info))
                     signal_date = date_match.group(1) if date_match else "Unknown"
                     price_match = re.search(r'Price:\s*([0-9.]+)', str(symbol_info))
-                    signal_price = float(price_match.group(1)) if price_match else 0
+                    # Use the extracted signal_price if not already set from Signal Open Price column
+                    if signal_price == 0:
+                        signal_price = float(price_match.group(1)) if price_match else 0
                 else:
-                    symbol, signal_type, signal_date, signal_price = "Unknown", "Unknown", "Unknown", 0
+                    symbol, signal_type, signal_date = "Unknown", "Unknown", "Unknown"
             
             # Parse win rate and number of trades
             win_rate_info = row.get('Win Rate [%], History Tested, Number of Trades', '')

@@ -13,7 +13,8 @@ from src.pages import (
     create_virtual_trading_page,
     render_chatbot_page,
     create_trade_details_page,
-    create_f_stack_page
+    create_f_stack_page,
+    create_all_data_page
 )
 from src.pages.monitored_trades_page import create_monitored_trades_page
 from src.pages.horizontal_page import create_horizontal_page
@@ -133,30 +134,46 @@ def main():
     
     # Sidebar Navigation
     st.sidebar.title("Navigation")
-    st.sidebar.markdown("**Select Page**")
-    
-    # Dynamically discover CSV files
-    csv_files = discover_csv_files()
-    
-    # Define all available pages in the correct order
-    page_options = {
-        "Dashboard": None,
-        "🤖 AI Chatbot": "chatbot",
-        "⭐ Monitored Trades": "monitored_trades",
-        "Virtual Trading": "virtual_trading",
-        "Claude Shortlisted Signal": "text_files",
-        "Trade Details": "trade_details",
-    }
-    
-    # Add CSV files in the specified order
-    page_options.update(csv_files)
-    
-    # Page selection
-    page = st.sidebar.selectbox(
-        "Choose a page:",
-        list(page_options.keys()),
-        key="page_selector"
-    )
+
+    # Add Chat History at the top for chatbot page
+    # Check if we're on the chatbot page
+    try:
+        # We need to peek at what page will be selected
+        # Get the current page from session state or default to first option
+        csv_files = discover_csv_files()
+        page_options = {
+            "Dashboard": None,
+            "🤖 AI Chatbot": "chatbot",
+            "⭐ Monitored Trades": "monitored_trades",
+            "Virtual Trading": "virtual_trading",
+            "📊 All Data": "all_data",
+            "Claude Shortlisted Signal": "text_files",
+            "Trade Details": "trade_details",
+        }
+        page_options.update(csv_files)
+
+        # Get current page selection (default to first option if not set)
+        current_page_key = st.sidebar.selectbox(
+            "**Select Page**",
+            list(page_options.keys()),
+            key="page_selector"
+        )
+
+        # Show chat history if we're on the chatbot page
+        if current_page_key == "🤖 AI Chatbot":
+            st.sidebar.markdown("---")
+            # Import and render chat history here
+            from src.pages.chatbot_page import render_chat_history_sidebar
+            render_chat_history_sidebar()
+
+    except Exception as e:
+        # Fallback if there's an issue
+        st.sidebar.error(f"Error loading chat history: {e}")
+
+    st.sidebar.markdown("---")
+
+    # Page selection (keep this for backward compatibility)
+    page = current_page_key
     
     # Display selected page
     if page == "Dashboard":
@@ -167,6 +184,8 @@ def main():
         create_monitored_trades_page()
     elif page == "Virtual Trading":
         create_virtual_trading_page()
+    elif page == "📊 All Data":
+        create_all_data_page()
     elif page == "Claude Shortlisted Signal":
         create_text_file_page()
     elif page == "Trade Details":
