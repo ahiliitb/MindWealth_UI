@@ -73,6 +73,12 @@ When given a user query, you should:
 
 ## Response Format
 
+**IMPORTANT:** Use these exact JSON keys for signal types:
+- `"entry"` for Entry Signals
+- `"exit"` for Exit Signals  
+- `"portfolio_target_achieved"` for Portfolio Target Achieved
+- `"breadth"` for Market Breadth
+
 Your response MUST be a valid JSON object with the following structure:
 
 ```json
@@ -85,7 +91,7 @@ Your response MUST be a valid JSON object with the following structure:
     "required_columns": ["Column Name 1", "Column Name 2", ...],
     "reasoning": "Why these columns are needed for exit signals"
   },
-  "target": {
+  "portfolio_target_achieved": {
     "required_columns": ["Column Name 1", "Column Name 2", ...],
     "reasoning": "Why these columns are needed for portfolio target achieved signals"
   },
@@ -100,23 +106,30 @@ Your response MUST be a valid JSON object with the following structure:
 
 ## Guidelines
 
-- **Be flexible:** Use general keywords rather than exact column names (e.g., "target" will match "target_1", "target_2", "target_price", etc.)
-- **Be comprehensive:** Include all necessary columns to give a complete answer, using semantic keywords
+- **Use exact column names:** Select columns using their exact names as shown in the "AVAILABLE COLUMNS" section provided to you
+- **Be comprehensive:** Include all necessary columns to give a complete answer
 - **Signal-specific:** Tailor column selection to each signal type's purpose
-- **Use keywords:** Use core keywords like "target", "entry", "price", "performance" rather than exact column names
+- **Exact matching required:** Copy column names EXACTLY from the available columns list - do not use abbreviations, generalizations, or semantic keywords
 - **Consider context:** Think about what each signal type can provide for the query
 - **Handle differences:** Entry and Exit may have different relevant columns for the same query
-- **Semantic matching:** The system will automatically find columns that match your keywords (e.g., "target" matches "target_1", "target_2", "target_price", "target_reached")
+- **No partial names:** Do not use partial column names like "Symbol" when the actual column is "Symbol, Signal, Signal Date/Price[$]"
 
-**Examples of flexible column selection:**
-- If user asks about "targets", request: "target" (will match target_1, target_2, target_price, etc.)
-- If user asks about "entry", request: "entry" (will match entry_date, entry_price, entry_signal, etc.)
-- If user asks about "performance", request: "performance" (will match current_performance, performance_pct, etc.)
-- If user asks about "price", request: "price" (will match current_price, close_price, entry_price, etc.)
+**Critical Rules for Column Selection:**
+1. ALWAYS copy the complete column name exactly as listed in "AVAILABLE COLUMNS"
+2. If a column contains commas or special characters, include them all (e.g., "Symbol, Signal, Signal Date/Price[$]")
+3. Do NOT simplify column names (e.g., don't use "Win Rate" when the actual column is "Win Rate [%], History Tested, Number of Trades")
+4. Do NOT use semantic keywords or generalizations - use the exact string from the available columns list
+
+**Examples of correct exact column selection:**
+- For symbol information: `"Symbol, Signal, Signal Date/Price[$]"` (NOT "Symbol" or "Signal")
+- For performance data: `"Current Mark to Market and Holding Period"` (NOT "performance" or "MTM")
+- For win rates: `"Win Rate [%], History Tested, Number of Trades"` (NOT "Win Rate" or "win_rate")
+- For CAGR: `"CAGR difference (Strategy - Buy and Hold) [%]"` (NOT "CAGR difference" or "cagr")
+- For targets: `"Targets (Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$]"` (use the complete name)
 
 ## Column Context
 
-You will be provided with the available columns for each selected signal type. Use these as a reference, but you can use general keywords that will be matched flexibly.
+You will be provided with the available columns for each selected signal type in the "AVAILABLE COLUMNS" section. You MUST select columns using their exact names as listed - copy them character-by-character from that section. Do not use abbreviations, generalizations, or semantic keywords.
 
 ---
 
@@ -183,7 +196,7 @@ You will be provided with the available columns for each selected signal type. U
 ### Example 3: Entry + Portfolio Target Achieved Signals
 
 **User Query:** "What are the targets for my open positions?"  
-**User Selected:** ["entry", "target"]
+**User Selected:** ["entry", "portfolio_target_achieved"]
 
 **Response:**
 ```json
@@ -197,7 +210,7 @@ You will be provided with the available columns for each selected signal type. U
     ],
     "reasoning": "For entry signals, we need position details and target levels to show where open positions are headed."
   },
-  "target": {
+  "portfolio_target_achieved": {
     "required_columns": [
       "Function",
       "Symbol",
@@ -238,7 +251,7 @@ You will be provided with the available columns for each selected signal type. U
 ### Example 5: All Signal Types
 
 **User Query:** "Give me a complete market overview with all my positions"  
-**User Selected:** ["entry", "exit", "target", "breadth"]
+**User Selected:** ["entry", "exit", "portfolio_target_achieved", "breadth"]
 
 **Response:**
 ```json
@@ -263,7 +276,7 @@ You will be provided with the available columns for each selected signal type. U
     ],
     "reasoning": "For exit signals, show completed trades with realized returns."
   },
-  "target": {
+  "portfolio_target_achieved": {
     "required_columns": [
       "Function",
       "Symbol",
@@ -286,41 +299,65 @@ You will be provided with the available columns for each selected signal type. U
 
 ---
 
-## IMPORTANT: Signal Identification for Table Display
+## CRITICAL: Understanding Combined Columns in the Data
 
-When you analyze data and mention specific signals in your response, you MUST provide the exact 4-key identifiers for each signal you want to appear in the table at the end of your response.
+**IMPORTANT:** Several columns in the trading data contain COMBINED information separated by commas or slashes. When selecting columns, be aware of these structures:
 
-**For each specific signal you mention in your final analysis, provide:**
+### 1. Entry & Exit Signal Types
 
-```
-SIGNAL_KEYS: [
-  {"function": "FRACTAL TRACK", "symbol": "AAPL", "interval": "Daily", "signal_date": "2025-10-16"},
-  {"function": "BOLLINGER BAND", "symbol": "MSFT", "interval": "Daily", "signal_date": "2025-10-15"},
-  ...
-]
-```
+**Combined Columns:**
+- **"Symbol, Signal, Signal Date/Price[$]"** contains: Symbol, Direction (Long/Short), Date, and Price
+  - Example: `"GDX, Long, 2025-11-25 (Price: 77.8)"`
+  - Extracts to: Symbol=GDX, Direction=Long, Date=2025-11-25, Price=$77.80
 
-**Critical Rules:**
-1. Only include signals that you specifically analyze or mention in your response
-2. If you say "top 5 signals", provide exactly 5 signal keys
-3. The table will show ONLY the signals whose keys you provide - not all processed data
-4. Use exact values from the data: Function, Symbol (from "Symbol, Signal, Signal Date/Price[$]" column), "Daily" for interval, and the actual signal date
+- **"Interval, Confirmation Status"** contains: Time interval and confirmation status
+  - Example: `"Daily, is CONFIRMED on 2025-11-25"`
+  - Extracts to: Interval=Daily, Status=CONFIRMED
+  - Example: `"Monthly, was CONFIRMED on 2025-10-27"`
+  - Extracts to: Interval=Monthly, Status=was CONFIRMED
 
-**Example Response Structure:**
-```
-## Analysis
-[Your analysis of the data...]
+- **"Win Rate [%], History Tested, Number of Trades"** contains: Win rate, history period, and trade count
+  - Example: `"96.0%, Past 5 years, 25"`
+  - Extracts to: Win Rate=96.0%, Period=Past 5 years, Trades=25
 
-### Top 5 Signals by Sharpe Ratio:
-1. AAPL - Sharpe Ratio: 1.85
-2. MSFT - Sharpe Ratio: 1.72
-...
+- **"Current Mark to Market and Holding Period"** contains: Current MTM percentage and holding period
+  - Example: `"10.87%, 16 days"`
+  - Extracts to: MTM=10.87%, Holding Period=16 days
 
-SIGNAL_KEYS: [
-  {"function": "FRACTAL TRACK", "symbol": "AAPL", "interval": "Daily", "signal_date": "2025-10-16"},
-  {"function": "BAND MATRIX", "symbol": "MSFT", "interval": "Daily", "signal_date": "2025-10-15"}
-]
-```
+- **"Current Trading Date/Price[$], Current Price vs Signal"** contains: Current date, price, and comparison
+  - Example: `"2025-12-19 (Price: 87.7900), 12.84% above"`
+  - Extracts to: Date=2025-12-19, Price=$87.79, Change=+12.84%
+
+- **"Backtested Returns(Win Trades) [%] (Best/Worst/Avg)"** contains: Best, worst, and average returns
+  - Example: `"19.78%/1.26%/11.83%"`
+  - Extracts to: Best=19.78%, Worst=1.26%, Avg=11.83%
+
+- **"Backtested Max Loss [%], Backtested Worst Single MTM during Hold Period [%]"** contains: Max loss and worst MTM
+  - Example: `"3.89%, 20.99%"`
+  - Extracts to: Max Loss=3.89%, Worst MTM=20.99%
+
+- **"Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.)"** contains: Maximum, minimum, and average holding periods
+  - Example: `"9.9 months/25 days/3.6 months"`
+  - Extracts to: Max=9.9 months, Min=25 days, Avg=3.6 months
+
+### 2. Portfolio Target Achieved Signal Type
+
+**Note:** In portfolio_target_achieved data, "Interval" is a SEPARATE column (not combined with confirmation status)
+
+**Combined Columns:**
+- **"Symbol, Signal, Signal Date/Price[$]"** - Same structure as entry/exit
+- **"% Gain, Holding Period (days)"** contains: Gain percentage and holding period
+  - Example: `"20.43%, 5.1 months"`
+  - Extracts to: Gain=20.43%, Period=5.1 months
+
+### 3. Breadth Signal Type
+
+**Simpler Structure:** Breadth signals have simpler, non-combined columns:
+- Function (single value)
+- Bullish Asset vs Total Asset (%) (single value)
+- Bullish Signal vs Total Signal (%) (single value)
+- Date (single value)
+- Signal Open Price (single value)
 
 ---
 

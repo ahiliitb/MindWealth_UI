@@ -27,19 +27,34 @@ def get_signal_type_label(signal_type: str, uppercase: bool = False) -> str:
 
 
 def extract_user_prompt(content: str, metadata: Optional[dict] = None) -> str:
-    """Return the original user prompt without appended data payloads."""
+    """Return the original user prompt without appended data payloads or conversation context."""
     if metadata and metadata.get("display_prompt"):
         return metadata["display_prompt"]
     
     cleaned = content or ""
     
+    # Handle follow-up queries with conversation context
+    if 'CONVERSATION CONTEXT (for reference):' in cleaned:
+        # Extract only the CURRENT QUESTION part
+        if 'CURRENT QUESTION:' in cleaned:
+            cleaned = cleaned.split('CURRENT QUESTION:', 1)[1].strip()
+        else:
+            # Fallback: remove everything before the actual question
+            cleaned = cleaned.split('CONVERSATION CONTEXT (for reference):', 1)[1].strip()
+    
+    # Handle standard formats
     if 'FOLLOW-UP QUESTION:' in cleaned:
         cleaned = cleaned.split('FOLLOW-UP QUESTION:', 1)[1].strip()
     elif 'User Query:' in cleaned:
         cleaned = cleaned.split('User Query:', 1)[1].strip()
     
+    # Remove any data context sections
     if '===' in cleaned:
         cleaned = cleaned.split('===', 1)[0].strip()
+    
+    # Remove NOTE: sections
+    if 'NOTE:' in cleaned:
+        cleaned = cleaned.split('NOTE:', 1)[0].strip()
     
     return cleaned
 
@@ -650,15 +665,15 @@ def render_chatbot_page():
     
     col1, col2 = st.sidebar.columns(2)
     
-    # Set default dates (last 1 month)
-    default_from_date = datetime.now() - timedelta(days=30)
+    # Set default dates (last 2 months)
+    default_from_date = datetime.now() - timedelta(days=60)
     default_to_date = datetime.now()
     
     with col1:
         from_date = st.date_input(
             "From Date",
             value=default_from_date,
-            help="Start date for data (default: 1 month ago)"
+            help="Start date for data (default: 2 months ago)"
         )
     
     with col2:
@@ -667,6 +682,10 @@ def render_chatbot_page():
             value=default_to_date,
             help="End date for data (default: today)"
         )
+    
+    # Render Chat History after Query Configuration
+    st.sidebar.markdown("---")
+    render_chat_history_sidebar()
     
     # Asset selection for Analyze feature
     st.sidebar.markdown("---")
@@ -939,15 +958,15 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
         st.session_state.last_settings = current_settings
 
     # --- CHAT HISTORY UI ---
-    st.markdown("### 💬 Conversation")
-
     # Display chat messages
     chat_container = st.container()
     with chat_container:
         for message in st.session_state.chat_history:
             if message['role'] == 'user':
                 with st.chat_message("user"):
-                    st.markdown(message['content'])
+                    # Extract clean user prompt for display
+                    clean_content = extract_user_prompt(message['content'], message.get('metadata'))
+                    st.markdown(clean_content)
             else:
                 with st.chat_message("assistant"):
                     st.markdown(message['content'])
@@ -1003,8 +1022,8 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
                                 )
                     
                     # Show metadata
-                    # Check if it's a smart query
-                    if msg_metadata.get('input_type') == 'smart_query':
+                    # Check if it's a smart query or smart followup
+                    if msg_metadata.get('input_type') in ['smart_query', 'smart_followup']:
                         with st.expander("📊 Smart Query Details", expanded=False):
                             signal_types_meta = msg_metadata.get('selected_signal_types', [])
                             signal_reason_meta = msg_metadata.get('signal_type_reasoning', '')
@@ -1222,124 +1241,36 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
                                 st.markdown(f"**AI Signal Types:** {', '.join(get_signal_type_label(sig) for sig in selection_list)}")
                                 if selection_reason:
                                     st.caption(f"💡 {selection_reason}")
-                            # Show follow-up specific info if applicable
-                            if input_type == 'smart_followup':
-                                followup_mode = metadata.get('followup_mode', 'unknown')
-                                needs_new_data = metadata.get('needs_new_data', False)
-                                analysis_reasoning = metadata.get('analysis_reasoning', '')
-                                history_used = metadata.get('history_exchanges_used', 0)
-                                filters_changed = metadata.get('filters_changed', False)
-                                filter_change_details = metadata.get('filter_change_details', [])
-                                data_passing_mode = metadata.get('data_passing_mode', 'unknown')
-                                
-                                # Build info message
-                                info_msg = f"""**Follow-up Mode**: {followup_mode.replace('_', ' ').title()}
-- **New Data Needed**: {'Yes' if needs_new_data else 'No'}
-- **Reasoning**: {analysis_reasoning}
-- **History Context**: Last {history_used} exchange(s) used"""
-                                
-                                if filters_changed:
-                                    info_msg += f"\n- **⚠️ Filters Changed**: {', '.join(filter_change_details)}"
-                                
-                                # Add token optimization info
-                                if data_passing_mode == "full_data":
-                                    info_msg += f"\n- **💰 Data Passed**: Full data (filters changed)"
-                                elif data_passing_mode == "new_columns_only":
-                                    info_msg += f"\n- **💰 Data Passed**: Only NEW columns (token optimized ⚡)"
-                                elif data_passing_mode == "no_new_data":
-                                    info_msg += f"\n- **💰 Data Passed**: Nothing (all in context ⚡⚡)"
-                                
-                                # Add batch processing info if applicable
-                                batch_mode = metadata.get('batch_mode', '')
-                                batch_count = metadata.get('batch_count', 0)
-                                if batch_mode == 'multi':
-                                    info_msg += f"\n- **⚡ Batch Processing**: {batch_count} batches (data too large for single call)"
-                                elif batch_mode == 'single' and batch_count == 1:
-                                    info_msg += f"\n- **⚡ Processing**: Single batch (data within token limit)"
-                                
-                                st.info(info_msg)
-                            
                             # Show column selection per signal type
                             st.subheader("🎯 Column Selection by Signal Type")
                             
                             columns_by_type = metadata.get('columns_by_signal_type', {})
                             reasoning_by_type = metadata.get('reasoning_by_signal_type', {})
-                            new_columns_by_type = metadata.get('new_columns_by_type', {})
-                            existing_columns_by_type = metadata.get('existing_columns_by_type', {})
                             
                             for signal_type in metadata.get('selected_signal_types', []):
                                 if signal_type in columns_by_type:
                                     cols = columns_by_type[signal_type]
                                     reasoning = reasoning_by_type.get(signal_type, '')
-                                    new_cols = new_columns_by_type.get(signal_type, [])
-                                    existing_cols = existing_columns_by_type.get(signal_type, [])
                                     
-                                    # Show counts
-                                    total_cols = len(cols)
-                                    new_count = len(new_cols)
-                                    existing_count = len(existing_cols)
-                                    
-                                    if new_count > 0 and existing_count > 0:
-                                        st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)}** ({total_cols} columns: {new_count} new ✨ + {existing_count} existing 📦)")
-                                    elif new_count > 0:
-                                        st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)}** ({total_cols} columns: all new ✨)")
-                                    elif existing_count > 0:
-                                        st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)}** ({total_cols} columns: all existing 📦)")
-                                    else:
-                                        st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)}** ({total_cols} columns)")
-                                    
+                                    # Simple display - same for all queries
+                                    st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)}** ({len(cols)} columns)")
                                     st.caption(f"💡 {reasoning}")
                                     
                                     with st.expander(f"View {signal_type} columns"):
-                                        # Show new columns first
-                                        if new_cols:
-                                            st.markdown("**✨ NEW Columns (freshly fetched):**")
-                                            for col in new_cols:
-                                                st.markdown(f"  <span style='color: #00cc00;'>✨ {col}</span>", unsafe_allow_html=True)
-                                        
-                                        # Then show existing columns
-                                        if existing_cols:
-                                            if new_cols:  # Add separator if we showed new cols
-                                                st.markdown("---")
-                                            st.markdown("**📦 EXISTING Columns (already in context):**")
-                                            for col in existing_cols:
-                                                st.markdown(f"  <span style='color: #888888;'>📦 {col}</span>", unsafe_allow_html=True)
-                                        
-                                        # Fallback: if no split info, show all columns
-                                        if not new_cols and not existing_cols:
-                                            for col in cols:
-                                                st.text(f"  • {col}")
+                                        for col in cols:
+                                            st.text(f"  • {col}")
                             
-                            # Show data statistics
-                            batch_mode = metadata.get('batch_mode', '')
-                            batch_count = metadata.get('batch_count', 0)
+                            # Show data statistics - same format for all queries
+                            col1, col2, col3 = st.columns(3)
                             
-                            if batch_mode == 'multi' and batch_count > 1:
-                                # Show batch-specific metrics for multi-batch processing
-                                col1, col2, col3, col4 = st.columns(4)
-                                
-                                with col1:
-                                    st.metric("Rows Fetched", metadata.get('rows_fetched', 0))
-                                with col2:
-                                    signal_types_count = len(metadata.get('signal_types_with_data', metadata.get('selected_signal_types', [])))
-                                    st.metric("Signal Types", signal_types_count)
-                                with col3:
-                                    st.metric("Batch Count", batch_count, help="Data split across multiple API calls")
-                                with col4:
-                                    total_tokens = metadata.get('tokens_used', {}).get('total', 0)
-                                    st.metric("Total Tokens", f"{total_tokens:,}")
-                            else:
-                                # Standard metrics for single batch
-                                col1, col2, col3 = st.columns(3)
-                                
-                                with col1:
-                                    st.metric("Rows Fetched", metadata.get('rows_fetched', 0))
-                                with col2:
-                                    signal_types_count = len(metadata.get('signal_types_with_data', metadata.get('selected_signal_types', [])))
-                                    st.metric("Signal Types", signal_types_count)
-                                with col3:
-                                    total_tokens = metadata.get('tokens_used', {}).get('total', 0)
-                                    st.metric("Tokens Used", f"{total_tokens:,}")
+                            with col1:
+                                st.metric("Rows Fetched", metadata.get('rows_fetched', 0))
+                            with col2:
+                                signal_types_count = len(metadata.get('signal_types_with_data', metadata.get('selected_signal_types', [])))
+                                st.metric("Signal Types", signal_types_count)
+                            with col3:
+                                total_tokens = metadata.get('tokens_used', {}).get('total', 0)
+                                st.metric("Tokens Used", f"{total_tokens:,}")
                     
                     # Add to history
                     st.session_state.chat_history.append({

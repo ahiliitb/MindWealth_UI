@@ -159,16 +159,9 @@ def main():
             key="page_selector"
         )
 
-        # Show chat history if we're on the chatbot page
-        if current_page_key == "🤖 AI Chatbot":
-            st.sidebar.markdown("---")
-            # Import and render chat history here
-            from src.pages.chatbot_page import render_chat_history_sidebar
-            render_chat_history_sidebar()
-
     except Exception as e:
         # Fallback if there's an issue
-        st.sidebar.error(f"Error loading chat history: {e}")
+        st.sidebar.error(f"Error loading navigation: {e}")
 
     st.sidebar.markdown("---")
 

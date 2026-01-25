@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 class SmartDataFetcher:
     """
     Fetches only the required columns from data files based on:
-    - Signal type (entry/exit/target/breadth)
+    - Signal type (entry/exit/portfolio_target_achieved/breadth)
     - Asset name (ticker)
     - Function name (trading strategy)
     - Date
@@ -74,7 +74,7 @@ class SmartDataFetcher:
         Uses consolidated CSV files if available, falls back to folder-based approach.
 
         Args:
-            signal_types: List of signal types to fetch from (entry, exit, target, breadth)
+            signal_types: List of signal types to fetch from (entry, exit, portfolio_target_achieved, breadth)
             required_columns: List of column names to fetch, or None to fetch ALL columns (preserves CSV structure)
             assets: Optional list of asset/ticker names to filter by
             functions: Optional list of function names to filter by
@@ -166,10 +166,10 @@ class SmartDataFetcher:
         limit_rows: Optional[int] = None
     ) -> pd.DataFrame:
         """
-        Fetch data from a signal type (entry/exit/target).
+        Fetch data from a signal type (entry/exit/portfolio_target_achieved).
         
         Args:
-            signal_type: One of "entry", "exit", "target"
+            signal_type: One of "entry", "exit", "portfolio_target_achieved"
             required_columns: List of column names to fetch, or None to fetch ALL columns
             assets: Optional list of assets to filter by
             functions: Optional list of functions to filter by
@@ -260,7 +260,7 @@ class SmartDataFetcher:
         Fetch data from consolidated CSV files.
 
         Args:
-            signal_types: List of signal types to fetch from (entry, exit, target, breadth)
+            signal_types: List of signal types to fetch from (entry, exit, portfolio_target_achieved, breadth)
             required_columns: List of column names to fetch, or None to fetch ALL columns
             assets: Optional list of asset/ticker names to filter by
             functions: Optional list of function names to filter by
@@ -316,7 +316,7 @@ class SmartDataFetcher:
         Fetch data from consolidated CSV for a signal type (entry/exit/target).
 
         Args:
-            signal_type: One of "entry", "exit", "target"
+            signal_type: One of "entry", "exit", "portfolio_target_achieved"
             required_columns: List of column names to fetch, or None to fetch ALL columns
             assets: Optional list of assets to filter by
             functions: Optional list of functions to filter by
@@ -470,7 +470,7 @@ class SmartDataFetcher:
             return self.entry_csv
         elif signal_type == "exit":
             return self.exit_csv
-        elif signal_type == "target":
+        elif signal_type == "portfolio_target_achieved":
             return self.target_csv
         elif signal_type == "breadth":
             return self.breadth_csv
@@ -540,7 +540,7 @@ class SmartDataFetcher:
             return self.entry_dir
         elif signal_type == "exit":
             return self.exit_dir
-        elif signal_type == "target":
+        elif signal_type == "portfolio_target_achieved":
             return self.target_dir
         elif signal_type == "breadth":
             return self.breadth_dir
@@ -788,7 +788,7 @@ class SmartDataFetcher:
         Get summary information about available data.
         
         Args:
-            signal_type: One of "entry", "exit", "target", "breadth"
+            signal_type: One of "entry", "exit", "portfolio_target_achieved", "breadth"
             asset: Optional asset name
             function: Optional function name
             
@@ -805,7 +805,7 @@ class SmartDataFetcher:
                 "dates": [f.stem for f in sorted(csv_files)]
             }
         
-        # For entry/exit/target
+        # For entry/exit/portfolio_target_achieved
         if asset and function:
             function_dir = base_dir / asset / function
             if function_dir.exists():
@@ -831,7 +831,7 @@ class SmartDataFetcher:
         Preserves 'Signal First Origination Date' for existing records.
 
         Args:
-            signal_type: One of "entry", "exit", "target", "breadth"
+            signal_type: One of "entry", "exit", "portfolio_target_achieved", "breadth"
             new_data: DataFrame with new data to add
             deduplicate: Whether to deduplicate based on unique keys
 
@@ -849,7 +849,7 @@ class SmartDataFetcher:
 
             # Add metadata columns if needed
             if signal_type != "breadth":
-                # For entry/exit/target, add metadata if not present
+                # For entry/exit/portfolio_target_achieved, add metadata if not present
                 if 'symbol' not in new_data.columns and 'symbol' in existing_data.columns:
                     # Try to extract symbol from existing data patterns
                     pass  # Will be handled by calling code
@@ -924,7 +924,7 @@ class SmartDataFetcher:
                 logger.warning("Cannot deduplicate breadth data: missing date or Function columns")
                 return data
         else:
-            # For entry/exit/target: symbol + signal_type + asset_name + function + interval + Signal Open Price
+            # For entry/exit/portfolio_target_achieved: symbol + signal_type + asset_name + function + interval + Signal Open Price
             required_cols = ['symbol', 'signal_type', 'asset_name', 'function', 'interval', 'Signal Open Price']
             if all(col in data.columns for col in required_cols):
                 data['unique_key'] = data.apply(
@@ -987,7 +987,7 @@ class SmartDataFetcher:
                 logger.warning("Cannot deduplicate breadth data: missing date or Function columns")
                 return data
         else:
-            # For entry/exit/target: symbol + signal_type + asset_name + function + interval + Signal Open Price
+            # For entry/exit/portfolio_target_achieved: symbol + signal_type + asset_name + function + interval + Signal Open Price
             required_cols = ['symbol', 'signal_type', 'asset_name', 'function', 'interval', 'Signal Open Price']
             if all(col in data.columns for col in required_cols):
                 data['unique_key'] = data.apply(

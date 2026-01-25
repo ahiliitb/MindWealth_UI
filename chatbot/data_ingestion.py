@@ -126,7 +126,7 @@ class DataIngestionManager:
             True if successful
         """
         if signals_data.empty:
-            logger.warning("No portfolio target signals to ingest")
+            logger.warning("No portfolio_target_achieved signals to ingest")
             return False
 
         # Ensure required columns are present
@@ -134,19 +134,19 @@ class DataIngestionManager:
         missing_cols = [col for col in required_cols if col not in signals_data.columns]
 
         if missing_cols:
-            logger.error(f"Missing required columns for portfolio target signals: {missing_cols}")
+            logger.error(f"Missing required columns for portfolio_target_achieved signals: {missing_cols}")
             return False
 
         # Add signal_type_meta column
         signals_data = signals_data.copy()
         signals_data['signal_type_meta'] = 'portfolio_target_achieved'
 
-        success = self.fetcher.add_data_to_consolidated_csv('target', signals_data, deduplicate=True)
+        success = self.fetcher.add_data_to_consolidated_csv('portfolio_target_achieved', signals_data, deduplicate=True)
 
         if success:
-            logger.info(f"✅ Successfully ingested {len(signals_data)} portfolio target signals")
+            logger.info(f"✅ Successfully ingested {len(signals_data)} portfolio_target_achieved signals")
         else:
-            logger.error("❌ Failed to ingest portfolio target signals")
+            logger.error("❌ Failed to ingest portfolio_target_achieved signals")
 
         return success
 
@@ -197,7 +197,7 @@ class DataIngestionManager:
         """
         summary = {}
 
-        for signal_type in ['entry', 'exit', 'target', 'breadth']:
+        for signal_type in ['entry', 'exit', 'portfolio_target_achieved', 'breadth']:
             csv_path = self.fetcher._get_consolidated_csv_path(signal_type)
 
             if csv_path.exists():

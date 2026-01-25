@@ -14,8 +14,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-ALLOWED_SIGNAL_TYPES = ["entry", "exit", "target", "breadth"]
-DEFAULT_SIGNAL_TYPES = ["entry", "exit", "target"]
+ALLOWED_SIGNAL_TYPES = ["entry", "exit", "portfolio_target_achieved", "breadth"]
+DEFAULT_SIGNAL_TYPES = ["entry", "exit", "portfolio_target_achieved"]
 
 SIGNAL_TYPE_DESCRIPTIONS = {
     "entry": (
@@ -28,7 +28,7 @@ SIGNAL_TYPE_DESCRIPTIONS = {
         "Trades that have completed with recorded exits. "
         "Relevant for reviewing performance, closed trades, or outcomes."
     ),
-    "target": (
+    "portfolio_target_achieved": (
         "Portfolio Target Achieved",
         "Signals that capture portfolio positions where targets have been hit and next risk actions are defined. "
         "Use when the user wants to understand realized targets, remaining upside, or protective moves for their portfolio."
@@ -62,7 +62,7 @@ class SignalTypeSelector:
         if not user_query or not user_query.strip():
             return (
                 DEFAULT_SIGNAL_TYPES.copy(),
-                "No specific request detected; using default entry/exit/target signals."
+                "No specific request detected; using default entry/exit/portfolio_target_achieved signals."
             )
 
         options_text = "\n".join(
@@ -80,7 +80,7 @@ class SignalTypeSelector:
             Selection rules:
             1. Always choose at least one category from the list.
             2. Choose only the categories that are genuinely required for the user's request.
-            3. If the request is broad or unclear, default to ["entry", "exit", "target"].
+            3. If the request is broad or unclear, default to ["entry", "exit", "portfolio_target_achieved"].
             4. Select "breadth" ONLY if the user asks about overall market health, sentiment, or breadth indicators.
             5. Preserve the order: entry → exit → target → breadth.
 
@@ -126,7 +126,7 @@ class SignalTypeSelector:
                 logger.info("Signal type selector returned empty or invalid selection; using defaults.")
                 ordered_selection = DEFAULT_SIGNAL_TYPES.copy()
                 if not reasoning:
-                    reasoning = "Defaulted to entry/exit/target due to unclear selection."
+                    reasoning = "Defaulted to entry/exit/portfolio_target_achieved due to unclear selection."
 
             logger.info(f"Signal type selection: {ordered_selection} | Reason: {reasoning}")
             return ordered_selection, reasoning or "Auto-selected signal types based on the query."
@@ -135,6 +135,6 @@ class SignalTypeSelector:
             logger.error(f"Failed to select signal types via OpenAI: {exc}")
             return (
                 DEFAULT_SIGNAL_TYPES.copy(),
-                "Fallback to default entry/exit/target due to selection error."
+                "Fallback to default entry/exit/portfolio_target_achieved due to selection error."
             )
 

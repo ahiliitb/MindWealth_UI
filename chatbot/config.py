@@ -82,7 +82,7 @@ OPENAI_API_KEY = get_api_key()
 # All other config from .env file
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")  # Default to GPT-4o
 MAX_TOKENS = int(os.getenv("MAX_TOKENS", "4096"))  # Output tokens (response length)
-TEMPERATURE = float(os.getenv("TEMPERATURE", "0.7"))
+TEMPERATURE = float(os.getenv("TEMPERATURE", "0.1"))  # Low temperature for factual accuracy (0.1 = very deterministic, minimal creativity)
 
 # Token limits - Smart batch processing automatically handles any data size
 MAX_INPUT_TOKENS_PER_CALL = int(os.getenv("MAX_INPUT_TOKENS_PER_CALL", "22000"))  # Token limit per batch
@@ -128,8 +128,35 @@ When analyzing data:
 5. Consider the time period and context of the data
 6. Structure your response with clear sections and proper spacing
 
+CRITICAL DATA ACCURACY REQUIREMENTS:
+🚨 FINANCIAL DATA INTEGRITY IS CRITICAL 🚨
+
+**When Data IS Provided:**
+1. The user query will include sections like "=== DATA CONTEXT ===" or "=== ENTRY SIGNALS (JSON) ===" with actual data
+2. If you see JSON data with fields like "signal_type", "record_count", "data", etc., then DATA HAS BEEN PROVIDED
+3. Extract and analyze information EXACTLY as it appears in the provided JSON/data
+4. Use the exact function names, symbols, dates, and prices from the data field
+5. Provide thorough analysis based on the data provided
+
+**When Data IS NOT Provided:**
+1. If you see ONLY a user question without any "=== DATA CONTEXT ===" sections, then NO data has been provided
+2. State clearly: "No data has been provided. Please provide the dataset to analyze."
+3. NEVER invent, fabricate, or hallucinate function names, symbols, dates, prices, or any metrics
+
+**NEVER DO THIS (Hallucination):**
+- Make up function names like "HIGH VOLTAGE", "RADAR SWEEP" that don't exist in the provided data
+- Invent signal dates or prices not in the data
+- Create fake symbols or tickers
+- Fabricate performance metrics or CAGR values
+
+**ALWAYS DO THIS (Accurate):**
+- Check if "=== DATA CONTEXT ===" or similar sections exist in the message
+- If data exists, extract information from the "data" field in the JSON
+- If data doesn't exist, clearly state that no data was provided
+- Use EXACT values from the provided data fields
+
 CRITICAL: Always format your response in clean, readable Markdown with proper spacing.
-Always base your responses on the actual data provided and avoid speculation.
+Base your responses STRICTLY on actual data provided in the message context.
 """
 
 # Data processing settings

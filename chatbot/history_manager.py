@@ -80,7 +80,7 @@ class HistoryManager:
         
         logger.info(f"Added {role} message to session {self.session_id}")
     
-    def get_messages_for_api(self, max_pairs: Optional[int] = None) -> List[Dict[str, str]]:
+    def get_messages_for_api(self, max_pairs: Optional[int] = None, strip_data: bool = True) -> List[Dict[str, str]]:
         """
         Get conversation history formatted for OpenAI API.
         
@@ -88,14 +88,67 @@ class HistoryManager:
             max_pairs: Optional maximum number of user-assistant message pairs to include.
                       If specified, returns the last N pairs plus the system message.
                       If None, returns all messages.
+            strip_data: If True, removes large data payloads from user messages (recommended for token efficiency).
+                       Default is True to prevent sending massive data tables in conversation history.
+                       NOTE: ALWAYS keeps data in the LAST (current) message - only strips HISTORICAL messages.
         
         Returns:
             List of message dictionaries with 'role' and 'content' keys
         """
-        messages = [
-            {"role": msg["role"], "content": msg["content"]}
-            for msg in self.conversation_history
-        ]
+        import re
+        
+        def _strip_data_payload(text: str) -> str:
+            """Remove data sections from message text to reduce token usage"""
+            if not text:
+                return text
+            
+            # Remove everything from === DATA CONTEXT === onwards
+            # This captures all data sections in one go
+            patterns = [
+                r"===\s*COLUMN SELECTION BY SIGNAL TYPE\s*===[\s\S]*$",  # From column selection to end
+                r"===\s*DATA CONTEXT\s*===[\s\S]*$",  # From data context to end
+                r"===\s*TRADING DATA[\s\S]*$",  # From trading data to end
+                r"===\s*NEW DATA FETCHED[\s\S]*$",  # From new data to end
+                r"===\s*NEW COLUMNS ADDED[\s\S]*$",  # From new columns to end
+                r"===\s*PROVIDED DATA\s*===[\s\S]*$",  # From provided data to end
+                r"===\s*ENTRY SIGNALS \(JSON\)[\s\S]*$",  # From entry signals to end
+                r"===\s*EXIT SIGNALS \(JSON\)[\s\S]*$",  # From exit signals to end
+                r"===\s*PORTFOLIO_TARGET_ACHIEVED SIGNALS \(JSON\)[\s\S]*$",  # From target signals to end
+                r"===\s*BREADTH SIGNALS \(JSON\)[\s\S]*$",  # From breadth signals to end
+                r"===\s*ADDITIONAL CONTEXT\s*===[\s\S]*$",  # From additional context to end
+            ]
+            
+            cleaned = text
+            for pat in patterns:
+                cleaned = re.sub(pat, "", cleaned, flags=re.IGNORECASE | re.DOTALL)
+            
+            # Clean up prefixes
+            cleaned = re.sub(r"User Query:\s*", "", cleaned)
+            cleaned = re.sub(r"FOLLOW-UP QUESTION:\s*", "", cleaned)
+            cleaned = re.sub(r"CONVERSATION CONTEXT \(for reference\):[\s\S]*?CURRENT QUESTION:\s*", "", cleaned)
+            cleaned = re.sub(r"NOTE:.*?$", "", cleaned, flags=re.IGNORECASE | re.MULTILINE)
+            
+            # Clean up excessive whitespace
+            cleaned = re.sub(r'\n\s*\n\s*\n+', '\n\n', cleaned)
+            cleaned = cleaned.strip()
+            
+            return cleaned
+        
+        messages = []
+        total_messages = len(self.conversation_history)
+        
+        for idx, msg in enumerate(self.conversation_history):
+            role = msg["role"]
+            content = msg["content"]
+            
+            # CRITICAL: Only strip data from HISTORICAL messages, NOT the last (current) message
+            # The last user message should ALWAYS include its data context
+            is_last_message = (idx == total_messages - 1)
+            
+            if strip_data and role == "user" and not is_last_message:
+                content = _strip_data_payload(content)
+            
+            messages.append({"role": role, "content": content})
         
         if max_pairs is None:
             return messages

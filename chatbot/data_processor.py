@@ -36,7 +36,7 @@ class DataProcessor:
         Initialize DataProcessor.
         
         Args:
-            use_new_structure: If True, uses chatbot/data/{entry|exit|target|breadth} structure.
+            use_new_structure: If True, uses chatbot/data/{entry|exit|portfolio_target_achieved|breadth} structure.
                              If False, uses legacy trade_store/stock_data structure.
         """
         self.use_new_structure = use_new_structure
@@ -255,8 +255,8 @@ class DataProcessor:
                         base_dirs_to_load.append(('entry', self.entry_data_dir))
                     if 'exit' in signal_types:
                         base_dirs_to_load.append(('exit', self.exit_data_dir))
-                    if 'target' in signal_types:
-                        base_dirs_to_load.append(('target', self.target_data_dir))
+                    if 'portfolio_target_achieved' in signal_types:
+                        base_dirs_to_load.append(('portfolio_target_achieved', self.target_data_dir))
                     # Note: breadth is handled separately, not asset-specific
                     logger.info(f"Loading based on signal_types {signal_types}: {[name for name, _ in base_dirs_to_load]}")
                 else:
@@ -264,7 +264,7 @@ class DataProcessor:
                     base_dirs_to_load = [
                         ('entry', self.entry_data_dir),
                         ('exit', self.exit_data_dir),
-                        ('target', self.target_data_dir)
+                        ('portfolio_target_achieved', self.target_data_dir)
                     ]
                     logger.info(f"No signal_types specified - loading from entry, exit, and portfolio_target_achieved folders")
                 
@@ -301,7 +301,7 @@ class DataProcessor:
                             continue
                         
                         # Determine data type based on directory name
-                        data_type = dir_name  # 'entry', 'exit', or 'target'
+                        data_type = dir_name  # 'entry', 'exit', or 'portfolio_target_achieved'
                         
                         # Load all CSV files for the date range and function
                         for date_str in dates_to_load:
@@ -491,7 +491,7 @@ class DataProcessor:
     ) -> Dict[str, pd.DataFrame]:
         """
         Load stock data for specified tickers, functions, and date range.
-        Loads from signal and/or target folders based on signal_types.
+        Loads from signal and/or portfolio_target_achieved folders based on signal_types.
         Uses new structure if available, falls back to legacy.
         
         Args:
@@ -506,7 +506,7 @@ class DataProcessor:
                          - ['entry_exit', 'portfolio_target_achieved'] → load from both
             
         Returns:
-            Dictionary mapping ticker to DataFrame (includes DataType column: 'signal' or 'target')
+            Dictionary mapping ticker to DataFrame (includes DataType column: 'signal' or 'portfolio_target_achieved')
         """
         if self.use_new_structure:
             return self.load_stock_data_new_structure(
@@ -747,7 +747,7 @@ class DataProcessor:
     ) -> Tuple[Dict[str, pd.DataFrame], str]:
         """
         Complete data loading and formatting pipeline.
-        Loads from BOTH signal and target folders.
+        Loads from BOTH signal and portfolio_target_achieved folders.
         
         Args:
             tickers: List of ticker/asset symbols
@@ -759,7 +759,7 @@ class DataProcessor:
         Returns:
             Tuple of (stock_data_dict, formatted_text)
         """
-        # Load stock data (from both signal and target)
+        # Load stock data (from both signal and portfolio_target_achieved)
         stock_data = self.load_stock_data(
             tickers, from_date, to_date, dedup_columns, functions
         )

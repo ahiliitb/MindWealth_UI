@@ -154,7 +154,7 @@ class SignalExtractor:
         signal_type_patterns = {
             'entry': r'\b(entry|entries|entering|long|short|buy|buying)\b',
             'exit': r'\b(exit|exits|exiting|close|closing|sell|selling)\b',
-            'target': r'\b(target|targets|profit|take.?profit)\b',
+            'portfolio_target_achieved': r'\b(target|targets|profit|take.?profit)\b',
             'breadth': r'\b(breadth|market.?breadth|sector)\b'
         }
         
@@ -577,7 +577,7 @@ class SignalExtractor:
         
         Args:
             row: DataFrame row containing signal data
-            signal_type: Type of signal (entry, exit, target, breadth)
+            signal_type: Type of signal (entry, exit, portfolio_target_achieved, breadth)
             
         Returns:
             Dictionary with signal information or None
@@ -663,9 +663,8 @@ class SignalExtractor:
         signals = []
         
         try:
-            # Look for common patterns in AI responses
             # Pattern 1: "AAPL entry signal" or "MSFT exit signal"
-            pattern1 = re.finditer(r'([A-Z]{1,5})\s+(entry|exit|target)\s+signal', text, re.IGNORECASE)
+            pattern1 = re.finditer(r'([A-Z]{1,5})\s+(entry|exit|portfolio_target_achieved)\s+signal', text, re.IGNORECASE)
             for match in pattern1:
                 signals.append({
                     'Symbol': match.group(1),

@@ -53,7 +53,7 @@ class ColumnMetadataExtractor:
                     "FRACTAL TRACK": [...]
                 },
                 "exit": {...},
-                "target": {...},
+                "portfolio_target_achieved": {...},
                 "breadth": [...] (no functions, just columns)
             }
         """
@@ -65,7 +65,7 @@ class ColumnMetadataExtractor:
         metadata = {
             "entry": self._extract_signal_type_metadata(self.entry_dir),
             "exit": self._extract_signal_type_metadata(self.exit_dir),
-            "target": self._extract_signal_type_metadata(self.target_dir),
+            "portfolio_target_achieved": self._extract_signal_type_metadata(self.target_dir),
             "breadth": self._extract_breadth_metadata()
         }
         
@@ -76,7 +76,7 @@ class ColumnMetadataExtractor:
     
     def _extract_signal_type_metadata(self, base_dir: Path) -> Dict[str, List[str]]:
         """
-        Extract column metadata for a signal type (entry/exit/target).
+        Extract column metadata for a signal type (entry/exit/portfolio_target_achieved).
         
         Args:
             base_dir: Base directory for the signal type (e.g., entry_dir)
@@ -166,8 +166,8 @@ class ColumnMetadataExtractor:
         metadata = self.extract_all_metadata()
         all_columns = set()
         
-        # Add columns from entry, exit, target
-        for signal_type in ["entry", "exit", "target"]:
+        # Add columns from entry, exit, portfolio_target_achieved
+        for signal_type in ["entry", "exit", "portfolio_target_achieved"]:
             for function_name, columns in metadata[signal_type].items():
                 all_columns.update(columns)
         
@@ -181,10 +181,10 @@ class ColumnMetadataExtractor:
         Get all columns for a specific signal type.
         
         Args:
-            signal_type: One of "entry", "exit", "target", "breadth"
+            signal_type: One of "entry", "exit", "portfolio_target_achieved", "breadth"
             
         Returns:
-            For entry/exit/target: Dict mapping function names to columns
+            For entry/exit/portfolio_target_achieved: Dict mapping function names to columns
             For breadth: Dict with single key "breadth" mapping to columns
         """
         metadata = self.extract_all_metadata()
@@ -207,7 +207,7 @@ class ColumnMetadataExtractor:
         Get columns for a specific function within a signal type.
         
         Args:
-            signal_type: One of "entry", "exit", "target", "breadth"
+            signal_type: One of "entry", "exit", "portfolio_target_achieved", "breadth"
             function_name: Name of the function (e.g., "TRENDPULSE")
             
         Returns:
@@ -259,10 +259,10 @@ class ColumnMetadataExtractor:
                 "functions": list(metadata["exit"].keys()),
                 "total_unique_columns": len(set(col for cols in metadata["exit"].values() for col in cols))
             },
-            "target": {
-                "num_functions": len(metadata["target"]),
-                "functions": list(metadata["target"].keys()),
-                "total_unique_columns": len(set(col for cols in metadata["target"].values() for col in cols))
+            "portfolio_target_achieved": {
+                "num_functions": len(metadata["portfolio_target_achieved"]),
+                "functions": list(metadata["portfolio_target_achieved"].keys()),
+                "total_unique_columns": len(set(col for cols in metadata["portfolio_target_achieved"].values() for col in cols))
             },
             "breadth": {
                 "num_columns": len(metadata["breadth"]),
@@ -281,7 +281,7 @@ class ColumnMetadataExtractor:
         print("COLUMN METADATA SUMMARY")
         print("="*60)
         
-        for signal_type in ["entry", "exit", "target"]:
+        for signal_type in ["entry", "exit", "portfolio_target_achieved"]:
             print(f"\n{signal_type.upper()}:")
             print(f"  Functions: {summary[signal_type]['num_functions']}")
             print(f"  Unique columns: {summary[signal_type]['total_unique_columns']}")

@@ -171,7 +171,7 @@ class ChatbotEngine:
             auto_extract_tickers: If True and tickers=None, use GPT-4o-mini to extract asset names
             is_followup: If True, skip data loading and use existing conversation context
             
-        Note: Automatically loads data from BOTH signal and target folders
+        Note: Automatically loads data from BOTH signal and portfolio_target_achieved folders
             
         Returns:
             Tuple of (response_text, metadata_dict)
@@ -325,7 +325,7 @@ class ChatbotEngine:
             stock_signal_types = [st for st in (signal_types or []) if st != 'breadth'] if signal_types else None
             load_breadth = signal_types and 'breadth' in signal_types
             
-            # Check if we need stock data (entry/exit/target)
+            # Check if we need stock data (entry/exit/portfolio_target_achieved)
             need_stock_data = tickers and stock_signal_types and not data_already_in_context
             
             # Initialize stock_data
@@ -336,7 +336,7 @@ class ChatbotEngine:
                 # signal_types controls which folders to load from:
                 # - ['entry'] → entry/ folder only (open positions)
                 # - ['exit'] → exit/ folder only (completed trades)
-                # - ['target'] → portfolio_target_achieved/ folder only (portfolio target achieved)
+                # - ['portfolio_target_achieved'] → portfolio_target_achieved/ folder only (portfolio target achieved)
                 # - Multiple or None → load from selected folders
                 stock_data = self.data_processor.load_stock_data(
                     tickers, from_date, to_date, dedup_columns, functions, stock_signal_types
@@ -567,7 +567,7 @@ class ChatbotEngine:
         
         Args:
             user_message: User's question or request
-            selected_signal_types: Signal types selected by user (checkboxes): entry, exit, target, breadth
+            selected_signal_types: Signal types selected by user (checkboxes): entry, exit, portfolio_target_achieved, breadth
             assets: Optional list of asset/ticker names to filter
             from_date: Start date for data filtering (YYYY-MM-DD)
             to_date: End date for data filtering (YYYY-MM-DD)
@@ -584,7 +584,7 @@ class ChatbotEngine:
             logger.info("="*60)
 
             # Standard no-data message used by UI when there are no rows
-            NO_DATA_MESSAGE = "No Data for Particular Interval, Please change range and try again"
+            NO_DATA_MESSAGE = "No Data for Choosen Date Range, Please change range and try again"
 
             signal_type_reasoning = signal_type_reasoning or ""
             if selected_signal_types:
@@ -755,33 +755,7 @@ class ChatbotEngine:
                     complete_message += f"\n  Reasoning: {reasoning_by_signal_type.get(signal_type, '')}"
             
             complete_message += f"\n\n=== DATA CONTEXT ===\n{data_context}"
-            
-            # Add signal key instruction for table display
-            complete_message += f"""
 
-=== IMPORTANT: SIGNAL TABLE DISPLAY ===
-At the end of your response, you MUST provide the exact 4-key identifiers for ONLY the specific signals you want to appear in the data table. 
-
-For each signal you specifically mention or analyze in your response, provide:
-
-SIGNAL_KEYS: [
-  {{"function": "EXACT_FUNCTION_NAME", "symbol": "SYMBOL", "interval": "Daily", "signal_date": "YYYY-MM-DD"}},
-  ...
-]
-
-CRITICAL RULES:
-1. Only include signals you specifically mention in your analysis (e.g., if you say "top 5", provide exactly 5 keys)
-2. Use EXACT values from the data: Function name, Symbol (first part of "Symbol, Signal, Signal Date/Price[$]"), and actual signal date
-3. The table will show ONLY these signals - not all processed data
-4. Always use "Daily" for interval unless data shows otherwise
-
-Example: If you mention "AAPL has the highest Sharpe ratio" and "MSFT shows strong CAGR", provide:
-SIGNAL_KEYS: [
-  {{"function": "FRACTAL TRACK", "symbol": "AAPL", "interval": "Daily", "signal_date": "2025-10-16"}},
-  {{"function": "BAND MATRIX", "symbol": "MSFT", "interval": "Daily", "signal_date": "2025-10-15"}}
-]
-"""
-            
             if additional_context:
                 complete_message += f"\n\n=== ADDITIONAL CONTEXT ===\n{additional_context}"
             
@@ -877,17 +851,17 @@ SIGNAL_KEYS: [
         signal_type_reasoning: Optional[str] = None
     ) -> Tuple[str, Dict]:
         """
-        Process a follow-up query with intelligent column selection.
+        Process a follow-up query with dynamic, fresh analysis for each query.
         
-        This method:
-        1. Gets the last X conversation exchanges from history (X from config)
-        2. Analyzes if new columns are needed for the follow-up query
-        3. If new columns needed: fetches them and adds to context
-        4. If not needed: uses existing context from history
+        NEW APPROACH: Each follow-up query gets fresh signal type/function/column analysis
+        based on conversation context (text only, no raw data). This allows the AI to:
+        - Reference previous analysis naturally
+        - Choose different signal types/functions/columns per query
+        - Adapt to changing user interests dynamically
         
         Args:
             user_message: User's follow-up question
-            selected_signal_types: Signal types selected by user (checkboxes)
+            selected_signal_types: Signal types selected by user (checkboxes) - can be overridden by AI
             assets: Optional list of asset/ticker names to filter
             from_date: Start date for data filtering
             to_date: End date for data filtering
@@ -903,18 +877,10 @@ SIGNAL_KEYS: [
             from chatbot.config import FOLLOWUP_HISTORY_LENGTH
             
             logger.info("="*60)
-            logger.info("SMART FOLLOW-UP QUERY - Intelligent context reuse")
+            logger.info("SMART FOLLOW-UP QUERY - Dynamic fresh analysis per query")
             logger.info("="*60)
             
-            signal_type_reasoning = signal_type_reasoning or ""
-            if not selected_signal_types:
-                selected_signal_types, signal_type_reasoning = self.determine_signal_types(user_message)
-            else:
-                selected_signal_types = [stype for stype in selected_signal_types if stype]
-                if not selected_signal_types:
-                    selected_signal_types, signal_type_reasoning = self.determine_signal_types(user_message)
-            
-            # Get last N exchanges from history
+            # Get last N exchanges from history (text only, no raw data)
             history_messages = self.history_manager.get_messages_for_api(max_pairs=FOLLOWUP_HISTORY_LENGTH)
             
             if not history_messages or len(history_messages) < 2:
@@ -931,501 +897,53 @@ SIGNAL_KEYS: [
                     signal_type_reasoning=signal_type_reasoning
                 )
             
-            logger.info(f"Retrieved {len(history_messages)} messages from history")
+            logger.info(f"Retrieved {len(history_messages)} messages from history for context")
             
-            # Extract previously selected columns AND filter parameters from last query metadata
-            previous_metadata = None
-            for msg in reversed(history_messages):
-                if msg.get('role') == 'user':
-                    msg_metadata = msg.get('metadata', {})
-                    if msg_metadata.get('columns_by_signal_type'):
-                        previous_metadata = msg_metadata
-                        break
+            # Strip raw data from history to create clean conversation context
+            clean_history = self._strip_data_from_history(history_messages)
             
-            previous_columns_by_type = previous_metadata.get('columns_by_signal_type', {}) if previous_metadata else {}
-            previous_signal_types = previous_metadata.get('selected_signal_types', []) if previous_metadata else []
+            # Build conversation context (text-only history)
+            conversation_context = self._build_text_only_context(clean_history)
             
-            # Extract previous filter parameters
-            previous_assets = previous_metadata.get('assets') if previous_metadata else None
-            previous_from_date = previous_metadata.get('from_date') if previous_metadata else None
-            previous_to_date = previous_metadata.get('to_date') if previous_metadata else None
-            previous_functions = previous_metadata.get('functions') if previous_metadata else None
+            logger.info("DYNAMIC ANALYSIS: Treating follow-up as fresh query with conversation context")
+            logger.info("This allows AI to freely choose new signal types, functions, columns based on context")
             
-            logger.info(f"Previous query had {len(previous_columns_by_type)} signal types with columns")
+            # Treat this as a fresh smart_query but with conversation context
+            # This ensures full column selection + data fetching for each query
             
-            # Check if filter parameters have changed
-            filters_changed = False
-            filter_change_details = []
-            
-            # Compare assets (handle None and empty list as equivalent)
-            prev_assets_set = set(previous_assets) if previous_assets else set()
-            curr_assets_set = set(assets) if assets else set()
-            if prev_assets_set != curr_assets_set:
-                filters_changed = True
-                filter_change_details.append(f"Assets changed from {previous_assets or 'all'} to {assets or 'all'}")
-            
-            # Compare dates
-            if previous_from_date != from_date:
-                filters_changed = True
-                filter_change_details.append(f"From date changed from {previous_from_date} to {from_date}")
-            if previous_to_date != to_date:
-                filters_changed = True
-                filter_change_details.append(f"To date changed from {previous_to_date} to {to_date}")
-            
-            # Compare functions
-            prev_functions_set = set(previous_functions) if previous_functions else set()
-            curr_functions_set = set(functions) if functions else set()
-            if prev_functions_set != curr_functions_set:
-                filters_changed = True
-                filter_change_details.append(f"Functions changed from {previous_functions or 'all'} to {functions or 'all'}")
-            
-            if filters_changed:
-                logger.info("🔍 FILTER PARAMETERS CHANGED - Will fetch new data")
-                for detail in filter_change_details:
-                    logger.info(f"  - {detail}")
-            else:
-                logger.info("✅ Filter parameters unchanged from previous query")
-            
-            # STAGE 1: Analyze if new columns are needed
-            logger.info("STAGE 1: Analyzing if new columns are needed for follow-up...")
-            
-            # Build context about what columns we already have
-            existing_columns_context = "=== EXISTING DATA CONTEXT ===\n"
-            if previous_columns_by_type:
-                for signal_type, cols in previous_columns_by_type.items():
-                    existing_columns_context += f"\n{signal_type.upper()}: {len(cols)} columns available\n"
-                    existing_columns_context += f"Columns: {', '.join(cols[:10])}"  # Show first 10
-                    if len(cols) > 10:
-                        existing_columns_context += f"... and {len(cols)-10} more"
-                    existing_columns_context += "\n"
-            else:
-                existing_columns_context += "No previous column data available.\n"
-            
-            # Ask GPT if we need new columns
-            analysis_prompt = f"""Analyze this follow-up query and determine if we need NEW data columns or if we can answer using EXISTING columns.
+            # Add conversation context to the user message
+            enhanced_user_message = f"""CONVERSATION CONTEXT (for reference):
+{conversation_context}
 
-{existing_columns_context}
+CURRENT QUESTION: {user_message}
 
-=== FILTER PARAMETERS STATUS ===
-Filters Changed: {"YES - " + "; ".join(filter_change_details) if filters_changed else "NO - Same filters as previous query"}
-
-Current filters:
-- Assets: {assets or 'all'}
-- Date range: {from_date} to {to_date}
-- Functions: {functions or 'all'}
-
-IMPORTANT: If filters have changed (different date range, assets, or functions), we MUST fetch new data even if the columns are the same, because the actual data rows will be different.
-
-FOLLOW-UP QUESTION: {user_message}
-
-Previous signal types queried: {', '.join(previous_signal_types) if previous_signal_types else 'None'}
-Current signal types requested: {', '.join(selected_signal_types)}
-
-Respond with a JSON object:
-{{
-    "needs_new_data": true/false,
-    "reasoning": "Brief explanation",
-    "new_columns_needed": {{
-        "signal_type": ["column1", "column2", ...] if new columns needed
-    }}
-}}
-
-Decision rules:
-1. If filters changed (dates, assets, functions) → needs_new_data: true (same columns, different data rows)
-2. If user asks for new information not in existing columns → needs_new_data: true (new columns needed)
-3. If user asks clarifying questions about existing data with same filters → needs_new_data: false (reuse existing context)
-4. If signal types changed → needs_new_data: true (different signal type data needed)"""
+NOTE: Use the conversation context above to understand what we've discussed, but perform fresh analysis for this specific question. You can choose different signal types, functions, or columns as needed."""
             
-            analysis_response = self._call_openai_api([
-                {"role": "system", "content": "You are a data analysis assistant that determines if new data columns are needed for follow-up queries."},
-                {"role": "user", "content": analysis_prompt}
-            ])
-            
-            import json
-            try:
-                analysis_result = json.loads(analysis_response)
-            except:
-                # If parsing fails, assume new data needed
-                logger.warning("Failed to parse analysis response - assuming new data needed")
-                analysis_result = {"needs_new_data": True, "reasoning": "Analysis parse failed", "new_columns_needed": {}}
-            
-            needs_new_data = analysis_result.get('needs_new_data', True)
-            reasoning = analysis_result.get('reasoning', '')
-            new_columns_needed = analysis_result.get('new_columns_needed', {})
-            
-            # Override: If filters changed, we MUST fetch new data (different rows)
-            if filters_changed:
-                needs_new_data = True
-                if reasoning:
-                    reasoning = f"Filter parameters changed ({'; '.join(filter_change_details)}). " + reasoning
-                else:
-                    reasoning = f"Filter parameters changed: {'; '.join(filter_change_details)}"
-                logger.info(f"🔄 Override: Forcing data fetch due to filter changes")
-            
-            logger.info(f"Analysis: needs_new_data={needs_new_data}, reasoning={reasoning}")
-            
-            # STAGE 2: Fetch new data if needed, or use existing context
-            if needs_new_data:
-                logger.info("STAGE 2: Fetching data...")
-                
-                # Determine which columns to use
-                columns_by_signal_type = {}
-                reasoning_by_signal_type = {}
-                
-                for signal_type in selected_signal_types:
-                    # If filters changed but user didn't ask for new columns, reuse previous columns
-                    if filters_changed and signal_type in previous_columns_by_type and not new_columns_needed.get(signal_type):
-                        # Reuse previous columns but fetch new data rows
-                        columns_by_signal_type[signal_type] = previous_columns_by_type[signal_type]
-                        reasoning_by_signal_type[signal_type] = f"Reusing columns with new filters: {reasoning}"
-                        logger.info(f"  {signal_type}: Reusing {len(previous_columns_by_type[signal_type])} previous columns with new filters")
-                    elif signal_type in new_columns_needed and new_columns_needed[signal_type]:
-                        # GPT specified exact new columns needed
-                        columns_by_signal_type[signal_type] = new_columns_needed[signal_type]
-                        reasoning_by_signal_type[signal_type] = f"Follow-up requires: {reasoning}"
-                        logger.info(f"  {signal_type}: Using {len(new_columns_needed[signal_type])} new columns from GPT analysis")
-                    else:
-                        # Ask column selector for this signal type
-                        column_result = self.column_selector.select_columns(
-                            user_query=user_message,
-                            selected_signal_types=[signal_type],
-                            additional_context=existing_columns_context
-                        )
-                        
-                        if column_result.get('success') and signal_type in column_result:
-                            signal_data = column_result[signal_type]
-                            if isinstance(signal_data, dict):
-                                columns_by_signal_type[signal_type] = signal_data.get('required_columns', [])
-                                reasoning_by_signal_type[signal_type] = signal_data.get('reasoning', '')
-                                logger.info(f"  {signal_type}: Column selector chose {len(columns_by_signal_type[signal_type])} columns")
-                
-                # Fetch the new data
-                import pandas as pd  # local import for typing and usage
-                fetched_data: Dict[str, 'pd.DataFrame'] = {}
-                total_rows = 0
-                new_columns_by_type: Dict[str, List[str]] = {}
-                existing_columns_by_type: Dict[str, List[str]] = {}
-
-                for signal_type, required_cols in columns_by_signal_type.items():
-                    if not required_cols:
-                        continue
-                    signal_data = self.smart_data_fetcher.fetch_data(
-                        signal_types=[signal_type],
-                        required_columns=required_cols,
-                        assets=assets,
-                        functions=functions,
-                        from_date=from_date,
-                        to_date=to_date
-                    )
-                    if signal_data and signal_type in signal_data:
-                        df = signal_data[signal_type]
-                        fetched_data[signal_type] = df
-                        total_rows += len(df)
-
-                # If we needed new data (e.g. filters changed) but fetched nothing,
-                # surface a clear no-data message instead of calling the model.
-                if needs_new_data and (not fetched_data or total_rows == 0):
-                    logger.warning("No data fetched for follow-up query with current filters; returning no-data message.")
-                    return (
-                        "No Data for Particular Interval, Please change range and try again",
-                        {
-                            "warning": "no_data",
-                            "input_type": "smart_followup",
-                            "followup_mode": "new_data",
-                            "needs_new_data": True,
-                            "rows_fetched": 0,
-                            "selected_signal_types": selected_signal_types,
-                            "assets": assets,
-                            "from_date": from_date,
-                            "to_date": to_date,
-                            "functions": functions,
-                            "signal_type_reasoning": signal_type_reasoning or "",
-                        },
-                    )
-                
-                if filters_changed:
-                    # Case 1: Filters changed → Full data needed (different rows)
-                    logger.info("💰 Token optimization: Passing full new data (filters changed) as JSON")
-                    import json as _json
-                    new_data_context = "\n=== NEW DATA FETCHED (FILTERS CHANGED, JSON) ===\n"
-                    for stype, df in fetched_data.items():
-                        if df.empty:
-                            continue
-                        records = df.to_dict('records')
-                        payload = {"signal_type": stype, "record_count": len(records), "data": records}
-                        new_data_context += _json.dumps(payload, indent=2, default=str) + "\n"
-                    
-                    complete_message = f"""FOLLOW-UP QUESTION: {user_message}
-
-{new_data_context}
-
-{additional_context or ''}"""
-                    data_passing_mode = "full_data"
-                    
-                else:
-                    # Case 2: Same filters, but new columns requested
-                    # Only pass the NEW columns that weren't in previous context
-                    logger.info("💰 Token optimization: Passing only NEW columns (same filters) as JSON")
-                    
-                    new_columns_only = {}
-                    for stype, df in fetched_data.items():
-                        if df.empty:
-                            continue
-                        
-                        # Get columns that weren't in previous query
-                        previous_cols = set(previous_columns_by_type.get(stype, []))
-                        current_cols = set(df.columns)
-                        truly_new_cols = current_cols - previous_cols
-                        
-                        if truly_new_cols:
-                            # Extract only the new columns
-                            new_columns_only[stype] = df[list(truly_new_cols)]
-                            logger.info(f"  {stype}: Passing {len(truly_new_cols)} new columns: {list(truly_new_cols)}")
-                            # Track metadata of new/existing columns
-                            new_columns_by_type[stype] = list(truly_new_cols)
-                            existing_columns_by_type[stype] = list(current_cols & previous_cols)
-                        else:
-                            logger.info(f"  {stype}: All columns already in context, passing nothing")
-                    
-                    if new_columns_only:
-                        # Pass only the new columns, in JSON
-                        import json as _json
-                        new_data_context = "\n=== NEW COLUMNS ADDED TO EXISTING DATA (JSON) ===\n"
-                        new_data_context += "NOTE: The data rows are the same as before. Only showing NEW columns as JSON.\n"
-                        for stype, df in new_columns_only.items():
-                            records = df.to_dict('records')
-                            payload = {"signal_type": stype, "record_count": len(records), "data": records}
-                            new_data_context += _json.dumps(payload, indent=2, default=str) + "\n"
-                        
-                        complete_message = f"""FOLLOW-UP QUESTION: {user_message}
-
-{new_data_context}
-
-NOTE: We did not resend old raw data. Use the conversation context (previous prompts and your outputs) combined with the NEW columns above to answer.
-{additional_context or ''}"""
-                        data_passing_mode = "new_columns_only"
-                    else:
-                        # All columns already exist - shouldn't happen if needs_new_data=True, but handle it
-                        logger.warning("⚠️ needs_new_data=True but all columns already exist")
-                        complete_message = f"""FOLLOW-UP QUESTION: {user_message}
-
-NOTE: All required data is already in the conversation history.
-{additional_context or ''}"""
-                        data_passing_mode = "no_new_data"
-                
-                metadata = {
-                    "input_type": "smart_followup",
-                    "followup_mode": "new_data",
-                    "needs_new_data": True,
-                    "data_passing_mode": data_passing_mode,  # NEW: Track what we passed
-                    "data_format": "json",
-                    "prior_data_omitted": True,
-                    "filters_changed": filters_changed,
-                    "filter_change_details": filter_change_details if filters_changed else [],
-                    "analysis_reasoning": reasoning,
-                    "columns_by_signal_type": columns_by_signal_type,
-                    "new_columns_by_type": new_columns_by_type,  # NEW: Track which columns are new
-                    "existing_columns_by_type": existing_columns_by_type,  # NEW: Track which were already in context
-                    "reasoning_by_signal_type": reasoning_by_signal_type,
-                    "rows_fetched": total_rows,
-                    "history_exchanges_used": FOLLOWUP_HISTORY_LENGTH,
-                    "context_pairs_kept": MAX_HISTORY_LENGTH,
-                    "selected_signal_types": selected_signal_types,
-                    "assets": assets,
-                    "from_date": from_date,
-                    "to_date": to_date,
-                    "functions": functions,
-                    "signal_type_reasoning": signal_type_reasoning,
-                }
-                
-            else:
-                # No new data needed - use existing context
-                logger.info("STAGE 2: Using existing context (no new data needed)")
-                
-                complete_message = f"""FOLLOW-UP QUESTION: {user_message}
-
-    {existing_columns_context}
-
-    NOTE: We are not resending old raw data. Please answer using the conversation context (previous prompts and your outputs only). If additional columns are strictly required, explain why and which columns are needed.
-    {additional_context or ''}"""
-                
-                metadata = {
-                    "input_type": "smart_followup",
-                    "followup_mode": "existing_context",
-                    "needs_new_data": False,
-                    "prior_data_omitted": True,
-                    "filters_changed": False,
-                    "filter_change_details": [],
-                    "analysis_reasoning": reasoning,
-                    "columns_by_signal_type": previous_columns_by_type,
-                    "rows_fetched": 0,
-                    "history_exchanges_used": FOLLOWUP_HISTORY_LENGTH,
-                    "context_pairs_kept": MAX_HISTORY_LENGTH,
-                    "selected_signal_types": selected_signal_types,
-                    "assets": assets,
-                    "from_date": from_date,
-                    "to_date": to_date,
-                    "functions": functions,
-                    "signal_type_reasoning": signal_type_reasoning,
-                }
-            
-            # Add user message to history
-            self.history_manager.add_message(
-                "user",
-                complete_message,
-                self._prepare_user_metadata(metadata, user_message)
+            # Call smart_query which will do fresh signal type determination, column selection, and data fetching
+            response, metadata = self.smart_query(
+                user_message=enhanced_user_message,
+                selected_signal_types=selected_signal_types,  # Will be re-determined by AI if needed
+                assets=assets,
+                from_date=from_date,
+                to_date=to_date,
+                functions=functions,
+                additional_context=additional_context,
+                auto_extract_tickers=auto_extract_tickers,
+                signal_type_reasoning=signal_type_reasoning
             )
             
-            # Build conversation context: include summary of messages older than MAX_HISTORY_LENGTH pairs
-            # and include the last MAX_HISTORY_LENGTH pairs in full.
-            full_history_with_meta = self.history_manager.get_full_history()
-            # Sanitize large historical data dumps from user messages to reduce tokens
-            import re as _re
-            def _strip_data_payload(text: str) -> str:
-                if not text:
-                    return text
-                patterns = [
-                    r"===\s*TRADING DATA \(JSON Format\)\s*===[\s\S]*$",
-                    r"===\s*NEW DATA FETCHED[\s\S]*$",
-                    r"===\s*NEW COLUMNS ADDED TO EXISTING DATA[\s\S]*$",
-                    r"===\s*PROVIDED DATA\s*===[\s\S]*$",
-                ]
-                cleaned = text
-                for pat in patterns:
-                    cleaned = _re.sub(pat, "[context: prior raw data omitted]", cleaned, flags=_re.IGNORECASE)
-                if len(cleaned) > 12000:
-                    cleaned = cleaned[:12000] + "\n[truncated]"
-                return cleaned
-            # Convert to simple sanitized messages (role/content)
-            simple_messages = []
-            for m in full_history_with_meta:
-                role = m.get("role", "user")
-                content = m.get("content", "")
-                if role == "user":
-                    content = _strip_data_payload(content)
-                simple_messages.append({"role": role, "content": content})
-            # Separate system messages and conversation messages
-            system_messages = [msg for msg in simple_messages if msg["role"] == "system"]
-            conversation_messages = [msg for msg in simple_messages if msg["role"] != "system"]
+            # Mark this as a followup query in metadata
+            metadata["input_type"] = "smart_followup"
+            metadata["followup_mode"] = "dynamic_fresh"
+            metadata["conversation_context_used"] = True
+            metadata["history_exchanges_used"] = FOLLOWUP_HISTORY_LENGTH
+            # Override display_prompt to show only the actual user question (not the enhanced context)
+            metadata["display_prompt"] = user_message
             
-            # Determine how many messages to keep (pairs -> messages)
-            max_pairs = MAX_HISTORY_LENGTH
-            keep_messages = max_pairs * 2
-            older_messages: List[Dict] = []
-            last_messages: List[Dict] = list(conversation_messages)
-            if len(conversation_messages) > keep_messages:
-                older_messages = conversation_messages[:-keep_messages]
-                last_messages = conversation_messages[-keep_messages:]
-            
-            # If there are older messages, summarize them into a compact system note
-            summary_message = None
-            if older_messages:
-                # Prepare a compact text block of older messages (cap size to avoid excess tokens)
-                # Keep roughly ~6000 characters for summarization input
-                def _fmt(msg):
-                    role = msg.get("role", "user").upper()
-                    content = msg.get("content", "").strip()
-                    return f"[{role}] {content}"
-                older_text_blocks: List[str] = []
-                total_chars = 0
-                for m in older_messages:
-                    line = _fmt(m)
-                    if total_chars + len(line) > 6000:
-                        break
-                    older_text_blocks.append(line)
-                    total_chars += len(line)
-                older_text = "\n".join(older_text_blocks)
-                
-                summarizer_prompt = {
-                    "role": "system",
-                    "content": (
-                        "You are an expert meeting minutes writer. Summarize the following older parts of the "
-                        "conversation into a concise brief (<= 250-400 words) capturing: key objectives, decisions, "
-                        "assumptions, important definitions, current filters (assets, dates, functions), data columns "
-                        "used, major insights/conclusions, and any unresolved questions. Be specific and avoid fluff."
-                    )
-                }
-                user_block = {"role": "user", "content": f"Older conversation to summarize (prior to last {max_pairs} pairs):\n\n{older_text}"}
-                try:
-                    summary_text = self._call_openai_api([summarizer_prompt, user_block], model=OPENAI_MODEL, temperature=0.1)
-                    if not isinstance(summary_text, str):
-                        summary_text = str(summary_text)
-                    summary_message = {
-                        "role": "system",
-                        "content": f"Conversation Summary (older than last {max_pairs} exchanges):\n{summary_text}"
-                    }
-                except Exception as _:
-                    # If summarization fails, proceed without it
-                    summary_message = None
-            
-            # Construct final messages for the API call: system prompt(s) + optional summary + last messages
-            messages: List[Dict] = []
-            messages.extend(system_messages if system_messages else [{"role": "system", "content": SYSTEM_PROMPT}])
-            if summary_message:
-                messages.append(summary_message)
-            messages.extend(last_messages)
-            
-            # Call GPT - use smart batch processing if we have large data
-            total_chars = sum(len(str(msg.get('content', ''))) for msg in messages)
-            estimated_tokens = total_chars // ESTIMATED_CHARS_PER_TOKEN
-            
-            logger.info(f"Processing follow-up query with ~{estimated_tokens} tokens")
-            
-            # If data was fetched and might be large, use smart batch processing
-            if needs_new_data and fetched_data:
-                # Check if we need batch processing based on token count
-                if estimated_tokens > MAX_INPUT_TOKENS_PER_CALL:
-                    logger.info("⚡ Large data detected - using smart batch processing")
-                    # Convert fetched_data to ticker-based format for batch processing
-                    # Note: For signal type data, we don't split by ticker, but by signal type
-                    # So we'll use a modified approach
-                    assistant_message, batch_metadata = self._batch_followup_query(
-                        messages[:-1],  # All messages except the last just-added user message is already included in last_messages
-                        user_message,
-                        fetched_data,
-                        estimated_tokens
-                    )
-                else:
-                    logger.info("✓ Data within token limit - single API call")
-                    assistant_message, batch_metadata = self._simple_batch_query(messages, estimated_tokens)
-            else:
-                # No data fetched or using existing context - simple query
-                assistant_message, batch_metadata = self._simple_batch_query(messages, estimated_tokens)
-            
-            # Update metadata
-            metadata["model"] = OPENAI_MODEL
-            metadata["tokens_used"] = batch_metadata["tokens_used"]
-            metadata["finish_reason"] = batch_metadata["finish_reason"]
-            
-            # Extract full signal tables with all columns
-            query_params = {
-                'assets': assets,
-                'functions': functions, 
-                'from_date': from_date,
-                'to_date': to_date,
-                'selected_signal_types': selected_signal_types
-            }
-            full_signal_tables = self.signal_extractor.extract_full_signal_tables(
-                assistant_message,
-                fetched_data if 'fetched_data' in locals() and fetched_data else None,
-                query_params
-            )
-            metadata["full_signal_tables"] = full_signal_tables
-            
-            # Keep legacy for compatibility
-            signals_df = self.signal_extractor.extract_signals_from_response(
-                assistant_message, 
-                fetched_data if 'fetched_data' in locals() and fetched_data else None
-            )
-            metadata["signals_table"] = signals_df
-            
-            # Add assistant response to history
-            self.history_manager.add_message("assistant", assistant_message, metadata)
-            
-            logger.info(f"Follow-up query completed: mode={metadata['followup_mode']}, tokens={metadata['tokens_used']['total']}")
+            logger.info(f"Dynamic follow-up query completed with fresh analysis")
             logger.info("="*60)
             
-            return assistant_message, metadata
+            return response, metadata
             
         except Exception as e:
             error_message = f"Error processing follow-up query: {str(e)}"
@@ -1433,6 +951,89 @@ NOTE: All required data is already in the conversation history.
             import traceback
             traceback.print_exc()
             return error_message, {"error": str(e)}
+
+    def _strip_data_from_history(self, history_messages: List[Dict]) -> List[Dict]:
+        """
+        Strip raw data payloads from historical messages, keeping only text conversation.
+        
+        Args:
+            history_messages: List of message dictionaries with role and content
+            
+        Returns:
+            List of cleaned message dictionaries
+        """
+        import re
+        
+        def _strip_data_payload(text: str) -> str:
+            """Remove data sections from message text"""
+            if not text:
+                return text
+            
+            patterns = [
+                r"===\s*COLUMN SELECTION BY SIGNAL TYPE\s*===[\s\S]*?(?====|$)",
+                r"===\s*DATA CONTEXT\s*===[\s\S]*?(?====|$)",
+                r"===\s*TRADING DATA[\s\S]*?(?====|$)",
+                r"===\s*NEW DATA FETCHED[\s\S]*?(?====|$)",
+                r"===\s*NEW COLUMNS ADDED[\s\S]*?(?====|$)",
+                r"===\s*PROVIDED DATA\s*===[\s\S]*?(?====|$)",
+                r"===\s*ENTRY SIGNALS \(JSON\)[\s\S]*?(?====|$)",
+                r"===\s*EXIT SIGNALS \(JSON\)[\s\S]*?(?====|$)",
+                r"===\s*PORTFOLIO_TARGET_ACHIEVED SIGNALS \(JSON\)[\s\S]*?(?====|$)",
+                r"===\s*BREADTH SIGNALS \(JSON\)[\s\S]*?(?====|$)",
+                r"User Query:.*?\n\n",  # Remove "User Query:" prefix
+                r"FOLLOW-UP QUESTION:.*?\n\n",  # Remove "FOLLOW-UP QUESTION:" prefix
+            ]
+            
+            cleaned = text
+            for pat in patterns:
+                cleaned = re.sub(pat, "", cleaned, flags=re.IGNORECASE | re.DOTALL)
+            
+            # Clean up excessive whitespace
+            cleaned = re.sub(r'\n\s*\n\s*\n+', '\n\n', cleaned)
+            cleaned = cleaned.strip()
+            
+            return cleaned
+        
+        clean_messages = []
+        for msg in history_messages:
+            role = msg.get("role", "user")
+            content = msg.get("content", "")
+            
+            # Strip data from user messages
+            if role == "user":
+                content = _strip_data_payload(content)
+            
+            clean_messages.append({"role": role, "content": content})
+        
+        return clean_messages
+    
+    def _build_text_only_context(self, clean_history: List[Dict]) -> str:
+        """
+        Build a clean conversation context string from history.
+        
+        Args:
+            clean_history: List of cleaned message dictionaries
+            
+        Returns:
+            Formatted conversation context string
+        """
+        context_parts = []
+        
+        for msg in clean_history:
+            role = msg.get("role", "").upper()
+            content = msg.get("content", "").strip()
+            
+            # Skip system messages
+            if role == "SYSTEM":
+                continue
+            
+            # Format as conversation
+            if role == "USER":
+                context_parts.append(f"Previous Question: {content}")
+            elif role == "ASSISTANT":
+                context_parts.append(f"Previous Response: {content}")
+        
+        return "\n\n".join(context_parts)
     
     def query_with_csv_text(
         self,
@@ -1932,7 +1533,7 @@ Create a professional, well-structured response that reads as one cohesive analy
         Args:
             base_messages: Base conversation messages
             user_query: User's query text
-            signal_data: Dictionary of DataFrames by signal type (entry/exit/target/breadth)
+            signal_data: Dictionary of DataFrames by signal type (entry/exit/portfolio_target_achieved/breadth)
             estimated_tokens: Estimated total tokens
             
         Returns:

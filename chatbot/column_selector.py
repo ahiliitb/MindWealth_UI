@@ -63,7 +63,7 @@ class ColumnSelector:
         Build context about available columns for the GPT prompt.
         
         Args:
-            selected_signal_types: List of signal types user has selected (entry, exit, target, breadth)
+            selected_signal_types: List of signal types user has selected (entry, exit, portfolio_target_achieved, breadth)
             
         Returns:
             Formatted string with column information
@@ -72,7 +72,7 @@ class ColumnSelector:
         
         # If no signal types specified, include all
         if not selected_signal_types:
-            selected_signal_types = ["entry", "exit", "target", "breadth"]
+            selected_signal_types = ["entry", "exit", "portfolio_target_achieved", "breadth"]
         
         context_parts = ["\n=== AVAILABLE COLUMNS ===\n"]
         
@@ -176,13 +176,24 @@ class ColumnSelector:
             result = self._extract_json_from_response(response_text)
             
             if result and self._validate_signal_type_response(result, selected_signal_types):
+                # Validate that selected columns exist in available columns
+                metadata = self.metadata_extractor.extract_all_metadata()
+                validation_result = self._validate_column_names(result, metadata, selected_signal_types)
+                
+                if not validation_result["valid"]:
+                    logger.warning(f"Column validation warnings: {validation_result['warnings']}")
+                    # Log warnings but don't fail - the flexible matcher will handle it
+                    for warning in validation_result['warnings']:
+                        logger.warning(f"  - {warning}")
+                
                 result["success"] = True
+                result["column_validation_warnings"] = validation_result.get("warnings", [])
                 total_columns = sum(
                     len(sig_data.get('required_columns', [])) 
                     for sig_data in result.values() 
                     if isinstance(sig_data, dict) and 'required_columns' in sig_data
                 )
-                logger.info(f"Successfully selected {total_columns} columns across {len([k for k in result if k not in ['success', 'error']])} signal types")
+                logger.info(f"Successfully selected {total_columns} columns across {len([k for k in result if k not in ['success', 'error', 'column_validation_warnings']])} signal types")
                 return result
             else:
                 logger.error("Failed to parse or validate JSON from GPT response")
@@ -228,6 +239,73 @@ class ColumnSelector:
         
         return has_valid_signal
     
+    def _validate_column_names(
+        self,
+        result: Dict,
+        metadata: Dict,
+        selected_signal_types: Optional[List[str]]
+    ) -> Dict:
+        """
+        Validate that selected column names actually exist in the available columns.
+        
+        Args:
+            result: Parsed JSON response from GPT with selected columns
+            metadata: Column metadata from metadata_extractor
+            selected_signal_types: Signal types user selected
+            
+        Returns:
+            Dictionary with validation results:
+            {
+                "valid": True/False,
+                "warnings": ["warning message 1", "warning message 2", ...]
+            }
+        """
+        warnings = []
+        
+        if not selected_signal_types:
+            return {"valid": True, "warnings": []}
+        
+        for signal_type in selected_signal_types:
+            if signal_type not in result:
+                continue
+            
+            signal_data = result[signal_type]
+            if not isinstance(signal_data, dict) or 'required_columns' not in signal_data:
+                continue
+            
+            selected_columns = signal_data['required_columns']
+            
+            # Get available columns for this signal type
+            if signal_type == "breadth":
+                available_columns = metadata.get("breadth", [])
+            else:
+                # For entry/exit/target, collect all columns across all functions
+                available_columns = []
+                signal_metadata = metadata.get(signal_type, {})
+                for function_name, columns in signal_metadata.items():
+                    available_columns.extend(columns)
+                # Remove duplicates while preserving order
+                available_columns = list(dict.fromkeys(available_columns))
+            
+            # Check each selected column
+            for col in selected_columns:
+                if col not in available_columns:
+                    # Check if it's a close match (for helpful warnings)
+                    close_matches = [ac for ac in available_columns if col.lower() in ac.lower() or ac.lower() in col.lower()]
+                    if close_matches:
+                        warnings.append(
+                            f"{signal_type.upper()}: Column '{col}' not found. Did you mean one of: {', '.join(close_matches[:3])}?"
+                        )
+                    else:
+                        warnings.append(
+                            f"{signal_type.upper()}: Column '{col}' does not exist in available columns. It will be matched flexibly."
+                        )
+        
+        return {
+            "valid": len(warnings) == 0,
+            "warnings": warnings
+        }
+    
     def _extract_json_from_response(self, response_text: str) -> Optional[Dict]:
         """
         Extract JSON from GPT response, handling various formats.
@@ -265,7 +343,7 @@ class ColumnSelector:
             try:
                 result = json.loads(match)
                 # Validate it has signal type keys with required structure
-                if any(key in ['entry', 'exit', 'target', 'breadth'] for key in result.keys()):
+                if any(key in ['entry', 'exit', 'portfolio_target_achieved', 'breadth'] for key in result.keys()):
                     return result
             except json.JSONDecodeError:
                 continue
@@ -394,13 +472,13 @@ if __name__ == "__main__":
         
         result = selector.select_columns(
             query,
-            selected_signal_types=["entry", "exit", "target", "breadth"]
+            selected_signal_types=["entry", "exit", "portfolio_target_achieved", "breadth"]
         )
         
         print(f"\nSuccess: {result.get('success', False)}")
         
         if result.get('success'):
-            for signal_type in ["entry", "exit", "target", "breadth"]:
+            for signal_type in ["entry", "exit", "portfolio_target_achieved", "breadth"]:
                 if signal_type in result:
                     signal_data = result[signal_type]
                     cols = signal_data.get('required_columns', [])

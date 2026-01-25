@@ -284,11 +284,11 @@ def get_dedup_columns(signal_type="entry"):
     Different signal types use different deduplication keys:
     - entry: Date, Symbol, Interval, Signal
     - exit: Exit Signal Date, Symbol, Signal, Interval, Signal Date
-    - target: Symbol, Signal, Interval, Signal Date, Target for which Price has achieved over 90 percent of gain %, Backtested Target Exit Date, Exit Signal Date/Price[$]
+    - portfolio_target_achieved: Symbol, Signal, Interval, Signal Date, Target for which Price has achieved over 90 percent of gain %, Backtested Target Exit Date, Exit Signal Date/Price[$]
     - breadth: Date
     
     Args:
-        signal_type: Type of signal ('entry', 'exit', 'target', 'breadth')
+        signal_type: Type of signal ('entry', 'exit', 'portfolio_target_achieved', 'breadth')
     
     Returns:
         List of column names to use for deduplication
@@ -297,7 +297,7 @@ def get_dedup_columns(signal_type="entry"):
         dedup_cols_str = os.getenv("ENTRY_DEDUP_COLUMNS", "Date,Symbol,Interval,Signal")
     elif signal_type == "exit":
         dedup_cols_str = os.getenv("EXIT_DEDUP_COLUMNS", "Exit Signal Date,Symbol,Signal,Interval,Signal Date")
-    elif signal_type == "target":
+    elif signal_type == "portfolio_target_achieved":
         dedup_cols_str = os.getenv("TARGET_DEDUP_COLUMNS", "Symbol,Signal,Interval,Signal Date,Target for which Price has achieved over 90 percent of gain %,Backtested Target Exit Date,Exit Signal Date/Price[$]")
     elif signal_type == "breadth":
         dedup_cols_str = os.getenv("BREADTH_DEDUP_COLUMNS", "Date")
@@ -316,7 +316,7 @@ def deduplicate_dataframe(df, dedup_columns=None, signal_type="entry"):
     Args:
         df: DataFrame to deduplicate
         dedup_columns: List of column names to check for duplicates (if None, uses signal_type to get defaults)
-        signal_type: Type of signal ('entry', 'exit', 'target', 'breadth') - used if dedup_columns is None
+        signal_type: Type of signal ('entry', 'exit', 'portfolio_target_achieved', 'breadth') - used if dedup_columns is None
         
     Returns:
         Deduplicated DataFrame
@@ -453,7 +453,7 @@ def convert_signal_file_to_data_structure(
     
     Args:
         input_file: Path to input CSV file (e.g., outstanding_signal.csv, target_signal.csv)
-        signal_type: 'signal' or 'target'
+        signal_type: 'signal' or 'portfolio_target_achieved'
         output_base_dir: Base directory for output (default: chatbot/data)
         overwrite: Whether to overwrite existing files
         dedup_columns: List of columns for deduplication (uses .env if None)
@@ -477,12 +477,12 @@ def convert_signal_file_to_data_structure(
     exit_column = df.columns[2] if len(df.columns) > 2 else None  # "Exit Signal Date/Price[$]"
     
     print(f"✓ Parsing column: '{symbol_column}'")
-    if exit_column and signal_type != "target":
+    if exit_column and signal_type != "portfolio_target_achieved":
         print(f"✓ Exit column: '{exit_column}'")
     
     # Parse each row
     # Note: For signals, we'll determine entry/exit folder per-row based on exit date
-    if signal_type == "target":
+    if signal_type == "portfolio_target_achieved":
         output_base = Path(output_base_dir) / "portfolio_target_achieved"
         output_base.mkdir(parents=True, exist_ok=True)
     # For signals, we create both entry and exit folders
@@ -492,9 +492,9 @@ def convert_signal_file_to_data_structure(
         entry_base.mkdir(parents=True, exist_ok=True)
         exit_base.mkdir(parents=True, exist_ok=True)
     
-    # For targets, set up master CSV path
+    # For portfolio_target_achieved, set up master CSV path
     master_csv_path = None
-    if signal_type == "target":
+    if signal_type == "portfolio_target_achieved":
         master_csv_path = Path(output_base_dir) / "portfolio_target_achieved" / "all_targets.csv"
     
     processed = 0
@@ -506,8 +506,8 @@ def convert_signal_file_to_data_structure(
     signals_with_exit = 0
     signals_no_exit = 0
     
-    # Handle different column structures for signal vs target
-    if signal_type == "target":
+    # Handle different column structures for signal vs portfolio_target_achieved
+    if signal_type == "portfolio_target_achieved":
         # For target_signal.csv column order:
         # col 0: Function
         # col 1: "Symbol, Signal, Signal Date/Price[$]"
@@ -546,8 +546,8 @@ def convert_signal_file_to_data_structure(
             function_name = "UNKNOWN"
         
         # Parse symbol based on file type
-        if signal_type == "target":
-            # For targets, parse the compound column "Symbol, Signal, Signal Date/Price[$]"
+        if signal_type == "portfolio_target_achieved":
+            # For portfolio_target_achieved, parse the compound column "Symbol, Signal, Signal Date/Price[$]"
             symbol_data = row[symbol_column]
             if pd.notna(symbol_data):
                 symbol, signal_date, sig_type, price = parse_symbol_signal_column(symbol_data)
@@ -622,7 +622,7 @@ def convert_signal_file_to_data_structure(
         exit_date = None
         exit_price = None
         
-        if signal_type != "target" and exit_column and exit_column in row.index:
+        if signal_type != "portfolio_target_achieved" and exit_column and exit_column in row.index:
             exit_data = row[exit_column]
             if pd.notna(exit_data):
                 exit_date, exit_price = parse_exit_signal_column(exit_data)
@@ -644,8 +644,8 @@ def convert_signal_file_to_data_structure(
                 continue
         
         # Determine which folder and date to use based on signal type and exit date
-        if signal_type == "target":
-            # For targets, always use current date and target folder
+        if signal_type == "portfolio_target_achieved":
+            # For portfolio_target_achieved, always use current date and portfolio_target_achieved folder
             date_to_use = datetime.now().strftime("%Y-%m-%d")
             row_signal_type = "portfolio_target_achieved"
             output_base = Path(output_base_dir) / "portfolio_target_achieved"
@@ -685,8 +685,8 @@ def convert_signal_file_to_data_structure(
                 # For exit signals: Exit Signal Date, Symbol, Signal, Interval, Signal Date
                 row['Exit Signal Date'] = exit_date if exit_date else ""
                 row['Signal Date'] = signal_date if signal_date else ""
-        elif signal_type == "target":
-            # For targets, enrichment already done above before duplicate check
+        elif signal_type == "portfolio_target_achieved":
+            # For portfolio_target_achieved, enrichment already done above before duplicate check
             # All columns are already set, so no additional work needed here
             pass
         
@@ -699,8 +699,8 @@ def convert_signal_file_to_data_structure(
             if signal_type == "signal":
                 # For signals, we already extracted interval
                 signal_interval = row.get('Interval', 'Daily')
-            elif signal_type == "target":
-                # For targets, interval is in column 2
+            elif signal_type == "portfolio_target_achieved":
+                # For portfolio_target_achieved, interval is in column 2
                 signal_interval = row.get('Interval', 'Daily')
             else:
                 signal_interval = 'Daily'
@@ -743,7 +743,7 @@ def convert_signal_file_to_data_structure(
                 # Combine and deduplicate using the appropriate signal type
                 combined_df = pd.concat([existing_df, new_row_df], ignore_index=True)
                 # Map row_signal_type to deduplication signal_type
-                dedup_signal_type = "target" if row_signal_type == "portfolio_target_achieved" else row_signal_type
+                dedup_signal_type = "portfolio_target_achieved" if row_signal_type == "portfolio_target_achieved" else row_signal_type
                 combined_df = deduplicate_dataframe(combined_df, dedup_columns=None, signal_type=dedup_signal_type)
                 
                 # Save deduplicated data
@@ -758,12 +758,12 @@ def convert_signal_file_to_data_structure(
                 # Save the entire row as a new CSV
                 row_df = pd.DataFrame([row])
                 # Map row_signal_type to deduplication signal_type
-                dedup_signal_type = "target" if row_signal_type == "portfolio_target_achieved" else row_signal_type
+                dedup_signal_type = "portfolio_target_achieved" if row_signal_type == "portfolio_target_achieved" else row_signal_type
                 row_df = deduplicate_dataframe(row_df, dedup_columns=None, signal_type=dedup_signal_type)
                 row_df.to_csv(output_file, index=False)
                 
-                # For targets, add to master CSV
-                if signal_type == "target" and master_csv_path:
+                # For portfolio_target_achieved, add to master CSV
+                if signal_type == "portfolio_target_achieved" and master_csv_path:
                     add_to_master_targets(row, master_csv_path)
                 
                 processed += 1
@@ -777,14 +777,14 @@ def convert_signal_file_to_data_structure(
     print(f"Signal Type: {signal_type.upper()}")
     print(f"✓ Total rows processed: {processed}")
     print(f"⚠ Rows skipped: {skipped}")
-    if signal_type == "target":
+    if signal_type == "portfolio_target_achieved":
         print(f"🚫 Duplicates rejected: {duplicates_rejected}")
         print(f"   → Deduplication keys: Symbol, Target for which Price has achieved over 90 percent of gain %, Signal Date")
     if signal_type == "signal" and unconfirmed_skipped > 0:
         print(f"🚫 Unconfirmed entry signals skipped: {unconfirmed_skipped} (only 'is CONFIRMED' or 'was CONFIRMED' are processed)")
     print(f"✓ Unique assets: {len(created_symbols)}")
     print(f"✓ Unique functions: {len(created_functions)}")
-    if signal_type != "target":
+    if signal_type != "portfolio_target_achieved":
         print(f"\n📂 Folder Distribution:")
         print(f"   ✓ EXIT signals (completed trades): {signals_with_exit}")
         print(f"      → Stored in: chatbot/data/exit/{{asset}}/{{function}}/{{exit_date}}.csv")
@@ -799,7 +799,7 @@ def convert_signal_file_to_data_structure(
     if len(created_symbols) > 10:
         print(f"  ... and {len(created_symbols) - 10} more")
     
-    if signal_type == "target":
+    if signal_type == "portfolio_target_achieved":
         print(f"\n✓ Output structure: chatbot/data/portfolio_target_achieved/{{asset}}/{{function}}/YYYY-MM-DD.csv")
     else:
         print(f"\n✓ Output structures:")
@@ -1264,7 +1264,7 @@ def main():
     if target_file and target_file.exists():
         convert_signal_file_to_data_structure(
             input_file=target_file,
-            signal_type="target",
+            signal_type="portfolio_target_achieved",
             output_base_dir="chatbot/data",
             overwrite=False
         )
