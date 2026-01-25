@@ -119,7 +119,7 @@ def parse_sentiment(df):
                 buy_hold_sharpe = 0
         
         # Parse returns
-        returns_info = row.get('Backtested Returns(Win Trades) [%] (Best/Worst/Avg)', '')
+        returns_info = row.get('Backtested Returns(Win Trades) [%] (Max/Min/Avg)', '')
         returns_match = re.search(r'([0-9.]+)%/([0-9.]+)%/([0-9.]+)%', str(returns_info))
         
         if returns_match:

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
 Convert trading signal CSV files to chatbot data structure.
-Extracts Symbol and Signal Date from signal files and organizes them into:
-chatbot/data/{Symbol}/YYYY-MM-DD.csv
+Creates consolidated CSV files for efficient data access:
+chatbot/data/entry.csv, exit.csv, portfolio_target_achieved.csv, breadth.csv
 
 Features:
-- Automatic deduplication based on DEDUP_COLUMNS from .env
+- Automatic deduplication based on signal type and keys from .env
 - Prevents duplicate rows when appending to existing files
+- Folder structure creation disabled - uses consolidated CSVs only
 """
 
 import pandas as pd
@@ -280,27 +281,27 @@ def is_confirmed_signal(confirmation_status_value):
 def get_dedup_columns(signal_type="entry"):
     """
     Get deduplication columns based on signal type.
-    
+
     Different signal types use different deduplication keys:
-    - entry: Date, Symbol, Interval, Signal
-    - exit: Exit Signal Date, Symbol, Signal, Interval, Signal Date
-    - portfolio_target_achieved: Symbol, Signal, Interval, Signal Date, Target for which Price has achieved over 90 percent of gain %, Backtested Target Exit Date, Exit Signal Date/Price[$]
-    - breadth: Date
-    
+    - entry: Function, Symbol, Signal Type, Interval, Signal Open Price
+    - exit: Function, Symbol, Signal Type, Interval, Signal Date, Signal Open Price
+    - portfolio_target_achieved: Function, Symbol, Signal Type, Interval, Signal Open Price
+    - breadth: Function, Date
+
     Args:
         signal_type: Type of signal ('entry', 'exit', 'portfolio_target_achieved', 'breadth')
-    
+
     Returns:
         List of column names to use for deduplication
     """
     if signal_type == "entry":
-        dedup_cols_str = os.getenv("ENTRY_DEDUP_COLUMNS", "Date,Symbol,Interval,Signal")
+        dedup_cols_str = os.getenv("ENTRY_DEDUP_COLUMNS", "Function,Symbol,Interval,Signal,Signal Open Price")
     elif signal_type == "exit":
-        dedup_cols_str = os.getenv("EXIT_DEDUP_COLUMNS", "Exit Signal Date,Symbol,Signal,Interval,Signal Date")
+        dedup_cols_str = os.getenv("EXIT_DEDUP_COLUMNS", "Function,Symbol,Signal,Interval,Signal Date,Signal Open Price")
     elif signal_type == "portfolio_target_achieved":
-        dedup_cols_str = os.getenv("TARGET_DEDUP_COLUMNS", "Symbol,Signal,Interval,Signal Date,Target for which Price has achieved over 90 percent of gain %,Backtested Target Exit Date,Exit Signal Date/Price[$]")
+        dedup_cols_str = os.getenv("TARGET_DEDUP_COLUMNS", "Function,Symbol,Signal,Interval,Signal Open Price")
     elif signal_type == "breadth":
-        dedup_cols_str = os.getenv("BREADTH_DEDUP_COLUMNS", "Date")
+        dedup_cols_str = os.getenv("BREADTH_DEDUP_COLUMNS", "Function,Date")
     else:
         # Fallback to entry defaults
         dedup_cols_str = os.getenv("DEDUP_COLUMNS", "Date,Symbol,Interval,Signal")
@@ -399,39 +400,6 @@ def check_target_duplicate(row, master_csv_path):
         return False
 
 
-def add_to_master_targets(row, master_csv_path):
-    """
-    Add target signal to master CSV (all_targets.csv).
-    This maintains a complete record of all unique targets for deduplication.
-    
-    Args:
-        row: DataFrame row to add
-        master_csv_path: Path to all_targets.csv
-    """
-    import pandas as pd
-    from pathlib import Path
-    
-    master_file = Path(master_csv_path)
-    
-    try:
-        if master_file.exists():
-            # Read existing master file
-            master_df = pd.read_csv(master_file)
-            # Append new row
-            master_df = pd.concat([master_df, pd.DataFrame([row])], ignore_index=True)
-            print(f"  ✅ Added to master CSV: {row.get('Symbol', 'N/A')} (Total: {len(master_df)} targets)")
-        else:
-            # Create new master file
-            master_df = pd.DataFrame([row])
-            print(f"  ✅ Created master CSV with first target: {row.get('Symbol', 'N/A')}")
-        
-        # Save updated master file
-        master_df.to_csv(master_file, index=False)
-        
-    except Exception as e:
-        print(f"  ⚠ Error updating master targets: {e}")
-
-
 def convert_signal_file_to_data_structure(
     input_file,
     signal_type="signal",
@@ -482,20 +450,16 @@ def convert_signal_file_to_data_structure(
     
     # Parse each row
     # Note: For signals, we'll determine entry/exit folder per-row based on exit date
+    # NOTE: We now use consolidated CSVs, so folder creation is skipped to avoid creating unused directories
     if signal_type == "portfolio_target_achieved":
         output_base = Path(output_base_dir) / "portfolio_target_achieved"
-        output_base.mkdir(parents=True, exist_ok=True)
+        # output_base.mkdir(parents=True, exist_ok=True)  # Commented out - using CSVs only
     # For signals, we create both entry and exit folders
     elif signal_type == "signal":
         entry_base = Path(output_base_dir) / "entry"
         exit_base = Path(output_base_dir) / "exit"
-        entry_base.mkdir(parents=True, exist_ok=True)
-        exit_base.mkdir(parents=True, exist_ok=True)
-    
-    # For portfolio_target_achieved, set up master CSV path
-    master_csv_path = None
-    if signal_type == "portfolio_target_achieved":
-        master_csv_path = Path(output_base_dir) / "portfolio_target_achieved" / "all_targets.csv"
+        # entry_base.mkdir(parents=True, exist_ok=True)  # Commented out - using CSVs only
+        # exit_base.mkdir(parents=True, exist_ok=True)   # Commented out - using CSVs only
     
     processed = 0
     skipped = 0
@@ -566,39 +530,35 @@ def convert_signal_file_to_data_structure(
                 signal_date = datetime.now().strftime("%Y-%m-%d")
                 sig_type = ""
             
-            # For targets, enrich row with deduplication columns BEFORE duplicate check
+            # For targets, keep ALL columns from source but add deduplication enrichment
             # Extract Symbol, Signal, and Signal Date (already parsed above from col 1)
             row['Symbol'] = symbol if symbol else ""
             row['Signal'] = sig_type if sig_type else ""
             row['Signal Date'] = signal_date if signal_date else ""
-            
-            # Extract Interval (column 2)
-            interval_column = df.columns[2] if len(df.columns) > 2 else None
-            if interval_column and interval_column in row.index:
-                row['Interval'] = str(row[interval_column]).strip() if pd.notna(row[interval_column]) else ""
-            else:
-                row['Interval'] = ""
-            
-            # Extract "Exit Signal Date/Price[$]" (column 3)
-            exit_signal_column = df.columns[3] if len(df.columns) > 3 else None
-            if exit_signal_column and exit_signal_column in row.index:
-                row['Exit Signal Date/Price[$]'] = str(row[exit_signal_column]).strip() if pd.notna(row[exit_signal_column]) else ""
-            else:
-                row['Exit Signal Date/Price[$]'] = ""
-            
-            # Extract "Target for which Price has achieved over 90 percent of gain %" (column 4)
-            target_column = df.columns[4] if len(df.columns) > 4 else None
-            if target_column and target_column in row.index:
-                row['Target for which Price has achieved over 90 percent of gain %'] = str(row[target_column]).strip() if pd.notna(row[target_column]) else ""
-            else:
-                row['Target for which Price has achieved over 90 percent of gain %'] = ""
-            
-            # Extract "Backtested Target Exit Date" (column 5)
-            backtested_exit_column = df.columns[5] if len(df.columns) > 5 else None
-            if backtested_exit_column and backtested_exit_column in row.index:
-                row['Backtested Target Exit Date'] = str(row[backtested_exit_column]).strip() if pd.notna(row[backtested_exit_column]) else ""
-            else:
-                row['Backtested Target Exit Date'] = ""
+
+            # Ensure Interval column is properly named (it should already be there from source)
+            if 'Interval' not in row.index and len(df.columns) > 2:
+                interval_column = df.columns[2]
+                if interval_column in row.index:
+                    row['Interval'] = str(row[interval_column]).strip() if pd.notna(row[interval_column]) else ""
+
+            # Ensure Exit Signal Date/Price[$] column is properly named
+            if 'Exit Signal Date/Price[$]' not in row.index and len(df.columns) > 3:
+                exit_signal_column = df.columns[3]
+                if exit_signal_column in row.index:
+                    row['Exit Signal Date/Price[$]'] = str(row[exit_signal_column]).strip() if pd.notna(row[exit_signal_column]) else ""
+
+            # Ensure Target column is properly named
+            if 'Target for which Price has achieved over 90 percent of gain %' not in row.index and len(df.columns) > 4:
+                target_column = df.columns[4]
+                if target_column in row.index:
+                    row['Target for which Price has achieved over 90 percent of gain %'] = str(row[target_column]).strip() if pd.notna(row[target_column]) else ""
+
+            # Ensure Backtested Target Exit Date column is properly named
+            if 'Backtested Target Exit Date' not in row.index and len(df.columns) > 5:
+                backtested_exit_column = df.columns[5]
+                if backtested_exit_column in row.index:
+                    row['Backtested Target Exit Date'] = str(row[backtested_exit_column]).strip() if pd.notna(row[backtested_exit_column]) else ""
             
             # NOW check for duplicates after enrichment
             if master_csv_path:
@@ -693,39 +653,34 @@ def convert_signal_file_to_data_structure(
         # Add SignalType column to the row
         row['SignalType'] = row_signal_type
         
-        # Calculate and add Signal Open Price based on interval
-        if signal_type != "breadth":  # Breadth doesn't have signal open price
-            # Get interval for this signal
-            if signal_type == "signal":
-                # For signals, we already extracted interval
-                signal_interval = row.get('Interval', 'Daily')
-            elif signal_type == "portfolio_target_achieved":
-                # For portfolio_target_achieved, interval is in column 2
-                signal_interval = row.get('Interval', 'Daily')
-            else:
-                signal_interval = 'Daily'
-            
-            # Calculate correct interval-based open price
-            interval_open_price = get_interval_based_open_price(
-                symbol, 
-                signal_date, 
-                signal_interval
-            )
-            
-            if interval_open_price is not None:
-                row['Signal Open Price'] = f"{interval_open_price:.4f}"
-            else:
-                # Fallback to price from signal text if interval-based price not available
+        # Signal Open Price handling:
+        # 1. If trade_store data has 'Signal Open Price' column with value, keep it
+        # 2. Otherwise, use signal text price as fallback
+        if signal_type != "breadth":
+            if 'Signal Open Price' not in row.index or pd.isna(row.get('Signal Open Price')) or row.get('Signal Open Price') == '':
+                # No Signal Open Price in trade_store data, use fallback
                 if price is not None:
                     row['Signal Open Price'] = f"{price:.4f}"
                 else:
                     row['Signal Open Price'] = ""
+            else:
+                # Signal Open Price exists in trade_store, format it to 4 decimals
+                try:
+                    existing_price = float(row['Signal Open Price'])
+                    row['Signal Open Price'] = f"{existing_price:.4f}"
+                except (ValueError, TypeError):
+                    # Invalid value, use fallback
+                    if price is not None:
+                        row['Signal Open Price'] = f"{price:.4f}"
+                    else:
+                        row['Signal Open Price'] = ""
         
         # Create asset/function directory structure
         # Structure: data/{entry|exit|target}/{asset}/{function}/YYYY-MM-DD.csv
+        # NOTE: Directory creation skipped - now using consolidated CSVs only
         asset_dir = output_base / symbol
         function_dir = asset_dir / function_name
-        function_dir.mkdir(parents=True, exist_ok=True)
+        # function_dir.mkdir(parents=True, exist_ok=True)  # Commented out - using CSVs only
         
         created_symbols.add(symbol)
         created_functions.add(function_name)
@@ -748,6 +703,10 @@ def convert_signal_file_to_data_structure(
                 
                 # Save deduplicated data
                 combined_df.to_csv(output_file, index=False)
+                
+                # ALSO append to consolidated CSV
+                append_to_consolidated_csv(row, row_signal_type, output_base_dir)
+                
                 processed += 1
             except Exception as e:
                 print(f"  ⚠ Error appending to {output_file}: {e}")
@@ -762,9 +721,8 @@ def convert_signal_file_to_data_structure(
                 row_df = deduplicate_dataframe(row_df, dedup_columns=None, signal_type=dedup_signal_type)
                 row_df.to_csv(output_file, index=False)
                 
-                # For portfolio_target_achieved, add to master CSV
-                if signal_type == "portfolio_target_achieved" and master_csv_path:
-                    add_to_master_targets(row, master_csv_path)
+                # Append to consolidated CSV (replaces old add_to_master_targets approach)
+                append_to_consolidated_csv(row, row_signal_type, output_base_dir)
                 
                 processed += 1
             except Exception as e:
@@ -779,7 +737,7 @@ def convert_signal_file_to_data_structure(
     print(f"⚠ Rows skipped: {skipped}")
     if signal_type == "portfolio_target_achieved":
         print(f"🚫 Duplicates rejected: {duplicates_rejected}")
-        print(f"   → Deduplication keys: Symbol, Target for which Price has achieved over 90 percent of gain %, Signal Date")
+        print(f"   → Deduplication keys: Function, Symbol, Signal Type, Interval, Signal Open Price")
     if signal_type == "signal" and unconfirmed_skipped > 0:
         print(f"🚫 Unconfirmed entry signals skipped: {unconfirmed_skipped} (only 'is CONFIRMED' or 'was CONFIRMED' are processed)")
     print(f"✓ Unique assets: {len(created_symbols)}")
@@ -788,10 +746,10 @@ def convert_signal_file_to_data_structure(
         print(f"\n📂 Folder Distribution:")
         print(f"   ✓ EXIT signals (completed trades): {signals_with_exit}")
         print(f"      → Stored in: chatbot/data/exit/{{asset}}/{{function}}/{{exit_date}}.csv")
-        print(f"      → Deduplication keys: Exit Signal Date, Symbol, Signal, Interval, Signal Date")
+        print(f"      → Deduplication keys: Function, Symbol, Signal Type, Interval, Signal Date, Signal Open Price")
         print(f"   ✓ ENTRY signals (confirmed open positions): {signals_no_exit}")
         print(f"      → Stored in: chatbot/data/entry/{{asset}}/{{function}}/{{signal_date}}.csv")
-        print(f"      → Deduplication keys: Date, Symbol, Interval, Signal")
+        print(f"      → Deduplication keys: Function, Symbol, Signal Type, Interval, Signal Open Price")
         if unconfirmed_skipped > 0:
             print(f"   ⚠ Unconfirmed entry signals filtered out: {unconfirmed_skipped}")
     print(f"\n✓ Functions: {', '.join(sorted(list(created_functions)))}")
@@ -800,11 +758,13 @@ def convert_signal_file_to_data_structure(
         print(f"  ... and {len(created_symbols) - 10} more")
     
     if signal_type == "portfolio_target_achieved":
-        print(f"\n✓ Output structure: chatbot/data/portfolio_target_achieved/{{asset}}/{{function}}/YYYY-MM-DD.csv")
+        print(f"\n✓ Consolidated CSV updated: chatbot/data/portfolio_target_achieved.csv")
+        print(f"   (Folder structure creation disabled - using CSVs only)")
     else:
-        print(f"\n✓ Output structures:")
-        print(f"   - chatbot/data/entry/{{asset}}/{{function}}/YYYY-MM-DD.csv")
-        print(f"   - chatbot/data/exit/{{asset}}/{{function}}/YYYY-MM-DD.csv")
+        print(f"\n✓ Consolidated CSVs updated:")
+        print(f"   - chatbot/data/entry.csv")
+        print(f"   - chatbot/data/exit.csv")
+        print(f"   (Folder structure creation disabled - using CSVs only)")
     print("="*80 + "\n")
     
     return processed, skipped, created_symbols
@@ -953,6 +913,152 @@ def calculate_price_change_percentage(current_price, signal_price):
             
     except Exception as e:
         return "0.0% below"
+
+
+def append_to_consolidated_csv(row, signal_type, data_base_dir="chatbot/data"):
+    """
+    Update or insert signal row in consolidated CSV file.
+    
+    CRITICAL LOGIC:
+    1. If key exists → UPDATE existing row with new data
+    2. If key is new → INSERT new row and set Signal First Origination Date
+    3. Signal Open Price comes from trade_store (already in row data)
+    
+    Consolidated files:
+    - chatbot/data/entry.csv (open positions)
+    - chatbot/data/exit.csv (completed trades)
+    - chatbot/data/portfolio_target_achieved.csv (target achievements)
+    - chatbot/data/breadth.csv (market breadth)
+    
+    Args:
+        row: Pandas Series with signal data (from trade_store)
+        signal_type: 'entry', 'exit', 'portfolio_target_achieved', or 'breadth'
+        data_base_dir: Base directory for data (default: chatbot/data)
+    """
+    try:
+        # Determine consolidated CSV path based on signal type
+        csv_path = Path(data_base_dir) / f"{signal_type}.csv"
+        
+        # Prepare new row DataFrame
+        new_row_df = pd.DataFrame([row])
+        
+        # Rename columns from trade_store format to chatbot format (now both use Max/Min/Avg)
+        column_mapping = {
+            'Backtested Returns(Win Trades) [%] (Max/Min/Avg)': 'Backtested Returns(Win Trades) [%] (Max/Min/Avg)',
+            'Backtested Max Loss [%], Backtested Min Single MTM during Hold Period [%]': 'Backtested Max Loss [%], Backtested Min Single MTM during Hold Period [%]',
+            'Backtested Holding Period(Win Trades) (days) (Max/Min/Avg)': 'Backtested Holding Period(Win Trades) (days) (Max/Min/Avg)',
+            'Target Exit Date(Win Trades) (Max/Min/Avg.)': 'Target Exit Date(Win Trades) (Max/Min/Avg.)',
+            'Targets (Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/EMA 200) [$]': 'Targets (Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/EMA 200) [$]'
+        }
+        new_row_df = new_row_df.rename(columns=column_mapping)
+        
+        # Helper: Extract dedup key based on signal type
+        def get_dedup_key(row_data, sig_type):
+            """Extract deduplication key columns based on signal type"""
+            signal_col = row_data.get("Symbol, Signal, Signal Date/Price[$]", "")
+            interval_col = row_data.get("Interval, Confirmation Status", "")
+            
+            if sig_type == "entry":
+                # Key: Function + Symbol + Signal Type + Interval + Signal Open Price
+                function = row_data.get("Function", "").strip()
+                match_signal = re.search(r'^([^,]+),\s*([^,]+),', str(signal_col))
+                match_interval = re.search(r'^([^,]+)', str(interval_col))
+                symbol = match_signal.group(1).strip() if match_signal else ""
+                signal_type_val = match_signal.group(2).strip() if match_signal else ""
+                interval = match_interval.group(1).strip() if match_interval else ""
+                signal_open_price = row_data.get("Signal Open Price", "").strip()
+                return (function, symbol, signal_type_val, interval, signal_open_price)
+                
+            elif sig_type == "exit":
+                # Key: Function + Symbol + Signal Type + Interval + Signal Date + Signal Open Price
+                function = row_data.get("Function", "").strip()
+                match_signal = re.search(r'^([^,]+),\s*([^,]+),\s*(\d{4}-\d{2}-\d{2})', str(signal_col))
+                match_interval = re.search(r'^([^,]+)', str(interval_col))
+                symbol = match_signal.group(1).strip() if match_signal else ""
+                signal_type_val = match_signal.group(2).strip() if match_signal else ""
+                signal_date = match_signal.group(3).strip() if match_signal else ""
+                interval = match_interval.group(1).strip() if match_interval else ""
+                signal_open_price = row_data.get("Signal Open Price", "").strip()
+                return (function, symbol, signal_type_val, interval, signal_date, signal_open_price)
+                
+            elif sig_type == "portfolio_target_achieved":
+                # Key: Function + Symbol + Signal Type + Interval + Signal Open Price
+                function = row_data.get("Function", "").strip()
+                match_signal = re.search(r'^([^,]+),\s*([^,]+),', str(signal_col))
+                match_interval = re.search(r'^([^,]+)', str(interval_col))
+                symbol = match_signal.group(1).strip() if match_signal else ""
+                signal_type_val = match_signal.group(2).strip() if match_signal else ""
+                interval = match_interval.group(1).strip() if match_interval else ""
+                signal_open_price = row_data.get("Signal Open Price", "").strip()
+                return (function, symbol, signal_type_val, interval, signal_open_price)
+
+            elif sig_type == "breadth":
+                # Key: Function + Date
+                function = row_data.get("Function", "").strip()
+                date_col = row_data.get("Date", "")
+                match = re.search(r'(\d{4}-\d{2}-\d{2})', str(date_col))
+                date_val = match.group(1) if match else ""
+                return (function, date_val)
+
+            return None
+        
+        # Get dedup key for new row
+        new_key = get_dedup_key(row, signal_type)
+        
+        # Read existing CSV if it exists
+        if csv_path.exists():
+            existing_df = pd.read_csv(csv_path)
+            
+            # Find if key already exists
+            key_exists = False
+            existing_row_idx = None
+            
+            for idx, existing_row in existing_df.iterrows():
+                existing_key = get_dedup_key(existing_row, signal_type)
+                if existing_key == new_key:
+                    key_exists = True
+                    existing_row_idx = idx
+                    break
+            
+            if key_exists:
+                # UPDATE: Key exists → preserve Signal First Origination Date, update all other columns
+                if 'Signal First Origination Date' in existing_df.columns and 'Signal First Origination Date' in new_row_df.columns:
+                    # Preserve the EXISTING Signal First Origination Date
+                    preserved_first_date = existing_df.at[existing_row_idx, 'Signal First Origination Date']
+                    new_row_df.at[0, 'Signal First Origination Date'] = preserved_first_date
+                
+                # Update the existing row with new data
+                for col in new_row_df.columns:
+                    existing_df.at[existing_row_idx, col] = new_row_df.at[0, col]
+                
+                combined_df = existing_df
+            else:
+                # INSERT: New key → set Signal First Origination Date to signal date
+                if 'Signal First Origination Date' not in new_row_df.columns:
+                    # Extract signal date from "Symbol, Signal, Signal Date/Price[$]" column
+                    signal_col = row.get("Symbol, Signal, Signal Date/Price[$]", "")
+                    match = re.search(r'(\d{4}-\d{2}-\d{2})', str(signal_col))
+                    signal_date = match.group(1) if match else datetime.now().strftime("%Y-%m-%d")
+                    new_row_df['Signal First Origination Date'] = signal_date
+                
+                # Append new row
+                combined_df = pd.concat([existing_df, new_row_df], ignore_index=True)
+        else:
+            # File doesn't exist yet → INSERT new row
+            if 'Signal First Origination Date' not in new_row_df.columns:
+                # Extract signal date from "Symbol, Signal, Signal Date/Price[$]" column
+                signal_col = row.get("Symbol, Signal, Signal Date/Price[$]", "")
+                match = re.search(r'(\d{4}-\d{2}-\d{2})', str(signal_col))
+                signal_date = match.group(1) if match else datetime.now().strftime("%Y-%m-%d")
+                new_row_df['Signal First Origination Date'] = signal_date
+            
+            combined_df = new_row_df
+        
+        # Write back to consolidated CSV
+        combined_df.to_csv(csv_path, index=False, encoding='utf-8')
+        
+    except Exception as e:
+        print(f"  ⚠ Error updating consolidated CSV {csv_path}: {e}")
 
 
 def update_current_prices_in_data_files(data_base_dir="chatbot/data", stock_data_dir="trade_store/stock_data"):
@@ -1161,7 +1267,7 @@ def convert_breadth_report(
     
     # Create breadth directory
     breadth_dir = Path(output_base_dir) / "breadth"
-    breadth_dir.mkdir(parents=True, exist_ok=True)
+    # breadth_dir.mkdir(parents=True, exist_ok=True)  # Commented out - using CSVs only
     
     # Use current date for filename and add Date column
     current_date = datetime.now().strftime("%Y-%m-%d")
@@ -1176,6 +1282,11 @@ def convert_breadth_report(
         print(f"✓ Saved breadth report to: {output_file}")
         print(f"✓ Functions in report: {len(df)}")
         print(f"✓ Columns: {', '.join(df.columns.tolist())}")
+        
+        # ALSO append to consolidated breadth.csv
+        for _, row in df.iterrows():
+            append_to_consolidated_csv(row, "breadth", output_base_dir)
+        
         processed = 1
         skipped = 0
     except Exception as e:
@@ -1188,6 +1299,7 @@ def convert_breadth_report(
     print("-"*80)
     print(f"✓ Report saved: {output_file.name}")
     print(f"✓ Total functions: {len(df)}")
+    print(f"✓ Consolidated CSV: chatbot/data/breadth.csv (automatically updated)")
     print("="*80 + "\n")
     
     return processed, skipped
@@ -1201,11 +1313,12 @@ def main():
     print("="*80 + "\n")
     
     print("This script converts trading CSV files to the chatbot data structure.")
-    print("Structure:")
-    print("  - chatbot/data/entry/{asset}/{function}/YYYY-MM-DD.csv (open positions)")
-    print("  - chatbot/data/exit/{asset}/{function}/YYYY-MM-DD.csv (completed trades)")
-    print("  - chatbot/data/portfolio_target_achieved/{asset}/{function}/YYYY-MM-DD.csv (portfolio target achieved)")
-    print("  - chatbot/data/breadth/YYYY-MM-DD.csv (market breadth)\n")
+    print("Structure (Consolidated CSV Approach):")
+    print("  - chatbot/data/entry.csv (all open positions)")
+    print("  - chatbot/data/exit.csv (all completed trades)")
+    print("  - chatbot/data/portfolio_target_achieved.csv (all portfolio target achieved)")
+    print("  - chatbot/data/breadth.csv (all market breadth data)")
+    print("Note: Folder structure creation is disabled - using consolidated CSVs only.\n")
     
     # Convert outstanding_signal.csv (signals)
     # Handle both naming conventions: outstanding_signal.csv and YYYY-MM-DD_outstanding_signal.csv
@@ -1319,8 +1432,11 @@ def main():
     print("  2. EXIT:    chatbot/data/exit/{asset}/{function}/YYYY-MM-DD.csv")
     print("  3. TARGET:  chatbot/data/portfolio_target_achieved/{asset}/{function}/YYYY-MM-DD.csv")
     print("  4. BREADTH: chatbot/data/breadth/YYYY-MM-DD.csv")
-    print("\nMaster files:")
-    print("  - chatbot/data/portfolio_target_achieved/all_targets.csv (portfolio target deduplication)")
+    print("\nConsolidated files:")
+    print("  - chatbot/data/entry.csv")
+    print("  - chatbot/data/exit.csv")
+    print("  - chatbot/data/portfolio_target_achieved.csv")
+    print("  - chatbot/data/breadth.csv")
     print("\n✓ Current prices updated from live stock data")
     print()
 

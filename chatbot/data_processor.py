@@ -1,12 +1,13 @@
 """
 Data processor for loading and filtering CSV data based on user parameters.
-New structure: chatbot/data/{ticker_name}/YYYY-MM-DD.csv
+CSV-Only Structure: Uses consolidated CSV files (entry.csv, exit.csv, portfolio_target_achieved.csv, breadth.csv)
+instead of hierarchical folder structure.
 """
 
 import pandas as pd
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Set
 import logging
 
 from .config import (
@@ -29,48 +30,225 @@ logger = logging.getLogger(__name__)
 
 
 class DataProcessor:
-    """Handles loading and processing of CSV data for chatbot queries."""
-    
+    """Handles loading and processing of CSV data for chatbot queries using consolidated CSV files."""
+
     def __init__(self, use_new_structure: bool = True):
         """
         Initialize DataProcessor.
-        
+
         Args:
-            use_new_structure: If True, uses chatbot/data/{entry|exit|portfolio_target_achieved|breadth} structure.
+            use_new_structure: If True, uses consolidated CSV files in chatbot/data/ (entry.csv, exit.csv, portfolio_target_achieved.csv, breadth.csv).
                              If False, uses legacy trade_store/stock_data structure.
         """
         self.use_new_structure = use_new_structure
         self.chatbot_data_dir = Path(CHATBOT_DATA_DIR)
-        self.entry_data_dir = Path(CHATBOT_ENTRY_DIR)
-        self.exit_data_dir = Path(CHATBOT_EXIT_DIR)
-        self.target_data_dir = Path(CHATBOT_TARGET_DIR)
-        self.breadth_data_dir = Path(CHATBOT_BREADTH_DIR)
         self.stock_data_dir = Path(STOCK_DATA_DIR)
-        
+
+        # Cache for consolidated CSV files to avoid repeated loading
+        self._csv_cache = {}
+        self._cache_timestamp = {}
+
+        # Consolidated CSV file paths
+        self.entry_csv = self.chatbot_data_dir / "entry.csv"
+        self.exit_csv = self.chatbot_data_dir / "exit.csv"
+        self.portfolio_csv = self.chatbot_data_dir / "portfolio_target_achieved.csv"
+        self.breadth_csv = self.chatbot_data_dir / "breadth.csv"
+
+    def _load_csv_cached(self, csv_path: Path) -> Optional[pd.DataFrame]:
+        """
+        Load CSV file with caching to improve performance.
+        Automatically reloads if file has been modified since last cache.
+
+        Args:
+            csv_path: Path to CSV file
+
+        Returns:
+            DataFrame or None if file doesn't exist or can't be loaded
+        """
+        if not csv_path.exists():
+            return None
+
+        # Check if file has been modified since last cache
+        current_mtime = csv_path.stat().st_mtime
+        cache_key = str(csv_path)
+
+        if (cache_key in self._csv_cache and
+            cache_key in self._cache_timestamp and
+            self._cache_timestamp[cache_key] >= current_mtime):
+            # Use cached version
+            return self._csv_cache[cache_key]
+
+        # Load and cache the file
+        try:
+            df = pd.read_csv(csv_path, encoding=CSV_ENCODING)
+            self._csv_cache[cache_key] = df
+            self._cache_timestamp[cache_key] = current_mtime
+            logger.debug(f"Loaded and cached {csv_path.name}: {len(df)} rows")
+            return df
+        except Exception as e:
+            logger.error(f"Error loading CSV {csv_path}: {e}")
+            return None
+
+    def _extract_symbol_from_compound_column(self, compound_value: str) -> Optional[str]:
+        """
+        Extract symbol from compound column like "AAPL, Long, 2026-01-16 (Price: 193.89)"
+
+        Args:
+            compound_value: Compound column value
+
+        Returns:
+            Symbol string or None if parsing fails
+        """
+        if not compound_value or pd.isna(compound_value):
+            return None
+
+        try:
+            # Split by comma and take first part
+            parts = str(compound_value).split(',')
+            if parts:
+                return parts[0].strip()
+        except Exception as e:
+            logger.warning(f"Error parsing symbol from compound column '{compound_value}': {e}")
+
+        return None
+
+    def _filter_dataframe_by_ticker(self, df: pd.DataFrame, ticker: str) -> pd.DataFrame:
+        """
+        Filter DataFrame to include only rows for the specified ticker.
+
+        Args:
+            df: DataFrame to filter
+            ticker: Ticker symbol to filter by
+
+        Returns:
+            Filtered DataFrame
+        """
+        if df is None or df.empty:
+            return pd.DataFrame()
+
+        # Try Symbol column first
+        if 'Symbol' in df.columns:
+            return df[df['Symbol'] == ticker]
+        # Fall back to compound column
+        elif "Symbol, Signal, Signal Date/Price[$]" in df.columns:
+            return df[df["Symbol, Signal, Signal Date/Price[$]"].apply(
+                lambda x: self._extract_symbol_from_compound_column(x) == ticker
+            )]
+        else:
+            # No way to filter by ticker
+            logger.warning(f"No Symbol column found in DataFrame, cannot filter by ticker {ticker}")
+            return pd.DataFrame()
+
+    def _filter_dataframe_by_functions(self, df: pd.DataFrame, functions: List[str]) -> pd.DataFrame:
+        """
+        Filter DataFrame to include only rows for the specified functions.
+
+        Args:
+            df: DataFrame to filter
+            functions: List of function names to filter by
+
+        Returns:
+            Filtered DataFrame
+        """
+        if df is None or df.empty or not functions:
+            return df
+
+        if 'Function' in df.columns:
+            return df[df['Function'].isin(functions)]
+        else:
+            logger.warning("No Function column found in DataFrame, cannot filter by functions")
+            return df
+
+    def _filter_dataframe_by_date_range(self, df: pd.DataFrame, from_date: Optional[str], to_date: Optional[str]) -> pd.DataFrame:
+        """
+        Filter DataFrame to include only rows within the specified date range.
+
+        Args:
+            df: DataFrame to filter
+            from_date: Start date in YYYY-MM-DD format (optional)
+            to_date: End date in YYYY-MM-DD format (optional)
+
+        Returns:
+            Filtered DataFrame
+        """
+        if df is None or df.empty or (not from_date and not to_date):
+            return df
+
+        # Try different date columns
+        date_columns = ['Signal First Origination Date', 'Date']
+
+        for date_col in date_columns:
+            if date_col in df.columns:
+                # Convert to datetime if not already
+                if not pd.api.types.is_datetime64_any_dtype(df[date_col]):
+                    df = df.copy()
+                    df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+
+                # Apply date filters
+                filtered_df = df.copy()
+
+                if from_date:
+                    from_dt = pd.to_datetime(from_date)
+                    filtered_df = filtered_df[filtered_df[date_col] >= from_dt]
+
+                if to_date:
+                    to_dt = pd.to_datetime(to_date)
+                    filtered_df = filtered_df[filtered_df[date_col] <= to_dt]
+
+                return filtered_df
+
+        # No date column found
+        logger.warning("No date column found in DataFrame, cannot filter by date range")
+        return df
+
     def get_available_tickers(self) -> List[str]:
         """
-        Get list of available ticker/asset symbols from entry, exit, and portfolio_target_achieved folders.
-        
+        Get list of available ticker/asset symbols from consolidated CSV files.
+
         Returns:
             List of ticker symbols
         """
         try:
             if self.use_new_structure:
-                # Get folder names from entry/, exit/, and portfolio_target_achieved/
+                # Get unique symbols from consolidated CSV files
                 tickers = set()
-                
-                if self.entry_data_dir.exists():
-                    entry_tickers = [d.name for d in self.entry_data_dir.iterdir() if d.is_dir()]
-                    tickers.update(entry_tickers)
-                
-                if self.exit_data_dir.exists():
-                    exit_tickers = [d.name for d in self.exit_data_dir.iterdir() if d.is_dir()]
-                    tickers.update(exit_tickers)
-                
-                if self.target_data_dir.exists():
-                    target_tickers = [d.name for d in self.target_data_dir.iterdir() if d.is_dir()]
-                    tickers.update(target_tickers)
-                
+
+                # Load entry.csv and extract symbols
+                entry_df = self._load_csv_cached(self.entry_csv)
+                if entry_df is not None and not entry_df.empty:
+                    if 'Symbol' in entry_df.columns:
+                        symbols = entry_df['Symbol'].dropna().unique()
+                        tickers.update(symbols)
+                    # Also check compound column if Symbol column not available
+                    elif "Symbol, Signal, Signal Date/Price[$]" in entry_df.columns:
+                        compound_symbols = entry_df["Symbol, Signal, Signal Date/Price[$]"].dropna().apply(self._extract_symbol_from_compound_column)
+                        valid_symbols = compound_symbols.dropna().unique()
+                        tickers.update(valid_symbols)
+
+                # Load exit.csv and extract symbols
+                exit_df = self._load_csv_cached(self.exit_csv)
+                if exit_df is not None and not exit_df.empty:
+                    if 'Symbol' in exit_df.columns:
+                        symbols = exit_df['Symbol'].dropna().unique()
+                        tickers.update(symbols)
+                    # Also check compound column if Symbol column not available
+                    elif "Symbol, Signal, Signal Date/Price[$]" in exit_df.columns:
+                        compound_symbols = exit_df["Symbol, Signal, Signal Date/Price[$]"].dropna().apply(self._extract_symbol_from_compound_column)
+                        valid_symbols = compound_symbols.dropna().unique()
+                        tickers.update(valid_symbols)
+
+                # Load portfolio_target_achieved.csv and extract symbols
+                portfolio_df = self._load_csv_cached(self.portfolio_csv)
+                if portfolio_df is not None and not portfolio_df.empty:
+                    if 'Symbol' in portfolio_df.columns:
+                        symbols = portfolio_df['Symbol'].dropna().unique()
+                        tickers.update(symbols)
+                    # Also check compound column if Symbol column not available
+                    elif "Symbol, Signal, Signal Date/Price[$]" in portfolio_df.columns:
+                        compound_symbols = portfolio_df["Symbol, Signal, Signal Date/Price[$]"].dropna().apply(self._extract_symbol_from_compound_column)
+                        valid_symbols = compound_symbols.dropna().unique()
+                        tickers.update(valid_symbols)
+
                 return sorted(list(tickers))
             else:
                 # Legacy: Get CSV files from trade_store/stock_data/
@@ -83,92 +261,127 @@ class DataProcessor:
     
     def get_available_functions(self, ticker: Optional[str] = None) -> List[str]:
         """
-        Get list of available function names from entry, exit, and portfolio_target_achieved folders.
-        
+        Get list of available function names from consolidated CSV files.
+
         Args:
             ticker: Optional ticker to get functions for. If None, gets all unique functions.
-            
+
         Returns:
             List of function names
         """
         try:
             if not self.use_new_structure:
                 return []
-            
+
             functions = set()
-            
-            if ticker:
-                # Get functions for specific ticker from entry, exit, and portfolio_target_achieved
-                for base_dir in [self.entry_data_dir, self.exit_data_dir, self.target_data_dir]:
-                    if base_dir.exists():
-                        ticker_dir = base_dir / ticker
-                        if ticker_dir.exists():
-                            function_dirs = [d.name for d in ticker_dir.iterdir() if d.is_dir()]
-                            functions.update(function_dirs)
-                return sorted(list(functions))
-            else:
-                # Get all unique functions across all tickers from entry, exit, and portfolio_target_achieved
-                for base_dir in [self.entry_data_dir, self.exit_data_dir, self.target_data_dir]:
-                    if base_dir.exists():
-                        for ticker_dir in base_dir.iterdir():
-                            if ticker_dir.is_dir():
-                                for function_dir in ticker_dir.iterdir():
-                                    if function_dir.is_dir():
-                                        functions.add(function_dir.name)
-                
-                return sorted(list(functions))
+
+            # Helper function to extract functions from a dataframe
+            def extract_functions_from_df(df: pd.DataFrame, ticker_filter: Optional[str] = None) -> Set[str]:
+                if df is None or df.empty:
+                    return set()
+
+                funcs = set()
+
+                # Filter by ticker if specified
+                if ticker_filter:
+                    if 'Symbol' in df.columns:
+                        filtered_df = df[df['Symbol'] == ticker_filter]
+                    elif "Symbol, Signal, Signal Date/Price[$]" in df.columns:
+                        # Filter by compound column
+                        filtered_df = df[df["Symbol, Signal, Signal Date/Price[$]"].apply(
+                            lambda x: self._extract_symbol_from_compound_column(x) == ticker_filter
+                        )]
+                    else:
+                        return set()
+                else:
+                    filtered_df = df
+
+                # Extract unique functions
+                if 'Function' in filtered_df.columns:
+                    unique_funcs = filtered_df['Function'].dropna().unique()
+                    funcs.update(unique_funcs)
+
+                return funcs
+
+            # Get functions from all relevant CSV files
+            csv_files = [self.entry_csv, self.exit_csv, self.portfolio_csv]
+
+            for csv_file in csv_files:
+                df = self._load_csv_cached(csv_file)
+                funcs_from_file = extract_functions_from_df(df, ticker)
+                functions.update(funcs_from_file)
+
+            return sorted(list(functions))
         except Exception as e:
             logger.error(f"Error getting available functions: {e}")
             return []
     
     def get_available_dates_for_ticker(
-        self, 
-        ticker: str, 
+        self,
+        ticker: str,
         function: Optional[str] = None
     ) -> List[str]:
         """
-        Get list of available dates for a specific ticker and function from entry, exit, and portfolio_target_achieved folders.
-        
+        Get list of available dates for a specific ticker and function from consolidated CSV files.
+
         Args:
             ticker: Ticker/asset symbol
             function: Function name (optional). If None, gets dates across all functions.
-            
+
         Returns:
             List of date strings in YYYY-MM-DD format
         """
         try:
             dates = set()
-            
-            # Check entry, exit, and portfolio_target_achieved directories
-            for base_dir in [self.entry_data_dir, self.exit_data_dir, self.target_data_dir]:
-                if not base_dir.exists():
-                    continue
-                    
-                ticker_dir = base_dir / ticker
-                if not ticker_dir.exists():
-                    continue
-                
-                if function:
-                    # Get dates for specific function
-                    function_dir = ticker_dir / function
-                    if not function_dir.exists():
-                        continue
-                    csv_files = list(function_dir.glob("*.csv"))
+
+            # Helper function to extract dates from a dataframe
+            def extract_dates_from_df(df: pd.DataFrame, ticker_filter: str, function_filter: Optional[str] = None) -> Set[str]:
+                if df is None or df.empty:
+                    return set()
+
+                extracted_dates = set()
+
+                # Filter by ticker
+                if 'Symbol' in df.columns:
+                    ticker_filtered_df = df[df['Symbol'] == ticker_filter]
+                elif "Symbol, Signal, Signal Date/Price[$]" in df.columns:
+                    # Filter by compound column
+                    ticker_filtered_df = df[df["Symbol, Signal, Signal Date/Price[$]"].apply(
+                        lambda x: self._extract_symbol_from_compound_column(x) == ticker_filter
+                    )]
                 else:
-                    # Get dates across all functions
-                    csv_files = list(ticker_dir.rglob("*.csv"))
-                
-                # Extract dates from filenames (YYYY-MM-DD.csv)
-                for f in csv_files:
-                    date_str = f.stem
-                    # Validate date format
-                    try:
-                        datetime.strptime(date_str, DATE_FORMAT)
-                        dates.add(date_str)
-                    except ValueError:
-                        logger.warning(f"Invalid date format in filename: {f.name}")
-                        continue
-            
+                    return set()
+
+                # Filter by function if specified
+                if function_filter and 'Function' in ticker_filtered_df.columns:
+                    filtered_df = ticker_filtered_df[ticker_filtered_df['Function'] == function_filter]
+                else:
+                    filtered_df = ticker_filtered_df
+
+                # Extract dates from "Signal First Origination Date" column
+                if 'Signal First Origination Date' in filtered_df.columns:
+                    date_values = filtered_df['Signal First Origination Date'].dropna().unique()
+                    for date_val in date_values:
+                        try:
+                            # Ensure it's a valid date string
+                            if isinstance(date_val, str):
+                                datetime.strptime(str(date_val), DATE_FORMAT)
+                                extracted_dates.add(str(date_val))
+                            elif hasattr(date_val, 'strftime'):  # datetime object
+                                extracted_dates.add(date_val.strftime(DATE_FORMAT))
+                        except (ValueError, AttributeError):
+                            continue
+
+                return extracted_dates
+
+            # Get dates from all relevant CSV files
+            csv_files = [self.entry_csv, self.exit_csv, self.portfolio_csv]
+
+            for csv_file in csv_files:
+                df = self._load_csv_cached(csv_file)
+                dates_from_file = extract_dates_from_df(df, ticker, function)
+                dates.update(dates_from_file)
+
             return sorted(list(dates))
         except Exception as e:
             logger.error(f"Error getting available dates for {ticker}: {e}")
@@ -210,210 +423,149 @@ class DataProcessor:
         signal_types: Optional[List[str]] = None
     ) -> Dict[str, pd.DataFrame]:
         """
-        Load stock data from new structure: chatbot/data/{entry|exit|portfolio_target_achieved}/{asset}/{function}/YYYY-MM-DD.csv
-        Loads from entry/exit and/or portfolio target achieved folders based on signal_types parameter.
-        
+        Load stock data from consolidated CSV files: entry.csv, exit.csv, portfolio_target_achieved.csv
+        Filters data based on tickers, date range, functions, and signal types.
+
         Args:
             tickers: List of ticker/asset symbols
             from_date: Start date in YYYY-MM-DD format
             to_date: End date in YYYY-MM-DD format
             dedup_columns: Columns to use for deduplication (placeholder)
             functions: List of function names to filter (None = all functions)
-            signal_types: List of signal types - controls which folders to load from:
-                         - ['entry_exit'] → load from entry/exit folders
-                        - ['portfolio_target_achieved'] → load from portfolio_target_achieved/ folder only
-                         - None or [] → load from all folders (fallback)
-            
+            signal_types: List of signal types - controls which CSV files to load from:
+                         - ['entry'] → load from entry.csv only
+                         - ['exit'] → load from exit.csv only
+                         - ['portfolio_target_achieved'] → load from portfolio_target_achieved.csv only
+                         - None or [] → load from all CSV files (fallback)
+
         Returns:
             Dictionary mapping ticker to combined DataFrame
         """
         if dedup_columns is None:
             dedup_columns = DEDUP_COLUMNS
-        
+
         result = {}
-        
+
         for ticker in tickers:
             try:
-                # Determine which functions to load
-                if functions:
-                    # User specified functions - use only those
-                    functions_to_load = functions
-                    logger.info(f"Loading specific functions for {ticker}: {functions_to_load}")
-                else:
-                    # No functions specified - load ALL available functions
-                    functions_to_load = self.get_available_functions(ticker)
-                    logger.info(f"No functions specified - loading ALL {len(functions_to_load)} functions for {ticker}")
-                
-                if not functions_to_load:
-                    logger.warning(f"No functions found for asset: {ticker}")
-                    continue
-                
-                # Determine which directories to load from based on signal_types
-                base_dirs_to_load = []
+                logger.info(f"Loading data for ticker: {ticker}")
+
+                # Determine which CSV files to load from based on signal_types
+                csv_files_to_load = []
                 if signal_types:
-                    if 'entry' in signal_types:
-                        base_dirs_to_load.append(('entry', self.entry_data_dir))
-                    if 'exit' in signal_types:
-                        base_dirs_to_load.append(('exit', self.exit_data_dir))
+                    if 'entry' in signal_types or 'entry_exit' in signal_types:
+                        csv_files_to_load.append(('entry', self.entry_csv))
+                    if 'exit' in signal_types or 'entry_exit' in signal_types:
+                        csv_files_to_load.append(('exit', self.exit_csv))
                     if 'portfolio_target_achieved' in signal_types:
-                        base_dirs_to_load.append(('portfolio_target_achieved', self.target_data_dir))
-                    # Note: breadth is handled separately, not asset-specific
-                    logger.info(f"Loading based on signal_types {signal_types}: {[name for name, _ in base_dirs_to_load]}")
+                        csv_files_to_load.append(('portfolio_target_achieved', self.portfolio_csv))
+                    logger.info(f"Loading based on signal_types {signal_types}: {[name for name, _ in csv_files_to_load]}")
                 else:
-                    # No signal_types specified - load from entry, exit, and portfolio_target_achieved (fallback)
-                    base_dirs_to_load = [
-                        ('entry', self.entry_data_dir),
-                        ('exit', self.exit_data_dir),
-                        ('portfolio_target_achieved', self.target_data_dir)
+                    # No signal_types specified - load from all CSV files (fallback)
+                    csv_files_to_load = [
+                        ('entry', self.entry_csv),
+                        ('exit', self.exit_csv),
+                        ('portfolio_target_achieved', self.portfolio_csv)
                     ]
-                    logger.info(f"No signal_types specified - loading from entry, exit, and portfolio_target_achieved folders")
-                
-                # Load data for each function from selected folders
+                    logger.info("No signal_types specified - loading from entry, exit, and portfolio_target_achieved CSV files")
+
                 all_dfs = []
-                for function_name in functions_to_load:
-                    # Load from selected directories
-                    for dir_name, base_dir in base_dirs_to_load:
-                        if not base_dir.exists():
+
+                # Load and filter data from each CSV file
+                for data_type, csv_file in csv_files_to_load:
+                    df = self._load_csv_cached(csv_file)
+                    if df is None or df.empty:
+                        logger.debug(f"CSV file {csv_file.name} not found or empty")
+                        continue
+
+                    # Filter by ticker
+                    filtered_df = self._filter_dataframe_by_ticker(df, ticker)
+                    if filtered_df.empty:
+                        logger.debug(f"No data found for ticker {ticker} in {csv_file.name}")
+                        continue
+
+                    # Filter by functions if specified
+                    if functions:
+                        filtered_df = self._filter_dataframe_by_functions(filtered_df, functions)
+                        if filtered_df.empty:
+                            logger.debug(f"No data found for functions {functions} in {csv_file.name}")
                             continue
-                            
-                        ticker_dir = base_dir / ticker
-                        if not ticker_dir.exists():
-                            continue
-                            
-                        function_dir = ticker_dir / function_name
-                        if not function_dir.exists():
-                            continue
-                        
-                        # Get available dates for this ticker/function
-                        available_dates = self.get_available_dates_for_ticker(ticker, function_name)
-                        
-                        if not available_dates:
-                            continue
-                        
-                        # Filter dates by from_date and to_date
-                        dates_to_load = available_dates
-                        if from_date:
-                            dates_to_load = [d for d in dates_to_load if d >= from_date]
-                        if to_date:
-                            dates_to_load = [d for d in dates_to_load if d <= to_date]
-                        
-                        if not dates_to_load:
-                            continue
-                        
-                        # Determine data type based on directory name
-                        data_type = dir_name  # 'entry', 'exit', or 'portfolio_target_achieved'
-                        
-                        # Load all CSV files for the date range and function
-                        for date_str in dates_to_load:
-                            file_path = function_dir / f"{date_str}.csv"
-                            
-                            if not file_path.exists():
-                                continue
-                            
-                            try:
-                                df = pd.read_csv(file_path, encoding=CSV_ENCODING)
-                                
-                                # Check if DataFrame is empty
-                                if df.empty:
-                                    logger.warning(f"Empty CSV file: {file_path}")
-                                    continue
-                                
-                                # Add ticker column if not present
-                                if 'Symbol' not in df.columns and 'Ticker' not in df.columns:
-                                    df['Symbol'] = ticker
-                                elif 'Ticker' in df.columns and 'Symbol' not in df.columns:
-                                    # Rename Ticker to Symbol for consistency
-                                    df['Symbol'] = df['Ticker']
-                                
-                                # Add date column if not present
-                                if 'Date' not in df.columns:
-                                    df['Date'] = date_str
-                                
-                                # Add function column if not present
-                                if 'Function' not in df.columns:
-                                    df['Function'] = function_name
-                                
-                                # Add data type column
-                                df['DataType'] = data_type
-                                
-                                # Ensure all string columns are properly encoded
-                                for col in df.columns:
-                                    if df[col].dtype == 'object':
-                                        # Convert to string and handle any encoding issues
-                                        df[col] = df[col].astype(str).replace('nan', pd.NA)
-                                
-                                all_dfs.append(df)
-                                logger.debug(f"Loaded {len(df)} rows from {file_path}")
-                                
-                            except UnicodeDecodeError as e:
-                                logger.error(f"Encoding error loading file {file_path}: {e}. Trying with errors='ignore'")
-                                try:
-                                    df = pd.read_csv(file_path, encoding=CSV_ENCODING, encoding_errors='ignore')
-                                    # Apply same processing as above
-                                    if 'Symbol' not in df.columns and 'Ticker' not in df.columns:
-                                        df['Symbol'] = ticker
-                                    elif 'Ticker' in df.columns and 'Symbol' not in df.columns:
-                                        df['Symbol'] = df['Ticker']
-                                    if 'Date' not in df.columns:
-                                        df['Date'] = date_str
-                                    if 'Function' not in df.columns:
-                                        df['Function'] = function_name
-                                    df['DataType'] = data_type
-                                    all_dfs.append(df)
-                                except Exception as e2:
-                                    logger.error(f"Failed to load file {file_path} even with encoding errors='ignore': {e2}")
-                                    continue
-                            except Exception as e:
-                                logger.error(f"Error loading file {file_path}: {e}")
-                                import traceback
-                                logger.error(traceback.format_exc())
-                                continue
-                
+
+                    # Filter by date range
+                    filtered_df = self._filter_dataframe_by_date_range(filtered_df, from_date, to_date)
+                    if filtered_df.empty:
+                        logger.debug(f"No data found in date range {from_date} to {to_date} in {csv_file.name}")
+                        continue
+
+                    # Add data type column
+                    filtered_df = filtered_df.copy()  # Avoid SettingWithCopyWarning
+                    filtered_df['DataType'] = data_type
+
+                    # Ensure Symbol column exists (extract from compound column if needed)
+                    if 'Symbol' not in filtered_df.columns:
+                        if "Symbol, Signal, Signal Date/Price[$]" in filtered_df.columns:
+                            filtered_df['Symbol'] = filtered_df["Symbol, Signal, Signal Date/Price[$]"].apply(
+                                self._extract_symbol_from_compound_column
+                            )
+                        else:
+                            filtered_df['Symbol'] = ticker
+
+                    # Ensure Date column exists (use Signal First Origination Date)
+                    if 'Date' not in filtered_df.columns and 'Signal First Origination Date' in filtered_df.columns:
+                        filtered_df['Date'] = filtered_df['Signal First Origination Date']
+
+                    # Ensure all string columns are properly encoded
+                    for col in filtered_df.columns:
+                        if filtered_df[col].dtype == 'object':
+                            filtered_df[col] = filtered_df[col].astype(str).replace('nan', pd.NA)
+
+                    all_dfs.append(filtered_df)
+                    logger.debug(f"Loaded {len(filtered_df)} rows for {ticker} from {csv_file.name}")
+
                 if not all_dfs:
                     logger.warning(f"No valid data loaded for ticker: {ticker}")
                     continue
-                
+
                 # Combine all dataframes
                 combined_df = pd.concat(all_dfs, ignore_index=True)
-                
+
                 # Convert Date column to datetime if present
                 if 'Date' in combined_df.columns:
-                    combined_df['Date'] = pd.to_datetime(combined_df['Date'])
-                
+                    combined_df['Date'] = pd.to_datetime(combined_df['Date'], errors='coerce')
+
                 # Remove duplicates based on specified columns
-                # Placeholder: Use the columns specified in config or parameter
                 available_dedup_cols = [col for col in dedup_columns if col in combined_df.columns]
-                
+
                 if available_dedup_cols:
                     original_count = len(combined_df)
                     combined_df = combined_df.drop_duplicates(subset=available_dedup_cols, keep='first')
                     removed_count = original_count - len(combined_df)
-                    
+
                     if removed_count > 0:
                         logger.info(f"Removed {removed_count} duplicate rows for {ticker} based on columns: {available_dedup_cols}")
                 else:
                     logger.warning(f"No deduplication columns found for {ticker}. Available columns: {combined_df.columns.tolist()}")
-                
+
                 # Sort by date if Date column exists (LATEST FIRST)
                 if 'Date' in combined_df.columns:
                     combined_df = combined_df.sort_values('Date', ascending=False)
-                elif 'LoadedDate' in combined_df.columns:
-                    combined_df = combined_df.sort_values('LoadedDate', ascending=False)
-                
+                elif 'Signal First Origination Date' in combined_df.columns:
+                    combined_df = combined_df.sort_values('Signal First Origination Date', ascending=False)
+
                 # Limit rows if too many - KEEP LATEST DATA
                 if len(combined_df) > MAX_ROWS_TO_INCLUDE:
                     logger.info(f"Limiting {ticker} data from {len(combined_df)} to {MAX_ROWS_TO_INCLUDE} rows (keeping latest)")
-                    # Keep the most recent rows
                     combined_df = combined_df.head(MAX_ROWS_TO_INCLUDE)
-                
+
                 result[ticker] = combined_df
-                
+                logger.info(f"Successfully loaded {len(combined_df)} rows for {ticker}")
+
             except Exception as e:
                 logger.error(f"Error loading data for {ticker}: {e}")
                 import traceback
                 traceback.print_exc()
                 continue
-        
+
         return result
     
     def load_stock_data_legacy(
@@ -521,134 +673,68 @@ class DataProcessor:
         to_date: Optional[str] = None
     ) -> Optional[pd.DataFrame]:
         """
-        Load breadth report data for the specified date range.
+        Load breadth report data for the specified date range from breadth.csv.
         Breadth data is market-wide (not asset-specific).
-        Loads ALL breadth files within the date range and combines them.
-        
+
         Args:
             from_date: Start date in YYYY-MM-DD format
             to_date: End date in YYYY-MM-DD format
-            
+
         Returns:
-            Combined DataFrame with breadth data from all dates in range, or None if no data found
+            Filtered DataFrame with breadth data in the date range, or None if no data found
         """
-        if not self.breadth_data_dir.exists():
-            logger.warning(f"Breadth directory not found: {self.breadth_data_dir}")
+        # Load the breadth CSV file
+        df = self._load_csv_cached(self.breadth_csv)
+        if df is None or df.empty:
+            logger.warning(f"Breadth CSV file not found or empty: {self.breadth_csv}")
             return None
-        
-        # Get all CSV files in breadth directory
-        csv_files = list(self.breadth_data_dir.glob("*.csv"))
-        
-        if not csv_files:
-            logger.warning("No breadth reports found")
-            return None
-        
-        # Filter by date range
-        files_to_load = []
-        for file_path in csv_files:
-            file_date = file_path.stem  # filename without extension (YYYY-MM-DD)
-            
-            # Validate date format
-            try:
-                datetime.strptime(file_date, DATE_FORMAT)
-            except ValueError:
-                logger.warning(f"Invalid date format in breadth file: {file_path.name}")
-                continue
-            
-            # Check if date is within range
-            include_file = True
-            if from_date and file_date < from_date:
-                include_file = False
-            if to_date and file_date > to_date:
-                include_file = False
-            
-            if include_file:
-                files_to_load.append((file_date, file_path))
-        
-        if not files_to_load:
+
+        # Filter by date range using the Date column
+        filtered_df = self._filter_dataframe_by_date_range(df, from_date, to_date)
+
+        if filtered_df.empty:
             logger.info(f"No breadth reports found in date range {from_date} to {to_date}")
             return None
-        
-        # Sort by date (oldest first to maintain chronological order)
-        files_to_load.sort()
-        
-        # Load ALL breadth reports in the date range and combine them
-        all_dfs = []
-        for file_date, file_path in files_to_load:
-            try:
-                df = pd.read_csv(file_path, encoding=CSV_ENCODING)
-                
-                # Check if DataFrame is empty
-                if df.empty:
-                    logger.warning(f"Empty breadth CSV file: {file_path}")
-                    continue
-                
-                # Ensure Date column is set to the file date
-                df['Date'] = file_date
-                df['DataType'] = 'breadth'
-            
-                all_dfs.append(df)
-                logger.debug(f"Loaded breadth report from {file_date}: {len(df)} functions")
-                
-            except UnicodeDecodeError as e:
-                logger.error(f"Encoding error loading breadth file {file_path}: {e}. Trying with errors='ignore'")
-                try:
-                    df = pd.read_csv(file_path, encoding=CSV_ENCODING, encoding_errors='ignore')
-                    if not df.empty:
-                        df['Date'] = file_date
-                        df['DataType'] = 'breadth'
-                        all_dfs.append(df)
-                except Exception as e2:
-                    logger.error(f"Failed to load breadth file {file_path} even with encoding errors='ignore': {e2}")
-                    continue
-            except Exception as e:
-                logger.error(f"Error loading breadth report {file_path}: {e}")
-                import traceback
-                logger.error(traceback.format_exc())
-                continue
-        
-        if not all_dfs:
-            logger.warning(f"No valid breadth data loaded for date range {from_date} to {to_date}")
-            return None
-        
-        # Combine all dataframes
-        combined_df = pd.concat(all_dfs, ignore_index=True)
-        
+
+        # Ensure DataType column is set
+        filtered_df = filtered_df.copy()
+        filtered_df['DataType'] = 'breadth'
+
         # Convert Date column to datetime if present
-        if 'Date' in combined_df.columns:
-            combined_df['Date'] = pd.to_datetime(combined_df['Date'])
-        
+        if 'Date' in filtered_df.columns:
+            filtered_df['Date'] = pd.to_datetime(filtered_df['Date'], errors='coerce')
+
         # Sort by date (oldest first to show chronological progression)
-        if 'Date' in combined_df.columns:
-            combined_df = combined_df.sort_values('Date', ascending=True)
-        
+        if 'Date' in filtered_df.columns:
+            filtered_df = filtered_df.sort_values('Date', ascending=True)
+
         # Limit rows if too many - but keep all dates in range
-        if len(combined_df) > MAX_ROWS_TO_INCLUDE:
-            logger.info(f"Breadth data has {len(combined_df)} rows (limit: {MAX_ROWS_TO_INCLUDE}), but keeping all dates in range")
+        if len(filtered_df) > MAX_ROWS_TO_INCLUDE:
+            logger.info(f"Breadth data has {len(filtered_df)} rows (limit: {MAX_ROWS_TO_INCLUDE}), but keeping all dates in range")
             # Still apply limit but try to keep representative data across all dates
-            # For breadth, we want to keep all dates, so we might need to sample within each date
-            if 'Date' in combined_df.columns:
+            if 'Date' in filtered_df.columns:
                 # Group by date and sample if needed
-                dates = combined_df['Date'].unique()
+                dates = filtered_df['Date'].unique()
                 rows_per_date = MAX_ROWS_TO_INCLUDE // len(dates) if len(dates) > 0 else MAX_ROWS_TO_INCLUDE
                 sampled_dfs = []
                 for date in dates:
-                    date_df = combined_df[combined_df['Date'] == date]
+                    date_df = filtered_df[filtered_df['Date'] == date]
                     if len(date_df) > rows_per_date:
                         # Sample rows for this date
                         sampled_df = date_df.sample(n=rows_per_date, random_state=42)
                         sampled_dfs.append(sampled_df)
                     else:
                         sampled_dfs.append(date_df)
-                combined_df = pd.concat(sampled_dfs, ignore_index=True)
+                filtered_df = pd.concat(sampled_dfs, ignore_index=True)
             else:
                 # No date column, just take first MAX_ROWS_TO_INCLUDE
-                combined_df = combined_df.head(MAX_ROWS_TO_INCLUDE)
-        
-        logger.info(f"Loaded and combined breadth reports from {len(files_to_load)} dates: {len(combined_df)} total rows")
-        logger.info(f"Date range: {combined_df['Date'].min()} to {combined_df['Date'].max()}")
-        
-        return combined_df
+                filtered_df = filtered_df.head(MAX_ROWS_TO_INCLUDE)
+
+        logger.info(f"Loaded breadth data: {len(filtered_df)} rows from date range {from_date} to {to_date}")
+        if 'Date' in filtered_df.columns and not filtered_df['Date'].empty:
+            logger.info(f"Date range in results: {filtered_df['Date'].min()} to {filtered_df['Date'].max()}")
+
+        return filtered_df
     
     def estimate_token_count(self, text: str) -> int:
         """

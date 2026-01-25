@@ -453,20 +453,31 @@ def render_chatbot_page():
                     
                     # Display response
                     st.markdown(response)
-                    
-                    # Display full signal tables if available
-                    full_signal_tables = metadata.get('full_signal_tables', {})
-                    if full_signal_tables:
-                        st.markdown("### 📊 Complete Signal Data Used in Analysis")
-                        
-                        for signal_type, signal_df in full_signal_tables.items():
-                            if not signal_df.empty:
-                                st.markdown(f"#### {get_signal_type_label(signal_type, uppercase=True)} Signals ({len(signal_df)} records)")
-                                display_styled_dataframe(
-                                    signal_df, 
-                                    height=min(400, (len(signal_df) + 1) * 40),
-                                    key_suffix=f"analysis_{signal_type}"
-                                )
+
+                    # Display Smart Query Details with signal data
+                    if metadata.get('input_type') in ['smart_query', 'smart_followup'] or metadata.get('selected_signal_types'):
+                        with st.expander("📊 Smart Query Details", expanded=False):
+                            # Show signal types and reasoning
+                            signal_types_meta = metadata.get('selected_signal_types', selected_signal_types)
+                            if signal_types_meta:
+                                st.markdown(f"**AI Signal Types:** {', '.join(get_signal_type_label(sig) for sig in signal_types_meta)}")
+                                if ai_reason:
+                                    st.caption(f"💡 {ai_reason}")
+
+                            # Display full signal tables if available
+                            full_signal_tables = metadata.get('full_signal_tables', {})
+                            if full_signal_tables:
+                                st.markdown("---")
+                                st.subheader("📊 Complete Signal Data Used in Analysis")
+
+                                for signal_type, signal_df in full_signal_tables.items():
+                                    if not signal_df.empty:
+                                        st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)} Signals** ({len(signal_df)} records)")
+                                        display_styled_dataframe(
+                                            signal_df,
+                                            height=min(400, (len(signal_df) + 1) * 40),
+                                            key_suffix=f"analysis_{signal_type}"
+                                        )
                     
                     # Add to history
                     st.session_state.chat_history.append({
@@ -535,20 +546,28 @@ def render_chatbot_page():
                     
                     # Display response
                     st.markdown(response)
-                    
-                    # Display full signal tables if available
-                    full_signal_tables = metadata.get('full_signal_tables', {})
-                    if full_signal_tables:
-                        st.markdown("### 📊 Complete Signal Data Used in Analysis")
-                        
-                        for signal_type, signal_df in full_signal_tables.items():
-                            if not signal_df.empty:
-                                st.markdown(f"#### {get_signal_type_label(signal_type, uppercase=True)} Signals ({len(signal_df)} records)")
-                                display_styled_dataframe(
-                                    signal_df, 
-                                    height=min(400, (len(signal_df) + 1) * 40),
-                                    key_suffix=f"insights_{signal_type}"
-                                )
+
+                    # Display Smart Query Details with signal data
+                    with st.expander("📊 Smart Query Details", expanded=False):
+                        # Show signal types and reasoning
+                        st.markdown(f"**AI Signal Types:** {get_signal_type_label(selected_signal_types[0])}")
+                        if ai_reason:
+                            st.caption(f"💡 {ai_reason}")
+
+                        # Display full signal tables if available
+                        full_signal_tables = metadata.get('full_signal_tables', {})
+                        if full_signal_tables:
+                            st.markdown("---")
+                            st.subheader("📊 Complete Signal Data Used in Analysis")
+
+                            for signal_type, signal_df in full_signal_tables.items():
+                                if not signal_df.empty:
+                                    st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)} Signals** ({len(signal_df)} records)")
+                                    display_styled_dataframe(
+                                        signal_df,
+                                        height=min(400, (len(signal_df) + 1) * 40),
+                                        key_suffix=f"insights_{signal_type}"
+                                    )
                     
                     # Add to history
                     st.session_state.chat_history.append({
@@ -665,8 +684,8 @@ def render_chatbot_page():
     
     col1, col2 = st.sidebar.columns(2)
     
-    # Set default dates (last 2 months)
-    default_from_date = datetime.now() - timedelta(days=60)
+    # Set default dates (last 1 month)
+    default_from_date = datetime.now() - timedelta(days=30)
     default_to_date = datetime.now()
     
     with col1:
@@ -970,58 +989,9 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
             else:
                 with st.chat_message("assistant"):
                     st.markdown(message['content'])
-                    
-                    # Display full signal tables if available
-                    msg_metadata = message.get('metadata', {})
-                    full_signal_tables = msg_metadata.get('full_signal_tables', {})
-                    
-                    if full_signal_tables:
-                        st.markdown("### 📊 Complete Signal Data Used in Analysis")
-                        
-                        # Display each signal type in separate sections
-                        for signal_type, signal_df in full_signal_tables.items():
-                            if not signal_df.empty:
-                                st.markdown(f"#### {get_signal_type_label(signal_type, uppercase=True)} Signals ({len(signal_df)} records)")
-                                
-                                # Display the complete table with all columns and enhanced styling
-                                display_styled_dataframe(
-                                    signal_df, 
-                                    height=min(350, (len(signal_df) + 1) * 40),  # Adaptive height for history
-                                    key_suffix=f"history_{signal_type}"
-                                )
-                                
-                                # Show summary info (same as new responses)
-                                col1, col2, col3 = st.columns(3)
-                                with col1:
-                                    st.metric("Records", len(signal_df))
-                                with col2:
-                                    try:
-                                        # Try to extract symbols from various columns
-                                        symbols_found = set()
-                                        for col in signal_df.columns:
-                                            if any(keyword in col.lower() for keyword in ['symbol', 'asset']):
-                                                symbols = signal_df[col].astype(str).str.extract(r'([A-Z]{2,5})').dropna()
-                                                symbols_found.update(symbols.iloc[:, 0].tolist() if not symbols.empty else [])
-                                        unique_symbols = len(symbols_found) if symbols_found else "N/A"
-                                    except:
-                                        unique_symbols = "N/A"
-                                    st.metric("Unique Symbols", unique_symbols)
-                                with col3:
-                                    st.metric("Total Columns", len(signal_df.columns))
-                    
-                    else:
-                        # Fallback to legacy simple table
-                        signals_df = _coerce_to_dataframe(msg_metadata.get('signals_table'))
-                        if signals_df is not None and not signals_df.empty:
-                            with st.expander(f"Signals Referenced ({len(signals_df)} signals)", expanded=False):
-                                # Use styled dataframe for legacy tables too
-                                display_styled_dataframe(
-                                    signals_df,
-                                    height=300,
-                                    key_suffix="legacy"
-                                )
-                    
+
                     # Show metadata
+                    msg_metadata = message.get('metadata', {})
                     # Check if it's a smart query or smart followup
                     if msg_metadata.get('input_type') in ['smart_query', 'smart_followup']:
                         with st.expander("📊 Smart Query Details", expanded=False):
@@ -1055,6 +1025,43 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
                             with col3:
                                 total_tokens = msg_metadata.get('tokens_used', {}).get('total', 0)
                                 st.metric("Tokens Used", f"{total_tokens:,}")
+
+                            # Display full signal tables if available
+                            full_signal_tables = msg_metadata.get('full_signal_tables', {})
+                            if full_signal_tables:
+                                st.markdown("---")
+                                st.subheader("📊 Complete Signal Data Used in Analysis")
+
+                                # Display each signal type in separate sections
+                                for signal_type, signal_df in full_signal_tables.items():
+                                    if not signal_df.empty:
+                                        st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)} Signals** ({len(signal_df)} records)")
+
+                                        # Display the complete table with all columns and enhanced styling
+                                        display_styled_dataframe(
+                                            signal_df,
+                                            height=min(350, (len(signal_df) + 1) * 40),  # Adaptive height for history
+                                            key_suffix=f"smart_{signal_type}"
+                                        )
+
+                                        # Show summary info
+                                        col1, col2, col3 = st.columns(3)
+                                        with col1:
+                                            st.metric("Records", len(signal_df))
+                                        with col2:
+                                            try:
+                                                # Try to extract symbols from various columns
+                                                symbols_found = set()
+                                                for col in signal_df.columns:
+                                                    if any(keyword in col.lower() for keyword in ['symbol', 'asset']):
+                                                        symbols = signal_df[col].astype(str).str.extract(r'([A-Z]{2,5})').dropna()
+                                                        symbols_found.update(symbols.iloc[:, 0].tolist() if not symbols.empty else [])
+                                                unique_symbols = len(symbols_found) if symbols_found else "N/A"
+                                            except:
+                                                unique_symbols = "N/A"
+                                            st.metric("Unique Symbols", unique_symbols)
+                                        with col3:
+                                            st.metric("Total Columns", len(signal_df.columns))
                     
                     # Show batch processing metadata for old query() method
                     elif msg_metadata.get('batch_processing_used'):
@@ -1136,142 +1143,70 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
                     
                     # Display response
                     st.markdown(response)
-                    
-                    # Display full signal tables with all columns if available
-                    full_signal_tables = metadata.get('full_signal_tables', {})
-                    if full_signal_tables:
-                        st.markdown("### 📊 Complete Signal Data Used in Analysis")
-                        
-                        # Display each signal type in separate sections
-                        for signal_type, signal_df in full_signal_tables.items():
-                            if not signal_df.empty:
-                                st.markdown(f"#### {get_signal_type_label(signal_type, uppercase=True)} Signals ({len(signal_df)} records)")
-                                
-                                # Display the complete table with all columns and enhanced styling
-                                display_styled_dataframe(
-                                    signal_df, 
-                                    height=min(400, (len(signal_df) + 1) * 40),  # Adaptive height for new responses
-                                    key_suffix=f"new_{signal_type}"
-                                )
-                                
-                                # Show summary info
-                                col1, col2, col3 = st.columns(3)
-                                with col1:
-                                    st.metric("Records", len(signal_df))
-                                with col2:
-                                    try:
-                                        # Try to extract symbols from various columns
-                                        symbols_found = set()
-                                        for col in signal_df.columns:
-                                            if any(keyword in col.lower() for keyword in ['symbol', 'asset']):
-                                                symbols = signal_df[col].astype(str).str.extract(r'([A-Z]{2,5})').dropna()
-                                                symbols_found.update(symbols.iloc[:, 0].tolist() if not symbols.empty else [])
-                                        unique_symbols = len(symbols_found) if symbols_found else "N/A"
-                                    except:
-                                        unique_symbols = "N/A"
-                                    st.metric("Unique Symbols", unique_symbols)
-                                with col3:
-                                    st.metric("Total Columns", len(signal_df.columns))
-                    
-                    else:
-                        # Fallback to legacy simple table if full tables not available
-                        signals_df = _coerce_to_dataframe(metadata.get('signals_table'))
-                        if signals_df is not None and not signals_df.empty:
-                            # Reorder columns: Symbol/Signal first, Exit Signal second, Function third
-                            from ..utils.helpers import reorder_dataframe_columns, find_column_by_keywords
-                            signals_df = reorder_dataframe_columns(signals_df)
-                            
-                            # Find Symbol and Exit Signal columns for pinning
-                            symbol_col = find_column_by_keywords(signals_df.columns, ['Symbol, Signal', 'Symbol'])
-                            if not symbol_col:
-                                for col in signals_df.columns:
-                                    if 'Symbol' in col and 'Signal' in col and 'Exit' not in col:
-                                        symbol_col = col
-                                        break
-                            exit_col = find_column_by_keywords(signals_df.columns, ['Exit Signal Date', 'Exit Signal', 'Exit'])
-                            
-                            # Build column config with pinning and autosize for ALL columns
-                            column_config = {}
-                            for col in signals_df.columns:
-                                # Pin if it's Symbol or Exit column
-                                if col == symbol_col or col == exit_col:
-                                    # Handle DateColumn for Signal_Date
-                                    if col == "Signal_Date":
-                                        column_config[col] = st.column_config.DateColumn(
-                                            col,
-                                            pinned="left"
-                                            # No width parameter = autosize
-                                        )
-                                    else:
-                                        column_config[col] = st.column_config.TextColumn(
-                                            col,
-                                            pinned="left"
-                                            # No width parameter = autosize
-                                        )
-                                else:
-                                    # Handle DateColumn for Signal_Date
-                                    if col == "Signal_Date":
-                                        column_config[col] = st.column_config.DateColumn(
-                                            col
-                                            # No width parameter = autosize
-                                        )
-                                    else:
-                                        column_config[col] = st.column_config.TextColumn(
-                                            col
-                                            # No width parameter = autosize
-                                        )
-                            
-                            st.markdown("### 📊 Signals Referenced in Analysis")
-                            st.dataframe(
-                                signals_df,
-                                width='stretch',
-                                hide_index=True,
-                                column_config=column_config
-                            )
-                            st.caption(f"📈 {len(signals_df)} signal(s) were used to generate this analysis")
-                    
+
+                    # Display Smart Query Details with signal data
+                    with st.expander("📊 Smart Query Details", expanded=False):
+                        # Show signal types and reasoning
+                        st.markdown(f"**AI Signal Types:** {', '.join(get_signal_type_label(sig) for sig in selected_signal_types)}")
+                        if ai_reason:
+                            st.caption(f"💡 {ai_reason}")
+
+                        # Display full signal tables if available
+                        full_signal_tables = metadata.get('full_signal_tables', {})
+                        if full_signal_tables:
+                            st.markdown("---")
+                            st.subheader("📊 Complete Signal Data Used in Analysis")
+
+                            for signal_type, signal_df in full_signal_tables.items():
+                                if not signal_df.empty:
+                                    st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)} Signals** ({len(signal_df)} records)")
+                                    display_styled_dataframe(
+                                        signal_df,
+                                        height=min(400, (len(signal_df) + 1) * 40),
+                                        key_suffix=f"smart_{signal_type}"
+                                    )
+
                     # Show smart query metadata
                     input_type = metadata.get('input_type', '')
-                    
+
                     if input_type in ['smart_query', 'smart_followup']:
-                        with st.expander("📊 Smart Query Details", expanded=False):
-                            selection_list = metadata.get('selected_signal_types', [])
-                            selection_reason = metadata.get('signal_type_reasoning', '')
-                            if selection_list:
-                                st.markdown(f"**AI Signal Types:** {', '.join(get_signal_type_label(sig) for sig in selection_list)}")
-                                if selection_reason:
-                                    st.caption(f"💡 {selection_reason}")
-                            # Show column selection per signal type
-                            st.subheader("🎯 Column Selection by Signal Type")
-                            
-                            columns_by_type = metadata.get('columns_by_signal_type', {})
-                            reasoning_by_type = metadata.get('reasoning_by_signal_type', {})
-                            
-                            for signal_type in metadata.get('selected_signal_types', []):
-                                if signal_type in columns_by_type:
-                                    cols = columns_by_type[signal_type]
-                                    reasoning = reasoning_by_type.get(signal_type, '')
-                                    
-                                    # Simple display - same for all queries
-                                    st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)}** ({len(cols)} columns)")
-                                    st.caption(f"💡 {reasoning}")
-                                    
-                                    with st.expander(f"View {signal_type} columns"):
-                                        for col in cols:
-                                            st.text(f"  • {col}")
-                            
-                            # Show data statistics - same format for all queries
-                            col1, col2, col3 = st.columns(3)
-                            
-                            with col1:
-                                st.metric("Rows Fetched", metadata.get('rows_fetched', 0))
-                            with col2:
-                                signal_types_count = len(metadata.get('signal_types_with_data', metadata.get('selected_signal_types', [])))
-                                st.metric("Signal Types", signal_types_count)
-                            with col3:
-                                total_tokens = metadata.get('tokens_used', {}).get('total', 0)
-                                st.metric("Tokens Used", f"{total_tokens:,}")
-                    
+                        selection_list = metadata.get('selected_signal_types', [])
+                        selection_reason = metadata.get('signal_type_reasoning', '')
+                        if selection_list:
+                            st.markdown(f"**AI Signal Types:** {', '.join(get_signal_type_label(sig) for sig in selection_list)}")
+                            if selection_reason:
+                                st.caption(f"💡 {selection_reason}")
+                        # Show column selection per signal type
+                        st.subheader("🎯 Column Selection by Signal Type")
+
+                        columns_by_type = metadata.get('columns_by_signal_type', {})
+                        reasoning_by_type = metadata.get('reasoning_by_signal_type', {})
+
+                        for signal_type in metadata.get('selected_signal_types', []):
+                            if signal_type in columns_by_type:
+                                cols = columns_by_type[signal_type]
+                                reasoning = reasoning_by_type.get(signal_type, '')
+
+                                # Simple display - same for all queries
+                                st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)}** ({len(cols)} columns)")
+                                st.caption(f"💡 {reasoning}")
+
+                                with st.expander(f"View {signal_type} columns"):
+                                    for col in cols:
+                                        st.text(f"  • {col}")
+
+                        # Show data statistics - same format for all queries
+                        col1, col2, col3 = st.columns(3)
+
+                        with col1:
+                            st.metric("Rows Fetched", metadata.get('rows_fetched', 0))
+                        with col2:
+                            signal_types_count = len(metadata.get('signal_types_with_data', metadata.get('selected_signal_types', [])))
+                            st.metric("Signal Types", signal_types_count)
+                        with col3:
+                            total_tokens = metadata.get('tokens_used', {}).get('total', 0)
+                            st.metric("Tokens Used", f"{total_tokens:,}")
+
                     # Add to history
                     st.session_state.chat_history.append({
                         'role': 'assistant',

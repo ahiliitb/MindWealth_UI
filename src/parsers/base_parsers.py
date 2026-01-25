@@ -81,7 +81,7 @@ def parse_signal_csv(df, function_name):
                 buy_hold_sharpe = 0
         
         # Parse returns
-        returns_info = row.get('Backtested Returns(Win Trades) [%] (Best/Worst/Avg)', '')
+        returns_info = row.get('Backtested Returns(Win Trades) [%] (Max/Min/Avg)', '')
         returns_match = re.search(r'([0-9.]+)%/([0-9.]+)%/([0-9.]+)%', str(returns_info))
         
         if returns_match:
@@ -207,7 +207,7 @@ def parse_detailed_signal_csv(df):
                     buy_hold_sharpe = 0
             
             # Parse returns
-            returns_info = row.get('Backtested Returns(Win Trades) [%] (Best/Worst/Avg)', '')
+            returns_info = row.get('Backtested Returns(Win Trades) [%] (Max/Min/Avg)', '')
             returns_match = re.search(r'([0-9.]+)%/([0-9.]+)%/([0-9.]+)%', str(returns_info))
             
             if returns_match:
@@ -286,15 +286,15 @@ def parse_performance_csv(df):
         except:
             num_trades = 0
         
-        # Extract average profit
-        profit_str = str(row.get('Profit [%] (Best/Worst/Avg.)', '0/0/0'))
-        profit_match = re.search(r'([0-9.-]+)%/([0-9.-]+)%/([0-9.-]+)%', profit_str)
-        
-        if profit_match:
+        # Extract backtested returns (Max/Min/Avg format)
+        returns_str = str(row.get('Backtested Returns(Win Trades) [%] (Max/Min/Avg)', '0/0/0'))
+        returns_match = re.search(r'([0-9.-]+)%/([0-9.-]+)%/([0-9.-]+)%', returns_str)
+
+        if returns_match:
             try:
-                best_return = float(profit_match.group(1))
-                worst_return = float(profit_match.group(2))
-                avg_return = float(profit_match.group(3))
+                best_return = float(returns_match.group(1))  # Max return
+                worst_return = float(returns_match.group(2))  # Min return
+                avg_return = float(returns_match.group(3))   # Avg return
             except:
                 best_return, worst_return, avg_return = 0, 0, 0
         else:

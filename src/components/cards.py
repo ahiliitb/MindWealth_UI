@@ -481,7 +481,7 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                             st.write(f"**Avg Holding Period:** N/A")
                         
                         # Extract average backtested return
-                        returns_info = raw_data.get('Backtested Returns(Win Trades) [%] (Best/Worst/Avg)', 'N/A')
+                        returns_info = raw_data.get('Backtested Returns(Win Trades) [%] (Max/Min/Avg)', 'N/A')
                         if '/' in str(returns_info):
                             avg_return = str(returns_info).split('/')[-1].strip()
                             st.write(f"**Avg Backtested Return:** {avg_return}")

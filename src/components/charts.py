@@ -5,7 +5,6 @@ Interactive chart components for trading strategies
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-import numpy as np
 from datetime import datetime, timedelta
 
 from ..utils.data_loader import load_stock_data_file
@@ -318,39 +317,12 @@ def create_interactive_chart(row_data, raw_data, exit_date=None, exit_price=None
         df_ohlc = load_stock_data_file(symbol, start_date_for_data, end_date_for_data, interval)
         
         if df_ohlc is None or df_ohlc.empty:
-            st.warning(f"No CSV data available for {symbol}. Using mock data for demonstration.")
-            # Fallback to mock data if CSV file not available
-            dates = pd.date_range(start=start_date_for_data, end=end_date_for_data, freq='D')
-            base_price = signal_price if signal_price else 50
-            
-            np.random.seed(42)
-            price_data = []
-            current_price = base_price
-            
-            for i, date in enumerate(dates):
-                trend = 0.0001 * np.sin(i / 30)
-                volatility = 0.02
-                change = np.random.normal(trend, volatility)
-                current_price *= (1 + change)
-                
-                daily_vol = abs(np.random.normal(0, 0.015))
-                high = current_price * (1 + daily_vol)
-                low = current_price * (1 - daily_vol)
-                open_price = current_price * (1 + np.random.normal(0, 0.005))
-                close_price = current_price * (1 + np.random.normal(0, 0.008))
-                
-                high = max(high, open_price, close_price)
-                low = min(low, open_price, close_price)
-                
-                price_data.append({
-                    'Date': date,
-                    'Open': open_price,
-                    'High': high,
-                    'Low': low,
-                    'Close': close_price
-                })
-            
-            df_ohlc = pd.DataFrame(price_data)
+            st.error(f"❌ No price data available for {symbol}. Please ensure the stock data file exists in trade_store/stock_data/{symbol}.csv")
+            st.info("💡 To resolve this issue:\n"
+                   f"1. Check if the file `trade_store/stock_data/{symbol}.csv` exists\n"
+                   "2. Ensure the file contains valid OHLC data with Date, Open, High, Low, Close columns\n"
+                   "3. Verify the date range requested is within the available data")
+            return
         
         # Create the candlestick chart
         fig = go.Figure()
@@ -717,36 +689,12 @@ def create_divergence_chart(row, raw_data, exit_date=None, exit_price=None, exit
         df_ohlc = load_stock_data_file(symbol, start_date_for_data, end_date_for_data, 'Daily')
         
         if df_ohlc is None or df_ohlc.empty:
-            st.warning(f"No CSV data available for {symbol}. Using mock data for demonstration.")
-            # Fallback to mock data if CSV file not available
-            dates = pd.date_range(start=start_date_for_data, end=end_date_for_data, freq='D')
-            base_price = signal_price if signal_price else 50
-            
-            np.random.seed(42)
-            price_data = []
-            current_price = base_price
-            
-            for date in dates:
-                # Generate realistic OHLC data
-                change = np.random.normal(0, 0.02)  # 2% daily volatility
-                current_price *= (1 + change)
-                
-                high = current_price * (1 + abs(np.random.normal(0, 0.01)))
-                low = current_price * (1 - abs(np.random.normal(0, 0.01)))
-                open_price = current_price * (1 + np.random.normal(0, 0.005))
-                close_price = current_price
-                volume = np.random.randint(1000000, 10000000)
-                
-                price_data.append({
-                    'Date': date,
-                    'Open': open_price,
-                    'High': high,
-                    'Low': low,
-                    'Close': close_price,
-                    'Volume': volume
-                })
-            
-            df_ohlc = pd.DataFrame(price_data)
+            st.error(f"❌ No price data available for {symbol}. Please ensure the stock data file exists in trade_store/stock_data/{symbol}.csv")
+            st.info("💡 To resolve this issue:\n"
+                   f"1. Check if the file `trade_store/stock_data/{symbol}.csv` exists\n"
+                   "2. Ensure the file contains valid OHLC data with Date, Open, High, Low, Close columns\n"
+                   "3. Verify the date range requested is within the available data")
+            return
         
         # Create the chart
         fig = go.Figure()

@@ -213,7 +213,7 @@ def parse_target_signals(df, page_name="Unknown"):
                 gain_pct, holding_days = 0, 0
             
             # Parse backtested returns
-            returns_info = row.get('Backtested Returns(Win Trades) [%] (Best/Worst/Avg)', '')
+            returns_info = row.get('Backtested Returns(Win Trades) [%] (Max/Min/Avg)', '')
             returns_match = re.search(r'([0-9.]+)%/([0-9.]+)%/([0-9.]+)%', str(returns_info))
             
             if returns_match:

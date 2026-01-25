@@ -1,5 +1,8 @@
 """
-Signal extractor to identify signals mentioned in AI responses and fetch complete signal data.
+Signal extractor that returns the actual data used for AI analysis.
+
+PRIMARY: Returns fetched_data directly (what was sent to AI)
+FALLBACK: Parses AI responses to identify mentioned signals (legacy)
 """
 
 import pandas as pd
@@ -24,7 +27,10 @@ logger = logging.getLogger(__name__)
 
 class SignalExtractor:
     """
-    Extracts signal information from AI responses and fetches complete signal data with all columns.
+    Returns the actual signal data used for AI analysis.
+
+    PRIMARY: Uses fetched_data directly (actual data sent to AI)
+    FALLBACK: Parses AI responses for mentioned signals (legacy behavior)
     """
     
     def __init__(self):
@@ -38,54 +44,54 @@ class SignalExtractor:
         query_params: Dict = None
     ) -> Dict[str, pd.DataFrame]:
         """
-        Extract complete signal tables from AI response by identifying used signals and fetching full data.
-        
+        Return the complete signal data that was actually used for AI analysis.
+
+        Instead of parsing AI response text to identify mentioned signals,
+        this method returns the actual fetched_data that was sent to the AI.
+
         Args:
-            ai_response: The AI's response text
-            fetched_data: Data that was used to generate the response (for reference)
-            query_params: Query parameters used (assets, functions, date range, etc.)
-            
+            ai_response: The AI's response text (for reference only)
+            fetched_data: The actual data that was sent to AI for analysis (PRIMARY SOURCE)
+            query_params: Query parameters used (for reference only)
+
         Returns:
             Dictionary mapping signal types to complete DataFrames with all columns
         """
-        logger.info("Extracting full signal tables from AI response...")
-        
-        # Step 1: Identify which signals were actually used/mentioned
+        logger.info("Returning complete signal data used in AI analysis...")
+
+        # If we have fetched_data (the actual data sent to AI), use it directly
+        if fetched_data and isinstance(fetched_data, dict):
+            logger.info(f"Using fetched_data directly: {len(fetched_data)} signal types")
+            signal_tables = {}
+
+            for signal_type, signal_df in fetched_data.items():
+                if not signal_df.empty:
+                    logger.info(f"Including {signal_type} data: {len(signal_df)} records")
+                    signal_tables[signal_type] = signal_df.copy()
+
+            return signal_tables
+
+        # Fallback: If no fetched_data provided, try to identify from response (legacy behavior)
+        logger.warning("No fetched_data provided, falling back to response parsing...")
         used_signals = self._identify_used_signals(ai_response, fetched_data)
-        
-        # Step 2: For each signal type that was used, fetch complete data
+
         signal_tables = {}
-        
+
         if not used_signals:
             logger.info("No signals identified in response")
             return signal_tables
-            
+
         # Get query parameters for data fetching
         assets = query_params.get('assets', []) if query_params else []
         functions = query_params.get('functions', []) if query_params else []
         from_date = query_params.get('from_date') if query_params else None
         to_date = query_params.get('to_date') if query_params else None
-        
-        # Step 3: Fetch complete data for each signal type mentioned
+
+        # Fetch complete data for each signal type mentioned (legacy path)
         for signal_type in used_signals.get('signal_types', set()):
             try:
-                logger.info(f"Fetching complete {signal_type} data...")
-                
-                # First, get a sample to determine available columns
-                sample_data = self.smart_data_fetcher.fetch_data(
-                    signal_types=[signal_type],
-                    required_columns=["Function"],  # Minimal request to get column info
-                    assets=assets[:1] if assets else None,  # Just one asset for sample
-                    functions=functions[:1] if functions else None,  # Just one function for sample
-                    from_date=from_date,
-                    to_date=to_date,
-                    limit_rows=1
-                )
-                
-                # Fetch ALL available columns from CSV files in their original order
-                # This preserves the exact structure as it appears in the CSV files
-                logger.info(f"Fetching ALL columns for {signal_type} to preserve original CSV structure")
-                
+                logger.info(f"Fetching complete {signal_type} data (legacy)...")
+
                 # Fetch complete data with ALL columns (no column filtering)
                 complete_data = self.smart_data_fetcher.fetch_data(
                     signal_types=[signal_type],
@@ -95,15 +101,15 @@ class SignalExtractor:
                     from_date=from_date,
                     to_date=to_date
                 )
-                
+
                 if signal_type in complete_data and not complete_data[signal_type].empty:
-                    # Filter to only the signals that were actually used
+                    # For legacy fallback, filter to only the signals that were actually used
                     filtered_data = self._filter_used_signals(
-                        complete_data[signal_type], 
+                        complete_data[signal_type],
                         used_signals,
                         used_signals.get('signal_keys', [])
                     )
-                    
+
                     if not filtered_data.empty:
                         # Remove metadata columns to show only original CSV structure
                         cleaned_data = filtered_data.copy()
@@ -111,14 +117,14 @@ class SignalExtractor:
                         for col in metadata_columns:
                             if col in cleaned_data.columns:
                                 cleaned_data = cleaned_data.drop(columns=[col])
-                        
+
                         signal_tables[signal_type] = cleaned_data
-                        logger.info(f"Added {len(cleaned_data)} {signal_type} signals to table (showing only original CSV columns)")
-                
+                        logger.info(f"Added {len(cleaned_data)} {signal_type} signals to table (legacy fallback)")
+
             except Exception as e:
                 logger.error(f"Error fetching complete {signal_type} data: {e}")
-                
-        logger.info(f"Extracted {len(signal_tables)} signal type tables")
+
+        logger.info(f"Extracted {len(signal_tables)} signal type tables (legacy fallback)")
         return signal_tables
     
     def _identify_used_signals(
