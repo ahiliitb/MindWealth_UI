@@ -466,19 +466,8 @@ def convert_signal_file_to_data_structure(
     if exit_column and signal_type != "portfolio_target_achieved":
         print(f"✓ Exit column: '{exit_column}'")
     
-    # Parse each row
-    # Note: For signals, we'll determine entry/exit folder per-row based on exit date
-    # NOTE: We now use consolidated CSVs, so folder creation is skipped to avoid creating unused directories
-    if signal_type == "portfolio_target_achieved":
-        output_base = Path(output_base_dir) / "portfolio_target_achieved"
-        # output_base.mkdir(parents=True, exist_ok=True)  # Commented out - using CSVs only
-    # For signals, we create both entry and exit folders
-    elif signal_type == "signal":
-        entry_base = Path(output_base_dir) / "entry"
-        exit_base = Path(output_base_dir) / "exit"
-        # entry_base.mkdir(parents=True, exist_ok=True)  # Commented out - using CSVs only
-        # exit_base.mkdir(parents=True, exist_ok=True)   # Commented out - using CSVs only
-    
+    # Parse each row and append to consolidated CSVs only
+    # Note: No folder structure is created - all data goes to consolidated CSV files
     processed = 0
     skipped = 0
     duplicates_rejected = 0
@@ -618,23 +607,21 @@ def convert_signal_file_to_data_structure(
                 continue
         
         # Determine which folder and date to use based on signal type and exit date
+        # Determine signal type and date to use
         if signal_type == "portfolio_target_achieved":
-            # For portfolio_target_achieved, always use current date and portfolio_target_achieved folder
+            # For portfolio_target_achieved, always use current date
             date_to_use = datetime.now().strftime("%Y-%m-%d")
             row_signal_type = "portfolio_target_achieved"
-            output_base = Path(output_base_dir) / "portfolio_target_achieved"
         elif exit_date:
-            # For signals with exit, use exit date and EXIT folder
+            # For signals with exit, use exit date (completed trade)
             date_to_use = exit_date
             signals_with_exit += 1
-            row_signal_type = "exit"  # Completed trade
-            output_base = exit_base
+            row_signal_type = "exit"
         else:
-            # For signals without exit, use signal date and ENTRY folder
+            # For signals without exit, use signal date (open position)
             date_to_use = signal_date
             signals_no_exit += 1
-            row_signal_type = "entry"  # Open position
-            output_base = entry_base
+            row_signal_type = "entry"
         
         # Extract columns for deduplication based on signal type
         if signal_type == "signal":
@@ -689,59 +676,17 @@ def convert_signal_file_to_data_structure(
                     else:
                         row['Signal Open Price'] = ""
         
-        # Create asset/function directory structure
-        # Structure: data/{entry|exit|target}/{asset}/{function}/YYYY-MM-DD.csv
-        # NOTE: Directory creation skipped - now using consolidated CSVs only
-        asset_dir = output_base / symbol
-        function_dir = asset_dir / function_name
-        # function_dir.mkdir(parents=True, exist_ok=True)  # Commented out - using CSVs only
-        
+        # Track symbols and functions for summary
         created_symbols.add(symbol)
         created_functions.add(function_name)
         
-        # Create output file path using the determined date
-        output_file = function_dir / f"{date_to_use}.csv"
-        
-        # Check if file exists
-        if output_file.exists() and not overwrite:
-            # Append to existing file with deduplication
-            try:
-                existing_df = pd.read_csv(output_file)
-                new_row_df = pd.DataFrame([row])
-                
-                # Combine and deduplicate using the appropriate signal type
-                combined_df = pd.concat([existing_df, new_row_df], ignore_index=True)
-                # Map row_signal_type to deduplication signal_type
-                dedup_signal_type = "portfolio_target_achieved" if row_signal_type == "portfolio_target_achieved" else row_signal_type
-                combined_df = deduplicate_dataframe(combined_df, dedup_columns=None, signal_type=dedup_signal_type)
-                
-                # Save deduplicated data
-                combined_df.to_csv(output_file, index=False)
-                
-                # ALSO append to consolidated CSV
-                append_to_consolidated_csv(row, row_signal_type, output_base_dir)
-                
-                processed += 1
-            except Exception as e:
-                print(f"  ⚠ Error appending to {output_file}: {e}")
-                skipped += 1
-        else:
-            # Create new file (still deduplicate in case of multiple rows with same params)
-            try:
-                # Save the entire row as a new CSV
-                row_df = pd.DataFrame([row])
-                # Map row_signal_type to deduplication signal_type
-                dedup_signal_type = "portfolio_target_achieved" if row_signal_type == "portfolio_target_achieved" else row_signal_type
-                row_df = deduplicate_dataframe(row_df, dedup_columns=None, signal_type=dedup_signal_type)
-                row_df.to_csv(output_file, index=False)
-                
-                # Append to consolidated CSV (replaces old add_to_master_targets approach)
-                append_to_consolidated_csv(row, row_signal_type, output_base_dir)
-                
-                processed += 1
-            except Exception as e:
-                print(f"  ⚠ Error creating {output_file}: {e}")
-                skipped += 1
+        # ONLY append to consolidated CSV (no individual files)
+        try:
+            append_to_consolidated_csv(row, row_signal_type, output_base_dir)
+            processed += 1
+        except Exception as e:
+            print(f"  ⚠ Error appending to consolidated CSV: {e}")
+            skipped += 1
     
     print("\n" + "-"*80)
     print("CONVERSION SUMMARY")
@@ -757,12 +702,12 @@ def convert_signal_file_to_data_structure(
     print(f"✓ Unique assets: {len(created_symbols)}")
     print(f"✓ Unique functions: {len(created_functions)}")
     if signal_type != "portfolio_target_achieved":
-        print(f"\n📂 Folder Distribution:")
+        print(f"\n� Signal Distribution:")
         print(f"   ✓ EXIT signals (completed trades): {signals_with_exit}")
-        print(f"      → Stored in: chatbot/data/exit/{{asset}}/{{function}}/{{exit_date}}.csv")
+        print(f"      → Appended to: chatbot/data/exit.csv")
         print(f"      → Deduplication keys: Function, Symbol, Signal Type, Interval, Signal Date, Signal Open Price")
         print(f"   ✓ ENTRY signals (confirmed open positions): {signals_no_exit}")
-        print(f"      → Stored in: chatbot/data/entry/{{asset}}/{{function}}/{{signal_date}}.csv")
+        print(f"      → Appended to: chatbot/data/entry.csv")
         print(f"      → Deduplication keys: Function, Symbol, Signal Type, Interval, Signal Open Price")
         if unconfirmed_skipped > 0:
             print(f"   ⚠ Unconfirmed entry signals filtered out: {unconfirmed_skipped}")
@@ -772,13 +717,11 @@ def convert_signal_file_to_data_structure(
         print(f"  ... and {len(created_symbols) - 10} more")
     
     if signal_type == "portfolio_target_achieved":
-        print(f"\n✓ Consolidated CSV updated: chatbot/data/portfolio_target_achieved.csv")
-        print(f"   (Folder structure creation disabled - using CSVs only)")
+        print(f"\n✓ Consolidated CSV: chatbot/data/portfolio_target_achieved.csv (updated)")
     else:
-        print(f"\n✓ Consolidated CSVs updated:")
-        print(f"   - chatbot/data/entry.csv")
-        print(f"   - chatbot/data/exit.csv")
-        print(f"   (Folder structure creation disabled - using CSVs only)")
+        print(f"\n✓ Consolidated CSVs:")
+        print(f"   - chatbot/data/entry.csv (updated)")
+        print(f"   - chatbot/data/exit.csv (updated)")
     print("="*80 + "\n")
     
     return processed, skipped, created_symbols
@@ -990,41 +933,41 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
             
             if sig_type == "entry":
                 # Key: Function + Symbol + Signal Type + Interval + Signal Open Price
-                function = row_data.get("Function", "").strip()
+                function = str(row_data.get("Function", "")).strip()
                 match_signal = re.search(r'^([^,]+),\s*([^,]+),', str(signal_col))
                 match_interval = re.search(r'^([^,]+)', str(interval_col))
                 symbol = match_signal.group(1).strip() if match_signal else ""
                 signal_type_val = match_signal.group(2).strip() if match_signal else ""
                 interval = match_interval.group(1).strip() if match_interval else ""
-                signal_open_price = row_data.get("Signal Open Price", "").strip()
+                signal_open_price = str(row_data.get("Signal Open Price", "")).strip()
                 return (function, symbol, signal_type_val, interval, signal_open_price)
                 
             elif sig_type == "exit":
                 # Key: Function + Symbol + Signal Type + Interval + Signal Date + Signal Open Price
-                function = row_data.get("Function", "").strip()
+                function = str(row_data.get("Function", "")).strip()
                 match_signal = re.search(r'^([^,]+),\s*([^,]+),\s*(\d{4}-\d{2}-\d{2})', str(signal_col))
                 match_interval = re.search(r'^([^,]+)', str(interval_col))
                 symbol = match_signal.group(1).strip() if match_signal else ""
                 signal_type_val = match_signal.group(2).strip() if match_signal else ""
                 signal_date = match_signal.group(3).strip() if match_signal else ""
                 interval = match_interval.group(1).strip() if match_interval else ""
-                signal_open_price = row_data.get("Signal Open Price", "").strip()
+                signal_open_price = str(row_data.get("Signal Open Price", "")).strip()
                 return (function, symbol, signal_type_val, interval, signal_date, signal_open_price)
                 
             elif sig_type == "portfolio_target_achieved":
                 # Key: Function + Symbol + Signal Type + Interval + Signal Open Price
-                function = row_data.get("Function", "").strip()
+                function = str(row_data.get("Function", "")).strip()
                 match_signal = re.search(r'^([^,]+),\s*([^,]+),', str(signal_col))
                 match_interval = re.search(r'^([^,]+)', str(interval_col))
                 symbol = match_signal.group(1).strip() if match_signal else ""
                 signal_type_val = match_signal.group(2).strip() if match_signal else ""
                 interval = match_interval.group(1).strip() if match_interval else ""
-                signal_open_price = row_data.get("Signal Open Price", "").strip()
+                signal_open_price = str(row_data.get("Signal Open Price", "")).strip()
                 return (function, symbol, signal_type_val, interval, signal_open_price)
 
             elif sig_type == "breadth":
                 # Key: Function + Date
-                function = row_data.get("Function", "").strip()
+                function = str(row_data.get("Function", "")).strip()
                 date_col = row_data.get("Date", "")
                 match = re.search(r'(\d{4}-\d{2}-\d{2})', str(date_col))
                 date_val = match.group(1) if match else ""
@@ -1054,11 +997,26 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
                 # UPDATE: Key exists → update all columns
                 # Update the existing row with new data
                 for col in new_row_df.columns:
-                    existing_df.at[existing_row_idx, col] = new_row_df.at[0, col]
+                    # Add column to existing_df if it doesn't exist
+                    if col not in existing_df.columns:
+                        existing_df[col] = None
+                    # Update the value
+                    try:
+                        existing_df.at[existing_row_idx, col] = new_row_df[col].iloc[0]
+                    except (KeyError, IndexError):
+                        # If we can't get the value, skip this column
+                        pass
                 
                 combined_df = existing_df
             else:
                 # INSERT: New key → append new row
+                # Ensure new_row_df has all columns from existing_df and vice versa
+                for col in existing_df.columns:
+                    if col not in new_row_df.columns:
+                        new_row_df[col] = None
+                for col in new_row_df.columns:
+                    if col not in existing_df.columns:
+                        existing_df[col] = None
                 combined_df = pd.concat([existing_df, new_row_df], ignore_index=True)
         else:
             # File doesn't exist yet → INSERT new row
@@ -1069,7 +1027,11 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
         combined_df.to_csv(csv_path, index=False, encoding='utf-8')
         
     except Exception as e:
+        import traceback
         print(f"  ⚠ Error updating consolidated CSV {csv_path}: {e}")
+        print(f"     Error type: {type(e).__name__}")
+        # Uncomment for detailed debugging:
+        # traceback.print_exc()
 
 
 def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None):
@@ -1295,41 +1257,34 @@ def convert_breadth_report(
         print(f"✗ Error reading file: {e}")
         return 0, 0
     
-    # Create breadth directory
-    breadth_dir = Path(output_base_dir) / "breadth"
-    # breadth_dir.mkdir(parents=True, exist_ok=True)  # Commented out - using CSVs only
-    
-    # Use current date for filename and add Date column
+    # Use current date for Date column
     current_date = datetime.now().strftime("%Y-%m-%d")
-    output_file = breadth_dir / f"{current_date}.csv"
     
     # Add Date column to the dataframe
     df['Date'] = current_date
     
-    # Save breadth report with current date
+    # ONLY append to consolidated breadth.csv (no individual files)
     try:
-        df.to_csv(output_file, index=False)
-        print(f"✓ Saved breadth report to: {output_file}")
         print(f"✓ Functions in report: {len(df)}")
         print(f"✓ Columns: {', '.join(df.columns.tolist())}")
         
-        # ALSO append to consolidated breadth.csv
+        # Append each row to consolidated breadth.csv
         for _, row in df.iterrows():
             append_to_consolidated_csv(row, "breadth", output_base_dir)
         
         processed = 1
         skipped = 0
     except Exception as e:
-        print(f"✗ Error saving breadth report: {e}")
+        print(f"✗ Error appending to consolidated breadth.csv: {e}")
         processed = 0
         skipped = 1
     
     print("\n" + "-"*80)
     print("BREADTH CONVERSION SUMMARY")
     print("-"*80)
-    print(f"✓ Report saved: {output_file.name}")
+    print(f"✓ Date: {current_date}")
     print(f"✓ Total functions: {len(df)}")
-    print(f"✓ Consolidated CSV: chatbot/data/breadth.csv (automatically updated)")
+    print(f"✓ Consolidated CSV: chatbot/data/breadth.csv (updated)")
     print("="*80 + "\n")
     
     return processed, skipped
@@ -1460,16 +1415,11 @@ def main():
     print("\n" + "="*80)
     print("✓ Conversion Complete!")
     print("="*80)
-    print("\nData structure created (4 signal types):")
-    print("  1. ENTRY:   chatbot/data/entry/{asset}/{function}/YYYY-MM-DD.csv")
-    print("  2. EXIT:    chatbot/data/exit/{asset}/{function}/YYYY-MM-DD.csv")
-    print("  3. TARGET:  chatbot/data/portfolio_target_achieved/{asset}/{function}/YYYY-MM-DD.csv")
-    print("  4. BREADTH: chatbot/data/breadth/YYYY-MM-DD.csv")
-    print("\nConsolidated files:")
-    print("  - chatbot/data/entry.csv")
-    print("  - chatbot/data/exit.csv")
-    print("  - chatbot/data/portfolio_target_achieved.csv")
-    print("  - chatbot/data/breadth.csv")
+    print("\nConsolidated CSV files updated:")
+    print("  - chatbot/data/entry.csv (open positions)")
+    print("  - chatbot/data/exit.csv (completed trades)")
+    print("  - chatbot/data/portfolio_target_achieved.csv (target achievements)")
+    print("  - chatbot/data/breadth.csv (market breadth)")
     print("\n✓ Current prices updated from live stock data")
     print()
 
