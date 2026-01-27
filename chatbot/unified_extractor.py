@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-ALLOWED_SIGNAL_TYPES = ["entry", "exit", "portfolio_target_achieved", "breadth"]
+ALLOWED_SIGNAL_TYPES = ["entry", "exit", "portfolio_target_achieved", "breadth", "claude_report"]
 DEFAULT_SIGNAL_TYPES = ["entry", "exit", "portfolio_target_achieved"]
 
 AVAILABLE_FUNCTIONS = [
@@ -160,6 +160,7 @@ Available Signal Types:
 - exit: Completed trades with recorded exits
 - portfolio_target_achieved: Portfolio positions where targets were hit
 - breadth: Market-wide sentiment metrics
+- claude_report: Claude's comprehensive analysis report with signal synthesis and recommendations (NO table data, NO functions/tickers/columns extraction needed)
 
 Available Functions (trading strategies):
 {', '.join(AVAILABLE_FUNCTIONS)}
@@ -176,12 +177,15 @@ Available Tickers/Assets:
    - If user asks about "exits", "closed trades", "performance" → include "exit"
    - If user asks about "targets", "portfolio positions" → include "portfolio_target_achieved"
    - If user asks about "market breadth", "sentiment" → include "breadth"
+   - If user asks about "Claude report", "Claude analysis", "comprehensive report", "recommendations" → include "claude_report"
    - Default: ["entry", "exit", "portfolio_target_achieved"]
+   - SPECIAL: If "claude_report" is selected, DO NOT extract functions, tickers, or columns (return null for all)
 
 2. FUNCTIONS:
    - Extract ONLY function names mentioned in the query
    - Use EXACT names from available functions list
    - If NO specific functions mentioned → return null (means ALL functions)
+   - If signal type is "claude_report" → return null (not applicable)
 
 3. TICKERS:
    - If SPECIFIC tickers mentioned (e.g., "AAPL", "MSFT") → return those tickers
@@ -192,6 +196,7 @@ Available Tickers/Assets:
      * "Toronto" or "Canadian" → tickers ending with ".TO"
      * "US" or "American" → tickers without country suffixes
    - IMPORTANT: When conversation history is provided, use it to resolve ambiguous references like "those", "them", "it", "the same"
+   - If signal type is "claude_report" → return null (not applicable)
 
 4. COLUMNS:
    - For EACH signal type, select relevant columns
@@ -200,6 +205,7 @@ Available Tickers/Assets:
      * [1] Symbol, Signal, Signal Date/Price[$]
    - Include columns needed to answer the query
    - Use BOTH index number AND column name for accuracy
+   - If signal type is "claude_report" → DO NOT include any columns (not applicable)
 
 === RESPONSE FORMAT ===
 
@@ -363,7 +369,11 @@ Respond now:"""
         result["tickers"] = tickers
         
         # Normalize columns - add indices list
+        # For claude_report signal type, columns might be None or empty
         columns = result.get("columns", {})
+        if columns is None:
+            columns = {}
+        
         for signal_type, signal_data in columns.items():
             if "required_columns" in signal_data:
                 # Extract indices separately for easier access

@@ -860,3 +860,26 @@ class DataProcessor:
         formatted_text = self.format_data_for_prompt(stock_data)
         
         return stock_data, formatted_text
+    
+    def load_claude_report(self) -> Optional[str]:
+        """
+        Load Claude comprehensive analysis report from claude_report.txt.
+        
+        Returns:
+            Report text as string, or None if file doesn't exist or can't be loaded
+        """
+        claude_report_path = self.chatbot_data_dir / "claude_report.txt"
+        
+        if not claude_report_path.exists():
+            logger.warning(f"Claude report file not found: {claude_report_path}")
+            return None
+        
+        try:
+            with open(claude_report_path, 'r', encoding='utf-8') as f:
+                report_text = f.read()
+            
+            logger.info(f"Loaded Claude report: {len(report_text)} characters")
+            return report_text
+        except Exception as e:
+            logger.error(f"Error loading Claude report {claude_report_path}: {e}")
+            return None

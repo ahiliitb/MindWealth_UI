@@ -1384,6 +1384,27 @@ def main():
     else:
         print(f"⚠ File not found: breadth.csv (tried exact match and date_name.csv pattern)")
     
+    # Copy Claude report to chatbot data folder
+    print("\n" + "-" * 80)
+    print("Copying CLAUDE REPORT to chatbot data folder")
+    print("-" * 80)
+    
+    # Look for the most recent Claude report
+    claude_report_files = list(trade_store_us.glob("*_claude_signals_report.txt"))
+    if claude_report_files:
+        # Sort by modification time and get the most recent
+        claude_report_files.sort(key=lambda x: x.stat().st_mtime, reverse=True)
+        latest_claude_report = claude_report_files[0]
+        print(f"ℹ Found Claude report: {latest_claude_report.name}")
+        
+        # Copy to chatbot data folder
+        destination = CHATBOT_DATA_DIR / "claude_report.txt"
+        import shutil
+        shutil.copy2(latest_claude_report, destination)
+        print(f"✓ Copied to: {destination}")
+    else:
+        print(f"⚠ No Claude report files found (pattern: *_claude_signals_report.txt)")
+    
     # Update current prices in all chatbot data files using live prices from stock_data
     print("\n" + "-" * 80)
     print("Updating current prices from live stock data")
@@ -1401,6 +1422,7 @@ def main():
     print("  - chatbot/data/exit.csv (completed trades)")
     print("  - chatbot/data/portfolio_target_achieved.csv (target achievements)")
     print("  - chatbot/data/breadth.csv (market breadth)")
+    print("  - chatbot/data/claude_report.txt (Claude signals analysis)")
     print("\n✓ Current prices updated from live stock data")
     print()
 

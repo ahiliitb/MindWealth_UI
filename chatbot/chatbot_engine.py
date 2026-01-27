@@ -358,8 +358,9 @@ class ChatbotEngine:
             )
             
             # Determine what data to load based on signal_types
-            stock_signal_types = [st for st in (signal_types or []) if st != 'breadth'] if signal_types else None
+            stock_signal_types = [st for st in (signal_types or []) if st not in ['breadth', 'claude_report']] if signal_types else None
             load_breadth = signal_types and 'breadth' in signal_types
+            load_claude_report = signal_types and 'claude_report' in signal_types
             
             # Check if we need stock data (entry/exit/portfolio_target_achieved)
             need_stock_data = tickers and stock_signal_types and not data_already_in_context
@@ -392,6 +393,17 @@ class ChatbotEngine:
                     # Add breadth data as a special "MARKET_BREADTH" ticker
                     stock_data['MARKET_BREADTH'] = breadth_data
                     logger.info("Added breadth report to data context")
+            
+            # Load Claude report if requested (independent of tickers, no table data)
+            claude_report_text = None
+            if load_claude_report:
+                claude_report_text = self.data_processor.load_claude_report()
+                if claude_report_text:
+                    logger.info("Loaded Claude comprehensive analysis report")
+                    metadata["claude_report_loaded"] = True
+                else:
+                    logger.warning("Claude report requested but not found")
+                    metadata["claude_report_loaded"] = False
             
             # Format data for prompt if we have any data
             if stock_data:
@@ -467,7 +479,20 @@ class ChatbotEngine:
             # Build complete user message
             complete_message = user_message
             
-            if data_context:
+            # Build message with data context and/or Claude report
+            if claude_report_text:
+                # For Claude report queries, add the report text directly (no table data)
+                complete_message = f"""User Query: {user_message}
+
+=== CLAUDE COMPREHENSIVE ANALYSIS REPORT ===
+
+{claude_report_text}
+
+=== END REPORT ===
+
+Please answer the user's query based on the comprehensive analysis report above."""
+            elif data_context:
+                # For regular queries with table data
                 complete_message = f"""User Query: {user_message}
 
 {data_context}"""
@@ -508,9 +533,10 @@ class ChatbotEngine:
                 metadata["batch_count"] = batch_metadata["batch_count"]
                 metadata["batch_mode"] = batch_metadata["batch_mode"]
             else:
-                # For non-ticker queries (breadth only, CSV text, etc.)
+                # For non-ticker queries (breadth only, Claude report, CSV text, etc.)
                 # Use simple batch method with automatic single/multi decision
-                logger.info("Using simple batch processing for non-ticker query")
+                query_type = "Claude report" if load_claude_report else "non-ticker query"
+                logger.info(f"Using simple batch processing for {query_type}")
                 assistant_message, batch_metadata = self._simple_batch_query(
                     messages, estimated_tokens
                 )
@@ -640,6 +666,24 @@ class ChatbotEngine:
             selected_signal_types = extraction_result.get("signal_types", [])
             signal_type_reasoning = extraction_result.get("signal_types_reasoning", "")
             
+            # SPECIAL CASE: If claude_report is in signal types, route to old query() method
+            # Claude report doesn't need table data, functions, or column extraction
+            if 'claude_report' in selected_signal_types:
+                logger.info("CLAUDE_REPORT detected - routing to old query() method for text-based analysis")
+                return self.query(
+                    user_message=user_message,
+                    signal_types=selected_signal_types,
+                    tickers=None,  # Not needed for claude_report
+                    from_date=from_date,
+                    to_date=to_date,
+                    dedup_columns=None,  # Not needed for claude_report
+                    functions=None,  # Not needed for claude_report
+                    additional_context=additional_context,
+                    auto_extract_tickers=False,  # Not needed for claude_report
+                    auto_extract_functions=False,  # Not needed for claude_report
+                    is_followup=False
+                )
+            
             # Use extracted functions if not provided
             if functions is None:
                 functions = extraction_result.get("functions")  # None means ALL
@@ -663,7 +707,16 @@ class ChatbotEngine:
             indices_by_signal_type = {}  # Store column indices for precise selection
             all_required_columns = set()
             
+            # Check if claude_report is the only signal type (no table data needed)
+            has_claude_report = 'claude_report' in selected_signal_types
+            table_signal_types = [st for st in selected_signal_types if st != 'claude_report']
+            
             for signal_type in selected_signal_types:
+                # Skip column extraction for claude_report
+                if signal_type == 'claude_report':
+                    logger.info("CLAUDE_REPORT: No columns needed - will use full report text")
+                    continue
+                    
                 if signal_type in columns_data:
                     signal_data = columns_data[signal_type]
                     if isinstance(signal_data, dict):
@@ -678,17 +731,20 @@ class ChatbotEngine:
                         logger.info(f"{signal_type.upper()}: Selected {len(cols)} columns")
                         logger.info(f"  Reasoning: {reasoning[:100]}...")
             
-            if not columns_by_signal_type:
+            # Only validate columns if we have non-claude_report signal types
+            if not columns_by_signal_type and not has_claude_report:
                 logger.warning("No columns selected for any signal type")
                 return "Could not determine required columns for your query.", {"warning": "no_columns"}
             
             # STAGE 2: Data Fetching (per signal type with its specific columns)
+            # Skip data fetching for claude_report signal type
             logger.info("STAGE 2: Fetching data with selected columns for each signal type...")
             
             fetched_data = {}
             total_rows = 0
             
-            for signal_type in selected_signal_types:
+            # Only fetch table data for non-claude_report signal types
+            for signal_type in table_signal_types:
                 if signal_type not in columns_by_signal_type:
                     continue
                 

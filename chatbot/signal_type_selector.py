@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-ALLOWED_SIGNAL_TYPES = ["entry", "exit", "portfolio_target_achieved", "breadth"]
+ALLOWED_SIGNAL_TYPES = ["entry", "exit", "portfolio_target_achieved", "breadth", "claude_report"]
 DEFAULT_SIGNAL_TYPES = ["entry", "exit", "portfolio_target_achieved"]
 
 SIGNAL_TYPE_DESCRIPTIONS = {
@@ -37,6 +37,11 @@ SIGNAL_TYPE_DESCRIPTIONS = {
         "Market Breadth",
         "Market-wide sentiment metrics (e.g., bull/bear breadth). "
         "Apply when the user asks about overall market health or breadth indicators."
+    ),
+    "claude_report": (
+        "Claude Comprehensive Analysis Report",
+        "Detailed comprehensive analysis report by Claude covering signal synthesis, insights, recommendations, and filtered signals. "
+        "Use when the user asks about Claude's analysis, comprehensive reports, signal recommendations, or high-quality actionable signals."
     ),
 }
 
