@@ -706,15 +706,15 @@ def render_chatbot_page():
     
     col1, col2 = st.sidebar.columns(2)
     
-    # Set default dates (last 1 month)
-    default_from_date = datetime.now() - timedelta(days=30)
+    # Set default dates (last 15 days)
+    default_from_date = datetime.now() - timedelta(days=15)
     default_to_date = datetime.now()
     
     with col1:
         from_date = st.date_input(
             "From Date",
             value=default_from_date,
-            help="Start date for data (default: 2 months ago)"
+            help="Start date for data (default: 15 days ago)"
         )
     
     with col2:

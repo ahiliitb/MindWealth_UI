@@ -1,16 +1,16 @@
 """
-Unified Extractor - Combines signal type, function, ticker, and column extraction in ONE Claude API call.
+Unified Extractor - Combines signal type, function, ticker, and column extraction in ONE GPT-5.2 API call.
 This reduces API calls from 4 to 1, improving performance and reducing costs.
 """
 
 import json
 import logging
 from typing import Dict, List, Optional, Tuple
-from anthropic import Anthropic
+from openai import OpenAI
 from pathlib import Path
 
 from .column_metadata_extractor import ColumnMetadataExtractor
-from .config import CLAUDE_API_KEY, CLAUDE_MODEL, CLAUDE_MAX_TOKENS, CLAUDE_TEMPERATURE
+from .config import OPENAI_API_KEY, OPENAI_MODEL, MAX_TOKENS, TEMPERATURE
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ AVAILABLE_FUNCTIONS = [
 
 class UnifiedExtractor:
     """
-    Extracts all query components in a single GPT call:
+    Extracts all query components in a single GPT-5.2 call:
     1. Signal types (entry, exit, portfolio_target_achieved, breadth)
     2. Functions (TRENDPULSE, FRACTAL TRACK, etc.)
     3. Tickers/Assets (AAPL, MSFT, etc.)
@@ -45,17 +45,17 @@ class UnifiedExtractor:
         Initialize the unified extractor.
         
         Args:
-            api_key: Optional Claude API key (uses env var if not provided)
+            api_key: Optional OpenAI API key (uses env var if not provided)
         """
-        self.api_key = api_key or CLAUDE_API_KEY
+        self.api_key = api_key or OPENAI_API_KEY
         
         if not self.api_key:
-            raise ValueError("Claude API key not provided")
+            raise ValueError("OpenAI API key not provided")
         
         try:
-            self.client = Anthropic(api_key=self.api_key)
+            self.client = OpenAI(api_key=self.api_key)
         except Exception as e:
-            raise ValueError(f"Failed to initialize Claude client: {e}")
+            raise ValueError(f"Failed to initialize OpenAI client: {e}")
         
         self.metadata_extractor = ColumnMetadataExtractor()
         self.system_prompt = self._load_system_prompt()
@@ -240,19 +240,22 @@ IMPORTANT:
 
 Respond now:"""
 
-            logger.info(f"Calling unified extractor (Claude) for query: {user_query[:100]}...")
+            logger.info(f"Calling unified extractor (GPT-5.2) for query: {user_query[:100]}...")
             
             # Build messages with conversation history for context
             from .config import MAX_EXTRACTION_HISTORY_LENGTH, MAX_INPUT_TOKENS_PER_CALL, ESTIMATED_CHARS_PER_TOKEN
             
             messages = []
             
+            # Add system message
+            messages.append({"role": "system", "content": self.system_prompt})
+            
             # Add conversation history if provided (for follow-up context)
             if conversation_history:
                 # Limit history to MAX_EXTRACTION_HISTORY_LENGTH exchanges (5 by default, lighter than main chat)
                 history_to_use = conversation_history[-MAX_EXTRACTION_HISTORY_LENGTH*2:] if len(conversation_history) > MAX_EXTRACTION_HISTORY_LENGTH*2 else conversation_history
                 
-                # Filter out system messages (Claude doesn't accept them in messages array)
+                # Filter out system messages (already added above)
                 history_to_use = [msg for msg in history_to_use if msg.get('role') != 'system']
                 
                 # Estimate tokens to avoid exceeding MAX_INPUT_TOKENS_PER_CALL
@@ -277,16 +280,15 @@ Respond now:"""
             
             messages.append({"role": "user", "content": unified_prompt})
             
-            # Call Claude API
-            response = self.client.messages.create(
-                model=CLAUDE_MODEL,
-                max_tokens=CLAUDE_MAX_TOKENS,
-                temperature=CLAUDE_TEMPERATURE,
-                system=self.system_prompt,
-                messages=messages
+            # Call OpenAI GPT-5.2 API
+            response = self.client.chat.completions.create(
+                model=OPENAI_MODEL,
+                messages=messages,
+                max_completion_tokens=MAX_TOKENS,
+                temperature=TEMPERATURE
             )
             
-            response_text = response.content[0].text.strip()
+            response_text = response.choices[0].message.content.strip()
             logger.info(f"Unified extractor response: {response_text[:300]}...")
             
             # Parse JSON response
@@ -296,7 +298,7 @@ Respond now:"""
                 logger.error("Failed to parse JSON from unified extractor response")
                 return {
                     "success": False,
-                    "error": "Could not parse JSON from Claude response"
+                    "error": "Could not parse JSON from GPT-5.2 response"
                 }
             
             # Validate and normalize the result
@@ -319,7 +321,7 @@ Respond now:"""
             }
     
     def _extract_json_from_response(self, response_text: str) -> Optional[Dict]:
-        """Extract JSON from Claude response, handling markdown code blocks."""
+        """Extract JSON from GPT-5.2 response, handling markdown code blocks."""
         # Remove markdown code blocks if present
         if "```json" in response_text:
             start = response_text.find("```json") + 7

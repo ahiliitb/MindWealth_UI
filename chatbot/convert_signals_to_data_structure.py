@@ -1008,6 +1008,9 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
             
             combined_df = new_row_df
         
+        # Deduplicate before writing (to ensure no duplicates even if logic above failed)
+        combined_df = deduplicate_dataframe(combined_df, signal_type=signal_type)
+        
         # Write back to consolidated CSV
         combined_df.to_csv(csv_path, index=False, encoding='utf-8')
         

@@ -12,6 +12,7 @@ from .config import (
     CLAUDE_MODEL,
     CLAUDE_MAX_TOKENS,
     CLAUDE_TEMPERATURE,
+    OPENAI_API_KEY,
     SYSTEM_PROMPT,
     MAX_HISTORY_LENGTH,
     MAX_INPUT_TOKENS_PER_CALL,
@@ -69,7 +70,8 @@ class ChatbotEngine:
         
         self.data_processor = DataProcessor(use_new_structure=use_new_data_structure)
         self.history_manager = HistoryManager(session_id=session_id)
-        self.unified_extractor = UnifiedExtractor(api_key=self.claude_api_key)
+        # Use OpenAI API key for extraction with GPT-5.2
+        self.unified_extractor = UnifiedExtractor(api_key=OPENAI_API_KEY)
         self.smart_data_fetcher = SmartDataFetcher()
         self.signal_extractor = SignalExtractor()
         
