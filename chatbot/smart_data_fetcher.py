@@ -66,7 +66,8 @@ class SmartDataFetcher:
         functions: Optional[List[str]] = None,
         from_date: Optional[str] = None,
         to_date: Optional[str] = None,
-        limit_rows: Optional[int] = None
+        limit_rows: Optional[int] = None,
+        column_indices: Optional[Dict[str, List[int]]] = None
     ) -> Dict[str, pd.DataFrame]:
         """
         Fetch data from specified signal types with the required columns or ALL columns.
@@ -81,6 +82,7 @@ class SmartDataFetcher:
             from_date: Optional start date (YYYY-MM-DD)
             to_date: Optional end date (YYYY-MM-DD)
             limit_rows: Optional limit on number of rows per signal type
+            column_indices: Optional dict mapping signal_type to list of column indices for precise selection
 
         Returns:
             Dictionary mapping signal_type to DataFrame with fetched data
@@ -107,7 +109,8 @@ class SmartDataFetcher:
                     functions=functions,
                     from_date=from_date,
                     to_date=to_date,
-                    limit_rows=limit_rows
+                    limit_rows=limit_rows,
+                    column_indices=column_indices
                 )
 
         # Fall back to folder-based approach
@@ -254,7 +257,8 @@ class SmartDataFetcher:
         functions: Optional[List[str]] = None,
         from_date: Optional[str] = None,
         to_date: Optional[str] = None,
-        limit_rows: Optional[int] = None
+        limit_rows: Optional[int] = None,
+        column_indices: Optional[Dict[str, List[int]]] = None
     ) -> Dict[str, pd.DataFrame]:
         """
         Fetch data from consolidated CSV files.
@@ -283,6 +287,9 @@ class SmartDataFetcher:
                         limit_rows=limit_rows
                     )
                 else:
+                    # Get column indices for this signal type if available
+                    signal_col_indices = column_indices.get(signal_type) if column_indices else None
+                    
                     df = self._fetch_signal_type_data_consolidated(
                         signal_type=signal_type,
                         required_columns=required_columns,
@@ -290,7 +297,8 @@ class SmartDataFetcher:
                         functions=functions,
                         from_date=from_date,
                         to_date=to_date,
-                        limit_rows=limit_rows
+                        limit_rows=limit_rows,
+                        column_indices=signal_col_indices
                     )
 
                 if not df.empty:
@@ -310,7 +318,8 @@ class SmartDataFetcher:
         functions: Optional[List[str]] = None,
         from_date: Optional[str] = None,
         to_date: Optional[str] = None,
-        limit_rows: Optional[int] = None
+        limit_rows: Optional[int] = None,
+        column_indices: Optional[List[int]] = None
     ) -> pd.DataFrame:
         """
         Fetch data from consolidated CSV for a signal type (entry/exit/target).
@@ -354,6 +363,8 @@ class SmartDataFetcher:
 
             # Extract and filter by signal date if needed
             if from_date or to_date:
+                logger.info(f"Filtering {signal_type} by date range: {from_date} to {to_date}")
+                logger.info(f"DataFrame shape before date filtering: {df.shape}")
                 if symbol_col in df.columns:
                     # Extract date from "Symbol, Signal, Signal Date/Price[$]" column
                     # Format: "SYMBOL, Long/Short, YYYY-MM-DD (Price: X.XX)"
@@ -365,26 +376,59 @@ class SmartDataFetcher:
                         return match.group(1) if match else None
                     
                     df['_extracted_date'] = df[symbol_col].apply(extract_date)
+                    logger.info(f"Sample extracted dates: {df['_extracted_date'].head(5).tolist()}")
                     df['_extracted_date'] = pd.to_datetime(df['_extracted_date'], errors='coerce')
 
                     if from_date:
                         from_date_obj = pd.to_datetime(from_date)
+                        logger.info(f"Filtering for dates >= {from_date_obj}")
                         df = df[df['_extracted_date'] >= from_date_obj]
+                        logger.info(f"Rows after from_date filter: {len(df)}")
 
                     if to_date:
                         to_date_obj = pd.to_datetime(to_date)
+                        logger.info(f"Filtering for dates <= {to_date_obj}")
                         df = df[df['_extracted_date'] <= to_date_obj]
+                        logger.info(f"Rows after to_date filter: {len(df)}")
                     
                     df = df.drop(columns=['_extracted_date'])
+                logger.info(f"DataFrame shape after date filtering: {df.shape}")
 
-            # Apply column selection
-            if required_columns:
-                available_columns = df.columns.tolist()
-                columns_to_keep = [col for col in required_columns if col in available_columns]
+            # Apply column selection - use indices if provided for 100% accuracy
+            if column_indices and len(column_indices) > 0:
+                # Use column indices for precise selection
+                logger.info(f"Using column indices for {signal_type}: {column_indices}")
+                all_columns = df.columns.tolist()
+                columns_to_keep = []
+                for idx in column_indices:
+                    if 0 <= idx < len(all_columns):
+                        columns_to_keep.append(all_columns[idx])
+                        logger.info(f"  Index {idx} -> Column: {all_columns[idx]}")
+                    else:
+                        logger.warning(f"  Index {idx} out of range (0-{len(all_columns)-1})")
+                
                 if columns_to_keep:
+                    logger.info(f"Keeping {len(columns_to_keep)} columns by index")
+                    df = df[columns_to_keep]
+                else:
+                    logger.warning(f"No valid column indices for {signal_type}")
+                    return pd.DataFrame()
+            elif required_columns:
+                # Fallback to column names (old behavior)
+                available_columns = df.columns.tolist()
+                logger.info(f"Required columns for {signal_type}: {required_columns}")
+                logger.info(f"Available columns in CSV: {available_columns[:10]}...")  # Show first 10
+                columns_to_keep = [col for col in required_columns if col in available_columns]
+                missing_columns = [col for col in required_columns if col not in available_columns]
+                if missing_columns:
+                    logger.warning(f"Missing columns in {signal_type}: {missing_columns}")
+                if columns_to_keep:
+                    logger.info(f"Keeping {len(columns_to_keep)} columns: {columns_to_keep}")
                     df = df[columns_to_keep]
                 else:
                     logger.warning(f"None of the required columns found in {signal_type} consolidated CSV")
+                    logger.warning(f"Requested: {required_columns}")
+                    logger.warning(f"Available: {available_columns}")
                     return pd.DataFrame()
             # If required_columns is None, keep all columns
 
@@ -828,7 +872,6 @@ class SmartDataFetcher:
     ) -> bool:
         """
         Add new data to a consolidated CSV file with optional deduplication.
-        Preserves 'Signal First Origination Date' for existing records.
 
         Args:
             signal_type: One of "entry", "exit", "portfolio_target_achieved", "breadth"
@@ -858,16 +901,6 @@ class SmartDataFetcher:
                 if 'date' not in new_data.columns and 'date' in existing_data.columns:
                     pass  # Will be handled by calling code
 
-            # Add 'Signal First Origination Date' to new data if not present
-            if signal_type != "breadth" and 'Signal First Origination Date' not in new_data.columns:
-                # For new signals, use the signal_date as the first origination date
-                if 'signal_date' in new_data.columns:
-                    new_data['Signal First Origination Date'] = new_data['signal_date']
-                else:
-                    # Fallback to current date
-                    from datetime import datetime
-                    new_data['Signal First Origination Date'] = datetime.now().strftime('%Y-%m-%d')
-
             # Combine existing and new data
             combined_data = pd.concat([existing_data, new_data], ignore_index=True)
 
@@ -875,12 +908,11 @@ class SmartDataFetcher:
                 combined_data = self._deduplicate_data_preserve_origination(combined_data, signal_type)
 
             # Remove metadata columns before saving (they're only used for deduplication)
-            # But KEEP 'Signal First Origination Date' as it's a permanent column
             if signal_type == "breadth":
                 # For breadth data, remove date and signal_type_meta
                 metadata_columns = ['date', 'signal_type_meta']
             else:
-                # For other signal types, remove standard metadata columns but NOT Signal First Origination Date
+                # For other signal types, remove standard metadata columns
                 metadata_columns = ['symbol', 'function', 'signal_date', 'signal_type', 'interval', 'asset_name', 'signal_type_meta']
 
             columns_to_drop = [col for col in metadata_columns if col in combined_data.columns]
@@ -900,14 +932,13 @@ class SmartDataFetcher:
     def _deduplicate_data_preserve_origination(self, data: pd.DataFrame, signal_type: str) -> pd.DataFrame:
         """
         Deduplicate data based on unique keys for each signal type.
-        Preserves 'Signal First Origination Date' from the earliest occurrence.
 
         Args:
             data: DataFrame to deduplicate
             signal_type: Signal type to determine deduplication key
 
         Returns:
-            Deduplicated DataFrame with preserved origination dates
+            Deduplicated DataFrame
         """
         if data.empty:
             return data
@@ -935,25 +966,13 @@ class SmartDataFetcher:
                 logger.warning(f"Cannot deduplicate {signal_type} data: missing required columns {required_cols}")
                 return data
 
-        # For each unique key, preserve the earliest 'Signal First Origination Date'
-        if 'Signal First Origination Date' in data.columns:
-            # Group by unique_key and get the earliest origination date
-            earliest_origination = data.groupby('unique_key')['Signal First Origination Date'].first().to_dict()
-
-            # Remove duplicates, keeping the last (most recent) occurrence
-            original_count = len(data)
-            data = data.drop_duplicates(subset=['unique_key'], keep='last')
-
-            # Restore the earliest origination date for each unique key
-            data['Signal First Origination Date'] = data['unique_key'].map(earliest_origination)
-
-            removed_count = original_count - len(data)
-            if removed_count > 0:
-                logger.info(f"🗑️ Removed {removed_count} duplicate rows from {signal_type} data (preserved origination dates)")
-        else:
-            # No origination date column, just deduplicate normally
-            original_count = len(data)
-            data = data.drop_duplicates(subset=['unique_key'], keep='last')
+        # Remove duplicates, keeping the last (most recent) occurrence
+        original_count = len(data)
+        data = data.drop_duplicates(subset=['unique_key'], keep='last')
+        
+        removed_count = original_count - len(data)
+        if removed_count > 0:
+            logger.info(f"🗑️ Removed {removed_count} duplicate rows from {signal_type} data")
             removed_count = original_count - len(data)
             if removed_count > 0:
                 logger.info(f"🗑️ Removed {removed_count} duplicate rows from {signal_type} data")

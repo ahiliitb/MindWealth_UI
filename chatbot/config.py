@@ -30,34 +30,38 @@ if not USING_STREAMLIT_SECRETS:
 
 # Base directories
 BASE_DIR = project_root
-CHATBOT_DATA_DIR = BASE_DIR / "chatbot" / "data"
-CHATBOT_ENTRY_DIR = CHATBOT_DATA_DIR / "entry"  # Entry signals (no exit yet)
+
+# Directory configuration from environment
+CHATBOT_DATA_DIR = BASE_DIR / os.getenv("CHATBOT_DATA_DIR", "chatbot/data")  # Base data directory
+STOCK_DATA_DIR = BASE_DIR / os.getenv("STOCK_DATA_DIR", "trade_store/stock_data")  # Stock data directory
+TRADE_STORE_DIR = BASE_DIR / os.getenv("TRADE_STORE_DIR", "trade_store")  # Trade store directory
+HISTORY_DIR = BASE_DIR / os.getenv("HISTORY_DIR", "chatbot/history")  # Chat history directory
+
+# Data file names from environment
+ENTRY_CSV_NAME = os.getenv("ENTRY_CSV_NAME", "entry.csv")
+EXIT_CSV_NAME = os.getenv("EXIT_CSV_NAME", "exit.csv")
+TARGET_CSV_NAME = os.getenv("TARGET_CSV_NAME", "portfolio_target_achieved.csv")
+BREADTH_CSV_NAME = os.getenv("BREADTH_CSV_NAME", "breadth.csv")
+
+# Directory structure
+CHATBOT_ENTRY_DIR = CHATBOT_DATA_DIR / "entry"  # Entry signals (open positions)
 CHATBOT_EXIT_DIR = CHATBOT_DATA_DIR / "exit"  # Exit signals (completed trades)
 CHATBOT_TARGET_DIR = CHATBOT_DATA_DIR / "portfolio_target_achieved"  # Portfolio target achieved signals
 CHATBOT_BREADTH_DIR = CHATBOT_DATA_DIR / "breadth"  # Breadth reports (market-wide)
 TARGET_MASTER_CSV = CHATBOT_TARGET_DIR / "all_targets.csv"  # Master portfolio target file for dedup
 
 # Consolidated CSV files (new system)
-CHATBOT_ENTRY_CSV = CHATBOT_DATA_DIR / "entry.csv"  # Consolidated entry data
-CHATBOT_EXIT_CSV = CHATBOT_DATA_DIR / "exit.csv"  # Consolidated exit data
-CHATBOT_TARGET_CSV = CHATBOT_DATA_DIR / "portfolio_target_achieved.csv"  # Consolidated portfolio target data
-CHATBOT_BREADTH_CSV = CHATBOT_DATA_DIR / "breadth.csv"  # Consolidated breadth data
-STOCK_DATA_DIR = BASE_DIR / "trade_store" / "stock_data"
-HISTORY_DIR = BASE_DIR / "chatbot" / "history"
+CHATBOT_ENTRY_CSV = CHATBOT_DATA_DIR / ENTRY_CSV_NAME  # Consolidated entry data
+CHATBOT_EXIT_CSV = CHATBOT_DATA_DIR / EXIT_CSV_NAME  # Consolidated exit data
+CHATBOT_TARGET_CSV = CHATBOT_DATA_DIR / TARGET_CSV_NAME  # Consolidated portfolio target data
+CHATBOT_BREADTH_CSV = CHATBOT_DATA_DIR / BREADTH_CSV_NAME  # Consolidated breadth data
 
 # Create necessary directories if they don't exist
 HISTORY_DIR.mkdir(parents=True, exist_ok=True)
 
-# Target deduplication columns
-TARGET_DEDUP_COLUMNS = [
-    "Symbol",
-    "Target for which Price has achieved over 90 percent of gain %",
-    "Entry Signal Date/Price[$]"
-]
-
-# Helper function to get API key from Streamlit secrets
+# Helper function to get API key from Streamlit secrets (DEPRECATED - using Claude now)
 def get_api_key() -> str:
-    """Get OpenAI API key from Streamlit secrets or environment variables."""
+    """Get OpenAI API key from Streamlit secrets or environment variables. DEPRECATED - kept for backward compatibility."""
     if USING_STREAMLIT_SECRETS:
         try:
             import streamlit as st
@@ -71,17 +75,36 @@ def get_api_key() -> str:
     # Fallback to environment variable
     return os.getenv("OPENAI_API_KEY", "")
 
-# OpenAI Configuration
+# OpenAI Configuration (DEPRECATED - using Claude for all operations now)
 # API Key from Streamlit secrets (secure)
 OPENAI_API_KEY = get_api_key()
 
-# All other config from .env file
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")  # Default to GPT-4o
-MAX_TOKENS = int(os.getenv("MAX_TOKENS", "4096"))  # Output tokens (response length)
-TEMPERATURE = float(os.getenv("TEMPERATURE", "0.1"))  # Low temperature for factual accuracy (0.1 = very deterministic, minimal creativity)
+# Claude Configuration (for all chatbot operations - extraction AND responses)
+def get_claude_api_key() -> str:
+    """Get Claude API key from Streamlit secrets or environment variables."""
+    if USING_STREAMLIT_SECRETS:
+        try:
+            import streamlit as st
+            if "anthropic" in st.secrets and "CLAUDE_API_KEY" in st.secrets["anthropic"]:
+                return st.secrets["anthropic"]["CLAUDE_API_KEY"]
+            elif "CLAUDE_API_KEY" in st.secrets:
+                return st.secrets["CLAUDE_API_KEY"]
+        except Exception:
+            pass
+    return os.getenv("CLAUDE_API_KEY", "")
+
+CLAUDE_API_KEY = get_claude_api_key()
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
+CLAUDE_MAX_TOKENS = int(os.getenv("CLAUDE_MAX_TOKENS", "6000"))
+CLAUDE_TEMPERATURE = float(os.getenv("CLAUDE_TEMPERATURE", "0.2"))
+
+# All other config from .env file (DEPRECATED OpenAI settings kept for backward compatibility)
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.2")  # DEPRECATED - using Claude now
+MAX_TOKENS = int(os.getenv("MAX_TOKENS", "8000"))  # Output tokens (response length)
+TEMPERATURE = float(os.getenv("TEMPERATURE", "0.1"))  # DEPRECATED - using CLAUDE_TEMPERATURE now
 
 # Token limits - Smart batch processing automatically handles any data size
-MAX_INPUT_TOKENS_PER_CALL = int(os.getenv("MAX_INPUT_TOKENS_PER_CALL", "22000"))  # Token limit per batch
+MAX_INPUT_TOKENS_PER_CALL = int(os.getenv("MAX_INPUT_TOKENS_PER_CALL", "60000"))  # Token limit per batch
 MAX_SEQUENTIAL_BATCHES = int(os.getenv("MAX_SEQUENTIAL_BATCHES", "999"))  # NO LIMIT - Process as many batches as needed
 BATCH_DELAY_SECONDS = float(os.getenv("BATCH_DELAY_SECONDS", "5.0"))  # Delay between batches to avoid rate limits
 ESTIMATED_CHARS_PER_TOKEN = 4  # Rough estimate: 1 token ≈ 4 characters
@@ -161,13 +184,13 @@ CSV_ENCODING = "utf-8"
 MAX_ROWS_TO_INCLUDE = int(os.getenv("MAX_ROWS_TO_INCLUDE", "100"))  # Max rows per ticker (balanced for speed)
 
 # Conversation settings
-MAX_HISTORY_LENGTH = int(os.getenv("MAX_HISTORY_LENGTH", "10"))  # Max conversation turns to keep
-FOLLOWUP_HISTORY_LENGTH = int(os.getenv("FOLLOWUP_HISTORY_LENGTH", "3"))  # Number of previous exchanges to include in follow-up context
+MAX_HISTORY_LENGTH = int(os.getenv("MAX_HISTORY_LENGTH", "15"))  # Max conversation turns to keep
+MAX_EXTRACTION_HISTORY_LENGTH = int(os.getenv("MAX_EXTRACTION_HISTORY_LENGTH", "5"))  # Max history for extraction calls (lighter)
 
 # Chat History UI Settings
 MAX_CHATS_DISPLAY = int(os.getenv("MAX_CHATS_DISPLAY", "10"))  # Max number of chats to show in sidebar (default: 10)
 
 # Data deduplication settings
-# Placeholder column names for deduplication - will be updated based on actual data
-DEDUP_COLUMNS = os.getenv("DEDUP_COLUMNS", "Date,Symbol,Interval,Signal").split(",")  # Columns to use for deduplication
+DEDUP_COLUMNS = os.getenv("DEDUP_COLUMNS", "Function,Symbol,Interval,Signal,Signal Open Price").split(",")  # Columns to use for deduplication
+BREADTH_DEDUP_COLUMNS = os.getenv("BREADTH_DEDUP_COLUMNS", "Function,Date").split(",")  # Columns to use for breadth deduplication
 

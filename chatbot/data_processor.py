@@ -21,6 +21,7 @@ from .config import (
     CSV_ENCODING,
     MAX_ROWS_TO_INCLUDE,
     DEDUP_COLUMNS,
+    BREADTH_DEDUP_COLUMNS,
     MAX_INPUT_TOKENS_PER_CALL,
     ESTIMATED_CHARS_PER_TOKEN
 )
@@ -175,7 +176,7 @@ class DataProcessor:
             return df
 
         # Try different date columns
-        date_columns = ['Signal First Origination Date', 'Date']
+        date_columns = ['Date']
 
         for date_col in date_columns:
             if date_col in df.columns:
@@ -358,9 +359,9 @@ class DataProcessor:
                 else:
                     filtered_df = ticker_filtered_df
 
-                # Extract dates from "Signal First Origination Date" column
-                if 'Signal First Origination Date' in filtered_df.columns:
-                    date_values = filtered_df['Signal First Origination Date'].dropna().unique()
+                # Extract dates from "Date" column
+                if 'Date' in filtered_df.columns:
+                    date_values = filtered_df['Date'].dropna().unique()
                     for date_val in date_values:
                         try:
                             # Ensure it's a valid date string
@@ -442,6 +443,7 @@ class DataProcessor:
             Dictionary mapping ticker to combined DataFrame
         """
         if dedup_columns is None:
+            # Use appropriate dedup columns - breadth uses different columns than regular signals
             dedup_columns = DEDUP_COLUMNS
 
         result = {}
@@ -510,10 +512,6 @@ class DataProcessor:
                         else:
                             filtered_df['Symbol'] = ticker
 
-                    # Ensure Date column exists (use Signal First Origination Date)
-                    if 'Date' not in filtered_df.columns and 'Signal First Origination Date' in filtered_df.columns:
-                        filtered_df['Date'] = filtered_df['Signal First Origination Date']
-
                     # Ensure all string columns are properly encoded
                     for col in filtered_df.columns:
                         if filtered_df[col].dtype == 'object':
@@ -549,8 +547,6 @@ class DataProcessor:
                 # Sort by date if Date column exists (LATEST FIRST)
                 if 'Date' in combined_df.columns:
                     combined_df = combined_df.sort_values('Date', ascending=False)
-                elif 'Signal First Origination Date' in combined_df.columns:
-                    combined_df = combined_df.sort_values('Signal First Origination Date', ascending=False)
 
                 # Limit rows if too many - KEEP LATEST DATA
                 if len(combined_df) > MAX_ROWS_TO_INCLUDE:
@@ -733,6 +729,16 @@ class DataProcessor:
         logger.info(f"Loaded breadth data: {len(filtered_df)} rows from date range {from_date} to {to_date}")
         if 'Date' in filtered_df.columns and not filtered_df['Date'].empty:
             logger.info(f"Date range in results: {filtered_df['Date'].min()} to {filtered_df['Date'].max()}")
+
+        # Apply breadth-specific deduplication
+        if len(filtered_df) > 0:
+            available_dedup_cols = [col for col in BREADTH_DEDUP_COLUMNS if col in filtered_df.columns]
+            if available_dedup_cols:
+                original_count = len(filtered_df)
+                filtered_df = filtered_df.drop_duplicates(subset=available_dedup_cols, keep='first')
+                removed_count = original_count - len(filtered_df)
+                if removed_count > 0:
+                    logger.info(f"Removed {removed_count} duplicate breadth rows based on: {', '.join(available_dedup_cols)}")
 
         return filtered_df
     

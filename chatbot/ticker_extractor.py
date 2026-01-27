@@ -1,5 +1,5 @@
 """
-Ticker/Asset Extractor using GPT-4o-mini.
+Ticker/Asset Extractor using GPT-5.2.
 Automatically identifies asset symbols from user queries.
 """
 
@@ -8,29 +8,29 @@ import json
 import logging
 from typing import List, Optional
 from openai import OpenAI
-from .config import OPENAI_API_KEY, TEMPERATURE
+from .config import OPENAI_API_KEY, TEMPERATURE, OPENAI_MODEL, MAX_TOKENS
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 class TickerExtractor:
-    """Extract ticker symbols from user queries using GPT-4o-mini."""
+    """Extract ticker symbols from user queries using configured GPT model."""
     
-    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4o"):
+    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
         """
         Initialize TickerExtractor.
         
         Args:
             api_key: OpenAI API key (optional, uses env var if not provided)
-            model: Model to use for extraction (default: gpt-4o)
+            model: Model to use for extraction (optional, uses config default if not provided)
         """
         self.api_key = api_key or OPENAI_API_KEY
         if not self.api_key:
             raise ValueError("OpenAI API key not provided for TickerExtractor.")
         
+        self.model = model or OPENAI_MODEL
         self.client = OpenAI(api_key=self.api_key)
-        self.model = model
         self.available_tickers = []  # Populated by chatbot engine
     
     def set_available_tickers(self, tickers: List[str]):
@@ -45,7 +45,7 @@ class TickerExtractor:
     
     def extract_tickers(self, user_query: str) -> List[str]:
         """
-        Extract ticker symbols from user query using GPT-4o-mini.
+        Extract ticker symbols from user query using GPT-5.2.
         
         Args:
             user_query: User's natural language query
@@ -103,13 +103,13 @@ JSON Response:"""
         
         try:
             response = self.client.chat.completions.create(
-                model=self.model,
+                model=OPENAI_MODEL,  # Use GPT-5.2 for intelligent extraction
                 messages=[
                     {"role": "system", "content": "You are a helpful assistant that extracts ticker symbols from text."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.0,  # Deterministic
-                max_tokens=150,
+                temperature=TEMPERATURE,  # Use configured temperature
+                max_completion_tokens=150,  # Short response for ticker list
                 response_format={"type": "json_object"}
             )
             
@@ -161,6 +161,6 @@ JSON Response:"""
                 return []
             
         except Exception as e:
-            logger.error(f"Error extracting tickers with GPT-4o-mini: {e}")
+            logger.error(f"Error extracting tickers with {self.model}: {e}")
             return []
 

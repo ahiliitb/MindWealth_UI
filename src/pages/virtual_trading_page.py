@@ -5,6 +5,7 @@ Virtual Trading Page - Display open/closed trades with filters
 import streamlit as st
 import pandas as pd
 from ..utils.helpers import format_days
+from ..config_paths import VIRTUAL_TRADING_LONG_CSV, VIRTUAL_TRADING_SHORT_CSV
 
 
 def create_virtual_trading_page():
@@ -18,14 +19,14 @@ def create_virtual_trading_page():
     
     # Load data from both long and short CSV files
     try:
-        df_long = pd.read_csv('./trade_store/US/virtual_trading_long.csv')
+        df_long = pd.read_csv(VIRTUAL_TRADING_LONG_CSV)
         df_long['Position'] = 'Long'
     except Exception as e:
         st.error(f"Error loading virtual_trading_long.csv: {str(e)}")
         df_long = pd.DataFrame()
     
     try:
-        df_short = pd.read_csv('./trade_store/US/virtual_trading_short.csv')
+        df_short = pd.read_csv(VIRTUAL_TRADING_SHORT_CSV)
         df_short['Position'] = 'Short'
     except Exception as e:
         st.error(f"Error loading virtual_trading_short.csv: {str(e)}")

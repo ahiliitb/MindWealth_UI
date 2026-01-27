@@ -6,6 +6,12 @@ import streamlit as st
 import pandas as pd
 from pathlib import Path
 from ..utils.helpers import format_days
+from ..config_paths import (
+    CHATBOT_ENTRY_CSV, 
+    CHATBOT_EXIT_CSV, 
+    CHATBOT_TARGET_CSV, 
+    CHATBOT_BREADTH_CSV
+)
 
 
 def create_all_data_page():
@@ -17,12 +23,12 @@ def create_all_data_page():
     display_data_fetch_info(location="header")
     st.markdown("---")
 
-    # Define the 4 chatbot data files
+    # Define the 4 chatbot data files using config paths
     data_files = {
-        "Entry Signals": "chatbot/data/entry.csv",
-        "Exit Signals": "chatbot/data/exit.csv",
-        "Portfolio Targets": "chatbot/data/portfolio_target_achieved.csv",
-        "Market Breadth": "chatbot/data/breadth.csv"
+        "Entry Signals": str(CHATBOT_ENTRY_CSV),
+        "Exit Signals": str(CHATBOT_EXIT_CSV),
+        "Portfolio Targets": str(CHATBOT_TARGET_CSV),
+        "Market Breadth": str(CHATBOT_BREADTH_CSV)
     }
 
     # Load all data files to get combined functions and symbols
@@ -127,10 +133,6 @@ def display_data_file(tab_name, df, selected_functions, selected_symbols):
     if df.empty:
         st.warning(f"No data available for {tab_name}")
         return
-
-    # Clean and prepare data
-    if 'Signal First Origination Date' in df.columns:
-        df['Signal First Origination Date'] = df['Signal First Origination Date'].fillna('')
 
     # Determine signal type for filtering logic
     if tab_name == "Market Breadth":
@@ -296,10 +298,7 @@ def display_data_metrics(df, tab_name, signal_type):
             st.metric("Data Points", total_records)
 
     with col4:
-        if 'Signal First Origination Date' in df.columns:
-            unique_dates = df['Signal First Origination Date'].nunique()
-            st.metric("Unique Origination Dates", unique_dates)
-        elif 'Date' in df.columns:
+        if 'Date' in df.columns:
             unique_dates = df['Date'].nunique()
             st.metric("Unique Dates", unique_dates)
         else:
@@ -325,13 +324,13 @@ def display_interval_metrics(df, interval, position_name):
             st.metric("Data Points", records_count)
 
     with col3:
-        if 'Signal First Origination Date' in df.columns:
-            # Count records by origination date
-            date_counts = df['Signal First Origination Date'].value_counts()
+        if 'Date' in df.columns:
+            # Count records by date
+            date_counts = df['Date'].value_counts()
             if not date_counts.empty:
                 most_common_date = date_counts.index[0]
-                st.metric("Most Common Origination", most_common_date)
+                st.metric("Most Common Date", most_common_date)
             else:
-                st.metric("Origination Date", "N/A")
+                st.metric("Date", "N/A")
         else:
             st.metric("Interval", interval)

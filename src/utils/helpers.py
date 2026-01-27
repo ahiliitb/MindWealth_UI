@@ -7,6 +7,9 @@ from pathlib import Path
 from datetime import datetime
 
 
+from ..config_paths import DATA_FETCH_DATETIME_JSON
+
+
 def find_column_by_keywords(columns, keywords):
     """Find a column name that contains any of the keywords"""
     for col in columns:
@@ -126,16 +129,18 @@ def get_pinned_column_config(df: pd.DataFrame, base_config=None):
     return column_config
 
 
-def get_data_fetch_datetime(json_path="trade_store/US/data_fetch_datetime.json"):
+def get_data_fetch_datetime(json_path=None):
     """
     Read the data fetch datetime from JSON file.
     
     Args:
-        json_path: Path to the data_fetch_datetime.json file
+        json_path: Path to the data_fetch_datetime.json file (uses config default if None)
         
     Returns:
         Dictionary with date, time, datetime, and timezone, or None if file not found
     """
+    if json_path is None:
+        json_path = str(DATA_FETCH_DATETIME_JSON)
     try:
         json_file = Path(json_path)
         if json_file.exists():
@@ -147,14 +152,16 @@ def get_data_fetch_datetime(json_path="trade_store/US/data_fetch_datetime.json")
         return None
 
 
-def display_data_fetch_info(json_path="trade_store/US/data_fetch_datetime.json", location="sidebar"):
+def display_data_fetch_info(json_path=None, location="sidebar"):
     """
     Display the data fetch date and time information.
     
     Args:
-        json_path: Path to the data_fetch_datetime.json file
+        json_path: Path to the data_fetch_datetime.json file (uses config default if None)
         location: Where to display - "sidebar" or "header"
     """
+    if json_path is None:
+        json_path = str(DATA_FETCH_DATETIME_JSON)
     import streamlit as st
     from datetime import datetime
     

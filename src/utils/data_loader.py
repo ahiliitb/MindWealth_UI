@@ -97,7 +97,7 @@ def load_stock_data_file(symbol, start_date, end_date, interval='Daily'):
     }
     
     # Construct the file path - now using CSV files
-    csv_file_path = f'./trade_store/stock_data/{symbol}.csv'
+    csv_file_path = STOCK_DATA_DIR / f'{symbol}.csv'
     
     if not os.path.exists(csv_file_path):
         return None

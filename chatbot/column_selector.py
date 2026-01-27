@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Tuple
 from openai import OpenAI
 
 from .column_metadata_extractor import ColumnMetadataExtractor
-from .config import OPENAI_API_KEY, OPENAI_MODEL
+from .config import OPENAI_API_KEY, OPENAI_MODEL, TEMPERATURE, MAX_TOKENS
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -60,13 +60,13 @@ class ColumnSelector:
     
     def _build_column_context(self, selected_signal_types: Optional[List[str]] = None) -> str:
         """
-        Build context about available columns for the GPT prompt.
+        Build context about available columns with INDEX numbers for the GPT prompt.
         
         Args:
             selected_signal_types: List of signal types user has selected (entry, exit, portfolio_target_achieved, breadth)
             
         Returns:
-            Formatted string with column information
+            Formatted string with column information including indices
         """
         metadata = self.metadata_extractor.extract_all_metadata()
         
@@ -74,7 +74,8 @@ class ColumnSelector:
         if not selected_signal_types:
             selected_signal_types = ["entry", "exit", "portfolio_target_achieved", "breadth"]
         
-        context_parts = ["\n=== AVAILABLE COLUMNS ===\n"]
+        context_parts = ["\n=== AVAILABLE COLUMNS (with INDEX numbers) ===\n"]
+        context_parts.append("IMPORTANT: Always specify both column INDEX (number) and column NAME for 100% accuracy.\n")
         
         for signal_type in selected_signal_types:
             if signal_type not in metadata:
@@ -85,12 +86,16 @@ class ColumnSelector:
             if signal_type == "breadth":
                 # Breadth has no functions
                 columns = metadata["breadth"]
-                context_parts.append(f"  Available columns: {', '.join(columns)}")
+                context_parts.append(f"  Available columns ({len(columns)} total):")
+                for idx, col in enumerate(columns):
+                    context_parts.append(f"    [{idx}] {col}")
             else:
                 # Entry/exit/target have functions
                 for function_name, columns in metadata[signal_type].items():
                     context_parts.append(f"\n  Function: {function_name}")
-                    context_parts.append(f"    Available columns ({len(columns)}): {', '.join(columns)}")
+                    context_parts.append(f"    Available columns ({len(columns)} total):")
+                    for idx, col in enumerate(columns):
+                        context_parts.append(f"      [{idx}] {col}")
         
         context_parts.append("\n=== END AVAILABLE COLUMNS ===\n")
         
@@ -149,8 +154,22 @@ class ColumnSelector:
                 user_message_parts.append(f"\nAdditional context: {additional_context}")
             
             user_message_parts.append(
-                "\nRespond with a JSON object containing the required columns for EACH selected signal type, "
-                "with separate keys for each signal type. ONLY return valid JSON, no other text."
+                "\nMANDATORY COLUMNS that MUST always be included:\n"
+                "- For entry/exit/portfolio_target_achieved signals:\n"
+                "  * [0] Function - REQUIRED to identify the trading strategy\n"
+                "  * [1] Symbol, Signal, Signal Date/Price[$] - REQUIRED to identify the asset and signal\n"
+                "\n"
+                "Respond with a JSON object containing the required columns for EACH selected signal type. "
+                "For EACH column, specify BOTH the column INDEX (number) AND column name for 100% accuracy. "
+                "Format:\n"
+                "{\n"
+                "  \"signal_type\": {\n"
+                "    \"required_columns\": [{\"index\": 0, \"name\": \"Column Name\"}, ...],\n"
+                "    \"reasoning\": \"Brief explanation\"\n"
+                "  }\n"
+                "}\n"
+                "IMPORTANT: ALWAYS include the mandatory columns (Function and Symbol) in your selection.\n"
+                "ONLY return valid JSON, no other text."
             )
             
             user_message = "\n".join(user_message_parts)
@@ -159,13 +178,13 @@ class ColumnSelector:
             logger.info(f"Calling GPT to select columns for query: {user_query[:100]}...")
             
             response = self.client.chat.completions.create(
-                model=OPENAI_MODEL,
+                model=OPENAI_MODEL,  # Use GPT-5.2 for intelligent column selection
                 messages=[
                     {"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": user_message}
                 ],
-                temperature=0.3,  # Lower temperature for more consistent output
-                max_tokens=1000
+                temperature=TEMPERATURE,  # Use config value
+                max_completion_tokens=1000  # Enough for column list and reasoning
             )
             
             # Extract and parse the response
@@ -176,6 +195,9 @@ class ColumnSelector:
             result = self._extract_json_from_response(response_text)
             
             if result and self._validate_signal_type_response(result, selected_signal_types):
+                # Convert new format (with indices) to include both formats
+                result = self._normalize_column_format(result)
+                
                 # Validate that selected columns exist in available columns
                 metadata = self.metadata_extractor.extract_all_metadata()
                 validation_result = self._validate_column_names(result, metadata, selected_signal_types)
@@ -208,6 +230,75 @@ class ColumnSelector:
                 "success": False,
                 "error": str(e)
             }
+    
+    def _normalize_column_format(self, result: Dict) -> Dict:
+        """
+        Normalize column format to support both old (list of strings) and new (list of dicts with index+name).
+        Converts to consistent format: list of strings for column names, with separate indices list.
+        Also ensures mandatory columns (Function, Symbol) are always included.
+        
+        Args:
+            result: GPT response with column selections
+            
+        Returns:
+            Normalized result with both column names and indices
+        """
+        # Define mandatory columns for each signal type
+        MANDATORY_COLUMNS = {
+            'entry': [
+                {'index': 0, 'name': 'Function'},
+                {'index': 1, 'name': 'Symbol, Signal, Signal Date/Price[$]'}
+            ],
+            'exit': [
+                {'index': 0, 'name': 'Function'},
+                {'index': 1, 'name': 'Symbol, Signal, Signal Date/Price[$]'}
+            ],
+            'portfolio_target_achieved': [
+                {'index': 0, 'name': 'Function'},
+                {'index': 1, 'name': 'Symbol, Signal, Signal Date/Price[$]'}
+            ]
+        }
+        
+        for signal_type, signal_data in result.items():
+            if not isinstance(signal_data, dict) or 'required_columns' not in signal_data:
+                continue
+            
+            columns = signal_data['required_columns']
+            
+            # Check if new format (list of dicts with index+name)
+            if columns and isinstance(columns[0], dict):
+                # Extract names and indices
+                column_names = []
+                column_indices = []
+                
+                # Add mandatory columns first if this signal type has them
+                if signal_type in MANDATORY_COLUMNS:
+                    for mandatory_col in MANDATORY_COLUMNS[signal_type]:
+                        # Check if mandatory column is already in the list
+                        if not any(col.get('index') == mandatory_col['index'] for col in columns if isinstance(col, dict)):
+                            logger.info(f"{signal_type}: Adding mandatory column [{mandatory_col['index']}] {mandatory_col['name']}")
+                            column_indices.insert(0, mandatory_col['index'])
+                            column_names.insert(0, mandatory_col['name'])
+                
+                for col_info in columns:
+                    if isinstance(col_info, dict):
+                        idx = col_info.get('index', -1)
+                        name = col_info.get('name', '')
+                        # Avoid duplicates
+                        if idx not in column_indices:
+                            column_indices.append(idx)
+                            column_names.append(name)
+                    else:
+                        # Fallback for mixed format
+                        column_names.append(str(col_info))
+                        column_indices.append(-1)
+                
+                signal_data['required_columns'] = column_names
+                signal_data['column_indices'] = column_indices
+                logger.info(f"{signal_type}: Using column indices {column_indices} for precise selection")
+            # else: old format (list of strings) - keep as is
+        
+        return result
     
     def _validate_signal_type_response(
         self, 

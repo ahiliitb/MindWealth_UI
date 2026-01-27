@@ -4,14 +4,14 @@ Main chatbot engine for processing queries and generating responses.
 
 import logging
 from typing import List, Dict, Optional, Tuple, Any
-from openai import OpenAI
+from anthropic import Anthropic
 import time
 
 from .config import (
-    OPENAI_API_KEY,
-    OPENAI_MODEL,
-    MAX_TOKENS,
-    TEMPERATURE,
+    CLAUDE_API_KEY,
+    CLAUDE_MODEL,
+    CLAUDE_MAX_TOKENS,
+    CLAUDE_TEMPERATURE,
     SYSTEM_PROMPT,
     MAX_HISTORY_LENGTH,
     MAX_INPUT_TOKENS_PER_CALL,
@@ -19,14 +19,13 @@ from .config import (
     BATCH_DELAY_SECONDS,
     ESTIMATED_CHARS_PER_TOKEN,
     MIN_HISTORY_MESSAGES,
-    MAX_ROWS_TO_INCLUDE
+    MAX_ROWS_TO_INCLUDE,
+    MAX_TOKENS,  # Deprecated, for backward compatibility
+    TEMPERATURE  # Deprecated, for backward compatibility
 )
 from .data_processor import DataProcessor
 from .history_manager import HistoryManager
-from .function_extractor import FunctionExtractor
-from .ticker_extractor import TickerExtractor
-from .column_selector import ColumnSelector
-from .signal_type_selector import SignalTypeSelector
+from .unified_extractor import UnifiedExtractor
 from .smart_data_fetcher import SmartDataFetcher
 from .signal_extractor import SignalExtractor
 
@@ -37,7 +36,7 @@ logger = logging.getLogger(__name__)
 class ChatbotEngine:
     """
     Main chatbot engine that coordinates data processing, 
-    GPT-4o interaction, and history management.
+    using Claude Sonnet 4.5 for all AI operations (extraction and responses).
     """
     
     def __init__(
@@ -51,50 +50,32 @@ class ChatbotEngine:
         
         Args:
             session_id: Optional session ID for continuing previous conversation
-            api_key: Optional OpenAI API key (uses env var if not provided)
+            api_key: Optional Claude API key (uses env var if not provided)
             use_new_data_structure: Use new chatbot/data/{ticker}/YYYY-MM-DD.csv structure
         """
-        self.api_key = api_key or OPENAI_API_KEY
+        self.claude_api_key = api_key or CLAUDE_API_KEY
         
-        if not self.api_key:
+        if not self.claude_api_key:
             raise ValueError(
-                "OpenAI API key not provided. Set OPENAI_API_KEY in .streamlit/secrets.toml "
+                "Claude API key not provided. Set CLAUDE_API_KEY in .streamlit/secrets.toml "
                 "or .env file."
             )
         
-        # Initialize OpenAI client with minimal parameters for Streamlit Cloud compatibility
+        # Initialize Claude client (for all AI operations)
         try:
-            # Initialize with just the API key - no other parameters
-            self.client = OpenAI(api_key=self.api_key)
-        except TypeError as e:
-            if 'proxies' in str(e):
-                # Workaround for Streamlit Cloud proxy issues
-                # Try importing from the right module
-                try:
-                    from openai import OpenAI as OpenAIClient
-                    self.client = OpenAIClient(api_key=self.api_key)
-                except Exception as e2:
-                    raise ValueError(
-                        f"Failed to initialize OpenAI client (proxy error): {e}\n"
-                        f"This is likely a version incompatibility. "
-                        f"Please update openai to version 1.30.1+ in requirements.txt"
-                    )
-            else:
-                raise ValueError(f"Failed to initialize OpenAI client: {e}")
+            self.claude_client = Anthropic(api_key=self.claude_api_key)
         except Exception as e:
-            raise ValueError(f"Failed to initialize OpenAI client: {e}. Check your API key.")
+            raise ValueError(f"Failed to initialize Claude client: {e}. Check your API key.")
+        
         self.data_processor = DataProcessor(use_new_structure=use_new_data_structure)
         self.history_manager = HistoryManager(session_id=session_id)
-        self.function_extractor = FunctionExtractor(api_key=self.api_key)
-        self.ticker_extractor = TickerExtractor(api_key=self.api_key)
-        self.column_selector = ColumnSelector(api_key=self.api_key)
-        self.signal_type_selector = SignalTypeSelector(api_key=self.api_key)
+        self.unified_extractor = UnifiedExtractor(api_key=self.claude_api_key)
         self.smart_data_fetcher = SmartDataFetcher()
         self.signal_extractor = SignalExtractor()
         
-        # Set available tickers for ticker extractor
+        # Set available tickers for unified extractor
         available_tickers = self.data_processor.get_available_tickers()
-        self.ticker_extractor.set_available_tickers(available_tickers)
+        self.unified_extractor.set_available_tickers(available_tickers)
         
         # Add system prompt to history if this is a new session
         if not self.history_manager.conversation_history:
@@ -102,13 +83,46 @@ class ChatbotEngine:
         
         logger.info(f"Initialized ChatbotEngine with session {self.history_manager.session_id}")
     
+    def _convert_to_claude_format(self, messages: List[Dict]) -> Dict:
+        """
+        Convert message history to Claude format.
+        Claude requires system message separate from conversation messages.
+        
+        Args:
+            messages: List of messages with 'role' and 'content'
+            
+        Returns:
+            Dict with 'system' and 'messages' keys for Claude API
+        """
+        system_message = ""
+        claude_messages = []
+        
+        for msg in messages:
+            role = msg.get("role")
+            content = msg.get("content", "")
+            
+            if role == "system":
+                # Claude requires system message to be separate
+                system_message = content
+            elif role in ["user", "assistant"]:
+                # Claude uses same role names
+                claude_messages.append({
+                    "role": role,
+                    "content": content
+                })
+        
+        return {
+            "system": system_message if system_message else SYSTEM_PROMPT,
+            "messages": claude_messages
+        }
+    
     def _call_openai_api(self, messages: List[Dict], model: str = None, temperature: float = None) -> str:
         """
         Helper method to call OpenAI API and return the response content.
         
         Args:
             messages: List of message dictionaries
-            model: Model to use (defaults to OPENAI_MODEL from config)
+            model: Model to use (defaults to CLAUDE_MODEL from config)
             temperature: Temperature setting (defaults to TEMPERATURE from config)
             
         Returns:
@@ -116,9 +130,9 @@ class ChatbotEngine:
         """
         try:
             response = self.client.chat.completions.create(
-                model=model or OPENAI_MODEL,
+                model=model or CLAUDE_MODEL,
                 messages=messages,
-                max_tokens=MAX_TOKENS,
+                max_completion_tokens=MAX_TOKENS,
                 temperature=temperature or TEMPERATURE
             )
             return response.choices[0].message.content
@@ -129,9 +143,22 @@ class ChatbotEngine:
     def determine_signal_types(self, user_message: str) -> Tuple[List[str], str]:
         """
         Determine which signal types should be fetched for a given user message.
+        Uses the unified extractor to determine signal types.
         """
-        selected, reasoning = self.signal_type_selector.select_signal_types(user_message)
-        return selected, reasoning
+        # Get conversation history for context
+        from .config import MAX_EXTRACTION_HISTORY_LENGTH
+        conversation_history = self.history_manager.get_messages_for_api(max_pairs=MAX_EXTRACTION_HISTORY_LENGTH)
+        
+        extraction_result = self.unified_extractor.extract_all(user_message, conversation_history=conversation_history)
+        
+        if extraction_result.get("success", False):
+            signal_types = extraction_result.get("signal_types", ["entry", "exit", "portfolio_target_achieved"])
+            reasoning = extraction_result.get("signal_types_reasoning", "")
+            return signal_types, reasoning
+        else:
+            # Fallback to defaults if extraction fails
+            logger.warning(f"Signal type extraction failed: {extraction_result.get('error', 'Unknown error')}")
+            return ["entry", "exit", "portfolio_target_achieved"], "Using default signal types due to extraction error"
     
     def _prepare_user_metadata(self, metadata: Optional[Dict[str, Any]], user_message: str) -> Dict[str, Any]:
         """
@@ -167,8 +194,8 @@ class ChatbotEngine:
             signal_types: List of signal types to filter (entry_exit, portfolio_target_achieved, breadth) - from UI checkboxes
             additional_context: Any additional text context to include
             dedup_columns: Columns to use for deduplication (None = use config default)
-            auto_extract_functions: If True and functions=None, use GPT-4o-mini to extract
-            auto_extract_tickers: If True and tickers=None, use GPT-4o-mini to extract asset names
+            auto_extract_functions: If True and functions=None, use GPT-5.2 to extract
+            auto_extract_tickers: If True and tickers=None, use GPT-5.2 to extract asset names
             is_followup: If True, skip data loading and use existing conversation context
             
         Note: Automatically loads data from BOTH signal and portfolio_target_achieved folders
@@ -206,7 +233,7 @@ class ChatbotEngine:
                 assistant_message, batch_metadata = self._simple_batch_query(messages, estimated_tokens)
                 
                 # Update metadata
-                metadata["model"] = OPENAI_MODEL
+                metadata["model"] = CLAUDE_MODEL
                 metadata["tokens_used"] = batch_metadata["tokens_used"]
                 metadata["finish_reason"] = batch_metadata["finish_reason"]
                 metadata["batch_processing_used"] = True
@@ -235,23 +262,32 @@ class ChatbotEngine:
             # Auto-extract tickers if enabled and not provided
             extracted_tickers = None
             if tickers is None and auto_extract_tickers:
-                logger.info("Auto-extracting tickers from user query...")
-                extracted_tickers = self.ticker_extractor.extract_tickers(user_message)
-
-                # Empty list means no specific tickers mentioned - will use smart filtering
-                # Empty list means no specific tickers mentioned - will use smart filtering
-                if len(extracted_tickers) == 0:
-                    logger.info("No specific tickers mentioned - will use smart filtering based on functions")
-                    # Set to None initially, will be filtered by function later
-                    tickers = None
+                logger.info("Auto-extracting tickers from user query using unified extractor...")
+                from .config import MAX_EXTRACTION_HISTORY_LENGTH
+                conversation_history = self.history_manager.get_messages_for_api(max_pairs=MAX_EXTRACTION_HISTORY_LENGTH)
+                extraction_result = self.unified_extractor.extract_all(user_message, conversation_history=conversation_history)
+                if extraction_result.get("success", False):
+                    extracted_tickers = extraction_result.get("tickers")  # None means ALL
+                    if extracted_tickers:
+                        logger.info(f"Auto-extracted specific tickers: {extracted_tickers[:10]}{'...' if len(extracted_tickers) > 10 else ''}")
+                        tickers = extracted_tickers
+                    else:
+                        logger.info("No specific tickers mentioned - will use smart filtering based on functions")
+                        tickers = None
                 else:
-                    logger.info(f"Auto-extracted specific tickers: {extracted_tickers}")
-                    tickers = extracted_tickers
+                    logger.warning("Ticker extraction failed, using all tickers")
+                    tickers = None
             # Auto-extract functions from user message if not provided
             extracted_functions = None
             if functions is None and auto_extract_functions:
-                logger.info("Auto-extracting functions from user query...")
-                extracted_functions = self.function_extractor.extract_functions(user_message)
+                logger.info("Auto-extracting functions from user query using unified extractor...")
+                # Reuse extraction result if we already extracted for tickers
+                if extracted_tickers is not None or not auto_extract_tickers:
+                    from .config import MAX_EXTRACTION_HISTORY_LENGTH
+                    conversation_history = self.history_manager.get_messages_for_api(max_pairs=MAX_EXTRACTION_HISTORY_LENGTH)
+                    extraction_result = self.unified_extractor.extract_all(user_message, conversation_history=conversation_history)
+                    if extraction_result.get("success", False):
+                        extracted_functions = extraction_result.get("functions")  # None means ALL
                 
                 if extracted_functions:
                     logger.info(f"Auto-extracted functions: {extracted_functions}")
@@ -465,7 +501,7 @@ class ChatbotEngine:
                 )
                 
                 # Update metadata with batch info
-                metadata["model"] = OPENAI_MODEL
+                metadata["model"] = CLAUDE_MODEL
                 metadata["tokens_used"] = batch_metadata["tokens_used"]
                 metadata["finish_reason"] = batch_metadata["finish_reason"]
                 metadata["batch_processing_used"] = True
@@ -480,7 +516,7 @@ class ChatbotEngine:
                 )
                 
                 # Update metadata
-                metadata["model"] = OPENAI_MODEL
+                metadata["model"] = CLAUDE_MODEL
                 metadata["tokens_used"] = batch_metadata["tokens_used"]
                 metadata["finish_reason"] = batch_metadata["finish_reason"]
                 metadata["batch_processing_used"] = True
@@ -586,54 +622,58 @@ class ChatbotEngine:
             # Standard no-data message used by UI when there are no rows
             NO_DATA_MESSAGE = "No Data for Choosen Date Range, Please change range and try again"
 
-            signal_type_reasoning = signal_type_reasoning or ""
-            if selected_signal_types:
-                selected_signal_types = [stype for stype in selected_signal_types if stype]
-            else:
-                selected_signal_types = []
-
-            if not selected_signal_types:
-                selected_signal_types, signal_type_reasoning = self.determine_signal_types(user_message)
+            # STAGE 1: UNIFIED EXTRACTION - Extract everything in ONE GPT call
+            logger.info("STAGE 1: Using unified extractor (single GPT call for all extractions)...")
             
-            # Auto-extract tickers if enabled and not provided
-            if assets is None and auto_extract_tickers:
-                logger.info("Auto-extracting tickers from user query...")
-                extracted_tickers = self.ticker_extractor.extract_tickers(user_message)
-                
-                if len(extracted_tickers) == 0:
-                    logger.info("No specific tickers mentioned - will load all available assets")
-                    assets = None
+            # Get conversation history for context (helps with follow-up queries like "show me those" or "for the same tickers")
+            from .config import MAX_EXTRACTION_HISTORY_LENGTH
+            conversation_history = self.history_manager.get_messages_for_api(max_pairs=MAX_EXTRACTION_HISTORY_LENGTH)
+            
+            extraction_result = self.unified_extractor.extract_all(user_message, conversation_history=conversation_history)
+            
+            if not extraction_result.get("success", False):
+                error_msg = extraction_result.get("error", "Unknown error")
+                logger.error(f"Unified extraction failed: {error_msg}")
+                return f"Error extracting query components: {error_msg}", {"error": error_msg}
+            
+            # Extract all components from unified result
+            selected_signal_types = extraction_result.get("signal_types", [])
+            signal_type_reasoning = extraction_result.get("signal_types_reasoning", "")
+            
+            # Use extracted functions if not provided
+            if functions is None:
+                functions = extraction_result.get("functions")  # None means ALL
+                if functions:
+                    logger.info(f"Extracted functions: {functions}")
                 else:
-                    logger.info(f"Auto-extracted specific tickers: {extracted_tickers}")
-                    assets = extracted_tickers
+                    logger.info("No specific functions mentioned - will load ALL functions")
             
-            # STAGE 1: Column Selection
-            logger.info("STAGE 1: Selecting required columns using GPT...")
-            
-            column_selection_result = self.column_selector.select_columns(
-                user_query=user_message,
-                selected_signal_types=selected_signal_types,
-                additional_context=additional_context
-            )
-            
-            if not column_selection_result.get("success", False):
-                error_msg = column_selection_result.get("error", "Unknown error")
-                logger.error(f"Column selection failed: {error_msg}")
-                return f"Error selecting columns: {error_msg}", {"error": error_msg}
+            # Use extracted tickers/assets if not provided
+            if assets is None and auto_extract_tickers:
+                assets = extraction_result.get("tickers")  # None means ALL
+                if assets:
+                    logger.info(f"Extracted tickers: {assets[:10]}{'...' if len(assets) > 10 else ''}")
+                else:
+                    logger.info("No specific tickers mentioned - will load ALL assets")
             
             # Extract columns and reasoning per signal type
+            columns_data = extraction_result.get("columns", {})
             columns_by_signal_type = {}
             reasoning_by_signal_type = {}
+            indices_by_signal_type = {}  # Store column indices for precise selection
             all_required_columns = set()
             
             for signal_type in selected_signal_types:
-                if signal_type in column_selection_result:
-                    signal_data = column_selection_result[signal_type]
+                if signal_type in columns_data:
+                    signal_data = columns_data[signal_type]
                     if isinstance(signal_data, dict):
-                        cols = signal_data.get('required_columns', [])
+                        cols = signal_data.get('column_names', [])
                         reasoning = signal_data.get('reasoning', '')
+                        indices = signal_data.get('column_indices', [])
                         columns_by_signal_type[signal_type] = cols
                         reasoning_by_signal_type[signal_type] = reasoning
+                        if indices:
+                            indices_by_signal_type[signal_type] = indices
                         all_required_columns.update(cols)
                         logger.info(f"{signal_type.upper()}: Selected {len(cols)} columns")
                         logger.info(f"  Reasoning: {reasoning[:100]}...")
@@ -658,6 +698,10 @@ class ChatbotEngine:
                 
                 logger.info(f"Fetching {signal_type} data with {len(required_cols)} columns...")
                 
+                # Get column indices if available for this signal type
+                col_indices = indices_by_signal_type.get(signal_type)
+                indices_dict = {signal_type: col_indices} if col_indices else None
+                
                 signal_data = self.smart_data_fetcher.fetch_data(
                     signal_types=[signal_type],
                     required_columns=required_cols,
@@ -665,7 +709,8 @@ class ChatbotEngine:
                     functions=functions,
                     from_date=from_date,
                     to_date=to_date,
-                    limit_rows=MAX_ROWS_TO_INCLUDE
+                    limit_rows=MAX_ROWS_TO_INCLUDE,
+                    column_indices=indices_dict
                 )
                 
                 if signal_data and signal_type in signal_data:
@@ -702,6 +747,10 @@ class ChatbotEngine:
                         if not required_cols:
                             continue
                         
+                        # Get column indices if available for this signal type
+                        col_indices = indices_by_signal_type.get(signal_type)
+                        indices_dict = {signal_type: col_indices} if col_indices else None
+                        
                         signal_data = self.smart_data_fetcher.fetch_data(
                             signal_types=[signal_type],
                             required_columns=required_cols,
@@ -709,7 +758,8 @@ class ChatbotEngine:
                             functions=functions,
                             from_date=expanded_from_date,
                             to_date=expanded_to_date,
-                            limit_rows=MAX_ROWS_TO_INCLUDE
+                            limit_rows=MAX_ROWS_TO_INCLUDE,
+                            column_indices=indices_dict
                         )
                         
                         if signal_data and signal_type in signal_data:
@@ -794,7 +844,7 @@ class ChatbotEngine:
             assistant_message, batch_metadata = self._simple_batch_query(messages, estimated_tokens)
             
             # Update metadata
-            metadata["model"] = OPENAI_MODEL
+            metadata["model"] = CLAUDE_MODEL
             metadata["tokens_used"] = batch_metadata["tokens_used"]
             metadata["finish_reason"] = batch_metadata["finish_reason"]
             metadata["batch_processing_used"] = True
@@ -874,14 +924,14 @@ class ChatbotEngine:
             Tuple of (response_text, metadata_dict)
         """
         try:
-            from chatbot.config import FOLLOWUP_HISTORY_LENGTH
+            from chatbot.config import MAX_HISTORY_LENGTH
             
             logger.info("="*60)
             logger.info("SMART FOLLOW-UP QUERY - Dynamic fresh analysis per query")
             logger.info("="*60)
             
             # Get last N exchanges from history (text only, no raw data)
-            history_messages = self.history_manager.get_messages_for_api(max_pairs=FOLLOWUP_HISTORY_LENGTH)
+            history_messages = self.history_manager.get_messages_for_api(max_pairs=MAX_HISTORY_LENGTH)
             
             if not history_messages or len(history_messages) < 2:
                 logger.warning("No previous context found - treating as new query")
@@ -936,7 +986,7 @@ NOTE: Use the conversation context above to understand what we've discussed, but
             metadata["input_type"] = "smart_followup"
             metadata["followup_mode"] = "dynamic_fresh"
             metadata["conversation_context_used"] = True
-            metadata["history_exchanges_used"] = FOLLOWUP_HISTORY_LENGTH
+            metadata["history_exchanges_used"] = MAX_HISTORY_LENGTH
             # Override display_prompt to show only the actual user question (not the enhanced context)
             metadata["display_prompt"] = user_message
             
@@ -1082,7 +1132,7 @@ NOTE: Use the conversation context above to understand what we've discussed, but
             assistant_message, batch_metadata = self._simple_batch_query(messages, estimated_tokens)
             
             # Add response metadata
-            metadata["model"] = OPENAI_MODEL
+            metadata["model"] = CLAUDE_MODEL
             metadata["tokens_used"] = batch_metadata["tokens_used"]
             metadata["finish_reason"] = batch_metadata["finish_reason"]
             metadata["batch_processing_used"] = True
@@ -1215,9 +1265,9 @@ NOTE: Use the conversation context above to understand what we've discussed, but
             # Call API
             logger.info(f"Calling API with single batch ({len(stock_data)} tickers)")
             response = self.client.chat.completions.create(
-                model=OPENAI_MODEL,
+                model=CLAUDE_MODEL,
                 messages=messages,
-                max_tokens=MAX_TOKENS,
+                max_completion_tokens=MAX_TOKENS,
                 temperature=TEMPERATURE
             )
             
@@ -1323,9 +1373,9 @@ Note: This is batch {group_idx + 1} of {len(ticker_groups)} analyzing assets: {'
                 # Call API
                 logger.info(f"Calling API for batch {group_idx + 1}/{len(ticker_groups)}")
                 response = self.client.chat.completions.create(
-                    model=OPENAI_MODEL,
+                    model=CLAUDE_MODEL,
                     messages=group_messages,
-                    max_tokens=MAX_TOKENS,
+                    max_completion_tokens=MAX_TOKENS,
                     temperature=TEMPERATURE
                 )
                 
@@ -1398,9 +1448,9 @@ Create a professional, well-structured response that reads as one cohesive analy
             # Make aggregation API call
             logger.info("Calling API for final aggregation")
             aggregation_response = self.client.chat.completions.create(
-                model=OPENAI_MODEL,
+                model=CLAUDE_MODEL,
                 messages=synthesis_messages,
-                max_tokens=MAX_TOKENS,
+                max_completion_tokens=MAX_TOKENS,
                 temperature=TEMPERATURE
             )
             
@@ -1481,29 +1531,35 @@ Create a professional, well-structured response that reads as one cohesive analy
             if trimmed_count > 0:
                 logger.warning(f"Trimmed {trimmed_count} old messages to stay under token limit")
             
-            # Make single API call
-            logger.info(f"Calling {OPENAI_MODEL} with {len(trimmed_messages)} messages, ~{estimated_tokens} tokens")
-            response = self.client.chat.completions.create(
-                model=OPENAI_MODEL,
-                messages=trimmed_messages,
-                max_tokens=MAX_TOKENS,
-                temperature=TEMPERATURE
+            # Make single API call with Claude
+            logger.info(f"Calling {CLAUDE_MODEL} with {len(trimmed_messages)} messages, ~{estimated_tokens} tokens")
+            
+            # Convert messages to Claude format
+            claude_messages = self._convert_to_claude_format(trimmed_messages)
+            
+            response = self.claude_client.messages.create(
+                model=CLAUDE_MODEL,
+                max_tokens=CLAUDE_MAX_TOKENS,
+                temperature=CLAUDE_TEMPERATURE,
+                system=claude_messages["system"],
+                messages=claude_messages["messages"]
             )
             
-            assistant_message = response.choices[0].message.content
+            assistant_message = response.content[0].text
             
             metadata = {
                 "tokens_used": {
-                    "prompt": response.usage.prompt_tokens,
-                    "completion": response.usage.completion_tokens,
-                    "total": response.usage.total_tokens
+                    "prompt": response.usage.input_tokens,
+                    "completion": response.usage.output_tokens,
+                    "total": response.usage.input_tokens + response.usage.output_tokens
                 },
-                "finish_reason": response.choices[0].finish_reason,
+                "finish_reason": response.stop_reason,
                 "batch_count": 1,
-                "batch_mode": "single"
+                "batch_mode": "single",
+                "model": CLAUDE_MODEL
             }
             
-            logger.info(f"Simple batch completed: {response.usage.total_tokens} tokens")
+            logger.info(f"Simple batch completed: {metadata['tokens_used']['total']} tokens")
             
             return assistant_message, metadata
             
@@ -1612,27 +1668,32 @@ Create a professional, well-structured response that reads as one cohesive analy
                 
                 messages = base_messages + [{"role": "user", "content": complete_message}]
                 
-                response = self.client.chat.completions.create(
-                    model=OPENAI_MODEL,
-                    messages=messages,
-                    max_tokens=MAX_TOKENS,
-                    temperature=TEMPERATURE
+                # Convert to Claude format and call Claude API
+                claude_messages = self._convert_to_claude_format(messages)
+                
+                response = self.claude_client.messages.create(
+                    model=CLAUDE_MODEL,
+                    max_tokens=CLAUDE_MAX_TOKENS,
+                    temperature=CLAUDE_TEMPERATURE,
+                    system=claude_messages["system"],
+                    messages=claude_messages["messages"]
                 )
                 
-                assistant_message = response.choices[0].message.content
+                assistant_message = response.content[0].text
                 
                 metadata = {
                     "tokens_used": {
-                        "prompt": response.usage.prompt_tokens,
-                        "completion": response.usage.completion_tokens,
-                        "total": response.usage.total_tokens
+                        "prompt": response.usage.input_tokens,
+                        "completion": response.usage.output_tokens,
+                        "total": response.usage.input_tokens + response.usage.output_tokens
                     },
-                    "finish_reason": response.choices[0].finish_reason,
+                    "finish_reason": response.stop_reason,
                     "batch_count": 1,
-                    "batch_mode": "single"
+                    "batch_mode": "single",
+                    "model": CLAUDE_MODEL
                 }
                 
-                logger.info(f"Single batch completed: {response.usage.total_tokens} tokens")
+                logger.info(f"Single batch completed: {metadata['tokens_used']['total']} tokens")
                 return assistant_message, metadata
                 
             else:
@@ -1664,9 +1725,9 @@ Please analyze this batch. Your response will be combined with other batches lat
                     messages = base_messages + [{"role": "user", "content": batch_message}]
                     
                     response = self.client.chat.completions.create(
-                        model=OPENAI_MODEL,
+                        model=CLAUDE_MODEL,
                         messages=messages,
-                        max_tokens=MAX_TOKENS,
+                        max_completion_tokens=MAX_TOKENS,
                         temperature=TEMPERATURE
                     )
                     
@@ -1702,9 +1763,9 @@ Final synthesized response:"""
                 synthesis_messages = base_messages + [{"role": "user", "content": synthesis_prompt}]
                 
                 synthesis_response = self.client.chat.completions.create(
-                    model=OPENAI_MODEL,
+                    model=CLAUDE_MODEL,
                     messages=synthesis_messages,
-                    max_tokens=MAX_TOKENS,
+                    max_completion_tokens=MAX_TOKENS,
                     temperature=TEMPERATURE
                 )
                 

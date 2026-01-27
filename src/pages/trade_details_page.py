@@ -7,7 +7,9 @@ import pandas as pd
 import os
 
 
-BASE_DIR = "./trade_store/US"
+from ..config_paths import TRADE_STORE_US_DIR
+
+BASE_DIR = str(TRADE_STORE_US_DIR)
 
 
 def discover_folder_structure(base_folder):

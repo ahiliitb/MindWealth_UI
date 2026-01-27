@@ -1,5 +1,5 @@
 """
-Signal type selector that uses GPT to determine which data categories are needed.
+Signal type selector that uses configured GPT model to determine which data categories are needed.
 """
 
 import json
@@ -8,7 +8,7 @@ from typing import List, Optional, Tuple
 
 from openai import OpenAI
 
-from .config import OPENAI_API_KEY
+from .config import OPENAI_API_KEY, OPENAI_MODEL, MAX_TOKENS, TEMPERATURE
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -44,13 +44,13 @@ SIGNAL_TYPE_DESCRIPTIONS = {
 class SignalTypeSelector:
     """Determine which signal types are needed for a user prompt."""
 
-    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4o-mini"):
+    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
         self.api_key = api_key or OPENAI_API_KEY
         if not self.api_key:
             raise ValueError("OpenAI API key not provided for SignalTypeSelector.")
 
         self.client = OpenAI(api_key=self.api_key)
-        self.model = model
+        self.model = model or OPENAI_MODEL
 
     def select_signal_types(self, user_query: str) -> Tuple[List[str], str]:
         """
@@ -95,7 +95,7 @@ class SignalTypeSelector:
 
         try:
             response = self.client.chat.completions.create(
-                model=self.model,
+                model=OPENAI_MODEL,  # Use GPT-5.2 for intelligent extraction
                 messages=[
                     {
                         "role": "system",
@@ -103,8 +103,8 @@ class SignalTypeSelector:
                     },
                     {"role": "user", "content": prompt},
                 ],
-                temperature=0.0,
-                max_tokens=200,
+                temperature=TEMPERATURE,  # Use configured temperature
+                max_completion_tokens=200,  # Short response for signal type selection
                 response_format={"type": "json_object"},
             )
 

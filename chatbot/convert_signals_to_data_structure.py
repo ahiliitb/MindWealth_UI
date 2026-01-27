@@ -15,11 +15,19 @@ import re
 import os
 from pathlib import Path
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
 import sys
 
-# Load environment variables
-load_dotenv()
+# Import configuration
+from config import (
+    STOCK_DATA_DIR,
+    CHATBOT_DATA_DIR, 
+    DEDUP_COLUMNS,
+    BREADTH_DEDUP_COLUMNS,
+    ENTRY_CSV_NAME,
+    EXIT_CSV_NAME,
+    TARGET_CSV_NAME,
+    BREADTH_CSV_NAME
+)
 
 # Cache for stock data to avoid repeated file reads
 _stock_data_cache = {}
@@ -149,7 +157,26 @@ def parse_interval_from_status(value):
         return None
 
 
-def get_interval_based_open_price(symbol, signal_date, interval, stock_data_dir="trade_store/stock_data"):
+def get_interval_based_open_price(symbol, signal_date, interval, stock_data_dir=None):
+    """
+    Get the correct open price based on the interval type.
+    
+    For Daily: Returns open price on the signal date
+    For Weekly: Returns open price on the Monday of that week
+    For Monthly: Returns open price on the first trading day of that month
+    For Quarterly: Returns open price on the first trading day of that quarter
+    
+    Args:
+        symbol: Stock symbol
+        signal_date: Signal date (YYYY-MM-DD string)
+        interval: Interval type (Daily, Weekly, Monthly, Quarterly)
+        stock_data_dir: Directory containing stock data CSVs (uses config default if None)
+    
+    Returns:
+        Open price as float with 4 decimal places, or None if not found
+    """
+    if stock_data_dir is None:
+        stock_data_dir = str(STOCK_DATA_DIR)
     """
     Get the correct open price based on the interval type.
     
@@ -280,13 +307,8 @@ def is_confirmed_signal(confirmation_status_value):
 
 def get_dedup_columns(signal_type="entry"):
     """
-    Get deduplication columns based on signal type.
-
-    Different signal types use different deduplication keys:
-    - entry: Function, Symbol, Signal Type, Interval, Signal Open Price
-    - exit: Function, Symbol, Signal Type, Interval, Signal Date, Signal Open Price
-    - portfolio_target_achieved: Function, Symbol, Signal Type, Interval, Signal Open Price
-    - breadth: Function, Date
+    Get deduplication columns from configuration.
+    Uses DEDUP_COLUMNS for most types, BREADTH_DEDUP_COLUMNS for breadth data.
 
     Args:
         signal_type: Type of signal ('entry', 'exit', 'portfolio_target_achieved', 'breadth')
@@ -294,19 +316,11 @@ def get_dedup_columns(signal_type="entry"):
     Returns:
         List of column names to use for deduplication
     """
-    if signal_type == "entry":
-        dedup_cols_str = os.getenv("ENTRY_DEDUP_COLUMNS", "Function,Symbol,Interval,Signal,Signal Open Price")
-    elif signal_type == "exit":
-        dedup_cols_str = os.getenv("EXIT_DEDUP_COLUMNS", "Function,Symbol,Signal,Interval,Signal Date,Signal Open Price")
-    elif signal_type == "portfolio_target_achieved":
-        dedup_cols_str = os.getenv("TARGET_DEDUP_COLUMNS", "Function,Symbol,Signal,Interval,Signal Open Price")
-    elif signal_type == "breadth":
-        dedup_cols_str = os.getenv("BREADTH_DEDUP_COLUMNS", "Function,Date")
+    if signal_type == "breadth":
+        dedup_cols = BREADTH_DEDUP_COLUMNS.copy()
     else:
-        # Fallback to entry defaults
-        dedup_cols_str = os.getenv("DEDUP_COLUMNS", "Date,Symbol,Interval,Signal")
+        dedup_cols = DEDUP_COLUMNS.copy()
     
-    dedup_cols = [col.strip() for col in dedup_cols_str.split(",")]
     return dedup_cols
 
 
@@ -403,7 +417,7 @@ def check_target_duplicate(row, master_csv_path):
 def convert_signal_file_to_data_structure(
     input_file,
     signal_type="signal",
-    output_base_dir="chatbot/data",
+    output_base_dir=None,
     overwrite=False,
     dedup_columns=None
 ):
@@ -426,6 +440,10 @@ def convert_signal_file_to_data_structure(
         overwrite: Whether to overwrite existing files
         dedup_columns: List of columns for deduplication (uses .env if None)
     """
+    # Set default output directory if not provided
+    if output_base_dir is None:
+        output_base_dir = str(CHATBOT_DATA_DIR)
+    
     # Note: dedup_columns parameter is now handled per-row based on signal type (entry/exit/target/breadth)
     # Each signal type uses different deduplication keys
     print("\n" + "="*80)
@@ -560,12 +578,8 @@ def convert_signal_file_to_data_structure(
                 if backtested_exit_column in row.index:
                     row['Backtested Target Exit Date'] = str(row[backtested_exit_column]).strip() if pd.notna(row[backtested_exit_column]) else ""
             
-            # NOW check for duplicates after enrichment
-            if master_csv_path:
-                is_duplicate = check_target_duplicate(row, master_csv_path)
-                if is_duplicate:
-                    duplicates_rejected += 1
-                    continue  # Skip this row
+            # Note: Target signals are now handled like entry/exit signals
+            # No master CSV duplicate checking needed - they append to portfolio_target_achieved.csv
         else:
             # For signals, parse the compound column
             symbol_data = row[symbol_column]
@@ -770,7 +784,19 @@ def convert_signal_file_to_data_structure(
     return processed, skipped, created_symbols
 
 
-def get_latest_price_from_stock_data(symbol, stock_data_dir="trade_store/stock_data"):
+def get_latest_price_from_stock_data(symbol, stock_data_dir=None):
+    """
+    Get the latest (most recent) price from stock_data CSV file.
+    
+    Args:
+        symbol: Stock symbol (e.g., "TSLA", "WMT", "^NDX")
+        stock_data_dir: Directory containing stock_data CSV files (uses config default if None)
+    
+    Returns:
+        Tuple of (latest_date, latest_price) or (None, None) if not found
+    """
+    if stock_data_dir is None:
+        stock_data_dir = str(STOCK_DATA_DIR)
     """
     Get the latest (most recent) price from stock_data CSV file.
     
@@ -915,13 +941,13 @@ def calculate_price_change_percentage(current_price, signal_price):
         return "0.0% below"
 
 
-def append_to_consolidated_csv(row, signal_type, data_base_dir="chatbot/data"):
+def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
     """
     Update or insert signal row in consolidated CSV file.
     
     CRITICAL LOGIC:
     1. If key exists → UPDATE existing row with new data
-    2. If key is new → INSERT new row and set Signal First Origination Date
+    2. If key is new → INSERT new row
     3. Signal Open Price comes from trade_store (already in row data)
     
     Consolidated files:
@@ -936,6 +962,10 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir="chatbot/data"):
         data_base_dir: Base directory for data (default: chatbot/data)
     """
     try:
+        # Set default data directory if not provided
+        if data_base_dir is None:
+            data_base_dir = str(CHATBOT_DATA_DIR)
+            
         # Determine consolidated CSV path based on signal type
         csv_path = Path(data_base_dir) / f"{signal_type}.csv"
         
@@ -1021,36 +1051,17 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir="chatbot/data"):
                     break
             
             if key_exists:
-                # UPDATE: Key exists → preserve Signal First Origination Date, update all other columns
-                if 'Signal First Origination Date' in existing_df.columns and 'Signal First Origination Date' in new_row_df.columns:
-                    # Preserve the EXISTING Signal First Origination Date
-                    preserved_first_date = existing_df.at[existing_row_idx, 'Signal First Origination Date']
-                    new_row_df.at[0, 'Signal First Origination Date'] = preserved_first_date
-                
+                # UPDATE: Key exists → update all columns
                 # Update the existing row with new data
                 for col in new_row_df.columns:
                     existing_df.at[existing_row_idx, col] = new_row_df.at[0, col]
                 
                 combined_df = existing_df
             else:
-                # INSERT: New key → set Signal First Origination Date to signal date
-                if 'Signal First Origination Date' not in new_row_df.columns:
-                    # Extract signal date from "Symbol, Signal, Signal Date/Price[$]" column
-                    signal_col = row.get("Symbol, Signal, Signal Date/Price[$]", "")
-                    match = re.search(r'(\d{4}-\d{2}-\d{2})', str(signal_col))
-                    signal_date = match.group(1) if match else datetime.now().strftime("%Y-%m-%d")
-                    new_row_df['Signal First Origination Date'] = signal_date
-                
-                # Append new row
+                # INSERT: New key → append new row
                 combined_df = pd.concat([existing_df, new_row_df], ignore_index=True)
         else:
             # File doesn't exist yet → INSERT new row
-            if 'Signal First Origination Date' not in new_row_df.columns:
-                # Extract signal date from "Symbol, Signal, Signal Date/Price[$]" column
-                signal_col = row.get("Symbol, Signal, Signal Date/Price[$]", "")
-                match = re.search(r'(\d{4}-\d{2}-\d{2})', str(signal_col))
-                signal_date = match.group(1) if match else datetime.now().strftime("%Y-%m-%d")
-                new_row_df['Signal First Origination Date'] = signal_date
             
             combined_df = new_row_df
         
@@ -1061,7 +1072,24 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir="chatbot/data"):
         print(f"  ⚠ Error updating consolidated CSV {csv_path}: {e}")
 
 
-def update_current_prices_in_data_files(data_base_dir="chatbot/data", stock_data_dir="trade_store/stock_data"):
+def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None):
+    """
+    Update current prices in all chatbot data files using live prices from stock_data.
+    
+    This function:
+    1. Scans all CSV files in chatbot/data (entry, exit, portfolio_target_achieved)
+    2. For each file, extracts symbols and updates "Current Trading Date/Price[$], Current Price vs Signal" column
+    3. Uses the latest price from stock_data CSV files
+    4. Handles all three cases: entry signals, exit signals, and portfolio target achieved
+    
+    Args:
+        data_base_dir: Base directory for chatbot data (uses config default if None)
+        stock_data_dir: Directory containing stock_data CSV files (uses config default if None)
+    """
+    if data_base_dir is None:
+        data_base_dir = str(CHATBOT_DATA_DIR)
+    if stock_data_dir is None:
+        stock_data_dir = str(STOCK_DATA_DIR)
     """
     Update current prices in all chatbot data files using live prices from stock_data.
     
@@ -1243,7 +1271,7 @@ def update_current_prices_in_data_files(data_base_dir="chatbot/data", stock_data
 
 def convert_breadth_report(
     input_file,
-    output_base_dir="chatbot/data"
+    output_base_dir=None
 ):
     """
     Convert breadth report to data folder structure.
@@ -1251,8 +1279,10 @@ def convert_breadth_report(
     
     Args:
         input_file: Path to breadth.csv file
-        output_base_dir: Base directory for output (default: chatbot/data)
+        output_base_dir: Base directory for output (uses config default if None)
     """
+    if output_base_dir is None:
+        output_base_dir = str(CHATBOT_DATA_DIR)
     print("\n" + "="*80)
     print(f"CONVERTING BREADTH REPORT: {input_file}")
     print("="*80 + "\n")
@@ -1329,13 +1359,16 @@ def main():
     # Try to find the most recent outstanding_signal file
     signal_file = None
     
+    # Use trade store directory from config
+    trade_store_us = Path(str(CHATBOT_DATA_DIR).replace("chatbot/data", "trade_store/US"))
+    
     # First try exact match
-    signal_file_exact = Path("trade_store/US/outstanding_signal.csv")
+    signal_file_exact = trade_store_us / "outstanding_signal.csv"
     if signal_file_exact.exists():
         signal_file = signal_file_exact
     else:
         # Try pattern matching for date_name.csv format
-        signal_pattern_files = list(Path("trade_store/US").glob("*_outstanding_signal.csv"))
+        signal_pattern_files = list(trade_store_us.glob("*_outstanding_signal.csv"))
         if signal_pattern_files:
             # Sort by modification time and get the most recent
             signal_pattern_files.sort(key=lambda x: x.stat().st_mtime, reverse=True)
@@ -1346,7 +1379,7 @@ def main():
         convert_signal_file_to_data_structure(
             input_file=signal_file,
             signal_type="signal",
-            output_base_dir="chatbot/data",
+            output_base_dir=str(CHATBOT_DATA_DIR),
             overwrite=False
         )
     else:
@@ -1362,12 +1395,12 @@ def main():
     target_file = None
     
     # First try exact match
-    target_file_exact = Path("trade_store/US/target_signal.csv")
+    target_file_exact = trade_store_us / "target_signal.csv"
     if target_file_exact.exists():
         target_file = target_file_exact
     else:
         # Try pattern matching for date_name.csv format
-        target_pattern_files = list(Path("trade_store/US").glob("*_target_signal.csv"))
+        target_pattern_files = list(trade_store_us.glob("*_target_signal.csv"))
         if target_pattern_files:
             # Sort by modification time and get the most recent
             target_pattern_files.sort(key=lambda x: x.stat().st_mtime, reverse=True)
@@ -1378,7 +1411,7 @@ def main():
         convert_signal_file_to_data_structure(
             input_file=target_file,
             signal_type="portfolio_target_achieved",
-            output_base_dir="chatbot/data",
+            output_base_dir=str(CHATBOT_DATA_DIR),
             overwrite=False
         )
     else:
@@ -1394,12 +1427,12 @@ def main():
     breadth_file = None
     
     # First try exact match
-    breadth_file_exact = Path("trade_store/US/breadth.csv")
+    breadth_file_exact = trade_store_us / "breadth.csv"
     if breadth_file_exact.exists():
         breadth_file = breadth_file_exact
     else:
         # Try pattern matching for date_name.csv format (excluding breadth_us.csv)
-        breadth_pattern_files = [f for f in Path("trade_store/US").glob("*_breadth.csv") 
+        breadth_pattern_files = [f for f in trade_store_us.glob("*_breadth.csv") 
                                 if "breadth_us" not in f.name]
         if breadth_pattern_files:
             # Sort by modification time and get the most recent
@@ -1410,7 +1443,7 @@ def main():
     if breadth_file and breadth_file.exists():
         convert_breadth_report(
             input_file=breadth_file,
-            output_base_dir="chatbot/data"
+            output_base_dir=str(CHATBOT_DATA_DIR)
         )
     else:
         print(f"⚠ File not found: breadth.csv (tried exact match and date_name.csv pattern)")
@@ -1420,8 +1453,8 @@ def main():
     print("Updating current prices from live stock data")
     print("-" * 80)
     update_current_prices_in_data_files(
-        data_base_dir="chatbot/data",
-        stock_data_dir="trade_store/stock_data"
+        data_base_dir=str(CHATBOT_DATA_DIR),
+        stock_data_dir=str(STOCK_DATA_DIR)
     )
     
     print("\n" + "="*80)

@@ -15,6 +15,10 @@ from .config import (
     CHATBOT_EXIT_DIR,
     CHATBOT_TARGET_DIR,
     CHATBOT_BREADTH_DIR,
+    CHATBOT_ENTRY_CSV,
+    CHATBOT_EXIT_CSV,
+    CHATBOT_TARGET_CSV,
+    CHATBOT_BREADTH_CSV,
     CSV_ENCODING
 )
 
@@ -34,6 +38,12 @@ class ColumnMetadataExtractor:
         self.exit_dir = Path(CHATBOT_EXIT_DIR)
         self.target_dir = Path(CHATBOT_TARGET_DIR)
         self.breadth_dir = Path(CHATBOT_BREADTH_DIR)
+        
+        # Consolidated CSV paths
+        self.entry_csv = Path(CHATBOT_ENTRY_CSV)
+        self.exit_csv = Path(CHATBOT_EXIT_CSV)
+        self.target_csv = Path(CHATBOT_TARGET_CSV)
+        self.breadth_csv = Path(CHATBOT_BREADTH_CSV)
         
         # Cache for column metadata
         self._metadata_cache: Optional[Dict] = None
@@ -63,9 +73,9 @@ class ColumnMetadataExtractor:
         logger.info("Extracting column metadata from all signal types...")
         
         metadata = {
-            "entry": self._extract_signal_type_metadata(self.entry_dir),
-            "exit": self._extract_signal_type_metadata(self.exit_dir),
-            "portfolio_target_achieved": self._extract_signal_type_metadata(self.target_dir),
+            "entry": self._extract_signal_type_metadata(self.entry_dir, self.entry_csv, "entry"),
+            "exit": self._extract_signal_type_metadata(self.exit_dir, self.exit_csv, "exit"),
+            "portfolio_target_achieved": self._extract_signal_type_metadata(self.target_dir, self.target_csv, "portfolio_target_achieved"),
             "breadth": self._extract_breadth_metadata()
         }
         
@@ -74,16 +84,34 @@ class ColumnMetadataExtractor:
         
         return metadata
     
-    def _extract_signal_type_metadata(self, base_dir: Path) -> Dict[str, List[str]]:
+    def _extract_signal_type_metadata(self, base_dir: Path, csv_path: Path, signal_type: str) -> Dict[str, List[str]]:
         """
         Extract column metadata for a signal type (entry/exit/portfolio_target_achieved).
+        Tries consolidated CSV first, falls back to folder structure if CSV doesn't exist.
         
         Args:
             base_dir: Base directory for the signal type (e.g., entry_dir)
+            csv_path: Path to consolidated CSV file
+            signal_type: Name of signal type for logging
             
         Returns:
             Dictionary mapping function names to list of columns
+            For consolidated CSV: {"ALL": [columns]} since functions aren't separated
         """
+        # Try consolidated CSV first
+        if csv_path.exists():
+            try:
+                logger.info(f"Reading column metadata from consolidated CSV: {csv_path}")
+                df = pd.read_csv(csv_path, nrows=0, encoding=CSV_ENCODING)
+                columns = df.columns.tolist()
+                logger.info(f"Extracted {len(columns)} columns from {signal_type} consolidated CSV")
+                # Return columns under "ALL" key since consolidated CSV has all functions together
+                return {"ALL": columns}
+            except Exception as e:
+                logger.error(f"Error reading consolidated CSV {csv_path}: {e}")
+                # Fall through to folder-based extraction
+        
+        # Fall back to folder-based structure
         if not base_dir.exists():
             logger.warning(f"Directory does not exist: {base_dir}")
             return {}
@@ -130,11 +158,24 @@ class ColumnMetadataExtractor:
     def _extract_breadth_metadata(self) -> List[str]:
         """
         Extract column metadata for breadth signals.
-        Breadth signals don't have functions/assets, just date-based files.
+        Tries consolidated CSV first, falls back to folder structure.
         
         Returns:
             List of column names
         """
+        # Try consolidated CSV first
+        if self.breadth_csv.exists():
+            try:
+                logger.info(f"Reading breadth column metadata from consolidated CSV: {self.breadth_csv}")
+                df = pd.read_csv(self.breadth_csv, nrows=0, encoding=CSV_ENCODING)
+                columns = df.columns.tolist()
+                logger.info(f"Extracted {len(columns)} columns from breadth consolidated CSV")
+                return columns
+            except Exception as e:
+                logger.error(f"Error reading breadth consolidated CSV {self.breadth_csv}: {e}")
+                # Fall through to folder-based extraction
+        
+        # Fall back to folder-based structure
         if not self.breadth_dir.exists():
             logger.warning(f"Breadth directory does not exist: {self.breadth_dir}")
             return []

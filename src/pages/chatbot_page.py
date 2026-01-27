@@ -27,7 +27,12 @@ def get_signal_type_label(signal_type: str, uppercase: bool = False) -> str:
 
 
 def extract_user_prompt(content: str, metadata: Optional[dict] = None) -> str:
-    """Return the original user prompt without appended data payloads or conversation context."""
+    """Return the original user prompt without appended data payloads or conversation context.
+    
+    This ensures both current and historical messages show only the clean user question,
+    not the internal conversation context that's appended for the AI.
+    """
+    # First priority: use display_prompt from metadata if available
     if metadata and metadata.get("display_prompt"):
         return metadata["display_prompt"]
     
@@ -45,16 +50,27 @@ def extract_user_prompt(content: str, metadata: Optional[dict] = None) -> str:
     # Handle standard formats
     if 'FOLLOW-UP QUESTION:' in cleaned:
         cleaned = cleaned.split('FOLLOW-UP QUESTION:', 1)[1].strip()
-    elif 'User Query:' in cleaned:
-        cleaned = cleaned.split('User Query:', 1)[1].strip()
     
-    # Remove any data context sections
+    # Remove "User Query:" prefix
+    if cleaned.startswith('User Query:'):
+        cleaned = cleaned.replace('User Query:', '', 1).strip()
+    
+    # Remove any data context sections (everything from first === onwards)
     if '===' in cleaned:
         cleaned = cleaned.split('===', 1)[0].strip()
     
     # Remove NOTE: sections
     if 'NOTE:' in cleaned:
-        cleaned = cleaned.split('NOTE:', 1)[0].strip()
+        note_pos = cleaned.find('NOTE:')
+        # Find the line break before NOTE:
+        last_newline = cleaned.rfind('\n', 0, note_pos)
+        if last_newline != -1:
+            cleaned = cleaned[:last_newline].strip()
+        else:
+            cleaned = cleaned.split('NOTE:', 1)[0].strip()
+    
+    # Remove trailing/leading whitespace and empty lines
+    cleaned = cleaned.strip()
     
     return cleaned
 
@@ -427,9 +443,11 @@ def render_chatbot_page():
             'metadata': {'display_prompt': analysis_prompt}
         })
         
-        # Display user message immediately
+        # Display user message immediately (clean version only)
         with st.chat_message("user"):
-            st.markdown(analysis_prompt)
+            # Use extract_user_prompt to show only the clean question
+            clean_prompt = extract_user_prompt(analysis_prompt, {'display_prompt': analysis_prompt})
+            st.markdown(clean_prompt)
         
         # Get AI response
         with st.chat_message("assistant"):
@@ -520,9 +538,11 @@ def render_chatbot_page():
             'metadata': {'display_prompt': insights_prompt}
         })
         
-        # Display user message immediately
+        # Display user message immediately (clean version only)
         with st.chat_message("user"):
-            st.markdown(insights_prompt)
+            # Use extract_user_prompt to show only the clean question
+            clean_prompt = extract_user_prompt(insights_prompt, {'display_prompt': insights_prompt})
+            st.markdown(clean_prompt)
         
         # Get AI response
         with st.chat_message("assistant"):
@@ -610,9 +630,11 @@ def render_chatbot_page():
             'metadata': {'display_prompt': breadth_prompt}
         })
         
-        # Display user message immediately
+        # Display user message immediately (clean version only)
         with st.chat_message("user"):
-            st.markdown(breadth_prompt)
+            # Use extract_user_prompt to show only the clean question
+            clean_prompt = extract_user_prompt(breadth_prompt, {'display_prompt': breadth_prompt})
+            st.markdown(clean_prompt)
         
         # Get AI response
         with st.chat_message("assistant"):
@@ -1117,9 +1139,11 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
             'metadata': {'display_prompt': user_input}
         })
         
-        # Display user message immediately
+        # Display user message immediately (clean version only)
         with st.chat_message("user"):
-            st.markdown(user_input)
+            # Use extract_user_prompt to show only the clean question
+            clean_prompt = extract_user_prompt(user_input, {'display_prompt': user_input})
+            st.markdown(clean_prompt)
         
         # Get AI response
         with st.chat_message("assistant"):

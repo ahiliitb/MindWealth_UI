@@ -58,7 +58,6 @@ The system **primarily uses consolidated CSV files** for all data operations, pr
 - **Function:** Trading strategy (e.g., "FRACTAL TRACK", "TRENDPULSE")
 - **Interval:** Trading timeframe ("Daily", "Weekly", "Monthly", "Quarterly")
 - **Signal Open Price:** Price at signal generation (4 decimal places)
-- **Signal First Origination Date:** Date when signal was first created (preserved across updates, used for deduplication)
 - **Signal Date:** Date when signal occurred (extracted from compound column, used for date range filtering)
 
 #### **Exit Signals (`exit.csv`)**
@@ -69,7 +68,6 @@ The system **primarily uses consolidated CSV files** for all data operations, pr
 - **Interval:** Trading timeframe
 - **Signal Date:** Original entry signal date (used in deduplication key)
 - **Signal Open Price:** Original entry price (4 decimal places)
-- **Signal First Origination Date:** Date when signal was first created (preserved across updates, used for deduplication)
 - **Exit Date:** Date when position was closed (extracted from compound column, used for date range filtering)
 
 #### **Portfolio Target Achieved (`portfolio_target_achieved.csv`)**
@@ -79,7 +77,6 @@ The system **primarily uses consolidated CSV files** for all data operations, pr
 - **Function:** Trading strategy
 - **Interval:** Trading timeframe
 - **Signal Open Price:** Price at signal generation (4 decimal places)
-- **Signal First Origination Date:** Date when signal was first created (preserved across updates, used for deduplication)
 - **Target Achievement Date:** Date when target was achieved (extracted from compound column, used for date range filtering)
 
 #### **Market Breadth (`breadth.csv`)**
@@ -449,7 +446,7 @@ The chatbot implements an intelligent follow-up system that optimizes performanc
 **Method:** `smart_followup_query()` in `ChatbotEngine`
 
 **Process:**
-1. **History Retrieval:** Loads last N conversation exchanges (configurable via `FOLLOWUP_HISTORY_LENGTH`)
+1. **History Retrieval:** Loads last N conversation exchanges (configurable via `MAX_HISTORY_LENGTH`)
 2. **Context Extraction:** Analyzes previous query metadata including:
    - Signal types used
    - Columns previously selected
@@ -527,7 +524,7 @@ The chatbot implements an intelligent follow-up system that optimizes performanc
 ### Configuration Settings
 
 **Key Parameters:**
-- `FOLLOWUP_HISTORY_LENGTH`: Number of recent exchanges to keep (default: 3)
+- `MAX_HISTORY_LENGTH`: Number of recent exchanges to keep (default: 15)
 - `MAX_HISTORY_LENGTH`: Total conversation pairs to maintain
 - `ESTIMATED_CHARS_PER_TOKEN`: Token calculation for optimization
 

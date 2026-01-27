@@ -1,5 +1,5 @@
 """
-Function extractor using GPT-4o-mini to identify trading functions from user prompts.
+Function extractor using GPT-5.2 to identify trading functions from user prompts.
 """
 
 import logging
@@ -7,7 +7,7 @@ import json
 from typing import List, Optional
 from openai import OpenAI
 
-from .config import OPENAI_API_KEY
+from .config import OPENAI_API_KEY, OPENAI_MODEL, MAX_TOKENS, TEMPERATURE
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -60,7 +60,7 @@ Now extract from the user's query below. Respond ONLY with a JSON array, nothing
 
 
 class FunctionExtractor:
-    """Extracts trading function names from user prompts using GPT-4o-mini."""
+    """Extracts trading function names from user prompts using GPT-5.2."""
     
     def __init__(self, api_key: Optional[str] = None):
         """
@@ -92,7 +92,7 @@ class FunctionExtractor:
     
     def extract_functions(self, user_query: str) -> List[str]:
         """
-        Extract function names from user query using GPT-4o-mini.
+        Extract function names from user query using GPT-5.2.
         
         Args:
             user_query: User's question/prompt
@@ -107,13 +107,13 @@ class FunctionExtractor:
                 {"role": "user", "content": user_query}
             ]
             
-            # Call GPT-4o-mini for extraction
-            logger.info("Extracting functions from user query using GPT-4o-mini...")
+            # Call GPT-5.2 for extraction
+            logger.info(f"Extracting functions from user query using {OPENAI_MODEL}...")
             response = self.client.chat.completions.create(
-                model="gpt-4o-mini",  # Use cheaper model for extraction
+                model=OPENAI_MODEL,  # Use GPT-5.2 for intelligent extraction
                 messages=messages,
-                max_tokens=100,  # Short response needed
-                temperature=0.0  # Deterministic extraction
+                max_completion_tokens=100,  # Short response for function names
+                temperature=TEMPERATURE  # Use configured temperature
             )
             
             # Parse response
