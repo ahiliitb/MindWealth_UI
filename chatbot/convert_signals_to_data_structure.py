@@ -476,6 +476,8 @@ def convert_signal_file_to_data_structure(
     created_functions = set()
     signals_with_exit = 0
     signals_no_exit = 0
+    rows_updated = 0
+    rows_inserted = 0
     
     # Handle different column structures for signal vs portfolio_target_achieved
     if signal_type == "portfolio_target_achieved":
@@ -682,7 +684,11 @@ def convert_signal_file_to_data_structure(
         
         # ONLY append to consolidated CSV (no individual files)
         try:
-            append_to_consolidated_csv(row, row_signal_type, output_base_dir)
+            action = append_to_consolidated_csv(row, row_signal_type, output_base_dir)
+            if action == 'updated':
+                rows_updated += 1
+            elif action == 'inserted':
+                rows_inserted += 1
             processed += 1
         except Exception as e:
             print(f"  ⚠ Error appending to consolidated CSV: {e}")
@@ -693,6 +699,8 @@ def convert_signal_file_to_data_structure(
     print("-"*80)
     print(f"Signal Type: {signal_type.upper()}")
     print(f"✓ Total rows processed: {processed}")
+    print(f"   ├─ Rows updated (existing key): {rows_updated}")
+    print(f"   └─ Rows inserted (new key): {rows_inserted}")
     print(f"⚠ Rows skipped: {skipped}")
     if signal_type == "portfolio_target_achieved":
         print(f"🚫 Duplicates rejected: {duplicates_rejected}")
@@ -903,6 +911,9 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
         row: Pandas Series with signal data (from trade_store)
         signal_type: 'entry', 'exit', 'portfolio_target_achieved', or 'breadth'
         data_base_dir: Base directory for data (default: chatbot/data)
+        
+    Returns:
+        str: 'updated' if row was updated, 'inserted' if new row was added, 'error' if failed
     """
     try:
         # Set default data directory if not provided
@@ -928,47 +939,68 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
         # Helper: Extract dedup key based on signal type
         def get_dedup_key(row_data, sig_type):
             """Extract deduplication key columns based on signal type"""
-            signal_col = row_data.get("Symbol, Signal, Signal Date/Price[$]", "")
-            interval_col = row_data.get("Interval, Confirmation Status", "")
+            # Handle both dict and Series - use safe get
+            if isinstance(row_data, pd.Series):
+                signal_col = row_data.get("Symbol, Signal, Signal Date/Price[$]", "") if "Symbol, Signal, Signal Date/Price[$]" in row_data.index else ""
+                interval_col = row_data.get("Interval, Confirmation Status", "") if "Interval, Confirmation Status" in row_data.index else ""
+            else:
+                signal_col = row_data.get("Symbol, Signal, Signal Date/Price[$]", "")
+                interval_col = row_data.get("Interval, Confirmation Status", "")
             
             if sig_type == "entry":
                 # Key: Function + Symbol + Signal Type + Interval + Signal Open Price
-                function = str(row_data.get("Function", "")).strip()
+                if isinstance(row_data, pd.Series):
+                    function = str(row_data.get("Function", "") if "Function" in row_data.index else "").strip()
+                    signal_open_price = str(row_data.get("Signal Open Price", "") if "Signal Open Price" in row_data.index else "").strip()
+                else:
+                    function = str(row_data.get("Function", "")).strip()
+                    signal_open_price = str(row_data.get("Signal Open Price", "")).strip()
                 match_signal = re.search(r'^([^,]+),\s*([^,]+),', str(signal_col))
                 match_interval = re.search(r'^([^,]+)', str(interval_col))
                 symbol = match_signal.group(1).strip() if match_signal else ""
                 signal_type_val = match_signal.group(2).strip() if match_signal else ""
                 interval = match_interval.group(1).strip() if match_interval else ""
-                signal_open_price = str(row_data.get("Signal Open Price", "")).strip()
                 return (function, symbol, signal_type_val, interval, signal_open_price)
                 
             elif sig_type == "exit":
                 # Key: Function + Symbol + Signal Type + Interval + Signal Date + Signal Open Price
-                function = str(row_data.get("Function", "")).strip()
+                if isinstance(row_data, pd.Series):
+                    function = str(row_data.get("Function", "") if "Function" in row_data.index else "").strip()
+                    signal_open_price = str(row_data.get("Signal Open Price", "") if "Signal Open Price" in row_data.index else "").strip()
+                else:
+                    function = str(row_data.get("Function", "")).strip()
+                    signal_open_price = str(row_data.get("Signal Open Price", "")).strip()
                 match_signal = re.search(r'^([^,]+),\s*([^,]+),\s*(\d{4}-\d{2}-\d{2})', str(signal_col))
                 match_interval = re.search(r'^([^,]+)', str(interval_col))
                 symbol = match_signal.group(1).strip() if match_signal else ""
                 signal_type_val = match_signal.group(2).strip() if match_signal else ""
                 signal_date = match_signal.group(3).strip() if match_signal else ""
                 interval = match_interval.group(1).strip() if match_interval else ""
-                signal_open_price = str(row_data.get("Signal Open Price", "")).strip()
                 return (function, symbol, signal_type_val, interval, signal_date, signal_open_price)
                 
             elif sig_type == "portfolio_target_achieved":
                 # Key: Function + Symbol + Signal Type + Interval + Signal Open Price
-                function = str(row_data.get("Function", "")).strip()
+                if isinstance(row_data, pd.Series):
+                    function = str(row_data.get("Function", "") if "Function" in row_data.index else "").strip()
+                    signal_open_price = str(row_data.get("Signal Open Price", "") if "Signal Open Price" in row_data.index else "").strip()
+                else:
+                    function = str(row_data.get("Function", "")).strip()
+                    signal_open_price = str(row_data.get("Signal Open Price", "")).strip()
                 match_signal = re.search(r'^([^,]+),\s*([^,]+),', str(signal_col))
                 match_interval = re.search(r'^([^,]+)', str(interval_col))
                 symbol = match_signal.group(1).strip() if match_signal else ""
                 signal_type_val = match_signal.group(2).strip() if match_signal else ""
                 interval = match_interval.group(1).strip() if match_interval else ""
-                signal_open_price = str(row_data.get("Signal Open Price", "")).strip()
                 return (function, symbol, signal_type_val, interval, signal_open_price)
 
             elif sig_type == "breadth":
                 # Key: Function + Date
-                function = str(row_data.get("Function", "")).strip()
-                date_col = row_data.get("Date", "")
+                if isinstance(row_data, pd.Series):
+                    function = str(row_data.get("Function", "") if "Function" in row_data.index else "").strip()
+                    date_col = row_data.get("Date", "") if "Date" in row_data.index else ""
+                else:
+                    function = str(row_data.get("Function", "")).strip()
+                    date_col = row_data.get("Date", "")
                 match = re.search(r'(\d{4}-\d{2}-\d{2})', str(date_col))
                 date_val = match.group(1) if match else ""
                 return (function, date_val)
@@ -1008,6 +1040,7 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
                         pass
                 
                 combined_df = existing_df
+                action = 'updated'
             else:
                 # INSERT: New key → append new row
                 # Ensure new_row_df has all columns from existing_df and vice versa
@@ -1018,13 +1051,16 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
                     if col not in existing_df.columns:
                         existing_df[col] = None
                 combined_df = pd.concat([existing_df, new_row_df], ignore_index=True)
+                action = 'inserted'
         else:
             # File doesn't exist yet → INSERT new row
             
             combined_df = new_row_df
+            action = 'inserted'
         
         # Write back to consolidated CSV
         combined_df.to_csv(csv_path, index=False, encoding='utf-8')
+        return action
         
     except Exception as e:
         import traceback
@@ -1032,6 +1068,7 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
         print(f"     Error type: {type(e).__name__}")
         # Uncomment for detailed debugging:
         # traceback.print_exc()
+        return 'error'
 
 
 def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None):
@@ -1268,9 +1305,17 @@ def convert_breadth_report(
         print(f"✓ Functions in report: {len(df)}")
         print(f"✓ Columns: {', '.join(df.columns.tolist())}")
         
+        # Track updates and inserts
+        rows_updated = 0
+        rows_inserted = 0
+        
         # Append each row to consolidated breadth.csv
         for _, row in df.iterrows():
-            append_to_consolidated_csv(row, "breadth", output_base_dir)
+            action = append_to_consolidated_csv(row, "breadth", output_base_dir)
+            if action == 'updated':
+                rows_updated += 1
+            elif action == 'inserted':
+                rows_inserted += 1
         
         processed = 1
         skipped = 0
@@ -1278,12 +1323,16 @@ def convert_breadth_report(
         print(f"✗ Error appending to consolidated breadth.csv: {e}")
         processed = 0
         skipped = 1
+        rows_updated = 0
+        rows_inserted = 0
     
     print("\n" + "-"*80)
     print("BREADTH CONVERSION SUMMARY")
     print("-"*80)
     print(f"✓ Date: {current_date}")
     print(f"✓ Total functions: {len(df)}")
+    print(f"   ├─ Functions updated (existing): {rows_updated}")
+    print(f"   └─ Functions inserted (new): {rows_inserted}")
     print(f"✓ Consolidated CSV: chatbot/data/breadth.csv (updated)")
     print("="*80 + "\n")
     
