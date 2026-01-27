@@ -119,12 +119,18 @@ Your response MUST be a valid JSON object with the following structure:
 2. If a column contains commas or special characters, include them all (e.g., "Symbol, Signal, Signal Date/Price[$]")
 3. Do NOT simplify column names (e.g., don't use "Win Rate" when the actual column is "Win Rate [%], History Tested, Number of Trades")
 4. Do NOT use semantic keywords or generalizations - use the exact string from the available columns list
+5. **CRITICAL: NEVER paraphrase or shorten column names** - Examples:
+   - ✅ CORRECT: "Backtested Strategy Sharpe Ratio"
+   - ❌ WRONG: "Backtested Sharpe Ratio" or "Sharpe Ratio" or "Strategy Sharpe"
+   - ✅ CORRECT: "Backtested Strategy CAGR [%]"
+   - ❌ WRONG: "Backtested CAGR" or "Strategy CAGR"
 
 **Examples of correct exact column selection:**
 - For symbol information: `"Symbol, Signal, Signal Date/Price[$]"` (NOT "Symbol" or "Signal")
 - For performance data: `"Current Mark to Market and Holding Period"` (NOT "performance" or "MTM")
 - For win rates: `"Win Rate [%], History Tested, Number of Trades"` (NOT "Win Rate" or "win_rate")
 - For CAGR: `"CAGR difference (Strategy - Buy and Hold) [%]"` (NOT "CAGR difference" or "cagr")
+- For Sharpe Ratio: `"Backtested Strategy Sharpe Ratio"` (NOT "Backtested Sharpe Ratio" or "Sharpe Ratio")
 - For targets: `"Targets (Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$]"` (use the complete name)
 
 ## Column Context
@@ -206,20 +212,20 @@ You will be provided with the available columns for each selected signal type in
       "Function",
       "Symbol, Signal, Signal Date/Price[$]",
       "Current Trading Date/Price[$], Current Price vs Signal",
-      "Targets (Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2) [$]"
+      "Targets (Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/EMA 200) [$]"
     ],
     "reasoning": "For entry signals, we need position details and target levels to show where open positions are headed."
   },
   "portfolio_target_achieved": {
     "required_columns": [
       "Function",
-      "Symbol",
-      "Target Level",
-      "Target Type",
-      "Target Hit Date",
-      "Distance to Target"
+      "Symbol, Signal, Signal Date/Price[$]",
+      "Target for which Price has achieved over 90 percent of gain %",
+      "Backtested Target Exit Date",
+      "Remaining Potential Exit Prices [$]",
+      "Remaining Potential Exit Dates"
     ],
-    "reasoning": "For portfolio target achieved signals, we need specific target achievement data including which targets were hit, when they were reached, and the associated follow-up context."
+    "reasoning": "For portfolio target achieved signals, we need specific target achievement data including which targets were hit, when they were reached, and remaining potential targets."
   }
 }
 ```
@@ -236,10 +242,10 @@ You will be provided with the available columns for each selected signal type in
 {
   "breadth": {
     "required_columns": [
+      "Date",
       "Function",
       "Bullish Asset vs Total Asset (%)",
-      "Bullish Signal vs Total Signal (%)",
-      "Date"
+      "Bullish Signal vs Total Signal (%)"
     ],
     "reasoning": "For breadth signals, we need market-wide statistics showing the percentage of bullish assets and signals across all functions to assess overall market health."
   }
@@ -279,18 +285,19 @@ You will be provided with the available columns for each selected signal type in
   "portfolio_target_achieved": {
     "required_columns": [
       "Function",
-      "Symbol",
-      "Target Level",
-      "Target Hit Date"
+      "Symbol, Signal, Signal Date/Price[$]",
+      "Target for which Price has achieved over 90 percent of gain %",
+      "Backtested Target Exit Date",
+      "% Gain, Holding Period (days)"
     ],
     "reasoning": "For portfolio target achieved signals, show which targets have been achieved and their timing."
   },
   "breadth": {
     "required_columns": [
+      "Date",
       "Function",
       "Bullish Asset vs Total Asset (%)",
-      "Bullish Signal vs Total Signal (%)",
-      "Date"
+      "Bullish Signal vs Total Signal (%)"
     ],
     "reasoning": "For breadth signals, show overall market conditions."
   }
@@ -328,15 +335,15 @@ You will be provided with the available columns for each selected signal type in
   - Example: `"2025-12-19 (Price: 87.7900), 12.84% above"`
   - Extracts to: Date=2025-12-19, Price=$87.79, Change=+12.84%
 
-- **"Backtested Returns(Win Trades) [%] (Best/Worst/Avg)"** contains: Best, worst, and average returns
+- **"Backtested Returns(Win Trades) [%] (Max/Min/Avg)"** contains: Maximum, minimum, and average returns
   - Example: `"19.78%/1.26%/11.83%"`
-  - Extracts to: Best=19.78%, Worst=1.26%, Avg=11.83%
+  - Extracts to: Max=19.78%, Min=1.26%, Avg=11.83%
 
-- **"Backtested Max Loss [%], Backtested Worst Single MTM during Hold Period [%]"** contains: Max loss and worst MTM
+- **"Backtested Max Loss [%], Backtested Min Single MTM during Hold Period [%]"** contains: Max loss and min MTM
   - Example: `"3.89%, 20.99%"`
-  - Extracts to: Max Loss=3.89%, Worst MTM=20.99%
+  - Extracts to: Max Loss=3.89%, Min MTM=20.99%
 
-- **"Backtested Holding Period(Win Trades) (days) (Max./Min./Avg.)"** contains: Maximum, minimum, and average holding periods
+- **"Backtested Holding Period(Win Trades) (days) (Max/Min/Avg)"** contains: Maximum, minimum, and average holding periods
   - Example: `"9.9 months/25 days/3.6 months"`
   - Extracts to: Max=9.9 months, Min=25 days, Avg=3.6 months
 
@@ -347,17 +354,16 @@ You will be provided with the available columns for each selected signal type in
 **Combined Columns:**
 - **"Symbol, Signal, Signal Date/Price[$]"** - Same structure as entry/exit
 - **"% Gain, Holding Period (days)"** contains: Gain percentage and holding period
-  - Example: `"20.43%, 5.1 months"`
-  - Extracts to: Gain=20.43%, Period=5.1 months
+  - Example: `"0.0%, 0 days"`
+  - Extracts to: Gain=0.0%, Period=0 days
 
 ### 3. Breadth Signal Type
 
 **Simpler Structure:** Breadth signals have simpler, non-combined columns:
+- Date (single value)
 - Function (single value)
 - Bullish Asset vs Total Asset (%) (single value)
 - Bullish Signal vs Total Signal (%) (single value)
-- Date (single value)
-- Signal Open Price (single value)
 
 ---
 

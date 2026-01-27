@@ -46,10 +46,6 @@ STOCK_DATA_DIR = BASE_DIR / "trade_store" / "stock_data"
 HISTORY_DIR = BASE_DIR / "chatbot" / "history"
 
 # Create necessary directories if they don't exist
-CHATBOT_ENTRY_DIR.mkdir(parents=True, exist_ok=True)
-CHATBOT_EXIT_DIR.mkdir(parents=True, exist_ok=True)
-CHATBOT_TARGET_DIR.mkdir(parents=True, exist_ok=True)
-CHATBOT_BREADTH_DIR.mkdir(parents=True, exist_ok=True)
 HISTORY_DIR.mkdir(parents=True, exist_ok=True)
 
 # Target deduplication columns
