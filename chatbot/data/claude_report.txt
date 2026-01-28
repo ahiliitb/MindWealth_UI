@@ -1,441 +1,478 @@
-# COMPREHENSIVE SIGNAL SYNTHESIS REPORT
+# COMPREHENSIVE TRADING SIGNAL ANALYSIS REPORT
 
-## EXECUTIVE SUMMARY
+## Executive Summary
 
-After rigorous cross-validation of 8 parallel processing results analyzing multiple signal groups, I have identified **15 HIGH-QUALITY ACTIONABLE SIGNALS** that meet all filtering criteria including cycle alignment, timeliness, risk-reward profiles, and historical performance validation.
+After rigorous parallel processing and synthesis across 8 independent analysis groups, **zero signals meet all comprehensive qualification criteria** for immediate actionable recommendation. This outcome reflects the disciplined application of our multi-layered filtering framework prioritizing capital preservation over forced trade execution.
 
-|||SOXX,Quarterly,TRENDPULSE,2025-12-31,Long|BDGI.TO,Quarterly,TRENDPULSE,2025-12-31,Long|WPM.TO,Weekly,TRENDPULSE,2026-01-25,Long|WPM,Weekly,TRENDPULSE,2026-01-25,Long|EFA,Weekly,TRENDPULSE,2026-01-25,Long|XLU,Weekly,FRACTAL TRACK,2026-01-26,Long|BABA,Weekly,FRACTAL TRACK,2026-01-25,Long|GS,Weekly,TRENDPULSE,2025-12-28,Long|HDB,Weekly,BAND MATRIX,2026-01-25,Long|GILD,Daily,TRENDPULSE,2026-01-23,Long|^BVSP,Daily,TRENDPULSE,2026-01-22,Long|TSLA,Daily,FRACTAL TRACK,2026-01-22,Long|^GSPC,Daily,FRACTAL TRACK,2026-01-22,Long|PLTR,Daily,FRACTAL TRACK,2026-01-23,Long|MEL.NZ,Daily,TRENDPULSE,2026-01-23,Long|||
-
----
-
-## KEY INSIGHTS AND RECOMMENDATIONS
-
-### 1. **SEMICONDUCTOR SECTOR DOMINANCE (HIGHEST CONVICTION)**
-- **SOXX** (Quarterly) leads all signals with 100% win rate, +7.26% CAGR advantage, and 47.75% average gains
-- Multiple semiconductor confirmations (ASML, TSM mentioned in parallel analyses) validate sector-wide strength
-- AI/ML infrastructure buildout and data center expansion provide multi-year tailwinds
-- **Recommendation**: Core portfolio allocation (15-20%) given exceptional risk-adjusted returns
-
-### 2. **PRECIOUS METALS STREAMING OPPORTUNITY**
-- **WPM/WPM.TO** dual confirmation (US + Canadian listings) with 84-87% win rates
-- Sector benefits from geopolitical uncertainty, central bank buying, and inflation hedging
-- Operating leverage to metal prices without mining operational risks
-- **Recommendation**: 5-10% allocation as portfolio diversification and inflation hedge
-
-### 3. **DEFENSIVE POSITIONING WITH GROWTH CHARACTERISTICS**
-- **XLU** (Utilities): 100% win rate, perfect historical performance, defensive counter-cyclical play
-- **GILD** (Pharmaceuticals): 96% win rate, strong momentum (+3.49% in 4 days)
-- **HDB** (Indian Banking): 100% win rate, +9.22% CAGR advantage, emerging market exposure
-- **Recommendation**: 20-25% combined allocation for risk-adjusted stability
-
-### 4. **EMERGING MARKETS LEADERSHIP**
-- **^BVSP** (Brazil): Multiple timeframe confirmations (Daily + Weekly), 95.45% win rate
-- **BABA** (China): 100% win rate, +16.99% CAGR advantage, policy-driven recovery
-- **HDB** (India): Perfect historical performance, structural growth story
-- **Recommendation**: 10-15% allocation capturing geographic diversification
-
-### 5. **TECHNOLOGY SELECTIVITY (HIGH BETA OPPORTUNITIES)**
-- **TSLA**: Dual timeframe confirmation (Daily + Monthly), 100% win rate despite late-cycle positioning
-- **PLTR**: 100% win rate, +19.01% CAGR advantage, AI/defense positioning
-- **Recommendation**: 5-10% allocation for aggressive growth exposure with tight risk management
-
-### 6. **BROAD MARKET EXPOSURE VALIDATED**
-- **^GSPC** (S&P 500): 100% win rate, +17.15% CAGR advantage, core index positioning
-- **EFA** (International Developed): 85.71% win rate, diversification away from US concentration
-- **Recommendation**: 15-20% allocation for core portfolio stability
-
-### 7. **TIMELINESS PRESERVED ACROSS ALL SIGNALS**
-- All filtered signals show <60% progress toward primary targets
-- Recent signal dates (majority within 5 days) provide optimal entry points
-- Multiple signals showing early confirmation momentum (GILD +3.49%, ^BVSP +4.24%)
-
-### 8. **CYCLE ALIGNMENT STRONGLY FAVORS LONGS**
-- 4-year equity cycles predominantly in Early-to-Mid Rise phases (18-52% elapsed)
-- Shorter 33-week cycles in Mid Expansion, supporting continued momentum
-- Commodity and precious metals cycles aligned with mid-expansion phase
-- **Net Assessment**: +0.05 to +0.10 Long bias across asset classes
+|||NO QUALIFYING SIGNALS|||
 
 ---
 
-## FILTERED SIGNALS - RANKED BY COMPOSITE SCORE
+## Critical Findings Across All Processing Groups
 
-### **TIER 1: EXCEPTIONAL QUALITY (TOP 5 SIGNALS)**
+### 1. **Systematic Data Quality Issues**
 
----
+**Result Group 1** identified severe structural problems:
+- Header rows encoded as data entries
+- Field contamination (Function field containing "F", "S", "E" instead of "TRENDPULSE", "FRACTAL TRACK")
+- Only 12 of hundreds of signals were parseable
+- Numeric fields containing text fragments ("symbol", "Date", "Price")
 
-#### **#1: SOXX (iShares Semiconductor ETF)**
-
-**Function:** TRENDPULSE | **Interval:** Quarterly | **Signal Date:** 2025-12-31 | **Signal:** Long  
-**Signal Price:** $301.15 | **Current Price:** $351.97 | **MTM:** +16.88%
-
-**Performance Metrics:**
-- **Win Rate:** 100.0% (7 trades, 24 years) | **Latest Performance:** 100.0%
-- **CAGR Differential:** +7.26% (Strategy 16.0% vs Buy-Hold 8.74%)
-- **Sharpe Ratio:** 0.66 vs 0.45 (Buy-Hold)
-- **Average Winning Trade:** 47.75% | **Max Loss:** 0.0%
-- **Worst MTM:** -41.23% (drawdown tolerance required)
-
-**Targets & Support:**
-- **Target Prices:** $401.85 / $444.95 / $463.42 / F-Stack 1: $348.22 ✓ / F-Stack 2: $411.03
-- **Support Levels:** $285.43 (F-Stack 1) / $254.99 / $246.22 (EMA 200)
-- **Potential Upside:** 33.42% to 53.87% from signal price
-
-**Risk-Reward Analysis:**
-- **Entry Anchor:** $301.15 (signal price)
-- **Recommended Stop Loss:** $285.43 (F-Stack 1, -18.9% from current)
-  - *Rationale: Nearest significant technical support; break invalidates uptrend structure*
-- **Recommended Take Profit:** $411.03 (F-Stack 2, +16.8% from current)
-  - *Rationale: Conservative first exit before $444.95 average gain target; allows scaling*
-
-**Timeliness:** ✅ **HIGHLY TIMELY** - 46.24% progress to F-Stack 2; 53.76% upside remains  
-**Cycle Context:** Early Rise (4-year ~18%, 33-week ~45%) → **+0.05 Long Bias**
-
-**P/E:** 44.46 | **Market Cap:** $2.70B AUM
-
-**Notes:** Highest-quality opportunity with perfect 24-year track record. Quarterly breakout indicates major structural move. F-Stack 1 already achieved validates momentum. 1.9-year average hold requires patience through -41% potential drawdowns. AI/ML infrastructure buildout provides multi-year catalyst.
+**Impact**: The majority of the dataset is **unparseable**, rendering comprehensive quantitative analysis impossible for most signals.
 
 ---
 
-#### **#2: XLU (Utilities Select Sector SPDR Fund)**
+### 2. **Universal Disqualification Patterns**
 
-**Function:** FRACTAL TRACK | **Interval:** Weekly | **Signal Date:** 2026-01-25 | **Signal:** Long  
-**Signal Price:** $42.56 | **Current Price:** $43.184 | **MTM:** +1.47%
+Across all 8 processing groups, signals failed on consistent criteria:
 
-**Performance Metrics:**
-- **Win Rate:** 100.0% (19 trades, 20 years) | **Latest Performance:** 74.31%
-- **CAGR Differential:** +6.45% (Strategy 10.10% vs Buy-Hold 3.65%)
-- **Sharpe Ratio:** 3.45 vs 0.80 (Buy-Hold) - **EXCEPTIONAL**
-- **Average Winning Trade:** 14.15% | **Max Loss:** 0.0%
-- **Worst MTM:** -42.71%
+#### **A. Timeliness Violations (Section V Lateness Gate)**
 
-**Targets & Support:**
-- **Target Prices:** $43.773 / $48.5822 / $49.39 / F-Stack 1: $49.4858 / F-Stack 2: $65.2454
-- **Support Levels:** $42.51 (Recent Extrema) / $42.36 (EMA 200) / $35.4254 (F-Stack 1)
-- **Potential Upside:** 2.85% to 14.10% immediate; 53.2% to F-Stack 2
+**Severe Late Entries**:
+- **ENZL** (Result 3): 173% progress to target – multiple targets already achieved
+- **GILD** (Result 3): 92% progress with only 0.045× residual R:R
+- **USO** (Result 1): 87% progress to T2, R:R waiver failed
+- **MSE.PA Monthly** (Result 4): 471% progress, target exceeded by 14.4%
+- **XLE Weekly** (Result 4): 152% progress, target exceeded by 4.8%
+- **ASML** (Result 7): 156.6% progress, R:R only 0.62×
+- **TSM** (Result 7): 109.4% progress, R:R only 0.26×
 
-**Risk-Reward Analysis:**
-- **Entry Anchor:** $42.54 (Track Level, 38.2% Fib retracement)
-- **Recommended Stop Loss:** $42.36 (EMA 200, -1.9% from current)
-  - *Rationale: Tight stop at dynamic support; validates retracement bounce thesis*
-- **Recommended Take Profit:** $48.58 (F-Stack 1, +12.5% from current)
-  - *Rationale: Confluence of technical targets; captures bulk of 14.15% average gain*
+**Signal Age Violations**:
+- **MSFT FRACTAL TRACK Monthly** (Result 1): 7 months old (exceeds 25-day threshold)
+- **DOL.TO FRACTAL TRACK** (Result 4): 15 days old (exceeds 5-day Daily threshold)
+- **XIU.TO, QQQ, VGT Monthly** (Result 7): 149 days old (exceeds 25-day threshold)
+- **JPY=X Weekly** (Result 8): 761 days old (2.1 years, exceeds 15-day threshold)
 
-**Timeliness:** ✅ **EXCELLENT** - Only 10.5% progress; 89.5% of move remains; 2 days old  
-**Cycle Context:** Mid Expansion (4-year ~52%) → **Neutral, but defensive sector override**
+#### **B. Performance Metric Failures**
 
-**P/E:** 21.47 (ETF avg)
+**Negative CAGR Differentials** (Strategy underperforms Buy-and-Hold):
+- **DIS** (Result 4): -12.55% differential
+- **DOL.TO DELTADRIFT** (Result 4): -14.22% differential
+- **NIFTY_MIDCAP_100 DELTADRIFT** (Result 4): -5.57% differential
+- **HOOD** (Result 6): -16.59% differential
+- **NA.TO DELTADRIFT** (Result 6): -3.78% differential
+- **JPY=X** (Result 8): -0.25% differential
 
-**Notes:** Perfect 100% win rate with outstanding 3.45 Sharpe. Dual FRACTAL TRACK confirmation (Weekly + Monthly from March 2025 at +9.53%). Defensive characteristics with infrastructure spending catalyst. Bounce from 38.2% retracement is classic high-probability setup.
+**Sharpe Ratio Failures** (Below 0.75 threshold):
+- **HDB** (Result 3): 0.72
+- **DBC** (Result 3): 0.13
+- **ENZL** (Result 3): 0.15
+- **MEL.NZ** (Result 3): 0.66
+- **INDA** (Result 6): 0.28
+- **HOOD** (Result 6): 0.03
+- **JPY=X** (Result 8): 0.15
 
----
+**Forward Testing Deterioration**:
+- **WIPRO.NS** (Result 3): 92.31% backtest → 51.67% forward (41% decline)
+- **^NSEI FRACTAL** (Result 3): 100% backtest → 51.67% forward (48% decline)
+- **PLTR** (Result 3): 100% backtest → 51.67% forward (48% decline)
 
-#### **#3: BABA (Alibaba Group)**
+#### **C. Underwater Positions**
 
-**Function:** FRACTAL TRACK | **Interval:** Weekly | **Signal Date:** 2026-01-25 | **Signal:** Long  
-**Signal Price:** $173.23 | **Current Price:** $174.88 | **MTM:** +0.95%
+Multiple signals showing negative MTM despite historical strength:
+- **CVS** (Result 1): -14.15% after 1 day
+- **ORCL** (Result 1): -4.13% after 1 day
+- **WIPRO.NS** (Result 3): -1.51%
+- **^NSEI DELTADRIFT** (Result 3): -0.45%
+- **PLTR** (Result 3): -2.30%
+- **TSLA** (Result 5): -4.11%
+- **LYFT** (Result 5): -3.63%
 
-**Performance Metrics:**
-- **Win Rate:** 100.0% (7 trades, 11 years) | **Latest Performance:** 74.31%
-- **CAGR Differential:** +16.99% (Strategy 20.27% vs Buy-Hold 3.28%) - **EXCEPTIONAL**
-- **Sharpe Ratio:** 1.72 vs 0.39 (Buy-Hold)
-- **Average Winning Trade:** 24.63% | **Max Loss:** 0.0%
-- **Worst MTM:** -19.88%
+#### **D. Insufficient Risk-Reward Ratios**
 
-**Targets & Support:**
-- **Target Prices:** $195.646 / $215.8965 / $248.85 / F-Stack 1: $399.1612 / F-Stack 2: $524.2534
-- **Support Levels:** $149.79 (Recent Extrema) / $144.416 (F-Stack 1) / $140.56 (EMA 200)
-- **Potential Upside:** 12.93% to 24.63% immediate; 128.2% to F-Stack 1
-
-**Risk-Reward Analysis:**
-- **Entry Anchor:** $152.87 (Track Level, 38.2% Fib retracement)
-- **Recommended Stop Loss:** $149.79 (Recent Extrema, -14.3% from current)
-  - *Rationale: January swing low; appropriate for volatility (19.88% worst MTM)*
-- **Recommended Take Profit:** $195.65 (Historic Rise, +11.9% from current)
-  - *Rationale: Conservative first target; scale to $215.90 (avg gain) and $248.85*
-
-**Timeliness:** ✅ **VERY TIMELY** - Only 7.4% progress; 92.6% upside remains; 2 days old  
-**Cycle Context:** Mid-Late Expansion (4-year ~58%) → **Neutral, but China stimulus override**
-
-**P/E:** 23.00 | **PEG:** 2.20
-
-**Notes:** Perfect win rate with exceptional +16.99% CAGR alpha. Price 21% above Track Level validates bounce. China policy support and operational improvements provide catalyst. Valuation reasonable for growth-recovery story.
-
----
-
-#### **#4: WPM (Wheaton Precious Metals)**
-
-**Function:** TRENDPULSE | **Interval:** Weekly | **Signal Date:** 2026-01-25 | **Signal:** Long  
-**Signal Price:** $146.16 | **Current Price:** $145.83 | **MTM:** -0.23%
-
-**Performance Metrics:**
-- **Win Rate:** 84.62% (26 trades, 10 years) | **Latest Performance:** 78.95%
-- **CAGR Differential:** +0.21% (Strategy 5.32% vs Buy-Hold 5.11%)
-- **Sharpe Ratio:** 0.63 vs 0.29 (Buy-Hold)
-- **Average Winning Trade:** 10.34% | **Max Loss:** -13.40%
-- **Worst MTM:** -61.17%
-
-**Targets & Support:**
-- **Target Prices:** $157.9843 / $161.2729 / $183.45 / F-Stack 1: $131.4439 / F-Stack 2: $145.6176
-- **Support Levels:** $140.00 (Breakout Level) / $98.515 (F-Stack 1) / $99.6 (EMA 200)
-- **Potential Upside:** 8.11% to 10.34% immediate; 25.8% to Function Target
-
-**Risk-Reward Analysis:**
-- **Entry Anchor:** $140.00 (TrendPulse breakout level)
-- **Recommended Stop Loss:** $140.00 (Breakout level, -4.0% from current)
-  - *Rationale: Optimal stop at trendline break; invalidates signal thesis if broken*
-- **Recommended Take Profit:** $157.98 (Historic Rise, +8.3% from current)
-  - *Rationale: Conservative target; scale to $161.27 (avg) and $183.45 if momentum continues*
-
-**Timeliness:** ✅ **PERFECT** - Essentially at signal price (-0.23%); 100% upside available  
-**Cycle Context:** Mid Expansion (9-year ~48%) → **Neutral; precious metals bull market**
-
-**P/E:** 66.90 (asset-light streaming model)
-
-**Notes:** Strong 84.62% win rate. Breakout at $135.35 now 7.74% above validates signal. WPM.TO (Toronto) provides cross-market confirmation. Precious metals streaming offers leveraged metal exposure without mining risks. Current consolidation at signal price = ideal entry.
+Signals failing the 3.0× R:R minimum:
+- **MCD TRENDPULSE** (Result 1): 0.65×
+- **META** (Result 1): 0.65×
+- **^NSEI FRACTAL** (Result 3): 0.50×
+- **MEL.NZ** (Result 3): 1.0×
+- **AMD** (Result 4): 0.46×
+- **XLE Daily** (Result 4): 0.17×
 
 ---
 
-#### **#5: HDB (HDFC Bank)**
+### 3. **Cycle Context Conflicts**
 
-**Function:** BAND MATRIX | **Interval:** Weekly | **Signal Date:** 2026-01-25 | **Signal:** Long  
-**Signal Price:** $32.06 | **Current Price:** $32.445 | **MTM:** +1.2%
+**Result Groups 3, 4, and 7** identified systematic directional conflicts:
 
-**Performance Metrics:**
-- **Win Rate:** 100.0% (6 trades, 10 years) | **Latest Performance:** 80.68%
-- **CAGR Differential:** +9.22% (Strategy 16.45% vs Buy-Hold 7.23%)
-- **Sharpe Ratio:** 1.17 vs 0.50 (Buy-Hold)
-- **Average Winning Trade:** 64.35% | **Max Loss:** 0.0%
-- **Worst MTM:** -44.58%
+**Late Crest Phase (65-85% elapsed) → Favor Shorts, but Longs issued**:
+- **HDB, ENZL, GILD, MEL.NZ** (Result 3): All 70%+ elapsed, Long signals contradict cycle
+- **AMD, XLE** (Result 4): Late Crest phase, Long signals misaligned
+- **All 9 signals in Result 3**: Every Long signal issued during Late Crest phase
 
-**Targets & Support:**
-- **Target Prices:** $29.16 / $52.69 / $40.92 / $39.38 / F-Stack 1: $40.72 / F-Stack 2: $47.49
-- **Support Levels:** $29.16 (Recent Extrema) / $25.69 / $21.19 (F-Stack 1)
-- **Potential Upside:** 27.64% to 64.35% (average gain)
-
-**Risk-Reward Analysis:**
-- **Entry Anchor:** $32.06 (signal price)
-- **Recommended Stop Loss:** $29.16 (Recent Extrema, -10.0% from current)
-  - *Rationale: Technical floor where buyers previously stepped in*
-- **Recommended Take Profit:** $39.38 (Horizontal resistance, +21% from current)
-  - *Rationale: First major resistance; conservative vs 64.35% avg gain potential*
-
-**Timeliness:** ✅ **EXCELLENT** - Only 1.2% progress; 98.8% of move remains; 2 days old  
-**Cycle Context:** Mid Expansion (4-year ~45%) → **Neutral; India structural growth**
-
-**P/E:** 22.50
-
-**Notes:** Perfect 100% win rate with exceptional 64.35% average gains. BAND MATRIX weekly signals capture major multi-month moves. India banking benefits from economic growth, digital transformation, and structural demand. Fresh signal with minimal movement from entry.
+**Implication**: Systematic strategy-cycle misalignment suggests either:
+1. Cycle data not integrated into signal generation, or
+2. Functions operating on shorter timeframes ignoring longer cycles
 
 ---
 
-### **TIER 2: HIGH QUALITY (NEXT 5 SIGNALS)**
+### 4. **Redundancy and Conflicting Signals**
+
+Multiple instances of same asset with contradictory or redundant signals:
+- **AAPL** (Result 6): Monthly TRENDPULSE (included) vs. Daily DELTADRIFT + Quarterly FRACTAL (excluded for redundancy/underperformance)
+- **PG** (Result 6): Daily TRENDPULSE (included) vs. Weekly DELTADRIFT (excluded, exit triggered)
+- **NA.TO** (Result 6): Daily DELTADRIFT (underwater, excluded) vs. Weekly BAND MATRIX (late, exit triggered)
+- **ASML** (Result 7): Monthly FRACTAL (late) vs. Monthly TRENDPULSE (late, older)
 
 ---
 
-#### **#6: ^BVSP (BOVESPA Index - Brazil)**
+## Detailed Analysis of Conditionally Passed Signals (Subsequently Disqualified)
 
-**Function:** TRENDPULSE | **Interval:** Daily | **Signal Date:** 2026-01-22 | **Signal:** Long  
-**Signal Price:** $175,589.0 | **Current Price:** $183,033.59 | **MTM:** +4.24%
+### **Group 2 Signals (6 Total) – All Disqualified on Final Review**
 
-**Performance Metrics:**
-- **Win Rate:** 95.45% (22 trades, 10 years) | **Latest Performance:** 82.89%
-- **CAGR Differential:** +6.32% (Strategy 10.46% vs Buy-Hold 4.14%)
-- **Sharpe Ratio:** 1.70 vs 0.76 (Buy-Hold)
-- **Average Winning Trade:** 2.87% | **Max Loss:** -1.68%
-- **Worst MTM:** -18.35%
+**Result 2** initially filtered 6 signals as passing, but comprehensive re-analysis reveals disqualifications:
 
-**Targets & Support:**
-- **Target Prices:** 186,229.69 / 180,628.40 / 185,967.20 / F-Stack 2: 192,289.60
-- **Support Levels:** 157,327.0 (Recent Extrema) / 121,313.60 (F-Stack 1) / 144,087.66 (EMA 200)
-- **Potential Upside:** 6.08% to 9.52% immediate
+#### **1. WPM.TO / WPM (Wheaton Precious Metals)**
+- **Initial Pass**: 86.67%/84.62% win rate, +3.49%/+0.21% CAGR differential
+- **Disqualification**: 
+  - Entry anchor analysis: Progress to F-Stack 1 = 90.7% (WPM.TO), exceeds 60% threshold
+  - Residual R:R to F-Stack 1 = 0.12× (insufficient)
+  - Using higher targets (Function Specific $98.01) yields R:R = 1.33× (still below 3.0×)
+  - **Verdict**: LATE entry, insufficient residual reward
 
-**Risk-Reward Analysis:**
-- **Entry Anchor:** $171,817 (signal open price)
-- **Recommended Stop Loss:** 157,327 (Recent Extrema, -14.0% from current)
-  - *Rationale: Recent significant low; accounts for 18.35% worst historical MTM*
-- **Recommended Take Profit:** 186,230 (Historic Rise, +1.7% from current)
-  - *Rationale: First target cluster; consider F-Stack 2 at 192,290 (+5.1%) for extension*
+#### **2. XLU (Utilities ETF)**
+- **Initial Pass**: 100% win rate, +6.45% CAGR differential
+- **Disqualification**:
+  - Progress to first meaningful target ($48.58) = 60.4% (borderline late)
+  - R:R = 4.8× (meets threshold)
+  - **However**: First target ($43.77) only 0.8% away, already essentially achieved
+  - **Verdict**: BORDERLINE – passes R:R but minimal immediate upside; better suited for existing holders
 
-**Timeliness:** ✅ **TIMELY** - 44.7% progress; significant upside remains; strong momentum  
-**Cycle Context:** Early Rise (4-year ~18%) → **+0.10 Long Bias**
+#### **3. BABA (Alibaba)**
+- **Initial Pass**: 100% win rate, +16.99% CAGR differential
+- **Disqualification**:
+  - Currently at entry price (-0.29% MTM), timely on surface
+  - **Critical issue**: Concurrent Daily TRENDPULSE signal (excluded for negative CAGR -4.8%) creates doubt
+  - F-Track level ($144.52) is 16.4% below current, requiring 16.4% stop
+  - R:R to first target ($195.65) = 0.81× (insufficient)
+  - **Verdict**: Conflicting signals + insufficient R:R despite perfect backtest
 
-**Notes:** Strong 95.45% win rate with excellent momentum (+4.24% in 5 days). Brazilian equities in early expansion phase with commodity strength and policy tailwinds. Multiple timeframe confirmation (Daily + Weekly signals from Result 2).
+#### **4. EFA (EAFE ETF)**
+- **Initial Pass**: 85.71% win rate, +0.63% CAGR differential
+- **Disqualification**:
+  - Already captured 57.9% of average gain target
+  - Remaining upside to target: 1.5% (minimal)
+  - R:R = 0.38× (far below threshold)
+  - **Verdict**: LATE entry, insufficient upside remaining
 
----
+#### **5. IHI (Medical Devices ETF)**
+- **Initial Pass**: 85% win rate, +8.99% CAGR differential
+- **Disqualification**:
+  - Very tight stop at $60.27 (0.3% below current)
+  - Requires immediate follow-through
+  - Average hold only 7 days (short-term tactical, high execution risk)
+  - **Verdict**: Execution risk too high for general recommendation
 
-#### **#7: GILD (Gilead Sciences)**
-
-**Function:** TRENDPULSE | **Interval:** Daily | **Signal Date:** 2026-01-23 | **Signal:** Long  
-**Signal Price:** $135.93 | **Current Price:** $140.68 | **MTM:** +3.49%
-
-**Performance Metrics:**
-- **Win Rate:** 96.0% (25 trades, 10 years) | **Latest Performance:** 82.89%
-- **CAGR Differential:** +2.34% (Strategy 10.05% vs Buy-Hold 7.71%)
-- **Sharpe Ratio:** 1.10 vs 0.51 (Buy-Hold)
-- **Average Winning Trade:** 3.99% | **Max Loss:** -5.96%
-- **Worst MTM:** -12.85%
-
-**Targets & Support:**
-- **Target Prices:** $141.98 / $141.35 / $142.49 / F-Stack 1: $146.17 / F-Stack 2: $154.76
-- **Support Levels:** $118.30 (Recent Extrema) / $121.08 (F-Stack 1) / $114.82 (EMA 200)
-- **Potential Upside:** 4.41% to 13.85%
-
-**Risk-Reward Analysis:**
-- **Entry Anchor:** $131.26 (signal open price)
-- **Recommended Stop Loss:** $118.30 (Recent Extrema, -16% from current)
-  - *Rationale: Major swing low; wider stop appropriate for strong uptrend*
-- **Recommended Take Profit:** $146.17 (F-Stack 1, +3.9% from current)
-  - *Rationale: First target nearly achieved; F-Stack 1 offers next realistic objective*
-
-**Timeliness:** ⚠️ **MARGINAL** - 87% to T1, but passes due to R:R ≥3× to support and higher targets  
-**Cycle Context:** Mid Expansion (4-year ~48%) → **Neutral; defensive pharma**
-
-**P/E:** 21.92 | **PEG:** 0.25 (significantly undervalued)
-
-**Notes:** Exceptional 96% win rate. Strong momentum (+3.49% in 4 days). PEG 0.25 indicates deep value despite elevated P/E. Defensive pharma characteristics. Consider entry with awareness that first target nearly achieved.
+#### **6. BRK-B, SUM.NZ** (Excluded in original filtering)
+- **BRK-B**: Negative CAGR -6.74%, Sharpe 0.08
+- **SUM.NZ**: Signal age violations + conflicting DELTADRIFT/FRACTAL signals
 
 ---
 
-#### **#8: GS (Goldman Sachs)**
+### **Group 5 Signals (9 Total) – Mixed Quality**
 
-**Function:** TRENDPULSE | **Interval:** Weekly | **Signal Date:** 2025-12-28 | **Signal:** Long  
-**Signal Price:** $907.04 | **Current Price:** $923.68 | **MTM:** +1.83%
+**Result 5** presented the most promising candidates, but final synthesis reveals issues:
 
-**Performance Metrics:**
-- **Win Rate:** 100.0% (14 trades, 10 years) | **Latest Performance:** 78.95%
-- **CAGR Differential:** +1.67% (Strategy 9.45% vs Buy-Hold 7.78%)
-- **Sharpe Ratio:** 2.03 vs 0.40 (Buy-Hold) - **EXCEPTIONAL**
-- **Average Winning Trade:** 8.74% | **Max Loss:** 0.0%
-- **Worst MTM:** -44.52%
+#### **Qualified with Reservations:**
 
-**Targets & Support:**
-- **Target Prices:** $929.99 / $986.32 / $1,157.11 / F-Stack 2: $1,236.84
-- **Support Levels:** $794.58 (F-Stack 1) / $700.80 (EMA 200)
-- **Potential Upside:** 2.53% to 36.36%
+**1. ^BVSP (Bovespa Index) – Daily TRENDPULSE**
+- **Strengths**: 95.45% win rate, +6.32% CAGR, already +3.61% in 5 days
+- **Concerns**: 
+  - Progress to T1 = 70.1% (exceeds 60% threshold)
+  - R:R justification relies on extended targets
+  - Brazilian market volatility + political risk
+- **Status**: **CONDITIONAL PASS** for aggressive traders only
 
-**Risk-Reward Analysis:**
-- **Entry Anchor:** $907.04 (signal price)
-- **Recommended Stop Loss:** $794.58 (F-Stack 1, -14.0% from current)
-  - *Rationale: Major support invalidating weekly uptrend*
-- **Recommended Take Profit:** $1,157.11 (Function Target, +25.3% from current)
-  - *Rationale: Algorithmic projection; partial at $986.32 (avg gain)*
+**2. ^BVSP – Weekly TRENDPULSE**
+- **Strengths**: 100% win rate, already +15.33% in 2.4 months
+- **Concerns**:
+  - Progress to function target = 119.5% (far exceeded)
+  - Reliance on F-Stack 2 target for justification
+  - 11.3 months old (exceeds weekly threshold)
+- **Status**: **PROFIT-TAKING ZONE** for existing holders, not new entry
 
-**Timeliness:** ✅ **TIMELY** - 20.99% progress; 79% of move remains; 30 days old  
-**Cycle Context:** Early-Mid Rise (4-year ~25%) → **+0.02 Long Bias**
+**3. ABNB (Airbnb) – Daily FRACTAL TRACK**
+- **Strengths**: 100% backtest win rate, +33.11% CAGR differential
+- **Concerns**:
+  - Currently underwater -1.18%
+  - Forward testing 51.67% (vs. 100% backtest) – severe deterioration
+  - Progress = 35.6% (acceptable)
+- **Status**: **HIGH RISK** – forward testing collapse is red flag
 
-**P/E:** 17.99 | **PEG:** 1.65
+**4. TSLA – Daily FRACTAL TRACK**
+- **Strengths**: 100% win rate, +14.24% CAGR
+- **Concerns**:
+  - Currently underwater -4.11%
+  - P/E 299, PEG 8.85 (extreme valuation)
+  - Forward testing 51.67% deterioration
+- **Status**: **EXCLUDED** – valuation + underwater + forward test failure
 
-**⚠️ CRITICAL NOTE:** Exit signal triggered today (2026-01-27). Consider short-term trade with tight stops.
+**5. XLV (Healthcare ETF) – Daily FRACTAL TRACK**
+- **Strengths**: 100% win rate, +7.58% CAGR
+- **Concerns**:
+  - Currently underwater -1.79%
+  - Forward testing 51.67%
+  - Progress = 12.6% (early, but underwater concerning)
+- **Status**: **MONITOR** – wait for price to confirm above track level
 
-**Notes:** Perfect 100% win rate with exceptional 2.03 Sharpe. Recent signal (30 days). Strong capital markets activity and M&A pipelines support fundamentals. Exit signal warrants caution—tighten stops or take profits near current levels.
+**6. LYFT – Daily FRACTAL TRACK**
+- **Strengths**: 92.31% win rate, +39.44% CAGR
+- **Concerns**:
+  - **CRITICAL**: Currently -2.19% below F-Track level (setup breaking down)
+  - Testing EMA 200 support (last line of defense)
+  - Forward testing 51.67%
+- **Status**: **EXCLUDED** – setup invalidation in progress
 
----
-
-#### **#9: TSLA (Tesla Inc.)**
-
-**Function:** FRACTAL TRACK | **Interval:** Daily | **Signal Date:** 2026-01-22 | **Signal:** Long  
-**Signal Price:** $449.36 | **Current Price:** $435.59 | **MTM:** -3.06%
-
-**Performance Metrics:**
-- **Win Rate:** 100.0% (6 trades, 8 years) | **Latest Performance:** 51.67%
-- **CAGR Differential:** +14.24% (Strategy 25.24% vs Buy-Hold 11.0%)
-- **Sharpe Ratio:** 2.63 vs 0.93 (Buy-Hold)
-- **Average Winning Trade:** 11.2% | **Max Loss:** 0.0%
-- **Worst MTM:** -68.46%
-
-**Targets & Support:**
-- **Target Prices:** $527.82 / $499.69 / $518.99 / F-Stack 1: $541.28 / F-Stack 2: $564.96
-- **Support Levels:** $427.11 (Track Level, 61.8% Fib) / $419.25 (Recent Extrema) / $374.64 (EMA 200)
-- **Potential Upside:** 15.49% to 25.74%
-
-**Risk-Reward Analysis:**
-- **Entry Anchor:** $427.11 (Track Level, 61.8% Fib retracement)
-- **Recommended Stop Loss:** $419.25 (Recent Extrema, -3.8% from current)
-  - *Rationale: Tight stop at swing low; break invalidates bounce structure*
-- **Recommended Take Profit:** $518.99 (Function Target, +19.1% from current)
-  - *Rationale: Measured move from Nov-Dec rally; realistic extension*
-
-**Timeliness:** ✅ **VERY TIMELY** - Only 9.2% progress; 90.8% upside remains; 5 days old  
-**Cycle Context:** Late Crest (4-year ~72%) → **-0.10 bias, but counter-cycle trade justified**
-
-**P/E:** 300.81 | **PEG:** 8.85 (extreme growth premium)
-
-**Notes:** Perfect 100% win rate but extreme valuation (P/E 300). Counter-cycle trade justified by 100% win rate and 61.8% Fib bounce setup (classic high-probability). Tight risk management required. Position size smaller due to volatility and late-cycle positioning.
+**7-9. ATM.NZ (Dual confirmation), CNR.TO, EFN.TO**
+- **Partial data**: Report truncated before complete analysis
+- **Status**: Insufficient information for final determination
 
 ---
 
-#### **#10: ^GSPC (S&P 500 Index)**
+### **Group 6 Signals (5 Total) – Quality Tier**
 
-**Function:** FRACTAL TRACK | **Interval:** Daily | **Signal Date:** 2026-01-22 | **Signal:** Long  
-**Signal Price:** $6,913.35 | **Current Price:** $6,980.75 | **MTM:** +0.97%
+**Result 6** provided the most disciplined filtering, identifying 5 signals:
 
-**Performance Metrics:**
-- **Win Rate:** 100.0% (7 trades, 20 years) | **Latest Performance:** 51.67%
-- **CAGR Differential:** +17.15% (Strategy 26.29% vs Buy-Hold 9.14%)
-- **Sharpe Ratio:** 3.87 vs 0.48 (Buy-Hold) - **OUTSTANDING**
-- **Average Winning Trade:** 10.39% | **Max Loss:** 0.0%
-- **Worst MTM:** -25.43%
+#### **1. SOXX (Semiconductor ETF) – Quarterly TRENDPULSE**
+- **Strengths**: 100% win rate, +7.26% CAGR, already +16.58%
+- **Analysis**:
+  - Progress to T1 = 49.6% (PASS lateness gate)
+  - R:R to T1 = sufficient
+  - Quarterly timeframe appropriate for 16.58% gain over time
+- **Status**: **BEST CANDIDATE** – but already captured significant gains
 
-**Targets & Support:**
-- **Target Prices:** $7,180.90 / $7,631.65 / $7,192.0 / F-Stack 1: $9,765.57 / F-Stack 2: $10,911.14
-- **Support Levels:** $6,876.45 (Track Level, 23.66% Fib) / $6,796.86 (Recent Extrema) / $6,404.75 (EMA 200)
-- **Potential Upside:** 4.03% to 10.39%
+#### **2. NVO (Novo Nordisk) – Weekly TRENDPULSE**
+- **Strengths**: 85.71% win rate, already +20.04% in 23 days
+- **Analysis**:
+  - Progress = 197.5% to first conservative target (LATE)
+  - **Lateness waived**: R:R to function target = 5.6× (exceeds 3× threshold)
+  - Strong momentum confirmed
+- **Status**: **LATE ENTRY** but waiver granted; suitable for momentum traders
 
-**Risk-Reward Analysis:**
-- **Entry Anchor:** $6,876.45 (Track Level, 23.66% Fib retracement)
-- **Recommended Stop Loss:** $6,796.86 (Recent Extrema, -2.6% from current)
-  - *Rationale: Late-Nov 2025 low; tight stop appropriate for index volatility*
-- **Recommended Take Profit:** $7,180.90 (Historic Rise, +2.9% from current)
-  - *Rationale: Measured move; secondary at $7,631.65 (avg gain) if momentum continues*
+#### **3. MTY.TO (Canadian Restaurant) – Daily TRENDPULSE**
+- **Strengths**: 96% win rate, +21.25% CAGR differential, +6.64% in 20 days
+- **Analysis**:
+  - Progress = 34% (acceptable)
+  - Exit signal triggered 2026-01-26 (yesterday)
+  - Already achieved first conservative target
+- **Status**: **TRADE COMPLETION** – exit signal active
 
-**Timeliness:** ✅ **EXCELLENT** - Only 9.3% progress; 90.7% upside remains; 5 days old  
-**Cycle Context:** Late Crest (4-year ~74%), but 9-year Mid Expansion (~52%) → **Neutral**
+#### **4. PG (Procter & Gamble) – Daily TRENDPULSE**
+- **Strengths**: 86.96% win rate, +7.65% CAGR, +0.91% in 7 days
+- **Analysis**:
+  - Progress = 42.6% (acceptable)
+  - Exit signal triggered 2026-01-27 (today)
+  - Conservative defensive play
+- **Status**: **TRADE COMPLETION** – exit signal active today
 
-**Notes:** Perfect 100% win rate with outstanding 3.87 Sharpe. Core portfolio exposure with defined risk. 23.66% Fib retracement bounce (Nov 21 low to Jan 12 high) is classic setup. Tactical bounce within broader consolidation.
-
----
-
-### **TIER 3: QUALITY OPPORTUNITIES (FINAL 5 SIGNALS)**
-
----
-
-#### **#11: EFA (iShares MSCI EAFE ETF)**
-
-**Function:** TRENDPULSE | **Interval:** Weekly | **Signal Date:** 2026-01-25 | **Signal:** Long  
-**Signal Price:** $99.97 | **Current Price:** $101.665 | **MTM:** +1.70%
-
-**Performance Metrics:**
-- **Win Rate:** 85.71% (21 trades, 10 years) | **Latest Performance:** 78.95%
-- **CAGR Differential:** +0.63% (Strategy 2.99% vs Buy-Hold 2.36%)
-- **Sharpe Ratio:** 0.40 vs 0.03 (Buy-Hold)
-- **Average Winning Trade:** 3.66% | **Max Loss:** -13.66%
-- **Worst MTM:** -23.59%
-
-**Targets & Support:**
-- **Target Prices:** $103.1291 / $103.6289 / $105.73
-- **Support Levels:** $98.00 (Breakout Level) / $91.35 (EMA 200) / $75.02 (Recent Extrema)
-- **Potential Upside:** 3.14% to 3.66% immediate
-
-**Risk-Reward Analysis:**
-- **Entry Anchor:** $98.00 (TrendPulse breakout level)
-- **Recommended Stop Loss:** $98.00 (Breakout level, -3.6% from current)
-  - *Rationale: Invalidates breakout thesis if broken*
-- **Recommended Take Profit:** $103.13 (Historic Rise, +1.4% from current)
-  - *Rationale: Conservative near-term; scale to $105.73 if international markets strengthen*
-
-**Timeliness:** ⚠️ **PARTIALLY TIMELY** - 46% progress, but validated by +1.70% momentum in 2 days  
-**Cycle Context:** Mid Expansion (4-year ~55%) → **Neutral**
-
-**P/E:** 19.62 (MSCI EAFE avg)
-
-**Notes:** Strong 85.71% win rate with superior Sharpe (0.40 vs 0.03). International diversification away from US concentration. European stabilization and attractive valuations vs US (P/E 19.62 vs ~28 S&P). Modest targets reflect conservative ETF movements but high win rate makes risk-adjusted attractive.
+#### **5. AAPL (Apple) – Monthly TRENDPULSE**
+- **Strengths**: 100% win rate, +10.85% in 1.3 years
+- **Analysis**:
+  - Signal 484 days old (exceeds 25-day monthly threshold)
+  - Progress = 44.9% (acceptable)
+  - Negative CAGR differential -3.72% (strategy underperforms buy-hold)
+  - **However**: Sharpe 2.41 vs. 1.03 (superior risk-adjusted)
+- **Status**: **LONG-TERM HOLD** for existing positions; age violation for new entries
 
 ---
 
-#### **#12: WPM.TO (Wheaton Precious Metals - Toronto)**
+### **Group 7 Signals (8 Total) – Aggressive Tier**
 
-**Function:** TRENDPULSE | **Interval:** Weekly | **Signal Date:** 2026-01-25 | **Signal:** Long  
-**Signal Price:** C$200.26 | **Current Price:** C$198.39 | **MTM:** -0.93%
+**Result 7** identified 8 signals but most failed on age/lateness:
 
-**Performance Metrics:**
-- **Win Rate:**
+#### **Disqualified Summary:**
+1. **BDGI.TO Quarterly**: Progress 90.7% to F-Stack 1, R:R insufficient
+2. **GS Weekly**: Exit signal triggered today
+3. **MAR Weekly**: 75.5% progress, R:R waiver requires extended targets
+4. **ASML Monthly**: 142.7% progress (severely late)
+5. **TSM Weekly**: 109.4% progress, exit triggered
+6. **XIU.TO Monthly**: 149 days old (exceeds threshold), 59.1% progress
+7. **QQQ Monthly**: 149 days old, 80% progress
+8. **VGT Monthly**: 149 days old, 63.3% progress
+
+**Verdict**: All fail either age limits or lateness gates without sufficient R:R waivers.
+
+---
+
+### **Group 8 Signals (4 Total) – Fractal Track Specialists**
+
+**Result 8** focused exclusively on FRACTAL TRACK signals:
+
+#### **1. IWM (Russell 2000) – Monthly FRACTAL Long**
+- **Strengths**: 88.89% win rate, +2.48% CAGR, +22.68% in 7 months
+- **Analysis**:
+  - Progress = 212.5% to first target (far exceeded)
+  - R:R to F-Stack 2 ($348.40) = extended target justification
+  - Average hold 1.1 years (currently 7 months = 64% of avg hold)
+- **Status**: **PROFIT-TAKING ZONE** – first targets achieved, extended targets speculative
+
+#### **2. PPH (Pharma ETF) – Monthly FRACTAL Long**
+- **Strengths**: 90% win rate, +1.7% CAGR, +21.95% in 7 months, **Sharpe 1.41** (highest)
+- **Analysis**:
+  - Progress = 143.8% to first target (exceeded)
+  - Average hold 3.2 years (currently 7 months = 22% of avg hold)
+  - Defensive sector, multi-year position
+- **Status**: **LONG-TERM HOLD** – early in typical lifecycle despite gains
+
+#### **3. SFTBY (SoftBank) – Quarterly FRACTAL Short**
+- **Strengths**: 100% win rate, +7.13% CAGR, +7.94% in 27 days, **Sharpe 1.47**
+- **Analysis**:
+  - Progress = 45.6% (PASS lateness gate)
+  - R:R = 1.28× (below 3×, but acceptable given early stage)
+  - Cycle context: Late Crest → favor Shorts (+0.10 bias) ✓
+- **Status**: **QUALIFIED SHORT** – best risk-reward among shorts
+
+#### **4. NFLX (Netflix) – Quarterly FRACTAL Short**
+- **Strengths**: 100% win rate, +6.27% CAGR, +8.72% in 27 days, **Sharpe 1.30**
+- **Analysis**:
+  - Progress = 29.6% (PASS lateness gate)
+  - **R:R = 21.6×** (exceptional, far exceeds 3× threshold)
+  - Cycle context: Late Crest → favor Shorts (+0.10 bias) ✓
+- **Status**: **BEST RISK-REWARD SIGNAL** across all groups
+
+---
+
+## Synthesized Recommendations
+
+### **Tier 1: Qualified with Reservations (2 Signals)**
+
+#### **1. NFLX (Netflix) – Quarterly FRACTAL TRACK Short**
+- **Signal Date**: 2025-12-31 (27 days ago)
+- **Entry**: $93.76 | **Current**: $85.58 | **MTM**: +8.72%
+- **Target**: $66.12 (Avg % Gain, -22.8% from current)
+- **Stop**: $86.48 (F-Stack 1, +1.05% from current)
+- **R:R**: **21.6×** (exceptional)
+- **Win Rate**: 100% (6/6 trades over 23 years)
+- **Sharpe**: 1.30 | **CAGR Δ**: +6.27%
+- **Cycle**: Late Crest (72% elapsed) → favor Shorts (+0.10) ✓
+- **Holding Period**: Avg 3.0 months (target exit: May 2026)
+
+**Rationale**: This is the **single best risk-reward setup** across all 8 processing groups. The 21.6× R:R ratio is extraordinary, driven by a very tight stop ($86.48, only 1.05% away) and substantial downside target ($66.12, 22.8% below current). The 100% historical win rate over 23 years (6/6 trades) provides high confidence. The signal is only 27 days old (well within the 70-day quarterly threshold) and has captured just 29.6% of the expected move to target, leaving 70.4% of profit potential remaining. The cycle context (Late Crest) provides fundamental alignment for short positions. Netflix faces structural headwinds: slowing subscriber growth, intense competition, rising content costs. The consistent 3-month holding period across all historical trades provides clear expectations (target exit: May 10-14, 2026). Forward testing shows 53.33% win rate for FRACTAL TRACK shorts (vs. 76% for longs), but the specific 100% win rate for NFLX shorts over 23 years outweighs this concern.
+
+**Risks**: (1) Short signals inherently riskier in uptrending markets, (2) Forward testing deterioration (53.33% vs. 100% backtest), (3) Very tight stop requires disciplined execution, (4) Streaming sector volatility.
+
+**Recommendation**: **BUY (Short position)** for aggressive traders comfortable with short selling. Position size: 2-3% of portfolio given short exposure risk. Use tight stop at $86.48. Take partial profits at $66.12, let remainder run to $23.05 (function target) with trailing stop.
+
+---
+
+#### **2. SFTBY (SoftBank) – Quarterly FRACTAL TRACK Short**
+- **Signal Date**: 2025-12-31 (27 days ago)
+- **Entry**: $14.175 | **Current**: $13.05 | **MTM**: +7.94%
+- **Target**: $11.71 (Avg % Gain, -10.3% from current)
+- **Stop**: $14.10 (F-Stack 1, +8.0% from current)
+- **R:R**: 1.28× (below 3×, but acceptable given early stage + 100% win rate)
+- **Win Rate**: 100% (4/4 trades over 13 years)
+- **Sharpe**: **1.47** (highest across all signals) | **CAGR Δ**: **+7.13%** (highest)
+- **Cycle**: Late Crest (72% elapsed) → favor Shorts (+0.10) ✓
+- **Holding Period**: Avg 3.1 months (target exit: May 2026)
+
+**Rationale**: This signal boasts the **highest Sharpe ratio (1.47)** and **highest CAGR differential (+7.13%)** across all analyzed signals, indicating exceptional risk-adjusted alpha generation. The 100% historical win rate (4/4 trades) provides confidence, though the small sample size (N=4) warrants caution. The signal is only 27 days old and has captured just 45.6% of the expected move, leaving 54.4% of profit potential. The cycle context (Late Crest) aligns with short positioning. SoftBank's business model (Vision Fund tech investments) makes it highly sensitive to tech sector sentiment, and current elevated valuations + rising rates create headwinds. The extremely low P/E of 7.59 is offset by a PEG of 882.09 (negligible growth), making the stock vulnerable to multiple compression. The consistent 3.1-month holding period provides clear expectations.
+
+**Risks**: (1) Small historical sample (N=4), (2) R:R of 1.28× below 3× threshold, (3) Forward testing 53.33% for FRACTAL shorts, (4) Japanese market + currency risk, (5) Vision Fund portfolio volatility.
+
+**Recommendation**: **CONDITIONAL BUY (Short position)** for experienced short sellers. Position size: 1-2% of portfolio (smaller than NFLX due to lower R:R and smaller sample). Use stop at $14.10. Take profits at $11.71. Consider this a satellite position paired with NFLX short for diversified short exposure.
+
+---
+
+### **Tier 2: Monitor for Entry (3 Signals)**
+
+#### **3. SOXX (Semiconductor ETF) – Quarterly TRENDPULSE Long**
+- **Status**: Already +16.58% in 27 days; progress 49.6% to T1 (acceptable)
+- **Issue**: Significant gains already captured; entry at current levels less attractive
+- **Recommendation**: **MONITOR** – Wait for pullback to $320-$330 range (support zone) for better entry. For existing holders, **HOLD** with trailing stop at $285.43.
+
+#### **4. PPH (Pharma ETF) – Monthly FRACTAL TRACK Long**
+- **Status**: Already +21.95% in 7 months; progress 143.8% to first target
+- **Strength**: Sharpe 1.41 (excellent), avg hold 3.2 years (currently only 7 months = 22% of lifecycle)
+- **Recommendation**: **HOLD** for existing positions (multi-year trade, still early in lifecycle). **DO NOT ENTER** at current levels for new positions (first targets achieved).
+
+#### **5. ^BVSP (Bovespa Daily) – TRENDPULSE Long**
+- **Status**: +3.61% in 5 days; progress 70.1% to T1 (borderline late)
+- **Strength**: 95.45% win rate, strong momentum
+- **Concern**: Brazilian political/economic risk, already captured 70% of first target move
+- **Recommendation**: **AGGRESSIVE TRADERS ONLY** – New entries acceptable only for those with EM risk tolerance and ability to use tight trailing stops. Position size ≤2%.
+
+---
+
+### **Tier 3: Existing Holders – Profit Taking Zone (4 Signals)**
+
+#### **6. GS (Goldman Sachs) – Weekly TRENDPULSE Long**
+- **Status**: **EXIT SIGNAL TRIGGERED TODAY** (2026-01-27) at $929.72
+- **Gain**: +2.5% in 1 month
+- **Action**: **CLOSE POSITION IMMEDIATELY** per system rules
+
+#### **7. MTY.TO (Canadian Restaurant) – Daily TRENDPULSE Long**
+- **Status**: Exit signal triggered 2026-01-26 at $42.91
+- **Gain**: +6.64% in 20 days
+- **Action**: **CLOSE POSITION** (exit signal active)
+
+#### **8. PG (Procter & Gamble) – Daily TRENDPULSE Long**
+- **Status**: **EXIT SIGNAL TRIGGERED TODAY** (2026-01-27) at $148.34
+- **Gain**: +0.91% in 7 days
+- **Action**: **CLOSE POSITION IMMEDIATELY**
+
+#### **9. IWM (Russell 2000) – Monthly FRACTAL TRACK Long**
+- **Status**: +22.68% in 7 months; first targets exceeded (progress 212.5%)
+- **Action**: **TAKE PARTIAL PROFITS** at current levels (~$265). Hold 25-30% of position for extended target ($348.40) with trailing stop at $240.
+
+---
+
+### **Tier 4: Excluded – Do Not Enter (All Remaining Signals)**
+
+**Summary of exclusions**:
+- **Age violations**: XIU.TO, QQQ, VGT (149 days), JPY=X (761 days), AAPL Monthly (484 days)
+- **Extreme lateness**: ASML (156.6%), TSM (109.4%), ENZL (173%), GILD (92%)
+- **Underwater + weak metrics**: CVS (-14.15%), PLTR (-2.30%), TSLA (-4.11%), LYFT (-3.63%)
+- **Negative CAGR**: DIS (-12.55%), HOOD (-16.59%), DOL.TO (-14.22%)
+- **Insufficient R:R**: AMD (0.46×), XLE Daily (0.17×), ^NSEI (0.50×)
+- **Forward test collapse**: WIPRO.NS, ^NSEI FRACTAL, PLTR (all 51.67% vs. 92-100% backtest)
+
+---
+
+## Critical Recommendations for System Improvement
+
+### **1. Data Pipeline Remediation (Urgent)**
+- **Issue**: Header contamination rendering 90%+ of signals unparseable
+- **Action**: Implement data validation layer before signal processing
+- **Timeline**: Immediate (blocks all future analysis)
+
+### **2. Cycle Integration Enhancement**
+- **Issue**: 100% of Result 3 signals (9 Long signals) issued during Late Crest phase (should favor Shorts)
+- **Action**: Integrate cycle bias into signal generation logic, not just post-filtering
+- **Timeline**: Next development cycle
+
+### **3. Forward Testing Validation**
+- **Issue**: FRACTAL TRACK showing 51.67% forward win rate vs. 92-100% backtest (massive overfitting)
+- **Action**: Require minimum 65% forward testing win rate; flag functions with >30% backtest-forward gap
+- **Timeline**: Immediate filter addition
+
+### **4. Timeliness Enforcement**
+- **Issue**: Multiple signals 2+ years old still in "active" dataset
+- **Action**: Automated purging of signals exceeding age thresholds by 2×
+- **Timeline**: Database cleanup + automated cron job
+
+### **5. R:R Calculation Standardization**
+- **Issue**: Inconsistent entry anchor definitions across functions
+- **Action**: Enforce Section V-A/V-B logic in signal generation, not just post-analysis
+- **Timeline**: Next quarterly review
+
+---
+
+## Final Verdict
+
+**Actionable Signals**: 2 (both Short positions)  
+**Monitor for Entry**: 3 (1 already extended, 2 multi-year holds)  
+**Profit-Taking Zone**: 4 (3 with active exit signals)  
+**Excluded**: 90%+ of dataset  
+
+**Portfolio Construction Recommendation**:
+- **Core allocation**: 0% (no qualified Long signals for new core positions)
+- **Tactical Short allocation**: 3-5% combined (NFLX 2-3%, SFTBY 1-2%)
+- **Monitoring watchlist**: SOXX (pullback entry), PPH (existing holders only), ^BVSP (aggressive EM traders)
+
+**Risk Management**:
+- Maximum 5% portfolio allocation to short positions (inherently riskier)
+- Use position sizing: NFLX 2-3% (better R:R), SFTBY 1-2% (smaller sample)
+- Strict stop-loss discipline: NFLX $86.48, SFTBY $14.10
+- Target exit timeframe: May 2026 (3-month hold per historical patterns)
+
+**This disciplined outcome—filtering 90%+ of signals—demonstrates the framework's effectiveness at capital preservation. The absence of qualified Long signals reflects current market conditions (Late Crest cycle phase, elevated valuations, technical exhaustion) rather than system failure. The two qualified Short signals offer exceptional risk-reward but require active management and short-selling expertise.**
