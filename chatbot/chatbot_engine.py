@@ -29,6 +29,7 @@ from .history_manager import HistoryManager
 from .unified_extractor import UnifiedExtractor
 from .smart_data_fetcher import SmartDataFetcher
 from .signal_extractor import SignalExtractor
+from .signal_type_selector import SignalTypeSelector
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -74,6 +75,7 @@ class ChatbotEngine:
         self.unified_extractor = UnifiedExtractor(api_key=OPENAI_API_KEY)
         self.smart_data_fetcher = SmartDataFetcher()
         self.signal_extractor = SignalExtractor()
+        self.signal_type_selector = SignalTypeSelector(api_key=OPENAI_API_KEY)
         
         # Set available tickers for unified extractor
         available_tickers = self.data_processor.get_available_tickers()
