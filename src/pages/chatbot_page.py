@@ -208,20 +208,11 @@ def display_styled_dataframe(df, height=400, key_suffix=""):
     # Apply additional styling through column configuration with pinning and autosize
     column_config = {}
     for col in df.columns:
-        # Pin Symbol and Exit Signal columns
-        if col == symbol_col or col == exit_col:
-            column_config[col] = st.column_config.TextColumn(
-                col,
-                help=None,
-                pinned="left"
-                # No width parameter = autosize
-            )
-        else:
-            column_config[col] = st.column_config.TextColumn(
-                col,
-                help=None
-                # No width parameter = autosize
-            )
+        column_config[col] = st.column_config.TextColumn(
+            col,
+            help=None
+            # No width parameter = autosize
+        )
     
     # Display with enhanced parameters
     st.dataframe(

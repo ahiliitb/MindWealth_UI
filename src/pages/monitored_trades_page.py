@@ -416,8 +416,7 @@ def display_trades_table(df: pd.DataFrame, title: str):
             if col == symbol_col or col == exit_col:
                 column_config[col] = st.column_config.TextColumn(
                     col,
-                    help=f"Original CSV column: {col}",
-                    pinned="left"
+                    help=f"Original CSV column: {col}"
                     # No width parameter = autosize
                 )
             else:

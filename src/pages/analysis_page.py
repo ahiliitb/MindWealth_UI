@@ -222,23 +222,14 @@ def create_analysis_page(data_file, page_title):
                             break
                 exit_col = find_column_by_keywords(filtered_original_df.columns, ['Exit Signal Date', 'Exit Signal', 'Exit'])
                 
-                # Display with better formatting, pinning, and autosize for ALL columns
+                # Display with better formatting and autosize for ALL columns
                 column_config = {}
                 for col in filtered_original_df.columns:
-                    # Pin Symbol and Exit Signal columns
-                    if col == symbol_col or col == exit_col:
-                        column_config[col] = st.column_config.TextColumn(
-                            col,
-                            help=f"Original CSV column: {col}",
-                            pinned="left"
-                            # No width parameter = autosize
-                        )
-                    else:
-                        column_config[col] = st.column_config.TextColumn(
-                            col,
-                            help=f"Original CSV column: {col}"
-                            # No width parameter = autosize
-                        )
+                    column_config[col] = st.column_config.TextColumn(
+                        col,
+                        help=f"Original CSV column: {col}"
+                        # No width parameter = autosize
+                    )
                 
                 st.dataframe(
                     filtered_original_df,

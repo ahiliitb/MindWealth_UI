@@ -5,6 +5,7 @@ All Data Page - Display all chatbot data (entry, exit, portfolio, breadth) with 
 import streamlit as st
 import pandas as pd
 from pathlib import Path
+from ..components.cards import create_summary_cards, create_strategy_cards
 from ..utils.helpers import format_days
 from ..config_paths import (
     CHATBOT_ENTRY_CSV, 
@@ -16,7 +17,7 @@ from ..config_paths import (
 
 def create_all_data_page():
     """Create All Data page with chatbot data files"""
-    st.title("📊 All Data")
+    st.title("� Outstanding Signals")
 
     # Display data fetch datetime at top of page
     from ..utils.helpers import display_data_fetch_info
@@ -127,7 +128,6 @@ def create_all_data_page():
 
 def display_data_file(tab_name, df, selected_functions, selected_symbols):
     """Display a specific data file with filters and tabs"""
-    st.subheader(f"📊 {tab_name}")
 
     # Check if data is loaded
     if df.empty:
@@ -156,23 +156,20 @@ def display_data_file(tab_name, df, selected_functions, selected_symbols):
         st.warning(f"No data matches the current filters for {tab_name}")
         return
 
-    # Display summary metrics
-    display_data_metrics(filtered_df, tab_name, signal_type)
-
     # Create position tabs (Long/Short/All) for signals, skip for breadth
     if signal_type == "signals" and 'Symbol, Signal, Signal Date/Price[$]' in filtered_df.columns:
-        position_tab1, position_tab2, position_tab3 = st.tabs(["📈 Long Positions", "📉 Short Positions", "📊 ALL Positions"])
+        position_tab1, position_tab2, position_tab3 = st.tabs(["� ALL Positions", "📈 Long Positions", "📉 Short Positions"])
 
         with position_tab1:
+            display_interval_tabs(filtered_df, "ALL Positions", tab_name)
+
+        with position_tab2:
             df_long = filtered_df[filtered_df['Symbol, Signal, Signal Date/Price[$]'].str.contains('Long', na=False)]
             display_interval_tabs(df_long, "Long Positions", tab_name)
 
-        with position_tab2:
+        with position_tab3:
             df_short = filtered_df[filtered_df['Symbol, Signal, Signal Date/Price[$]'].str.contains('Short', na=False)]
             display_interval_tabs(df_short, "Short Positions", tab_name)
-
-        with position_tab3:
-            display_interval_tabs(filtered_df, "All Positions", tab_name)
     else:
         # For breadth or data without position info, just show all data
         display_interval_tabs(filtered_df, tab_name, tab_name)
@@ -241,8 +238,46 @@ def display_interval_tabs(df, position_name, tab_name):
                 st.info(f"No data available for {interval}")
                 continue
 
-            # Display summary metrics for this interval
-            display_interval_metrics(interval_df, interval, position_name)
+            # Add Key Performance Metrics section
+            st.markdown(f"### 🎯 Key Performance Metrics - {position_name} {interval}")
+            
+            # Parse required fields from interval_df
+            parsed_data = []
+            for _, row in interval_df.iterrows():
+                try:
+                    # Extract Win Rate
+                    win_rate_str = str(row.get('Win Rate [%], History Tested, Number of Trades', '0%'))
+                    win_rate = float(win_rate_str.split('%')[0].split(',')[0].strip()) if '%' in win_rate_str else 0.0
+                    
+                    # Extract Number of Trades
+                    num_trades_str = str(row.get('Win Rate [%], History Tested, Number of Trades', '0'))
+                    num_trades_parts = num_trades_str.split(',')
+                    num_trades = int(num_trades_parts[-1].strip()) if len(num_trades_parts) >= 3 else 0
+                    
+                    # Extract Strategy CAGR
+                    cagr_str = str(row.get('Backtested Strategy CAGR [%]', '0'))
+                    strategy_cagr = float(cagr_str.strip().replace('%', '')) if cagr_str.strip() and cagr_str != 'nan' else 0.0
+                    
+                    # Extract Strategy Sharpe Ratio
+                    sharpe_str = str(row.get('Backtested Strategy Sharpe Ratio', '0'))
+                    strategy_sharpe = float(sharpe_str.strip()) if sharpe_str.strip() and sharpe_str != 'nan' else 0.0
+                    
+                    parsed_data.append({
+                        'Win_Rate': win_rate,
+                        'Num_Trades': num_trades,
+                        'Strategy_CAGR': strategy_cagr,
+                        'Strategy_Sharpe': strategy_sharpe
+                    })
+                except Exception as e:
+                    # Skip rows that can't be parsed
+                    continue
+            
+            if parsed_data:
+                # Create a dataframe with parsed metrics
+                metrics_df = pd.DataFrame(parsed_data)
+                create_summary_cards(metrics_df)
+            
+            st.markdown("---")
 
             # Display detailed data table
             st.markdown("### 📊 Detailed Data Table")

@@ -143,23 +143,14 @@ def create_text_file_page():
                         break
             exit_col = find_column_by_keywords(filtered_raw_df.columns, ['Exit Signal Date', 'Exit Signal', 'Exit'])
             
-            # Display with better formatting, pinning, and autosize for ALL columns
+            # Display with better formatting and autosize for ALL columns
             column_config = {}
             for col in filtered_raw_df.columns:
-                # Pin Symbol and Exit Signal columns
-                if col == symbol_col or col == exit_col:
-                    column_config[col] = st.column_config.TextColumn(
-                        col,
-                        help=f"Original CSV column: {col}",
-                        pinned="left"
-                        # No width parameter = autosize
-                    )
-                else:
-                    column_config[col] = st.column_config.TextColumn(
-                        col,
-                        help=f"Original CSV column: {col}"
-                        # No width parameter = autosize
-                    )
+                column_config[col] = st.column_config.TextColumn(
+                    col,
+                    help=f"Original CSV column: {col}"
+                    # No width parameter = autosize
+                )
             
             st.dataframe(
                 filtered_raw_df,
@@ -167,6 +158,8 @@ def create_text_file_page():
                 height=600,
                 column_config=column_config
             )
+        except pd.errors.EmptyDataError:
+            st.info("No data available in Claude signals CSV.")
         except Exception as e:
             st.error(f"Error reading CSV report: {str(e)}")
             import traceback

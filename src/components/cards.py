@@ -241,29 +241,15 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                     else:
                         button_col1, button_col2, button_col3 = st.columns([1, 1, 1])
                     
+                    # Create a session state key for tracking which chart to show
+                    chart_key = f"chart_{unique_hash}_{card_num}"
+                    chart_state_key = f"show_chart_{unique_hash}_{card_num}"
+                    
                     with button_col1:
                         if show_chart:
-                            chart_key = f"chart_{unique_hash}_{card_num}"
                             if st.button(f"📊 View Interactive Chart", key=chart_key):
-                                # Route to appropriate chart based on page type
-                                if page_name == 'Outstanding Signals Exit':
-                                    # Fetch original signal data and display chart with exit marker
-                                    create_outstanding_exit_signal_chart(row, raw_data)
-                                elif page_name in ['Outstanding Signals', 'New Signals']:
-                                    # For New Signals and Outstanding Signals, fetch original data from function CSVs
-                                    create_outstanding_signal_chart(row, raw_data)
-                                elif page_name == 'Oscillator Delta':
-                                    # Divergence chart with divergence line
-                                    create_divergence_chart(row, raw_data)
-                                elif page_name == 'Band Matrix':
-                                    # Bollinger Bands chart with BB overlay
-                                    create_bollinger_band_chart(row, raw_data)
-                                elif page_name in ['Fractal Track', 'TrendPulse']:
-                                    # Interactive chart with reference lines (Fibonacci for Fractal Track, TrendPulse line for TrendPulse)
-                                    create_interactive_chart(row, raw_data)
-                                else:
-                                    # Simple candlestick chart with buy/sell marker for all other pages
-                                    create_interactive_chart(row, raw_data)
+                                # Toggle chart visibility
+                                st.session_state[chart_state_key] = not st.session_state.get(chart_state_key, False)
                     
                     # Add "Add to Monitored" button for Outstanding Signals page
                     if show_add_monitored:
@@ -334,6 +320,29 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                                 else:
                                     st.warning("⚠️ Trade ID not found")
                 
+                # Display chart if toggle is active (full width, outside columns)
+                if show_chart and st.session_state.get(chart_state_key, False):
+                    st.markdown("---")
+                    # Route to appropriate chart based on page type
+                    if page_name == 'Outstanding Signals Exit':
+                        # Fetch original signal data and display chart with exit marker
+                        create_outstanding_exit_signal_chart(row, raw_data)
+                    elif page_name in ['Outstanding Signals', 'New Signals']:
+                        # For New Signals and Outstanding Signals, fetch original data from function CSVs
+                        create_outstanding_signal_chart(row, raw_data)
+                    elif page_name == 'Oscillator Delta':
+                        # Divergence chart with divergence line
+                        create_divergence_chart(row, raw_data)
+                    elif page_name == 'Band Matrix':
+                        # Bollinger Bands chart with BB overlay
+                        create_bollinger_band_chart(row, raw_data)
+                    elif page_name in ['Fractal Track', 'TrendPulse']:
+                        # Interactive chart with reference lines (Fibonacci for Fractal Track, TrendPulse line for TrendPulse)
+                        create_interactive_chart(row, raw_data)
+                    else:
+                        # Simple candlestick chart with buy/sell marker for all other pages
+                        create_interactive_chart(row, raw_data)
+                    st.markdown("---")
                 
                 # Create three columns for better layout
                 col1, col2, col3 = st.columns(3)

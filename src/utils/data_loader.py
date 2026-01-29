@@ -9,6 +9,7 @@ import io
 from datetime import datetime, timedelta
 
 from .file_discovery import detect_csv_structure
+from ..config_paths import STOCK_DATA_DIR
 from ..parsers import (
     parse_bollinger_band, parse_distance, parse_fib_ret, parse_general_divergence,
     parse_new_high, parse_stochastic_divergence, parse_sigma, parse_sentiment,

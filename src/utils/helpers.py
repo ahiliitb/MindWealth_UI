@@ -79,27 +79,17 @@ def reorder_dataframe_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 def get_pinned_column_config(df: pd.DataFrame, base_config=None):
     """
-    Create column configuration with Symbol and Exit Signal columns pinned by default.
-    Users can unpin/change pinning via the table's three-dot menu.
+    Create column configuration for dataframe columns.
+    Note: Column pinning is not supported in this version of Streamlit.
     
     Args:
         df: DataFrame to create config for
         base_config: Optional base column config dict to merge with
         
     Returns:
-        Dictionary of column configurations with pinning
+        Dictionary of column configurations
     """
     import streamlit as st
-    
-    # Find the key columns
-    symbol_col = find_column_by_keywords(df.columns, ['Symbol, Signal', 'Symbol'])
-    if not symbol_col:
-        for col in df.columns:
-            if 'Symbol' in col and 'Signal' in col and 'Exit' not in col:
-                symbol_col = col
-                break
-    
-    exit_col = find_column_by_keywords(df.columns, ['Exit Signal Date', 'Exit Signal', 'Exit'])
     
     # Start with base config if provided
     column_config = base_config.copy() if base_config else {}
@@ -107,24 +97,11 @@ def get_pinned_column_config(df: pd.DataFrame, base_config=None):
     # Create config for all columns
     for col in df.columns:
         if col not in column_config:
-            # Default config for unpinned columns
+            # Default config for all columns
             column_config[col] = st.column_config.TextColumn(
                 col,
                 width="medium"
             )
-        
-        # Pin Symbol and Exit Signal columns
-        if col == symbol_col or col == exit_col:
-            # Update existing config or create new one with pinning
-            if isinstance(column_config[col], dict):
-                column_config[col]['pinned'] = 'left'
-            else:
-                # If it's already a column config, we need to recreate it with pinned
-                column_config[col] = st.column_config.TextColumn(
-                    col,
-                    width="medium",
-                    pinned="left"
-                )
     
     return column_config
 

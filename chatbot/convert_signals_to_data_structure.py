@@ -367,12 +367,8 @@ def check_target_duplicate(row, master_csv_path):
     import pandas as pd
     from pathlib import Path
     
-    # Target dedup columns - Use columns that are actually created during enrichment
-    dedup_cols = [
-        "Symbol",
-        "Target for which Price has achieved over 90 percent of gain %",
-        "Signal Date"
-    ]
+    # Get deduplication columns from configuration
+    dedup_cols = get_dedup_columns(signal_type="portfolio_target_achieved")
     
     master_file = Path(master_csv_path)
     
@@ -537,12 +533,10 @@ def convert_signal_file_to_data_structure(
                 signal_date = datetime.now().strftime("%Y-%m-%d")
                 sig_type = ""
             
-            # For targets, keep ALL columns from source but add deduplication enrichment
-            # Extract Symbol, Signal, and Signal Date (already parsed above from col 1)
-            row['Symbol'] = symbol if symbol else ""
-            row['Signal'] = sig_type if sig_type else ""
-            row['Signal Date'] = signal_date if signal_date else ""
-
+            # For targets, keep ALL columns from source as-is
+            # Note: Symbol, Signal, Signal Date are already in "Symbol, Signal, Signal Date/Price[$]" column
+            # No need to create separate columns - dedup key extraction handles parsing directly
+            
             # Ensure Interval column is properly named (it should already be there from source)
             if 'Interval' not in row.index and len(df.columns) > 2:
                 interval_column = df.columns[2]
@@ -623,35 +617,15 @@ def convert_signal_file_to_data_structure(
             signals_no_exit += 1
             row_signal_type = "entry"
         
-        # Extract columns for deduplication based on signal type
-        if signal_type == "signal":
-            # Extract Interval from "Interval, Confirmation Status" column
-            if confirmation_column and confirmation_column in row.index:
-                interval = parse_interval_from_status(row[confirmation_column])
-                row['Interval'] = interval if interval else ""
-            else:
-                row['Interval'] = ""
-            
-            # Extract Signal (Long/Short) from parsed symbol data
-            # We already parsed sig_type from parse_symbol_signal_column
-            row['Signal'] = sig_type if sig_type else ""
-            
-            # Add Symbol column for deduplication
-            row['Symbol'] = symbol if symbol else ""
-            
-            if row_signal_type == "entry":
-                # For entry signals: Date, Symbol, Interval, Signal
-                row['Date'] = signal_date if signal_date else ""
-            elif row_signal_type == "exit":
-                # For exit signals: Exit Signal Date, Symbol, Signal, Interval, Signal Date
-                row['Exit Signal Date'] = exit_date if exit_date else ""
-                row['Signal Date'] = signal_date if signal_date else ""
-        elif signal_type == "portfolio_target_achieved":
-            # For portfolio_target_achieved, enrichment already done above before duplicate check
-            # All columns are already set, so no additional work needed here
-            pass
+        # Note: We do NOT add Interval, Signal, Symbol, Date columns to the row
+        # These are extracted from existing columns for deduplication only
+        # The original columns already contain this information:
+        # - Interval is in "Interval, Confirmation Status"
+        # - Signal (Long/Short) is in "Symbol, Signal, Signal Date/Price[$]"
+        # - Symbol is in "Symbol, Signal, Signal Date/Price[$]"
+        # - Date is in "Symbol, Signal, Signal Date/Price[$]"
         
-        # Add SignalType column to the row
+        # Add SignalType column to the row (this is the only new column we add)
         row['SignalType'] = row_signal_type
         
         # Signal Open Price handling:
@@ -889,9 +863,11 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
     Update or insert signal row in consolidated CSV file.
     
     CRITICAL LOGIC:
-    1. If key exists → UPDATE existing row with new data
-    2. If key is new → INSERT new row
-    3. Signal Open Price comes from trade_store (already in row data)
+    1. Reads data from trade_store CSV files
+    2. Checks deduplication key for each row
+    3. If key exists → UPDATE existing row with new data from trade_store
+    4. If key is new → INSERT new row from trade_store
+    5. Signal Open Price comes from trade_store (already in row data)
     
     Consolidated files:
     - chatbot/data/entry.csv (open positions)
@@ -994,12 +970,10 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
                     break
             
             if key_exists:
-                # UPDATE: Key exists → update all columns
-                # Update the existing row with new data
-                for col in new_row_df.columns:
-                    existing_df.at[existing_row_idx, col] = new_row_df.at[0, col]
-                
-                combined_df = existing_df
+                # UPDATE: Key exists → replace entire row with new data
+                # Drop the old row and append the new one
+                existing_df = existing_df.drop(existing_row_idx)
+                combined_df = pd.concat([existing_df, new_row_df], ignore_index=True)
             else:
                 # INSERT: New key → append new row
                 combined_df = pd.concat([existing_df, new_row_df], ignore_index=True)
@@ -1008,14 +982,21 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
             
             combined_df = new_row_df
         
-        # Deduplicate before writing (to ensure no duplicates even if logic above failed)
-        combined_df = deduplicate_dataframe(combined_df, signal_type=signal_type)
+        # Note: NO additional deduplication needed here
+        # Deduplication is already handled by the key matching logic above
+        # which uses the proper dedup key based on signal type:
+        # - entry: Function + Symbol + Signal Type + Interval + Signal Open Price
+        # - exit: Function + Symbol + Signal Type + Interval + Signal Date + Signal Open Price
+        # - portfolio_target_achieved: Function + Symbol + Signal Type + Interval + Signal Open Price
+        # - breadth: Function + Date
         
         # Write back to consolidated CSV
         combined_df.to_csv(csv_path, index=False, encoding='utf-8')
         
     except Exception as e:
+        import traceback
         print(f"  ⚠ Error updating consolidated CSV {csv_path}: {e}")
+        print(f"  ⚠ Traceback: {traceback.format_exc()}")
 
 
 def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None):

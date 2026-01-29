@@ -143,10 +143,10 @@ def main():
         csv_files = discover_csv_files()
         page_options = {
             "Dashboard": None,
-            "🤖 AI Chatbot": "chatbot",
-            "⭐ Monitored Trades": "monitored_trades",
+            "AI Chatbot": "chatbot",
+            "Monitored Trades": "monitored_trades",
             "Virtual Trading": "virtual_trading",
-            "📊 All Data": "all_data",
+            "All Historical Report Signals": "all_data",
             "Claude Shortlisted Signal": "text_files",
             "Trade Details": "trade_details",
         }
@@ -171,13 +171,13 @@ def main():
     # Display selected page
     if page == "Dashboard":
         create_top_signals_dashboard()
-    elif page == "🤖 AI Chatbot":
+    elif page == "AI Chatbot":
         render_chatbot_page()
-    elif page == "⭐ Monitored Trades":
+    elif page == "Monitored Trades":
         create_monitored_trades_page()
     elif page == "Virtual Trading":
         create_virtual_trading_page()
-    elif page == "📊 All Data":
+    elif page == "All Historical Report Signals":
         create_all_data_page()
     elif page == "Claude Shortlisted Signal":
         create_text_file_page()
