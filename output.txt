@@ -1,47 +1,165 @@
+🔄 Starting trade data update process...
+📁 Working directory: /Users/ahilkhaniitb/work/mindwealth/MindWealth_UI
+📊 Copying stock data CSV files from cache...
+📊 Copying trade signal CSV files...
+📄 Copying trade signal TXT files...
+📅 Copying data fetch datetime JSON file...
+✅ Copied data_fetch_datetime.json
+🧹 Cleaning up old dated files (keeping only latest for each base name)...
+ℹ️  No old dated CSV files to delete (all files are already the latest)
+📊 Copying virtual trading CSV files...
+✅ Copied virtual_trading_long.csv → virtual_trading_long.csv
+✅ Copied virtual_trading_short.csv → virtual_trading_short.csv
+📊 Copying breadth_us.csv...
+✅ Copied breadth_us.csv → breadth_us.csv
+🔄 Converting signals to chatbot data structure...
+🐍 Activating virtual environment...
 
 ================================================================================
-MINDWEALTH CHATBOT - DEMONSTRATION
+TRADING SIGNAL, TARGET & BREADTH DATA CONVERTER
 ================================================================================
 
-Initializing chatbot...
-✓ Chatbot initialized with session ID: 4025e840-2552-48e6-ad97-1eaebb0d0846
-
-Available data sources:
-  - Assets: 136 available
-    Examples: AAPL, ABNB, ACWX, AIA.NZ, AMD, AMZN, ARM, ASML, ATD.TO, ATM.NZ...
-  - Functions: 31 available
-    Types: AIA.NZ, ALTITUDE ALPHA, AMD, AMZN, ARM, BAND MATRIX, BASELINEDIVERGENCE, BDGI.TO, BNS.TO, BRK-B, DIS, FRACTAL TRACK, GILD, GLD, GNE.NZ, GOOG, GS, JPM, MSFT, OSCILLATOR DELTA, PULSEGAUGE, RHHBY, SIGMASHELL, SLV, SOXX, TD.TO, TRENDPULSE, TSLA, XIU.TO, XLU, ^GSPC
+This script converts trading CSV files to the chatbot data structure.
+Structure (Consolidated CSV Approach):
+  - chatbot/data/entry.csv (all open positions)
+  - chatbot/data/exit.csv (all completed trades)
+  - chatbot/data/portfolio_target_achieved.csv (all portfolio target achieved)
+  - chatbot/data/breadth.csv (all market breadth data)
+Note: Folder structure creation is disabled - using consolidated CSVs only.
 
 --------------------------------------------------------------------------------
-DEMO 1: Analyze single stock
+Converting SIGNAL data (outstanding_signal.csv)
 --------------------------------------------------------------------------------
-Query: How many TRENDPULSE signals exist for AAPL?
-Assets: ['AAPL']
-Functions: ['TRENDPULSE']
-Date Range: 2025-10-01 to 2025-10-10
-Note: Loads BOTH signal and target data automatically
-
-Processing...
-
-📊 Response:
-Based on the provided trading data for AAPL, there is one TRENDPULSE signal recorded. This signal is a "Long" position that was confirmed on August 15, 2025, with the signal date being August 17, 2025, at a price of $231.59. The exit signal date is October 10, 2025, at a price of $245.27.
-
-📈 Metadata:
-  - Tokens used: 1486
-  - Data loaded: {'assets': ['AAPL'], 'total_records': 1}
---------------------------------------------------------------------------------
-
-Follow-up Query: Is there any potential selloff price signal for TRENDPULSE for aapl if yes then tell me the entry date and price of that signal?
-Processing...
-
-✨ Note: Data reused from history (smart optimization!)
-
-📊 Response:
-The provided data does not indicate any potential selloff price signal for the TRENDPULSE strategy for AAPL. The only TRENDPULSE signal present is a "Long" position with an entry date of August 17, 2025, at a price of $231.59. There is no mention of a selloff or short signal in the data provided.
-
-📈 Tokens used: 1599
+ℹ Found dated file: 2026-01-29_outstanding_signal.csv
 
 ================================================================================
-✓ DEMONSTRATION COMPLETE
+CONVERTING: /Users/ahilkhaniitb/work/mindwealth/MindWealth_UI/trade_store/US/2026-01-29_outstanding_signal.csv
 ================================================================================
 
+✓ Loaded 107 rows from /Users/ahilkhaniitb/work/mindwealth/MindWealth_UI/trade_store/US/2026-01-29_outstanding_signal.csv
+✓ Parsing column: 'Symbol, Signal, Signal Date/Price[$]'
+✓ Exit column: 'Exit Signal Date/Price[$]'
+✓ Confirmation column found: 'Interval, Confirmation Status'
+
+--------------------------------------------------------------------------------
+CONVERSION SUMMARY
+--------------------------------------------------------------------------------
+Signal Type: SIGNAL
+✓ Total rows processed: 83
+⚠ Rows skipped: 24
+🚫 Unconfirmed entry signals skipped: 24 (only 'is CONFIRMED' or 'was CONFIRMED' are processed)
+✓ Unique assets: 53
+✓ Unique functions: 6
+
+� Signal Distribution:
+   ✓ EXIT signals (completed trades): 48
+      → Appended to: chatbot/data/exit.csv
+      → Deduplication keys: Function, Symbol, Signal Type, Interval, Signal Date, Signal Open Price
+   ✓ ENTRY signals (confirmed open positions): 35
+      → Appended to: chatbot/data/entry.csv
+      → Deduplication keys: Function, Symbol, Signal Type, Interval, Signal Open Price
+   ⚠ Unconfirmed entry signals filtered out: 24
+
+✓ Functions: BAND MATRIX, DELTADRIFT, FRACTAL TRACK, OSCILLATOR DELTA, SIGMASHELL, TRENDPULSE
+
+✓ Assets (sample): DOL.TO, ENZL, JPY=X, LULU, NFLX, PPH, RHHBY, SUM.NZ, TRI.TO, WMT
+  ... and 43 more
+
+✓ Consolidated CSVs:
+   - chatbot/data/entry.csv (updated)
+   - chatbot/data/exit.csv (updated)
+================================================================================
+
+
+--------------------------------------------------------------------------------
+Converting TARGET data (target_signal.csv)
+--------------------------------------------------------------------------------
+ℹ Found dated file: 2026-01-29_target_signal.csv
+
+================================================================================
+CONVERTING: /Users/ahilkhaniitb/work/mindwealth/MindWealth_UI/trade_store/US/2026-01-29_target_signal.csv
+================================================================================
+
+✓ Loaded 55 rows from /Users/ahilkhaniitb/work/mindwealth/MindWealth_UI/trade_store/US/2026-01-29_target_signal.csv
+✓ Parsing column: 'Symbol, Signal, Signal Date/Price[$]'
+
+--------------------------------------------------------------------------------
+CONVERSION SUMMARY
+--------------------------------------------------------------------------------
+Signal Type: PORTFOLIO_TARGET_ACHIEVED
+✓ Total rows processed: 55
+⚠ Rows skipped: 0
+🚫 Duplicates rejected: 0
+   → Deduplication keys: Function, Symbol, Signal Type, Interval, Signal Open Price
+✓ Unique assets: 33
+✓ Unique functions: 6
+
+✓ Functions: BAND MATRIX, DELTADRIFT, FRACTAL TRACK, OSCILLATOR DELTA, SIGMASHELL, TRENDPULSE
+
+✓ Assets (sample): CEN.NZ, CNQ.TO, DOL.TO, ENZL, FPH.NZ, MCD, NFLX, SUM.NZ, TD.TO, TRI.TO
+  ... and 23 more
+
+✓ Consolidated CSV: chatbot/data/portfolio_target_achieved.csv (updated)
+================================================================================
+
+
+--------------------------------------------------------------------------------
+Converting BREADTH data (breadth.csv)
+--------------------------------------------------------------------------------
+ℹ Found dated file: 2026-01-29_breadth.csv
+
+================================================================================
+CONVERTING BREADTH REPORT: /Users/ahilkhaniitb/work/mindwealth/MindWealth_UI/trade_store/US/2026-01-29_breadth.csv
+================================================================================
+
+✓ Loaded 8 rows from /Users/ahilkhaniitb/work/mindwealth/MindWealth_UI/trade_store/US/2026-01-29_breadth.csv
+✓ Functions in report: 8
+✓ Columns: Date, Function, Bullish Asset vs Total Asset (%), Bullish Signal vs Total Signal (%)
+
+--------------------------------------------------------------------------------
+BREADTH CONVERSION SUMMARY
+--------------------------------------------------------------------------------
+✓ Date: 2026-01-31
+✓ Total functions: 8
+✓ Consolidated CSV: chatbot/data/breadth.csv (updated)
+================================================================================
+
+
+--------------------------------------------------------------------------------
+Copying CLAUDE REPORT to chatbot data folder
+--------------------------------------------------------------------------------
+ℹ Found Claude report: 2026-01-29_claude_signals_report.txt
+✓ Copied to: /Users/ahilkhaniitb/work/mindwealth/MindWealth_UI/chatbot/data/claude_report.txt
+
+--------------------------------------------------------------------------------
+Updating current prices from live stock data
+--------------------------------------------------------------------------------
+
+================================================================================
+UPDATING CURRENT PRICES FROM LIVE STOCK DATA
+================================================================================
+
+⚠ Entry Signals (Open Positions) folder not found: /Users/ahilkhaniitb/work/mindwealth/MindWealth_UI/chatbot/data/entry
+⚠ Exit Signals (Completed Trades) folder not found: /Users/ahilkhaniitb/work/mindwealth/MindWealth_UI/chatbot/data/exit
+⚠ Portfolio Target Achieved folder not found: /Users/ahilkhaniitb/work/mindwealth/MindWealth_UI/chatbot/data/portfolio_target_achieved
+⚠ No CSV files found to update
+
+================================================================================
+✓ Conversion Complete!
+================================================================================
+
+Consolidated CSV files updated:
+  - chatbot/data/entry.csv (open positions)
+  - chatbot/data/exit.csv (completed trades)
+  - chatbot/data/portfolio_target_achieved.csv (target achievements)
+  - chatbot/data/breadth.csv (market breadth)
+  - chatbot/data/claude_report.txt (Claude signals analysis)
+
+✓ Current prices updated from live stock data
+
+⭐ Updating monitored trades with latest prices and exit conditions...
+  📊 Updating current prices from stock data...
+  🔍 Checking for exit signals in outstanding signals...
+  📁 Using file: 2026-01-29_outstanding_signal.csv
+  ✅ Monitored trades updated successfully!
+🔄 Adding files to git...

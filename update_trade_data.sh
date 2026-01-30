@@ -199,8 +199,8 @@ import sys
 sys.path.insert(0, '.')
 from src.utils.monitored_trades import update_monitored_trades_prices, update_monitored_trades_with_outstanding
 from src.utils.data_loader import load_data_from_file
-from constant import OUTSTANDING_SIGNAL_CSV_PATH_US
 import os
+import glob
 
 # Update prices from stock data
 print('  📊 Updating current prices from stock data...')
@@ -208,8 +208,12 @@ update_monitored_trades_prices()
 
 # Update exit conditions from outstanding signals
 print('  🔍 Checking for exit signals in outstanding signals...')
-if os.path.exists(OUTSTANDING_SIGNAL_CSV_PATH_US):
-    outstanding_df = load_data_from_file(OUTSTANDING_SIGNAL_CSV_PATH_US, 'Outstanding Signals')
+# Find the latest outstanding signal file with date prefix
+outstanding_files = sorted(glob.glob('./trade_store/US/*_outstanding_signal.csv'))
+if outstanding_files:
+    latest_file = outstanding_files[-1]  # Get the latest dated file
+    print(f'  📁 Using file: {os.path.basename(latest_file)}')
+    outstanding_df = load_data_from_file(latest_file, 'Outstanding Signals')
     if not outstanding_df.empty:
         update_monitored_trades_with_outstanding(outstanding_df)
         print('  ✅ Monitored trades updated successfully!')
