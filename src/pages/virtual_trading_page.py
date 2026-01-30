@@ -10,6 +10,38 @@ from ..config_paths import VIRTUAL_TRADING_LONG_CSV, VIRTUAL_TRADING_SHORT_CSV
 
 def create_virtual_trading_page():
     """Create virtual trading page with open/closed/all trades tabs"""
+    # Info button at the top
+    if st.button("ℹ️ Info About Page", key="info_virtual_trading", help="Click to learn about this page"):
+        st.session_state['show_info_virtual_trading'] = not st.session_state.get('show_info_virtual_trading', False)
+    
+    if st.session_state.get('show_info_virtual_trading', False):
+        with st.expander("📖 Virtual Trading Page Information", expanded=True):
+            st.markdown("""
+            ### What is this page?
+            The Virtual Trading page simulates real trading scenarios, tracking both open and closed positions for long and short trades.
+            
+            ### Why is it used?
+            - **Paper Trading**: Test strategies without real money
+            - **Performance Tracking**: Monitor virtual portfolio performance
+            - **Strategy Validation**: Validate trading strategies before live implementation
+            - **Risk-Free Learning**: Learn trading mechanics without financial risk
+            
+            ### How to use?
+            1. **View All Trades**: Start with the "All Trades" tab for complete overview
+            2. **Filter by Status**: Use "Open Trades" or "Closed Trades" tabs to focus on specific trade states
+            3. **Apply Filters**: Use sidebar filters for functions, symbols, and intervals
+            4. **Analyze Performance**: Review win rates, profits, and holding periods
+            5. **Track Positions**: Monitor position types (Long/Short) and their outcomes
+            
+            ### Key Features:
+            - Separate tracking for long and short positions
+            - Open vs closed trade analysis
+            - Real-time profit/loss calculations
+            - Holding period analysis
+            - Comprehensive filtering options
+            - Performance metrics and summaries
+            """)
+    
     st.title("📈 Virtual Trading")
     
     # Display data fetch datetime at top of page
@@ -107,7 +139,7 @@ def create_virtual_trading_page():
         "Min Win Rate (%)",
         min_value=0,
         max_value=100,
-        value=0,
+        value=70,
         help="Minimum win rate threshold",
         key="win_rate_slider_vt"
     )

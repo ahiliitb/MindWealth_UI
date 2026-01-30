@@ -891,16 +891,6 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
         # Prepare new row DataFrame
         new_row_df = pd.DataFrame([row])
         
-        # Rename columns from trade_store format to chatbot format (now both use Max/Min/Avg)
-        column_mapping = {
-            'Backtested Returns(Win Trades) [%] (Max/Min/Avg)': 'Backtested Returns(Win Trades) [%] (Max/Min/Avg)',
-            'Backtested Max Loss [%], Backtested Min Single MTM during Hold Period [%]': 'Backtested Max Loss [%], Backtested Min Single MTM during Hold Period [%]',
-            'Backtested Holding Period(Win Trades) (days) (Max/Min/Avg)': 'Backtested Holding Period(Win Trades) (days) (Max/Min/Avg)',
-            'Target Exit Date(Win Trades) (Max/Min/Avg.)': 'Target Exit Date(Win Trades) (Max/Min/Avg.)',
-            'Targets (Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/EMA 200) [$]': 'Targets (Historic Rise or Fall to Pivot/Avg % Gain of Historic Winning trades/Exit Rule/Horizontal/F-Stack 1/F-Stack 2/EMA 200) [$]'
-        }
-        new_row_df = new_row_df.rename(columns=column_mapping)
-        
         # Helper: Extract dedup key based on signal type
         def get_dedup_key(row_data, sig_type):
             """Extract deduplication key columns based on signal type"""

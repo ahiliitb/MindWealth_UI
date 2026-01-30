@@ -53,6 +53,37 @@ def find_latest_gpt_file(base_path, extension='txt'):
 
 def create_text_file_page():
     """Create a page to display Claude Signals report: text first, then cards + table"""
+    # Info button at the top
+    if st.button("ℹ️ Info About Page", key="info_text_file", help="Click to learn about this page"):
+        st.session_state['show_info_text_file'] = not st.session_state.get('show_info_text_file', False)
+    
+    if st.session_state.get('show_info_text_file', False):
+        with st.expander("📖 Claude Signals Report Information", expanded=True):
+            st.markdown("""
+            ### What is this page?
+            The Claude Signals Report page displays AI-generated analysis of trading signals using Claude AI, showing both textual analysis and structured data.
+            
+            ### Why is it used?
+            - **AI Insights**: Get Claude AI's analysis and recommendations on trading signals
+            - **Comprehensive Reports**: View both narrative text reports and structured CSV data
+            - **Signal Summary**: See a consolidated view of important signals analyzed by AI
+            - **Quick Reference**: Access Claude's latest market analysis and trading suggestions
+            
+            ### How to use?
+            1. **Read Text Analysis**: Start with the text report section for Claude's narrative analysis
+            2. **Review Cards**: Scroll through strategy cards for quick signal overview
+            3. **Check Table**: Examine the detailed data table at the bottom
+            4. **Filter Data**: Use sidebar filters to focus on specific strategies or symbols
+            5. **Compare Signals**: Cross-reference Claude's insights with your own analysis
+            
+            ### Key Features:
+            - AI-powered signal analysis from Claude
+            - Dual format: Text report + structured data
+            - Automated date-stamped reports
+            - Integration with signal cards and tables
+            - Historical report access
+            """)
+    
     st.title("🤖 Claude Signals Report")
     
     # Display data fetch datetime at top of page (from JSON file)
@@ -82,88 +113,118 @@ def create_text_file_page():
     # 2) CSV output: show strategy cards first, then table
     st.markdown("### 📊 Claude Signals (Cards + Table)")
     csv_path = csv_file if csv_file else GPT_SIGNALS_REPORT_CSV_PATH_US
-    if os.path.exists(csv_path):
-        try:
-            # Read raw CSV first
-            raw_df = pd.read_csv(csv_path)
-            
-            if raw_df.empty:
-                st.info("No data available in Claude signals CSV.")
-                return
-            
-            # Claude Signals CSV has the same structure as outstanding_signal.csv
-            # Use parse_detailed_signal_csv parser directly
-            from ..parsers.base_parsers import parse_detailed_signal_csv
-            parsed_df = parse_detailed_signal_csv(raw_df)
-            
-            if parsed_df.empty:
-                st.info("No data could be parsed from Claude signals CSV.")
-                return
-            
-            # Strategy cards - use parsed data which has Raw_Data column
-            # Summary cards if possible
-            required_summary_cols = {'Win_Rate', 'Num_Trades', 'Strategy_CAGR', 'Strategy_Sharpe'}
-            has_summary_cols = required_summary_cols.issubset(set(parsed_df.columns))
-            
-            if has_summary_cols:
-                create_summary_cards(parsed_df)
-                st.markdown("---")
-            
-            # Strategy cards with function-specific column logic
-            create_strategy_cards(parsed_df, page_name="Claude Signals", tab_context="claude_signals")
-            st.markdown("---")
-            
-            # Detail table - exclude function-specific columns (same logic as other pages)
-            st.markdown("### 📋 Detailed Data Table (Original CSV Format)")
-            
-            # Columns to exclude from detail table (only show in strategy cards if not "No Information")
-            columns_to_exclude = [
-                'Sigmashell, Success Rate of Past Analysis [%]',
-                'Divergence observed with, Signal Type',
-                'Maxima Broken Date/Price[$]',
-                'Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type',
-                'Reference Upmove or Downmove start Date/Price($), end Date/Price($)',
-                '% Change in Price on Latest Trading day vs Price on Trendpulse Breakout day/Earliest Unconfirmed Signal day/Confirmed Signal day'
-            ]
-            
-            # Remove excluded columns if they exist
-            columns_to_display = [col for col in raw_df.columns if col not in columns_to_exclude]
-            filtered_raw_df = raw_df[columns_to_display]
-            
-            # Reorder columns: Symbol/Signal first, Exit Signal second, Function third
-            from ..utils.helpers import reorder_dataframe_columns, find_column_by_keywords
-            filtered_raw_df = reorder_dataframe_columns(filtered_raw_df)
-            
-            # Find Symbol and Exit Signal columns for pinning
-            symbol_col = find_column_by_keywords(filtered_raw_df.columns, ['Symbol, Signal', 'Symbol'])
-            if not symbol_col:
-                for col in filtered_raw_df.columns:
-                    if 'Symbol' in col and 'Signal' in col and 'Exit' not in col:
-                        symbol_col = col
-                        break
-            exit_col = find_column_by_keywords(filtered_raw_df.columns, ['Exit Signal Date', 'Exit Signal', 'Exit'])
-            
-            # Display with better formatting and autosize for ALL columns
-            column_config = {}
-            for col in filtered_raw_df.columns:
-                column_config[col] = st.column_config.TextColumn(
-                    col,
-                    help=f"Original CSV column: {col}"
-                    # No width parameter = autosize
-                )
-            
-            st.dataframe(
-                filtered_raw_df,
-                use_container_width=True,
-                height=600,
-                column_config=column_config
-            )
-        except pd.errors.EmptyDataError:
+    
+    if not os.path.exists(csv_path):
+        st.info("No data available - Claude signals CSV file not found.")
+        return
+    
+    try:
+        # Read raw CSV first
+        raw_df = pd.read_csv(csv_path)
+        
+        if raw_df.empty:
             st.info("No data available in Claude signals CSV.")
-        except Exception as e:
-            st.error(f"Error reading CSV report: {str(e)}")
-            import traceback
-            st.code(traceback.format_exc())
-    else:
-        st.warning(f"CSV report not found: {csv_path}")
-
+            return
+        
+        # Claude Signals CSV has the same structure as outstanding_signal.csv
+        # Use parse_detailed_signal_csv parser directly
+        from ..parsers.base_parsers import parse_detailed_signal_csv
+        parsed_df = parse_detailed_signal_csv(raw_df)
+        
+        if parsed_df.empty:
+            st.info("No data could be parsed from Claude signals CSV.")
+            return
+        
+        # Sidebar Filters
+        st.sidebar.markdown("### 📊 Filters")
+        min_win_rate = st.sidebar.slider(
+            "Min Win Rate (%)",
+            min_value=0,
+            max_value=100,
+            value=70,
+            step=1,
+            key="win_rate_slider_claude_signals"
+        )
+        min_sharpe_ratio = st.sidebar.slider(
+            "Min Sharpe Ratio",
+            min_value=-5.0,
+            max_value=5.0,
+            value=0.5,
+            step=0.1,
+            key="sharpe_ratio_slider_claude_signals"
+        )
+        
+        # Apply filters
+        if 'Win_Rate' in parsed_df.columns:
+            parsed_df = parsed_df[parsed_df['Win_Rate'].fillna(0) >= min_win_rate]
+        if 'Strategy_Sharpe' in parsed_df.columns:
+            parsed_df = parsed_df[parsed_df['Strategy_Sharpe'].fillna(-999) >= min_sharpe_ratio]
+        
+        if parsed_df.empty:
+            st.info("No signals match the current filter criteria.")
+            return
+        
+        # Strategy cards - use parsed data which has Raw_Data column
+        # Summary cards if possible
+        required_summary_cols = {'Win_Rate', 'Num_Trades', 'Strategy_CAGR', 'Strategy_Sharpe'}
+        has_summary_cols = required_summary_cols.issubset(set(parsed_df.columns))
+        
+        if has_summary_cols:
+            create_summary_cards(parsed_df)
+            st.markdown("---")
+        
+        # Strategy cards with function-specific column logic
+        create_strategy_cards(parsed_df, page_name="Claude Signals", tab_context="claude_signals")
+        st.markdown("---")
+        
+        # Detail table - exclude function-specific columns (same logic as other pages)
+        st.markdown("### 📋 Detailed Data Table (Original CSV Format)")
+        
+        # Columns to exclude from detail table (only show in strategy cards if not "No Information")
+        columns_to_exclude = [
+            'Sigmashell, Success Rate of Past Analysis [%]',
+            'Divergence observed with, Signal Type',
+            'Maxima Broken Date/Price[$]',
+            'Track Level/Price($), Price on Latest Trading day vs Track Level, Signal Type',
+            'Reference Upmove or Downmove start Date/Price($), end Date/Price($)',
+            '% Change in Price on Latest Trading day vs Price on Trendpulse Breakout day/Earliest Unconfirmed Signal day/Confirmed Signal day'
+        ]
+        
+        # Remove excluded columns if they exist
+        columns_to_display = [col for col in raw_df.columns if col not in columns_to_exclude]
+        filtered_raw_df = raw_df[columns_to_display]
+        
+        # Reorder columns: Symbol/Signal first, Exit Signal second, Function third
+        from ..utils.helpers import reorder_dataframe_columns, find_column_by_keywords
+        filtered_raw_df = reorder_dataframe_columns(filtered_raw_df)
+        
+        # Find Symbol and Exit Signal columns for pinning
+        symbol_col = find_column_by_keywords(filtered_raw_df.columns, ['Symbol, Signal', 'Symbol'])
+        if not symbol_col:
+            for col in filtered_raw_df.columns:
+                if 'Symbol' in col and 'Signal' in col and 'Exit' not in col:
+                    symbol_col = col
+                    break
+        exit_col = find_column_by_keywords(filtered_raw_df.columns, ['Exit Signal Date', 'Exit Signal', 'Exit'])
+        
+        # Display with better formatting and autosize for ALL columns
+        column_config = {}
+        for col in filtered_raw_df.columns:
+            column_config[col] = st.column_config.TextColumn(
+                col,
+                help=f"Original CSV column: {col}"
+                # No width parameter = autosize
+            )
+        
+        st.dataframe(
+            filtered_raw_df,
+            use_container_width=True,
+            height=600,
+            column_config=column_config
+        )
+    except pd.errors.EmptyDataError:
+        st.info("No data available in Claude signals CSV.")
+    except Exception as e:
+        st.error(f"Error reading CSV report: {str(e)}")
+        import traceback
+        st.code(traceback.format_exc())

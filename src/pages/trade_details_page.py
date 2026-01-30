@@ -118,6 +118,37 @@ def load_trade_data(base_folder, function, asset, interval):
 
 def create_trade_details_page():
     """Create the Trade Details page with tabs and selection dropdowns"""
+    # Info button at the top
+    if st.button("ℹ️ Info About Page", key="info_trade_details", help="Click to learn about this page"):
+        st.session_state['show_info_trade_details'] = not st.session_state.get('show_info_trade_details', False)
+    
+    if st.session_state.get('show_info_trade_details', False):
+        with st.expander("📖 Trade Details Page Information", expanded=True):
+            st.markdown("""
+            ### What is this page?
+            The Trade Details page provides in-depth analysis of individual trades organized by function, asset, and interval.
+            
+            ### Why is it used?
+            - **Detailed Analysis**: Examine specific trades for each strategy function
+            - **Historical Data**: Access historical trade data for different assets
+            - **Interval Analysis**: Compare performance across different time intervals
+            - **Success Metrics**: Review success rates and forward testing results
+            
+            ### How to use?
+            1. **Select Folder Type**: Choose between Backtest History, Forward Testing, or Latest Performance
+            2. **Pick Function**: Select a strategy function from the dropdown
+            3. **Choose Interval**: Select the time interval you want to analyze
+            4. **Select Asset**: Pick a specific asset/symbol to view its trades
+            5. **Analyze Table**: Review the detailed trade data in the table
+            
+            ### Key Features:
+            - Hierarchical navigation: Folder → Function → Interval → Asset
+            - Multiple data sources: success_rate, forward_testing, latest_performance
+            - Comprehensive trade history
+            - Performance metrics per asset
+            - Interval-based analysis
+            """)
+    
     st.title("📊 Trade Details")
     
     # Display data fetch datetime at top of page

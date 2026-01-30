@@ -29,6 +29,38 @@ from constant import OUTSTANDING_SIGNAL_CSV_PATH_US
 
 def create_monitored_trades_page():
     """Create the Monitored Trades page"""
+    # Info button at the top
+    if st.button("ℹ️ Info About Page", key="info_monitored_trades", help="Click to learn about this page"):
+        st.session_state['show_info_monitored_trades'] = not st.session_state.get('show_info_monitored_trades', False)
+    
+    if st.session_state.get('show_info_monitored_trades', False):
+        with st.expander("📖 Monitored Trades Information", expanded=True):
+            st.markdown("""
+            ### What is this page?
+            The Monitored Trades page is your personal portfolio tracker where you can add and monitor specific trades that interest you.
+            
+            ### Why is it used?
+            - **Personal Tracking**: Monitor trades you're personally interested in or invested in
+            - **Portfolio Management**: Keep track of your selected positions in one place
+            - **Price Updates**: Get automated price updates for your monitored trades
+            - **Performance Analysis**: Track individual trade performance over time
+            
+            ### How to use?
+            1. **Add Trades**: Use the "⭐ Add to Monitored" button on Outstanding Signals or New Signals pages
+            2. **Update Prices**: Click "🔄 Update Prices" button in sidebar to refresh current prices
+            3. **View Status**: Switch between All Trades, Open Trades, and Closed Trades tabs
+            4. **Apply Filters**: Use sidebar filters to focus on specific functions, symbols, or intervals
+            5. **Remove Trades**: Remove trades you no longer want to monitor
+            
+            ### Key Features:
+            - Personal portfolio tracking
+            - Automated price updates from stock data
+            - Integration with outstanding signals for exit detection
+            - Open vs closed trade segregation
+            - Real-time profit/loss tracking
+            - Customizable watchlist
+            """)
+    
     st.title("⭐ Monitored Trades")
     
     # Display data fetch datetime at top of page
@@ -156,28 +188,39 @@ def create_monitored_trades_page():
         "Min Win Rate (%)",
         min_value=0,
         max_value=100,
-        value=0,
+        value=70,
         help="Minimum win rate threshold",
         key="win_rate_slider_mt"
+    )
+    
+    # Sharpe ratio filter
+    min_sharpe_ratio = st.sidebar.slider(
+        "Min Strategy Sharpe Ratio",
+        min_value=-5.0,
+        max_value=5.0,
+        value=0.5,
+        step=0.1,
+        help="Minimum Strategy Sharpe Ratio threshold",
+        key="sharpe_ratio_slider_mt"
     )
     
     # Process each main tab
     with main_tab1:
         st.subheader("📊 All Trades")
-        display_monitored_trades_content(df, "All Trades", functions, symbols, min_win_rate)
+        display_monitored_trades_content(df, "All Trades", functions, symbols, min_win_rate, min_sharpe_ratio)
     
     with main_tab2:
         st.subheader("Open Trades")
         df_open = df[df['Status'] == 'Open']
-        display_monitored_trades_content(df_open, "Open Trades", functions, symbols, min_win_rate)
+        display_monitored_trades_content(df_open, "Open Trades", functions, symbols, min_win_rate, min_sharpe_ratio)
     
     with main_tab3:
         st.subheader("Closed Trades")
         df_closed = df[df['Status'] != 'Open']
-        display_monitored_trades_content(df_closed, "Closed Trades", functions, symbols, min_win_rate)
+        display_monitored_trades_content(df_closed, "Closed Trades", functions, symbols, min_win_rate, min_sharpe_ratio)
 
 
-def display_monitored_trades_content(df, tab_name, selected_functions, selected_symbols, min_win_rate):
+def display_monitored_trades_content(df, tab_name, selected_functions, selected_symbols, min_win_rate, min_sharpe_ratio=-5.0):
     """Display monitored trades content with position and interval tabs"""
     
     if df.empty:
@@ -193,6 +236,10 @@ def display_monitored_trades_content(df, tab_name, selected_functions, selected_
     # Apply win rate filter if column exists
     if 'Win_Rate' in filtered_df.columns and min_win_rate > 0:
         filtered_df = filtered_df[filtered_df['Win_Rate'].fillna(0) >= min_win_rate]
+    
+    # Apply Sharpe ratio filter if column exists
+    if 'Strategy_Sharpe' in filtered_df.columns:
+        filtered_df = filtered_df[filtered_df['Strategy_Sharpe'].fillna(-999) >= min_sharpe_ratio]
     
     if filtered_df.empty:
         st.warning(f"No data matches the current filters for {tab_name}")

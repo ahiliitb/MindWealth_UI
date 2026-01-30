@@ -14,6 +14,38 @@ from ..utils.file_discovery import extract_date_from_filename
 
 def create_breadth_page(data_file, page_title):
     """Create a specialized page for breadth data"""
+    # Info button at the top
+    if st.button("ℹ️ Info About Page", key=f"info_breadth_{page_title}", help="Click to learn about this page"):
+        st.session_state[f'show_info_breadth_{page_title}'] = not st.session_state.get(f'show_info_breadth_{page_title}', False)
+    
+    if st.session_state.get(f'show_info_breadth_{page_title}', False):
+        with st.expander("📖 Market Breadth Information", expanded=True):
+            st.markdown("""
+            ### What is this page?
+            The Market Breadth page analyzes the overall health and direction of the market by tracking the percentage of assets and signals that are bullish across different strategies.
+            
+            ### Why is it used?
+            - **Market Health**: Gauge overall market strength and direction
+            - **Breadth Analysis**: Understand how many assets are participating in the trend
+            - **Signal Confirmation**: Confirm if market moves are broad-based or concentrated
+            - **Strategy Performance**: See which strategies have the most bullish signals
+            
+            ### How to use?
+            1. **Review Summary**: Check the market breadth summary cards at the top
+            2. **Analyze Strategies**: Review individual strategy breadth cards
+            3. **View Chart**: Examine the Bullish SBI (Signal Breadth Indicator) chart
+            4. **Compare Functions**: Compare breadth across different strategy functions
+            5. **Track Trends**: Monitor breadth changes over time
+            
+            ### Key Features:
+            - Bullish asset percentage tracking
+            - Bullish signal percentage tracking
+            - Strategy-by-strategy breadth analysis
+            - Historical breadth trend visualization
+            - Combined "All Functions" breadth view
+            - Date-stamped breadth data
+            """)
+    
     st.title(f"📊 {page_title}")
     
     # Display data fetch datetime at top of page (from JSON file)

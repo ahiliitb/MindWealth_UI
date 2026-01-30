@@ -72,6 +72,38 @@ def _render_signal_cards(df):
 
 def create_f_stack_page(data_file, page_title="F-Stack"):
     """Render the F-Stack analyzer page."""
+    # Info button at the top
+    if st.button("ℹ️ Info About Page", key="info_f_stack", help="Click to learn about this page"):
+        st.session_state['show_info_f_stack'] = not st.session_state.get('show_info_f_stack', False)
+    
+    if st.session_state.get('show_info_f_stack', False):
+        with st.expander("📖 F-Stack Analyzer Information", expanded=True):
+            st.markdown("""
+            ### What is this page?
+            The F-Stack Analyzer visualizes and analyzes Fibonacci-based band structures and extension levels for trading signals.
+            
+            ### Why is it used?
+            - **Technical Analysis**: Understand Fibonacci-based price levels and bands
+            - **Target Identification**: Identify next potential price targets
+            - **Band Analysis**: Analyze band composition and width for trend strength
+            - **Extension Tracking**: Monitor current extension levels relative to signal price
+            
+            ### How to use?
+            1. **Review Cards**: Scroll through signal cards for overview of each position
+            2. **Check Band Structure**: View current extension level, band range, and composition
+            3. **Identify Targets**: Look at next band levels and Fibonacci retracements
+            4. **Apply Filters**: Use sidebar filters for functions, symbols, and intervals
+            5. **Analyze Table**: Review the complete data table for detailed metrics
+            
+            ### Key Features:
+            - Fibonacci extension level analysis
+            - Band structure visualization (width, range, composition)
+            - Next target identification
+            - Price vs signal tracking
+            - Trading days calculation
+            - Comprehensive filtering options
+            """)
+    
     st.title("📐 F-Stack Analyzer")
     
     # Display data fetch datetime at top of page (from JSON file)

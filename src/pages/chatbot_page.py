@@ -344,6 +344,39 @@ def render_chat_history_sidebar():
 def render_chatbot_page():
     """Render the AI Chatbot page."""
     
+    # Info button at the top
+    if st.button("ℹ️ Info About Page", key="info_chatbot", help="Click to learn about this page"):
+        st.session_state['show_info_chatbot'] = not st.session_state.get('show_info_chatbot', False)
+    
+    if st.session_state.get('show_info_chatbot', False):
+        with st.expander("📖 AI Trading Assistant Information", expanded=True):
+            st.markdown("""
+            ### What is this page?
+            The AI Trading Assistant is an intelligent chatbot powered by advanced AI that helps you analyze trading data, answer questions about signals, and provide strategic insights.
+            
+            ### Why is it used?
+            - **Interactive Analysis**: Ask questions about your trading data in natural language
+            - **Smart Insights**: Get AI-powered analysis of signals, strategies, and performance
+            - **Quick Answers**: Find information faster than manually searching through data
+            - **Data Exploration**: Explore complex trading data through conversational interface
+            
+            ### How to use?
+            1. **Select Signal Types**: Choose which data sources to include (Entry, Exit, Breadth, etc.)
+            2. **Ask Questions**: Type your question in the chat input box
+            3. **Review Responses**: Read the AI's analysis and view any tables or data provided
+            4. **Follow-up**: Ask follow-up questions for deeper insights
+            5. **Manage Chats**: Use sidebar to create new chats, rename, or delete old ones
+            6. **View History**: Access your previous conversations from the sidebar
+            
+            ### Key Features:
+            - Natural language querying of trading data
+            - Multi-source data integration
+            - Conversation history management
+            - Interactive tables and visualizations
+            - Context-aware responses
+            - Quick action buttons for common queries
+            """)
+    
     st.title("🤖 AI Trading Analysis Chatbot")
     
     # Display data fetch datetime at top of page
@@ -794,7 +827,7 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
         "💡 Signal Insights",
         use_container_width=True,
         type="secondary",
-        help="Find high-quality entry signals across all assets (Sharpe >1.5, Win Rate >80%, recent horizontal breaks)"
+        help="Find high-quality entry signals across all assets (Sharpe >1.5, Win Rate >80%, Forward Testing >65%)"
     )
     
     if signal_insights_button:
@@ -820,8 +853,8 @@ Focus on identifying high-quality signals that meet the following criteria:
 
 1. **High Sharpe Ratio**: Strategy Sharpe Ratio > 1.5
 2. **High Win Rate (Full History)**: Win Rate > 80% based on full historical testing
-3. **High Win Rate (Recent)**: Win Rate > 85% for past 4 years
-4. **Recent Horizontal Breaks**: Signals with horizontal resistance/support breaks that occurred within the last 2-3 years
+3. **Latest Performance Win Rate**: Win Rate > 85% for past 4 years
+4. **Forward Testing Win Rate**: Win Rate > 65% from forward testing data
 
 For each qualifying signal, provide:
 - Asset symbol
@@ -830,14 +863,13 @@ For each qualifying signal, provide:
 - Signal direction (Long/Short)
 - Signal date
 - Strategy Sharpe Ratio
-- Win Rate (full history and recent if available)
-- Details about horizontal breaks if applicable
+- Win Rate (full history, latest performance, and forward testing if available)
 - Any other relevant performance metrics
 
 Organize the results by:
 1. Highest Sharpe Ratio signals first
 2. Then by highest Win Rate
-3. Highlight any signals with recent horizontal breaks
+3. Highlight any signals with high Forward Testing Win Rate (>65%)
 
 Important:
 - Only analyze ENTRY signals (signals that are still open, no exit yet)

@@ -16,8 +16,38 @@ from ..config_paths import (
 
 
 def create_all_data_page():
-    """Create All Data page with chatbot data files"""
-    st.title("� Outstanding Signals")
+    """Create All Data page with chatbot data files"""    # Info button at the top
+    if st.button("ℹ️ Info About Page", key="info_all_data", help="Click to learn about this page"):
+        st.session_state['show_info_all_data'] = not st.session_state.get('show_info_all_data', False)
+    
+    if st.session_state.get('show_info_all_data', False):
+        with st.expander("📖 Outstanding Signals Information", expanded=True):
+            st.markdown("""
+            ### What is this page?
+            The Outstanding Signals page consolidates all trading signal data from multiple sources including entry signals, exit signals, portfolio targets, and market breadth indicators.
+            
+            ### Why is it used?
+            - **Centralized View**: Access all signal types in one place
+            - **Comprehensive Analysis**: View entry, exit, portfolio targets, and breadth data together
+            - **Cross-Signal Comparison**: Compare different signal types and their performance
+            - **Unified Filtering**: Apply consistent filters across all signal types
+            
+            ### How to use?
+            1. **Select Tab**: Choose from Entry Signals, Exit Signals, Portfolio Targets, or Market Breadth
+            2. **Apply Filters**: Use sidebar filters to narrow down by functions and symbols
+            3. **View Summary**: Check summary cards at the top for quick metrics
+            4. **Explore Cards**: Scroll through strategy cards for detailed information
+            5. **Analyze Table**: Review the comprehensive data table at the bottom
+            
+            ### Key Features:
+            - Multi-tab interface for different signal types
+            - Unified filtering across all tabs
+            - Entry signals: Current open positions
+            - Exit signals: Completed trades
+            - Portfolio targets: Target achievement tracking
+            - Market breadth: Overall market health indicators
+            """)
+        st.title("� Outstanding Signals")
 
     # Display data fetch datetime at top of page
     from ..utils.helpers import display_data_fetch_info
@@ -118,15 +148,37 @@ def create_all_data_page():
     else:
         selected_symbols = []
 
+    # Win rate filter (slider)
+    st.sidebar.markdown("---")
+    min_win_rate = st.sidebar.slider(
+        "Min Win Rate (%)",
+        min_value=0,
+        max_value=100,
+        value=70,
+        help="Minimum win rate threshold",
+        key="win_rate_slider_all_data"
+    )
+    
+    # Sharpe ratio filter
+    min_sharpe_ratio = st.sidebar.slider(
+        "Min Strategy Sharpe Ratio",
+        min_value=-5.0,
+        max_value=5.0,
+        value=0.5,
+        step=0.1,
+        help="Minimum Strategy Sharpe Ratio threshold",
+        key="sharpe_ratio_slider_all_data"
+    )
+
     # Create main tabs for each data file
     main_tabs = st.tabs(list(data_files.keys()))
 
     for i, tab_name in enumerate(data_files.keys()):
         with main_tabs[i]:
-            display_data_file(tab_name, all_data[tab_name], selected_functions, selected_symbols)
+            display_data_file(tab_name, all_data[tab_name], selected_functions, selected_symbols, min_win_rate, min_sharpe_ratio)
 
 
-def display_data_file(tab_name, df, selected_functions, selected_symbols):
+def display_data_file(tab_name, df, selected_functions, selected_symbols, min_win_rate=0, min_sharpe_ratio=-5.0):
     """Display a specific data file with filters and tabs"""
 
     # Check if data is loaded
@@ -151,6 +203,15 @@ def display_data_file(tab_name, df, selected_functions, selected_symbols):
         # Apply symbol filter if symbol column exists and we have selected symbols
         if 'Symbol, Signal, Signal Date/Price[$]' in filtered_df.columns and selected_symbols:
             filtered_df = filtered_df[filtered_df['Symbol, Signal, Signal Date/Price[$]'].isin(selected_symbols)]
+        
+        # Apply win rate filter if column exists
+        if 'Win_Rate' in filtered_df.columns and min_win_rate > 0:
+            filtered_df = filtered_df[filtered_df['Win_Rate'].fillna(0) >= min_win_rate]
+        
+        # Apply Sharpe ratio filter if column exists
+        if 'Strategy_Sharpe' in filtered_df.columns:
+            sharpe_series = filtered_df['Strategy_Sharpe'].fillna(-999)
+            filtered_df = filtered_df[sharpe_series >= min_sharpe_ratio]
 
     if filtered_df.empty:
         st.warning(f"No data matches the current filters for {tab_name}")

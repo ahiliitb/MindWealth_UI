@@ -13,6 +13,38 @@ from ..components.charts import create_horizontal_chart
 
 def create_horizontal_page(data_file: str, page_title: str):
     """Render the Horizontal analysis page."""
+    # Info button at the top
+    if st.button("ℹ️ Info About Page", key=f"info_horizontal_{page_title}", help="Click to learn about this page"):
+        st.session_state[f'show_info_horizontal_{page_title}'] = not st.session_state.get(f'show_info_horizontal_{page_title}', False)
+    
+    if st.session_state.get(f'show_info_horizontal_{page_title}', False):
+        with st.expander("📖 Horizontal Analysis Information", expanded=True):
+            st.markdown("""
+            ### What is this page?
+            The Horizontal Analysis page displays horizontal support and resistance levels for different assets across various time intervals.
+            
+            ### Why is it used?
+            - **Level Identification**: Identify key horizontal support/resistance levels
+            - **Price Comparison**: Compare current price with identified horizontal levels
+            - **Technical Analysis**: Use horizontal levels for entry/exit decisions
+            - **Chart Visualization**: View interactive charts with horizontal level overlays
+            
+            ### How to use?
+            1. **Browse Cards**: Scroll through strategy cards showing horizontal levels for each symbol
+            2. **View Charts**: Click "📊 View Interactive Chart" to see candlestick chart with horizontal line
+            3. **Check Difference**: Review the percentage difference between current price and horizontal level
+            4. **Analyze Status**: See if price is above or below the horizontal level
+            5. **Compare Intervals**: Analyze horizontal levels across different time intervals
+            
+            ### Key Features:
+            - Horizontal support/resistance level identification
+            - Interactive candlestick charts
+            - Percentage difference calculation
+            - Multi-interval analysis
+            - Visual price vs level comparison
+            - Expandable detail cards
+            """)
+    
     st.title(f"📊 {page_title}")
     
     # Display data fetch datetime at top of page (from JSON file)

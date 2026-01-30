@@ -39,6 +39,39 @@ def display_summary_metrics_basic(df, tab_name):
 
 def create_performance_summary_page(data_file, page_title):
     """Create a performance summary page for CSV files with different structure"""
+    # Info button at the top
+    if st.button("ℹ️ Info About Page", key=f"info_performance_{page_title}", help="Click to learn about this page"):
+        st.session_state[f'show_info_performance_{page_title}'] = not st.session_state.get(f'show_info_performance_{page_title}', False)
+    
+    if st.session_state.get(f'show_info_performance_{page_title}', False):
+        with st.expander("📖 Performance Summary Information", expanded=True):
+            st.markdown("""
+            ### What is this page?
+            The Performance Summary page provides comprehensive statistics and metrics about trading strategy performance, including win rates, average profits, and holding periods.
+            
+            ### Why is it used?
+            - **Strategy Evaluation**: Evaluate the effectiveness of different trading strategies
+            - **Performance Metrics**: Review key performance indicators like win rate and profit
+            - **Comparison**: Compare performance across strategies, intervals, and signal types
+            - **Historical Analysis**: Analyze historical performance data
+            
+            ### How to use?
+            1. **Select Signal Type**: Choose between All, Long, or Short signals using tabs
+            2. **Apply Filters**: Use sidebar filters for strategies, intervals, and performance thresholds
+            3. **Review Summary**: Check summary metrics at the top (average win rate, total trades, etc.)
+            4. **View Cards**: Scroll through strategy cards for detailed performance breakdown
+            5. **Analyze Table**: Review the complete performance table at the bottom
+            
+            ### Key Features:
+            - Win rate and profit analysis
+            - Average holding period calculation
+            - Total trades tracking
+            - Strategy and interval filtering
+            - Long vs Short performance comparison
+            - Summary metrics and aggregations
+            - Historical performance tracking
+            """)
+    
     st.title(f"📊 {page_title}")
     st.markdown("---")
     
@@ -59,29 +92,29 @@ def create_performance_summary_page(data_file, page_title):
     # Sidebar filters for performance data
     st.sidebar.markdown("#### 🔍 Filters")
     
-    # Strategy filter
-    st.sidebar.markdown("**Strategies:**")
+    # Function filter
+    st.sidebar.markdown("**Functions:**")
     col1, col2 = st.sidebar.columns(2)
     with col1:
-        if st.button("All", key=f"select_all_strategies_{page_title}", help="Select all strategies", use_container_width=True):
+        if st.button("All", key=f"select_all_strategies_{page_title}", help="Select all functions", use_container_width=True):
             st.session_state[f'selected_strategies_{page_title}'] = list(df['Strategy'].unique())
     with col2:
-        if st.button("None", key=f"deselect_all_strategies_{page_title}", help="Deselect all strategies", use_container_width=True):
+        if st.button("None", key=f"deselect_all_strategies_{page_title}", help="Deselect all functions", use_container_width=True):
             st.session_state[f'selected_strategies_{page_title}'] = []
     
     # Initialize session state for strategies
     if f'selected_strategies_{page_title}' not in st.session_state:
         st.session_state[f'selected_strategies_{page_title}'] = list(df['Strategy'].unique())
     
-    # Display strategy selection status
+    # Display function selection status
     if len(st.session_state[f'selected_strategies_{page_title}']) == len(df['Strategy'].unique()):
-        st.sidebar.markdown("*All strategies selected*")
+        st.sidebar.markdown("*All functions selected*")
     elif len(st.session_state[f'selected_strategies_{page_title}']) == 0:
-        st.sidebar.markdown("*No strategies selected*")
+        st.sidebar.markdown("*No functions selected*")
     else:
         st.sidebar.markdown(f"*{len(st.session_state[f'selected_strategies_{page_title}'])} of {len(df['Strategy'].unique())} selected*")
     
-    with st.sidebar.expander("Select Strategies", expanded=False):
+    with st.sidebar.expander("Select Functions", expanded=False):
         strategies = st.multiselect(
             "",
             options=df['Strategy'].unique(),
@@ -99,7 +132,7 @@ def create_performance_summary_page(data_file, page_title):
         "Min Win Rate (%)",
         min_value=0,
         max_value=100,
-        value=0,
+        value=70,
         help="Minimum win rate threshold",
         key=f"win_rate_slider_{page_title}"
     )

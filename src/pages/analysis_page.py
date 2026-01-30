@@ -32,6 +32,37 @@ def create_analysis_page(data_file, page_title):
         create_performance_summary_page(data_file, page_title)
         return
     
+    # Info button at the top
+    if st.button("ℹ️ Info About Page", key=f"info_analysis_{page_title}", help="Click to learn about this page"):
+        st.session_state[f'show_info_analysis_{page_title}'] = not st.session_state.get(f'show_info_analysis_{page_title}', False)
+    
+    if st.session_state.get(f'show_info_analysis_{page_title}', False):
+        with st.expander("📖 Analysis Page Information", expanded=True):
+            st.markdown("""
+            ### What is this page?
+            The Analysis Page provides detailed insights into trading signals and strategy performance for specific CSV data files.
+            
+            ### Why is it used?
+            - **Signal Analysis**: Analyze trading signals with detailed metrics
+            - **Performance Tracking**: Track the performance of different strategies
+            - **Position Management**: View and filter long and short positions separately
+            - **Strategy Comparison**: Compare different functions and intervals
+            
+            ### How to use?
+            1. **Select Filters**: Use the sidebar to filter by functions, symbols, and intervals
+            2. **Choose Position Type**: Switch between ALL, Long, or Short positions using the tabs
+            3. **View Cards**: Scroll through strategy cards for detailed signal information
+            4. **Analyze Data**: Review the data table at the bottom for comprehensive details
+            5. **Use Quick Filters**: Click "All" or "None" buttons for quick selection
+            
+            ### Key Features:
+            - Multi-tab interface for different position types
+            - Advanced filtering by function, symbol, and interval
+            - Visual cards with expandable details
+            - Interactive data tables
+            - Real-time win rate and performance metrics
+            """)
+    
     # Display title
     st.title(f"📈 {page_title}")
     
@@ -77,34 +108,43 @@ def create_analysis_page(data_file, page_title):
     # Sidebar filters (same as Signal Analysis)
     st.sidebar.markdown("#### 🔍 Filters")
     
-    # Function filter with select all button
-    st.sidebar.markdown("**Functions:**")
-    if st.sidebar.button("All", key=f"select_all_functions_{page_title}", help="Select all functions", use_container_width=True):
-        all_functions = list(df['Function'].unique())
-        st.session_state[f'selected_functions_{page_title}'] = all_functions
-        st.session_state[f"functions_multiselect_{page_title}"] = all_functions
+    # Check if this is a single-function page
+    unique_functions = df['Function'].unique()
+    is_single_function = len(unique_functions) == 1
     
-    # Initialize session state for functions
-    if f'selected_functions_{page_title}' not in st.session_state:
-        st.session_state[f'selected_functions_{page_title}'] = list(df['Function'].unique())
-    
-    # Display function selection status
-    if len(st.session_state[f'selected_functions_{page_title}']) == len(df['Function'].unique()):
-        st.sidebar.markdown("*All functions selected*")
+    # Function filter - only show if multiple functions exist
+    if not is_single_function:
+        st.sidebar.markdown("**Functions:**")
+        if st.sidebar.button("All", key=f"select_all_functions_{page_title}", help="Select all functions", use_container_width=True):
+            all_functions = list(unique_functions)
+            st.session_state[f'selected_functions_{page_title}'] = all_functions
+            st.session_state[f"functions_multiselect_{page_title}"] = all_functions
+        
+        # Initialize session state for functions
+        if f'selected_functions_{page_title}' not in st.session_state:
+            st.session_state[f'selected_functions_{page_title}'] = list(unique_functions)
+        
+        # Display function selection status
+        if len(st.session_state[f'selected_functions_{page_title}']) == len(unique_functions):
+            st.sidebar.markdown("*All functions selected*")
+        else:
+            st.sidebar.markdown(f"*{len(st.session_state[f'selected_functions_{page_title}'])} of {len(unique_functions)} selected*")
+        
+        with st.sidebar.expander("Select Functions", expanded=False):
+            functions = st.multiselect(
+                "",
+                options=unique_functions,
+                default=st.session_state[f'selected_functions_{page_title}'],
+                key=f"functions_multiselect_{page_title}",
+                label_visibility="collapsed"
+            )
+        
+        # Update session state
+        st.session_state[f'selected_functions_{page_title}'] = functions
     else:
-        st.sidebar.markdown(f"*{len(st.session_state[f'selected_functions_{page_title}'])} of {len(df['Function'].unique())} selected*")
-    
-    with st.sidebar.expander("Select Functions", expanded=False):
-        functions = st.multiselect(
-            "",
-            options=df['Function'].unique(),
-            default=st.session_state[f'selected_functions_{page_title}'],
-            key=f"functions_multiselect_{page_title}",
-            label_visibility="collapsed"
-        )
-    
-    # Update session state
-    st.session_state[f'selected_functions_{page_title}'] = functions
+        # For single-function pages, auto-select the only function
+        functions = list(unique_functions)
+        st.session_state[f'selected_functions_{page_title}'] = functions
     
     # Symbol filter with select all button
     st.sidebar.markdown("**Symbols:**")
@@ -140,19 +180,19 @@ def create_analysis_page(data_file, page_title):
         "Min Win Rate (%)",
         min_value=0,
         max_value=100,
-        value=0,
+        value=70,
         help="Minimum win rate threshold",
         key=f"win_rate_slider_{page_title}"
     )
     
-    # Sharpe ratio filter - allow negative values by default
+    # Sharpe ratio filter
     min_sharpe_ratio = st.sidebar.slider(
         "Min Strategy Sharpe Ratio",
         min_value=-5.0,
         max_value=5.0,
-        value=-5.0,
+        value=0.5,
         step=0.1,
-        help="Minimum Strategy Sharpe Ratio threshold (default: -5.0 to show all)",
+        help="Minimum Strategy Sharpe Ratio threshold",
         key=f"sharpe_ratio_slider_{page_title}"
     )
     

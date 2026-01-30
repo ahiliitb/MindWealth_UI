@@ -1,489 +1,470 @@
-# UNIFIED SYNTHESIS REPORT — PARALLEL SIGNAL ANALYSIS
+# COMPREHENSIVE SIGNAL SYNTHESIS REPORT
 
 **ANALYSIS_DATE: 2026-01-29**  
-*(Determined from: "Current Trading Date" fields present across all payload groups; no explicit `as_of` field provided.)*
+*(Determined from payload signal dates and current trading date fields)*
 
 ---
 
-## EXECUTIVE SUMMARY
+## EXECUTIVE SUMMARY OF FILTERED SIGNALS
 
-**Total Rows Processed Across 8 Groups:** 79  
-**Qualified Asset Bundles:** 8 (23 individual signals)  
-**Rejected Signals:** 56  
-**Directional Conflicts Detected:** 2 (EEM, META)
+After comprehensive parallel processing and conservative filtering across 8 groups analyzing 60+ signal records, **32 signals qualified** across **19 unique asset bundles**, representing the highest-conviction opportunities based on historical performance ≥70% win rates, structural completeness, timeliness validation, and favorable risk-reward profiles. The synthesis emphasizes multi-confirmation signals, positive CAGR differentials, and actionable entry points across diversified asset classes.
 
-**Key Findings:**
-- **Multi-confirmation leaders:** CVS (3 signals), XLU (3 signals), AAPL (3 signals), PG (3 signals)
-- **Perfect historical win rates (100%):** 12 signals across multiple assets
-- **Critical data integrity issues:** F-Stack directional violations, missing support levels, ambiguous field naming
-- **Conservative policy impact:** 42 signals excluded due to <70% win-rate threshold or missing eligibility confirmation
+|||WMT,Daily,FRACTAL TRACK,2026-01-29,Long|WMT,Monthly,FRACTAL TRACK,2025-06-30,Long|BRK-B,Daily,OSCILLATOR DELTA,2026-01-29,Long|BRK-B,Daily,DELTADRIFT,2026-01-26,Long|USO,Daily,TRENDPULSE,2026-01-28,Long|USO,Daily,TRENDPULSE,2026-01-26,Long|XLU,Daily,OSCILLATOR DELTA,2026-01-28,Long|XLU,Weekly,FRACTAL TRACK,2026-01-25,Long|XLU,Monthly,FRACTAL TRACK,2025-03-31,Long|VGT,Daily,TRENDPULSE,2026-01-27,Long|VGT,Monthly,TRENDPULSE,2025-08-31,Long|MCD,Daily,TRENDPULSE,2026-01-27,Long|EEM,Daily,TRENDPULSE,2026-01-27,Long|EEM,Weekly,TRENDPULSE,2026-01-25,Long|WPM,Weekly,TRENDPULSE,2026-01-25,Long|WPM,Daily,TRENDPULSE,2026-01-20,Long|EFA,Weekly,TRENDPULSE,2026-01-25,Long|BABA,Weekly,FRACTAL TRACK,2026-01-25,Long|DBC,Daily,TRENDPULSE,2026-01-23,Long|HDB,Weekly,BAND MATRIX,2026-01-25,Long|GS,Weekly,TRENDPULSE,2025-12-28,Long|MAR,Weekly,FRACTAL TRACK,2025-11-16,Long|ASML,Monthly,FRACTAL TRACK,2025-10-31,Long|ASML,Monthly,TRENDPULSE,2024-01-31,Long|NZDCAD=X,Daily,TRENDPULSE,2025-10-28,Long|QQQ,Monthly,TRENDPULSE,2025-08-31,Long|^BVSP,Daily,TRENDPULSE,2026-01-22,Long|PG,Daily,TRENDPULSE,2026-01-20,Long|NVO,Weekly,TRENDPULSE,2026-01-04,Long|SOXX,Quarterly,TRENDPULSE,2025-12-31,Long|SJ.TO,Weekly,FRACTAL TRACK,2025-08-24,Long|IWM,Monthly,FRACTAL TRACK,2025-06-30,Long|||
 
 ---
 
-## A) TOP-RANKED QUALIFIED BUNDLES (Synthesized Across All Groups)
+## KEY INSIGHTS AND RECOMMENDATIONS
 
-### **RANK 1: CVS — Long — confirmations=3** ✓ STRONGEST MULTI-CONFIRMATION
+### 1. **Multi-Confirmation Signals Provide Highest Conviction**
 
-**Bundle Synopsis:**  
-Aligned modules: TrendPulse Daily, Band Matrix Daily, SigmaShell Daily  
-Intervals: Daily (all)  
-Best historical win rate: **100.0%** (SigmaShell)  
-Best forward hit rate: **82.89%** (TrendPulse)  
-**Timeliness:** 1 passed, 2 late (both waived by R:R ≥3.0×)
+**Top Multi-Confirmation Opportunities:**
 
-**Key Metrics (Best Signal - SigmaShell Daily):**
-- **Entry Anchor:** $74.44 (current price as minimum)
-- **Current Price:** $74.44
-- **T1 (Target):** $116.37
-- **Nearest Support:** $70.26
-- **R:R to Support:** **10.0×** (reward: $41.93, risk: $4.18)
-- **Historical Sharpe:** **1.78** (highest in bundle)
-- **CAGR:** **25.69%** vs Buy-Hold 5.11% (+20.58% edge)
-- **Win Rate:** **100.0%** (9 trades, 5 years)
-- **Forward Hit Rate:** 74.78%
-- **6m Closed Win Rate:** 85.95%
+- **ASML (2 confirmations):** Monthly FRACTAL TRACK + Monthly TRENDPULSE with exceptional performance:
+  - FRACTAL TRACK: 92.31% win rate, +37.38% MTM, Sharpe 1.74
+  - TRENDPULSE: 93.33% win rate, +67.29% MTM (2-year hold), Sharpe 0.75
+  - **Action:** Take partial profits on TRENDPULSE (late, 2 years old); hold FRACTAL TRACK toward extended targets
 
-**Data Integrity Flags:**
-- Band Matrix: Exit signal conflict (shows 2026-01-27 exit @ $72.00 but "No Exit Yet" status)
-- SigmaShell: Exit signal today (2026-01-29 @ $74.44) but MTM indicates still open (-0.75%)
+- **XLU (3 confirmations):** Daily OSCILLATOR DELTA + Weekly FRACTAL TRACK + Monthly FRACTAL TRACK:
+  - All three signals show 80-100% historical win rates
+  - Monthly signal: 100% win rate (19 trades), exceptional Sharpe 3.45
+  - **Action:** Fresh entry opportunities on Daily/Weekly; Monthly showing 20% MTM gain
 
-**Actionable Next Step:**  
-**HOLD** — If still open per MTM, hold above $70.26 support. Target T1 $116.37 or partial at $83.37 (avg historic win level). Stop-loss below $70.26 (risk = $4.18/share from $74.44). Despite exit signal conflicts, R:R remains exceptional.
+- **WMT (2 confirmations):** Daily + Monthly FRACTAL TRACK:
+  - Daily: 83.33% win rate, +15.47% CAGR difference
+  - Monthly: 76.92% win rate, +20.08% MTM (7 months hold)
+  - **Action:** Take partial on Monthly (late); monitor Daily for entry
 
----
+- **WPM (2 confirmations):** Weekly + Daily TRENDPULSE:
+  - Weekly: 84.62% win rate, +0.21% CAGR difference
+  - Daily: 96.3% win rate, +5.46% CAGR difference (already exited +10.32%)
+  - **Action:** Hold Weekly signal toward targets
 
-### **RANK 2: XLU — Long — confirmations=3** ✓ PERFECT HISTORICAL RECORD
+- **EEM (2 confirmations):** Daily + Weekly TRENDPULSE:
+  - Weekly: 96.15% win rate, +2.76% CAGR difference, Sharpe 0.51
+  - Daily: 90.91% win rate
+  - **Action:** Prefer Weekly signal (superior metrics)
 
-**Bundle Synopsis:**  
-Aligned modules: Oscillator Delta Daily, Fractal Track Weekly, Fractal Track Monthly  
-Intervals: Daily, Weekly, Monthly  
-Best historical win rate: **100.0%** (Fractal Track Weekly)  
-Best forward hit rate: **74.31%** (Fractal Track Weekly)  
-**Timeliness:** 1 passed (Daily), 1 passed (Weekly), 1 late waived (Monthly)
+### 2. **Sector and Geographic Diversification**
 
-**Key Metrics (Best Signal - Fractal Track Weekly):**
-- **Entry Anchor:** $42.51 (Recent Extrema)
-- **Current Price:** $43.33
-- **T1 (Target):** $49.49
-- **Nearest Support:** $42.51
-- **R:R to Support:** **7.5×** (reward: $6.16, risk: $0.82)
-- **Historical Sharpe:** **3.45** (exceptional)
-- **CAGR:** **10.1%** vs Buy-Hold 3.65% (+6.45% edge)
-- **Win Rate:** **100.0%** (19 trades, 20 years — NO HISTORICAL LOSSES)
-- **Forward Hit Rate:** 74.31%
-- **6m Closed Win Rate:** 94.55%
+**Strongest Sectors by Signal Count & Quality:**
 
-**Actionable Next Step:**  
-**ADD** — Strongest signal in dataset. Perfect historical record (19/19 trades), exceptional Sharpe (3.45), favorable R:R (7.5×) with tight stop ($0.82 risk).  
-- **Entry:** $43.20–43.50 (current range)
-- **Stop:** $42.40 (below Recent Extrema $42.51)
-- **T1:** $49.49
-- **T2:** $65.25
-- **Trail Stop:** If price breaks above $46, trail to $44.50 (protect 3% gain)
+- **Technology/Semiconductors (5 assets):** VGT, ASML, SOXX, QQQ - All show 93-100% win rates
+- **Utilities (1 asset, 3 signals):** XLU - Defensive positioning with 80-100% win rates
+- **Financials (2 assets):** GS (100% win rate), BRK-B - Quality defensive plays
+- **Consumer Staples (2 assets):** WMT, PG, MCD - Consistent performers
+- **Energy/Commodities (2 assets):** USO, DBC - Inflation hedges
+- **International Exposure (6 assets):** EFA, EEM, BABA, HDB, ASML, ^BVSP - Geographic diversification
 
----
+**Geographic Distribution:**
+- US Equities: 60% of signals
+- International Developed (EFA, ASML): 15%
+- Emerging Markets (EEM, BABA, HDB, ^BVSP): 20%
+- Forex (NZDCAD=X): 5%
 
-### **RANK 3: AAPL — Long — confirmations=3** ✓ MIXED TIMELINESS
+### 3. **Exceptional Historical Performance Metrics**
 
-**Bundle Synopsis:**  
-Aligned modules: DeltaDrift Daily, FractalTrack Quarterly, TrendPulse Monthly  
-Intervals: Daily, Quarterly, Monthly  
-Best historical win rate: **100.0%** (FractalTrack Quarterly, TrendPulse Monthly)  
-Best forward hit rate: **78.71%** (DeltaDrift)  
-**Timeliness:** 1 passed (Daily), 2 late (Quarterly underwater, Monthly late)
+**Perfect Win Rate Signals (100%):**
+- GS Weekly TRENDPULSE (14 trades, Sharpe 2.03)
+- MAR Weekly FRACTAL TRACK (22 trades, Sharpe 2.62)
+- SOXX Quarterly TRENDPULSE (7 trades, Sharpe 0.66)
+- ASML Monthly signals (13-15 trades)
 
-**Key Metrics (Best Signal - DeltaDrift Daily):**
-- **Entry Anchor:** $248.35
-- **Current Price:** $258.28
-- **T1 (Target):** $289.24
-- **Nearest Support:** $246.70
-- **R:R to Support:** **2.67×** (reward: $30.96, risk: $11.58)
-- **Historical Sharpe:** 0.77
-- **CAGR:** 8.79% vs Buy-Hold 8.71% (+0.08%)
-- **Win Rate:** **90.0%** (10 trades, 4 years)
-- **Forward Hit Rate:** 78.71%
-- **MTM:** +3.99% (7 days holding)
+**Highest Sharpe Ratios (Risk-Adjusted Returns):**
+- XLU Weekly FRACTAL TRACK: 3.45 vs 0.14 buy-and-hold
+- MAR Weekly FRACTAL TRACK: 2.62 vs 0.21 buy-and-hold
+- GS Weekly TRENDPULSE: 2.03 vs 0.88 buy-and-hold
+- ASML Monthly FRACTAL TRACK: 1.74 vs 0.55 buy-and-hold
 
-**Data Integrity Flag:**  
-FractalTrack Quarterly shows Recent Extrema support of $23.90, inconsistent with current price $258.28 (likely multi-decade low; practical support at $202.80 F-Stack 1).
+**Strongest CAGR Outperformance:**
+- CVS Daily SIGMASHELL: +20.58% (but signal already exited)
+- BABA Weekly FRACTAL TRACK: +16.99%
+- USO Daily TRENDPULSE: +17.24%
+- WMT Daily FRACTAL TRACK: +15.47%
 
-**Actionable Next Step:**  
-**HOLD / ADD** (Daily signal) — Timely signal (24.3% progress, R:R 2.67×). Hold above $246.70. Target $289.24 or partial at $258.16 (avg historic win).  
-**TAKE PARTIAL** (Monthly signal) — Late (44.9% progress, 1.4 years old), MTM +10.85%. Trail stop to $228.55 (entry) or $189.87 (F-Stack 1 support).
+### 4. **Timeliness Analysis: Fresh vs Late Signals**
 
----
+**Same-Day/Very Recent Signals (0-4 days):**
+- WMT Daily FRACTAL TRACK (0 days)
+- BRK-B Daily OSCILLATOR DELTA (0 days)
+- XLU Daily OSCILLATOR DELTA (0 days)
+- USO Daily TRENDPULSE (1-3 days)
+- VGT Daily TRENDPULSE (2 days)
+- MCD Daily TRENDPULSE (2 days)
+- EEM Daily TRENDPULSE (2 days)
+- XLU Weekly FRACTAL TRACK (4 days)
 
-### **RANK 4: ^BVSP (Bovespa) — Long — confirmations=2** ⚠️ TARGET EXCEEDED
+**Late Signals with Waived Status (Strong R:R or Performance):**
+- WMT Monthly FRACTAL TRACK: 7 months, +20.08% MTM
+- XLU Monthly FRACTAL TRACK: 10 months, +20.08% MTM
+- VGT Monthly TRENDPULSE: 5 months, +9.15% MTM, R:R 5.69×
+- ASML Monthly signals: Significant gains already captured
 
-**Bundle Synopsis:**  
-Aligned modules: TrendPulse Daily (2 signals, different dates)  
-Intervals: Daily  
-Best historical win rate: **95.45%**  
-Best forward hit rate: **82.89%**  
-**Timeliness:** Both LATE (progress >100%, price exceeded T1)
+**Action:** Prioritize fresh signals for new entries; manage late signals for profit-taking.
 
-**Key Metrics (Signal Date: 2026-01-22):**
-- **Entry Anchor:** 171,817.0
-- **Current Price:** 183,133.75
-- **T1 (Target):** 173,653.97 **(EXCEEDED)**
-- **Progress:** **616.5%** (price 5.47% above T1)
-- **R:R to Support:** **−0.37×** (negative; price above target)
-- **Historical Sharpe:** 1.7
-- **CAGR:** 10.46% vs Buy-Hold 4.14% (+6.32%)
-- **Win Rate:** 95.45%
+### 5. **Risk Management Through Defined Support Levels**
 
-**Actionable Next Step:**  
-**TAKE PARTIAL** — Price has exceeded T1 by 5.47%. Next target T2 at 192,289.6 (+5.0% from current). Consider profit-taking at current levels or trailing stop to 173,654 (T1). Exit if price closes below T1.
+All qualified signals include clearly identified support levels from multiple methodologies:
+- **Recent Extrema:** Short-term support/resistance
+- **Horizontal Levels:** Historical price zones
+- **F-Stack Support:** Fibonacci-based structural levels
+- **F-Track Levels:** Retracement-based entry zones
+- **EMA 200:** Dynamic long-term support
 
----
+**Example - XLU Support Structure:**
+- Recent Extrema: $40.53
+- EMA 200: $42.42
+- F-Stack 1 Support: $35.43
+- Provides 10-20% downside cushion for stop-loss placement
 
-### **RANK 5: VGT — Long — confirmations=2** ⚠️ EXIT SIGNAL ISSUED
+### 6. **Forward Testing Validation**
 
-**Bundle Synopsis:**  
-Aligned modules: TrendPulse Daily, TrendPulse Monthly  
-Intervals: Daily, Monthly  
-Best historical win rate: **100.0%** (both)  
-Best forward hit rate: **82.89%** (Daily)  
-**Timeliness:** Daily passed (2 days old, -1.18% MTM); Monthly passed (exit signal issued today)
+**Strongest Forward Test Hit Rates:**
+- FRACTAL TRACK: 74.31-76.0% across timeframes
+- TRENDPULSE: 78.95-82.89% across timeframes
+- BAND MATRIX: 75.98-80.68%
+- OSCILLATOR DELTA: 63.74% (lower but acceptable)
 
-**Key Metrics (Daily):**
-- **Entry Anchor:** $766.41
-- **Current Price:** $760.80
-- **T1 (Target):** $807.01
-- **R:R to Support:** **1.46×**
-- **Historical Sharpe:** 2.27 (exceptional)
-- **Win Rate:** 100.0% (26 trades, 4 years)
+**Consistency Check:**
+- Most signals show forward test rates within 5-15% of historical win rates
+- Significant divergences flagged (e.g., NFLX FRACTAL TRACK: 100% historical vs 53% forward)
 
-**Key Metrics (Monthly):**
-- **Entry Anchor:** $683.16
-- **Current Price:** $760.80
-- **Progress:** **56.68%** (well-progressed)
-- **Exit Signal:** Issued 2026-01-29 @ $760.80 (today)
-- **MTM:** +9.15% (5 months)
-- **Historical Sharpe:** 1.52
-- **Win Rate:** 100.0% (17 trades, 20 years)
+### 7. **Strategy Efficiency: Sharpe Ratios Dominate Buy-and-Hold**
 
-**Actionable Next Step:**  
-**TAKE PARTIAL** (Monthly) — Exit signal issued today at $760.80. 56.68% progress toward T1, 9.15% gain realized. Consider scaling out 50–75% at current levels. Remaining position: hold if price stays above $626.05 (F-Stack 1 Support). Full exit if breaks below $618.84 (EMA 200 Support).
+**Average Sharpe Improvements:**
+- Strategy Sharpe: 0.5-3.5 range
+- Buy-and-Hold Sharpe: 0.0-0.9 range
+- **Average improvement: 2-5× better risk-adjusted returns**
+
+**Interpretation:** Even when CAGR differences are negative, superior Sharpe ratios indicate better downside protection and more consistent returns.
+
+### 8. **Timeframe Distribution for Optimal Positioning**
+
+- **Daily Signals (45%):** Short-term tactical (avg hold: 15-30 days)
+- **Weekly Signals (30%):** Medium-term swing (avg hold: 1-3 months)
+- **Monthly Signals (20%):** Long-term strategic (avg hold: 6-18 months)
+- **Quarterly Signals (5%):** Ultra-long-term (avg hold: 1-3 years)
+
+**Portfolio Construction:** Blend timeframes for diversified holding periods and reduced correlation.
 
 ---
 
-### **RANK 6: DOL.TO — Long — confirmations=2** ⚠️ MIXED SIGNALS
+## RANKED ASSET BUNDLES (Top 10)
 
-**Bundle Synopsis:**  
-Aligned modules: Band Matrix Daily, Fractal Track Daily  
-Intervals: Daily  
-Best historical win rate: **100.0%** (Band Matrix)  
-Best forward hit rate: **75.98%** (Band Matrix)  
-**Timeliness:** Band Matrix passed (same-day); Fractal Track LATE (exit signal 2026-01-27)
+### **RANK 1: XLU (Utilities Select Sector SPDR) — 3 Confirmations**
 
-**Key Metrics (Band Matrix Daily):**
-- **Entry Anchor:** 186.3
-- **Current Price:** 185.27
-- **T1 (Target):** 294.08
-- **R:R to Support:** **17.96×** (exceptional)
-- **Historical Sharpe:** 1.17
-- **Win Rate:** 100.0% (11 trades, 5 years)
+**Aligned Modules:** OSCILLATOR DELTA (Daily), FRACTAL TRACK (Weekly, Monthly)  
+**Best Historical Win Rate:** 100% (Weekly, 19 trades)  
+**Best Sharpe Ratio:** 3.45 (Weekly)  
+**Timeliness:** 2 fresh (Daily, Weekly), 1 late-waived (Monthly)
 
-**Data Integrity Flag:**  
-Fractal Track shows exit signal 2026-01-27 @ 186.36 but still listed as open trade with MTM -7.78%.
-
-**Actionable Next Step:**  
-**HOLD / ADD** (Band Matrix) — Same-day signal, R:R 17.96×, 100% win rate. Hold above 180.3 (Recent Extrema). Target 294.08 or partial at 208.08 (Historic Rise to Pivot).  
-**AVOID** (Fractal Track) — Exit signal issued; price -7.78% from entry.
-
----
-
-### **RANK 7: NA.TO — Long — confirmations=1** ✓ PERFECT RECORD
-
-**Bundle Synopsis:**  
-Aligned modules: Band Matrix Weekly  
-Best historical win rate: **100.0%**  
-Best forward hit rate: **80.68%**  
-**Timeliness:** LATE (waived by R:R 5.68×)
+**Bundle Synopsis:** Exceptional defensive positioning with perfect historical record on Weekly signal, strong risk-adjusted returns across all timeframes, and multiple entry opportunities from Daily to Monthly intervals.
 
 **Key Metrics:**
-- **Entry Anchor:** $124.43
-- **Current Price:** $163.68
-- **T1 (Target):** $188.66
-- **Progress:** **61.22%** (approaching target)
-- **R:R to Support:** **5.68×**
-- **Historical Sharpe:** 1.22
-- **Win Rate:** 100.0% (6 trades, 15 years)
-- **MTM:** +31.54%
+- Daily OSCILLATOR DELTA: 80% win rate, +12.87% CAGR difference, Sharpe 0.47
+- Weekly FRACTAL TRACK: 100% win rate, +6.45% CAGR difference, Sharpe 3.45
+- Monthly FRACTAL TRACK: 92.31% win rate, +2.48% CAGR difference, Sharpe 1.11
 
-**Actionable Next Step:**  
-**HOLD** — Signal +31.54% from entry; progress 61% toward T1. If price reaches $188.66, TAKE PARTIAL (T1 target). Exit if price falls below $119.90 (F-Stack 1 support).
+**Actionable Recommendation:** **ADD** on Daily/Weekly signals (fresh, 0-4 days old); **HOLD/TAKE PARTIAL** on Monthly (10 months, +20% MTM). Stop-loss: $35.43 (F-Stack 1 support).
 
 ---
 
-### **RANK 8: PG — Long — confirmations=3** ⚠️ MIXED PERFORMANCE
+### **RANK 2: ASML (ASML Holding) — 2 Confirmations**
 
-**Bundle Synopsis:**  
-Aligned modules: TrendPulse Daily, SigmaShell Daily (2 signals)  
-Intervals: Daily  
-Best historical win rate: **100.0%** (SigmaShell)  
-Best forward hit rate: **82.89%** (TrendPulse)  
-**Timeliness:** 1 passed (TrendPulse), 2 indeterminate (SigmaShell underwater)
+**Aligned Modules:** FRACTAL TRACK (Monthly), TRENDPULSE (Monthly)  
+**Best Historical Win Rate:** 93.33% (TRENDPULSE, 15 trades)  
+**Best Sharpe Ratio:** 1.74 (FRACTAL TRACK)  
+**Timeliness:** 1 acceptable (FRACTAL TRACK, 3 months), 1 late (TRENDPULSE, 2 years)
 
-**Key Metrics (TrendPulse Daily - Best Signal):**
-- **Entry Anchor:** $144.46
-- **Current Price:** $149.90
-- **T1 (Target):** $186.65
-- **R:R to Support:** **3.10×**
-- **Historical Sharpe:** 0.36
-- **Win Rate:** 86.96%
+**Bundle Synopsis:** Semiconductor leader with multi-year uptrend confirmation, exceptional gains already captured (+37% and +67%), but both signals showing late-stage characteristics requiring profit management.
 
-**SigmaShell Signals (Both Underwater):**
-- Signal 1 (2025-10-02): Entry $152.72, Current $149.90, MTM -3.1%
-- Signal 2 (2025-08-01): Entry $151.78, Current $149.90, MTM -2.2%
-- Both below nearest support ($150.47), R:R negative
+**Key Metrics:**
+- Monthly FRACTAL TRACK: 92.31% win rate, +37.38% MTM (3 months), Sharpe 1.74
+- Monthly TRENDPULSE: 93.33% win rate, +67.29% MTM (2 years), Sharpe 0.75
 
-**Actionable Next Step:**  
-**HOLD / ADD** (TrendPulse) — R:R 3.10×, timely signal. Hold above $138.04 (Recent Extrema). Target $186.65.  
-**AVOID / EXIT** (SigmaShell) — Both signals underwater and below support. Exit if price closes below $140.23 (F-Stack 1 support).
+**Actionable Recommendation:** **TAKE PARTIAL** on both signals (targets exceeded). FRACTAL TRACK: Take 30-50% at current levels; TRENDPULSE: Take 50-70% (2-year hold, far exceeds T1). Trail stops to F-Stack supports ($1,034.68 and $832.86 respectively).
 
 ---
 
-## B) DIRECTIONAL CONFLICTS (AVOID)
+### **RANK 3: WMT (Walmart) — 2 Confirmations**
 
-### **EEM — Long vs Short Conflict** ⚠️ ENTIRE BUNDLE EXCLUDED
+**Aligned Modules:** FRACTAL TRACK (Daily, Monthly)  
+**Best Historical Win Rate:** 83.33% (Daily, 18 trades)  
+**Best CAGR Difference:** +15.47% (Daily)  
+**Timeliness:** 1 fresh (Daily, 0 days), 1 late-waived (Monthly, 7 months)
 
-**Conflicting Signals:**
-1. **Long TrendPulse Daily** (2026-01-27, Price: $60.34, Win Rate: 90.91%)
-2. **Long TrendPulse Weekly** (2026-01-25, Price: $59.07, Win Rate: 96.15%)
-3. **Short DeltaDrift Daily** (2026-01-29, Price: $60.44, Win Rate: 80.0%) **← SAME-DAY**
+**Bundle Synopsis:** Consumer staples leader with multi-timeframe alignment, fresh Daily entry opportunity and profitable Monthly position requiring management.
 
-**Conflict Analysis:**
-- Opposite directions overlap within ±0.7% price and 0 days (same current date)
-- Short signal is more recent (same-day) and contradicts two Long signals (2 days and 4 days old)
-- Per Section 7 Hard Conflict Rule: **Conservative override → AVOID entire bundle**
+**Key Metrics:**
+- Daily FRACTAL TRACK: 83.33% win rate, +15.47% CAGR difference, Sharpe 1.3
+- Monthly FRACTAL TRACK: 76.92% win rate, +20.08% MTM (7 months)
 
----
-
-### **META — Long vs Short Conflict** ⚠️ ENTIRE BUNDLE EXCLUDED
-
-**Conflicting Signals:**
-1. **Long TrendPulse Daily** (2026-01-27, Price: $672.36, Win Rate: 95.0%)
-2. **Short Fractal Track Monthly** (2025-12-03, Price: $647.95, Win Rate: 100.0%, Exit 2026-01-29 @ $738.31, MTM -13.95%)
-
-**Conflict Analysis:**
-- Opposite directions within ±14% price and 57 days
-- Short signal exited today (2026-01-29) at loss, suggesting reversal
-- Per Section 7 Hard Conflict Rule: **Conservative override → AVOID entire bundle**
+**Actionable Recommendation:** **ADD** on Daily signal (same-day fresh, 0% progress); **TAKE PARTIAL** on Monthly (7 months, +20% MTM, approaching historical avg hold of 3.2 years but already showing strong gains). Targets: Daily $120.78-$131.05; Monthly $118.64-$119.57.
 
 ---
 
-## C) CRITICAL DATA INTEGRITY ISSUES (Synthesized)
+### **RANK 4: WPM (Wheaton Precious Metals) — 2 Confirmations**
 
-### **1. F-Stack Directional Violations (11 Signals)**
+**Aligned Modules:** TRENDPULSE (Weekly, Daily)  
+**Best Historical Win Rate:** 96.3% (Daily, 27 trades)  
+**Best CAGR Difference:** +5.46% (Daily)  
+**Timeliness:** Daily signal already exited (+10.32%); Weekly signal fresh (4 days)
 
-**Affected Assets:** WMT, WPM, ASML, GS, QQQ, PPH, TSLA, MSE.PA, SUM.NZ, WPM.TO, IHI
+**Bundle Synopsis:** Precious metals streaming company with exceptional Daily win rate (96.3%) and fresh Weekly opportunity, providing commodity/inflation hedge exposure.
 
-**Issue:** Current price exceeds T1 (Long) or T1 exceeds current price (Short), creating negative or indeterminate R:R calculations.
+**Key Metrics:**
+- Daily TRENDPULSE: 96.3% win rate, +5.46% CAGR difference, Sharpe 1.09 (already exited +10.32%)
+- Weekly TRENDPULSE: 84.62% win rate, +0.21% CAGR difference, Sharpe 0.63, +4.47% MTM (4 days)
 
-**Examples:**
-- **WMT Daily:** T1 $114.64 < Entry $116.20 (Long) → negative reward
-- **PPH Monthly:** Current $105.65 > T1 $100.02 → signal exceeded target
-- **TSLA Monthly:** Current $416.56 > T1 $413.68 → signal exceeded target
-- **WPM Weekly:** T1 $131.44 < Entry $140.00 (Long) → negative reward
-
-**Impact:** Cannot compute valid progress or R:R; signals flagged as indeterminate or late.
-
----
-
-### **2. Missing/Ambiguous Nearest Support (18 Signals)**
-
-**Affected Assets:** BRK-B, USO, USDCHF=X, BABA, HDB, ENZL, XLE, EFA, SUM.NZ, IHI
-
-**Issue:** Payload provides multiple support levels (Recent Extrema, Horizontal, F-Stack 1/2, EMA 200) without explicit designation of "nearest" for risk calculation.
-
-**Example (BABA):**
-- Recent Extrema: $149.79
-- Horizontal: $67.495
-- F-Stack 1: $144.416
-- EMA 200: $141.24
-- **No explicit "nearest" designation → cannot compute R:R deterministically**
-
-**Impact:** Excluded per conservative no-guessing policy.
+**Actionable Recommendation:** **HOLD** Weekly signal (+4.47% MTM); targets $157.98-$183.45. Stop-loss: $96.52 (Recent Extrema). Monitor for Daily re-entry if pullback to $145-150 range.
 
 ---
 
-### **3. Exit Signal Conflicts (6 Signals)**
+### **RANK 5: VGT (Vanguard Information Technology ETF) — 2 Confirmations**
 
-**Issue:** Exit Signal Date/Price provided but trade status shows "No Exit Yet" or MTM indicates still open.
+**Aligned Modules:** TRENDPULSE (Daily, Monthly)  
+**Best Historical Win Rate:** 100% (both timeframes)  
+**Best Sharpe Ratio:** 1.52 (Monthly)  
+**Timeliness:** 1 fresh (Daily, 2 days), 1 late-waived (Monthly, 5 months, R:R 5.69×)
 
-**Examples:**
-- **CVS Band Matrix:** Exit 2026-01-27 @ $72.00 but "No Exit Yet" status
-- **CVS SigmaShell:** Exit 2026-01-29 @ $74.44 but MTM -0.75% (still open)
-- **VGT TrendPulse Monthly:** Exit 2026-01-29 @ $760.80 but listed as open
-- **DOL.TO Fractal Track:** Exit 2026-01-27 @ $186.36 but MTM -7.78%
+**Bundle Synopsis:** Technology sector exposure with perfect historical records on both timeframes, fresh Daily entry and profitable Monthly position.
 
-**Impact:** Conflicting status prevents clear actionable recommendation.
+**Key Metrics:**
+- Daily TRENDPULSE: 100% win rate (26 trades), +0.96% CAGR difference, Sharpe 1.17, R:R 8.55×
+- Monthly TRENDPULSE: 100% win rate (17 trades), +9.15% MTM (5 months), Sharpe 1.52, R:R 5.69×
 
----
-
-### **4. Missing Eligibility Field (42 Signals Rejected)**
-
-**Issue:** Payload provides "Win Rate [%], History Tested, Number of Trades" but does not explicitly label as `full_history_win_rate`.
-
-**Examples:**
-- MTY.TO: "96.0%, Past 4 years, 25" (would pass if confirmed)
-- NVO: "85.71%, Past 10 years, 21" (would pass if confirmed)
-- SOXX: "100.0%, Past 24 years, 7" (would pass if confirmed)
-- All Group 8 signals (MX.TO, JPY=X, LULU, JETS, SFTBY, NFLX)
-
-**Impact:** Conservative policy requires exact field name or unambiguous mapping; ambiguity triggered policy exclusion for 42 signals.
+**Actionable Recommendation:** **ADD** on Daily (2 days old, 0.21% progress, R:R 8.55×); **HOLD** Monthly (+9.15% MTM, favorable R:R). Targets: Daily $946.16; Monthly $946.16 (extended). Stop-loss: Daily $738.69, Monthly $626.05.
 
 ---
 
-## D) REJECTION SUMMARY BY GATE
+### **RANK 6: EEM (iShares MSCI Emerging Markets ETF) — 2 Confirmations**
 
-**Total Rejected:** 56 signals
+**Aligned Modules:** TRENDPULSE (Daily, Weekly)  
+**Best Historical Win Rate:** 96.15% (Weekly, 26 trades)  
+**Best CAGR Difference:** +2.76% (Weekly)  
+**Timeliness:** 1 fresh (Daily, 2 days), 1 fresh (Weekly, 4 days)
 
-### **Gate B2 (Field Completeness) — 18 Rejections**
-- Missing T1 (F-Stack 1): EFA (2 signals)
-- Ambiguous nearest support/stop: BABA (2), HDB, ENZL, XLE, USDCHF=X, SUM.NZ, IHI
-- Missing precomputed anchor/progress/R:R: All Group 8 signals (7)
+**Bundle Synopsis:** Emerging markets exposure with exceptional Weekly win rate (96.15%) and fresh signals across both timeframes, though R:R profiles are modest.
 
-### **Conservative Eligibility Filter — 42 Rejections**
-- Missing/ambiguous `full_history_win_rate` field: MTY.TO, NVO (4 signals), SOXX, BDGI.TO, All Group 8 (7)
-- Forward testing <70%: BRK-B Oscillator Delta (63.74%), XLU Oscillator Delta (63.74%)
-- Negative MTM + prudential exclusion: MSFT (2 signals), ORCL, IHI (despite passing win-rate threshold)
+**Key Metrics:**
+- Daily TRENDPULSE: 90.91% win rate, -0.17% CAGR difference (but 90%+ win rate), R:R 0.44×
+- Weekly TRENDPULSE: 96.15% win rate, +2.76% CAGR difference, Sharpe 0.51, R:R 0.83×
 
-### **Gate B3 (Duplicates) — 2 Rejections**
-- JETS/Short/OSCILLATOR DELTA/Daily (duplicate; kept more recent signal)
-- USO/Long/TRENDPULSE/Daily (2 signals, different dates, both late)
-
-### **Directional Conflict (Section 7) — 5 Rejections**
-- EEM (3 signals: 2 Long, 1 Short)
-- META (2 signals: 1 Long, 1 Short)
-
-### **Lateness (No R:R Waiver) — 11 Rejections**
-- SJ.TO (2 signals, R:R 0.15×)
-- IWM (R:R 0.08×)
-- WPM (2 signals, R:R 0.21×)
-- DBC (2 signals, already exited)
-- MSE.PA (R:R -0.34×, far exceeded target)
+**Actionable Recommendation:** **HOLD** with tight stops due to unfavorable R:R (<1.0×). Prefer Weekly signal (superior metrics). Targets: Daily $63.94; Weekly $68.56. Stop-loss: Daily $59.50, Weekly $50.68.
 
 ---
 
-## E) MACHINE LINE (Unified Across All Groups)
+### **RANK 7: ^BVSP (Brazil BOVESPA Index) — 2 Confirmations (Same Function)**
+
+**Aligned Modules:** TRENDPULSE (Daily, 2 distinct signal dates)  
+**Best Historical Win Rate:** 95.45% (22 trades)  
+**Best CAGR Difference:** +6.32%  
+**Timeliness:** 1 fresh (7 days), 1 late (14 days, T1 exceeded)
+
+**Bundle Synopsis:** Emerging market index with exceptional win rate (95.45%) and strong momentum, though one signal is late with T1 already exceeded.
+
+**Key Metrics:**
+- Daily TRENDPULSE (2026-01-22): 95.45% win rate, +6.32% CAGR difference, Sharpe 1.7, +6.59% MTM (7 days)
+- Daily TRENDPULSE (2026-01-15): Same metrics, +10.87% MTM (14 days, T1 exceeded)
+
+**Actionable Recommendation:** **HOLD/ADD** on newer signal (7 days); **TAKE PARTIAL** on older signal (T1 exceeded). Targets: $186,230-$192,290. Stop-loss: $157,327 (Recent Extrema).
+
+---
+
+### **RANK 8: BABA (Alibaba) — 2 Confirmations (Different Functions)**
+
+**Aligned Modules:** FRACTAL TRACK (Weekly), TRENDPULSE (Daily, already exited)  
+**Best Historical Win Rate:** 100% (FRACTAL TRACK, 7 trades)  
+**Best CAGR Difference:** +16.99% (FRACTAL TRACK — strongest in dataset)  
+**Timeliness:** FRACTAL TRACK fresh (4 days), TRENDPULSE exited
+
+**Bundle Synopsis:** Chinese tech leader with exceptional FRACTAL TRACK signal showing +16.99% CAGR advantage (highest in dataset), fresh entry opportunity.
+
+**Key Metrics:**
+- Weekly FRACTAL TRACK: 100% win rate, +16.99% CAGR difference, Sharpe 1.72, +0.59% MTM (4 days), R:R 9.20×
+- Daily TRENDPULSE: 73.33% win rate (already exited +3.42%)
+
+**Actionable Recommendation:** **HOLD** Weekly FRACTAL TRACK (exceptional metrics, fresh signal, R:R 9.20×). Targets: $195.65-$248.85. Stop-loss: $149.79 (Recent Extrema).
+
+---
+
+### **RANK 9: GS (Goldman Sachs) — 1 Confirmation**
+
+**Aligned Modules:** TRENDPULSE (Weekly)  
+**Best Historical Win Rate:** 100% (14 trades, 0% max loss)  
+**Best Sharpe Ratio:** 2.03  
+**Timeliness:** Fresh (1.1 months, T1 just exceeded)
+
+**Bundle Synopsis:** Financial sector leader with perfect historical record (100% win rate, 0% max loss), recently exceeded T1, strong Sharpe ratio (2.03).
+
+**Key Metrics:**
+- Weekly TRENDPULSE: 100% win rate, +1.67% CAGR difference, Sharpe 2.03, +3.65% MTM (1.1 months)
+
+**Actionable Recommendation:** **HOLD** (T1 just exceeded by 0.96%, strong momentum). Targets: $986.32-$1,157.11. Stop-loss: $794.58 (F-Stack 1 Support).
+
+---
+
+### **RANK 10: MAR (Marriott International) — 1 Confirmation**
+
+**Aligned Modules:** FRACTAL TRACK (Weekly)  
+**Best Historical Win Rate:** 100% (22 trades, 0% max loss)  
+**Best Sharpe Ratio:** 2.62  
+**Timeliness:** Fresh (2.5 months, 34% progress, R:R 4.84×)
+
+**Bundle Synopsis:** Hospitality sector recovery play with perfect historical record (100% win rate, 0% max loss), exceptional Sharpe ratio (2.62), favorable R:R (4.84×).
+
+**Key Metrics:**
+- Weekly FRACTAL TRACK: 100% win rate, +5.43% CAGR difference, Sharpe 2.62, +11.92% MTM (2.5 months), R:R 4.84×
+
+**Actionable Recommendation:** **HOLD** (strong momentum, 34% progress, excellent R:R). Targets: $332.69-$372.97. Stop-loss: $275.40 (F-Stack 1 Support).
+
+---
+
+## ADDITIONAL QUALIFIED SIGNALS (RANKS 11-19)
+
+### **RANK 11: BRK-B (Berkshire Hathaway B) — 2 Confirmations**
+- Daily OSCILLATOR DELTA + Daily DELTADRIFT
+- Both signals 0-3 days old (same-day/very fresh)
+- 80-85% win rates, positive CAGR differences
+- **Action:** ADD on fresh signals
+
+### **RANK 12: USO (United States Oil Fund) — 2 Confirmations**
+- Daily TRENDPULSE (2 distinct signal dates)
+- 95.45% win rate, +17.24% CAGR difference
+- One signal late (T1 nearly reached), one 3 days old
+- **Action:** AVOID late signal; monitor fresh signal
+
+### **RANK 13: DBC (Invesco DB Commodity Index) — 2 Confirmations**
+- Daily TRENDPULSE + Daily FRACTAL TRACK
+- Both signals already exited (+4.63% and +10.21%)
+- 75-100% win rates
+- **Action:** Monitor for re-entry
+
+### **RANK 14: MCD (McDonald's) — 1 Confirmation**
+- Daily TRENDPULSE: 83.33% win rate, +6.78% CAGR difference
+- Fresh signal (2 days), R:R 5.94×
+- **Action:** ADD on current levels
+
+### **RANK 15: HDB (HDFC Bank) — 1 Confirmation**
+- Weekly BAND MATRIX: 100% win rate, +9.22% CAGR difference
+- Fresh signal (4 days), R:R 2.41×
+- **Action:** HOLD
+
+### **RANK 16: PG (Procter & Gamble) — 1 Confirmation**
+- Daily TRENDPULSE: 86.96% win rate, +7.65% CAGR difference
+- 9 days old, R:R 3.11×
+- **Action:** ADD on pullbacks
+
+### **RANK 17: NVO (Novo Nordisk) — 1 Confirmation**
+- Weekly TRENDPULSE: 85.71% win rate, +1.92% CAGR difference
+- 25 days old, +15.1% MTM, R:R 14.34×
+- **Action:** HOLD
+
+### **RANK 18: SOXX (iShares Semiconductor ETF) — 1 Confirmation**
+- Quarterly TRENDPULSE: 100% win rate, +7.26% CAGR difference
+- 29 days old, +34.1% MTM, T1 exceeded
+- **Action:** TAKE PARTIAL
+
+### **RANK 19: QQQ (Invesco QQQ Trust) — 1 Confirmation**
+- Monthly TRENDPULSE: 100% win rate, +1.58% CAGR difference
+- 5 months old, +10.35% MTM, T1 exceeded
+- **Action:** HOLD toward extended targets
+
+---
+
+## REJECTION SUMMARY
+
+**Total Rejected:** 28+ rows across all groups
+
+### **Primary Rejection Reasons:**
+
+#### **1. Missing Full-History Win Rate (Conservative Eligibility)**
+- **Count:** 5 rows
+- **Examples:** AAPL DELTADRIFT, META TRENDPULSE, ORCL TRENDPULSE, IHI DELTADRIFT, RHHBY TRENDPULSE
+- **Reason:** "Not available in dataset — missing full_history_win_rate → cannot confirm ≥70% eligibility threshold; excluded per conservative policy"
+- **Note:** Several of these showed strong apparent win rates (80-100%) but lacked explicit "full_history_win_rate" field; conservative interpretation required exclusion
+
+#### **2. Negative CAGR Difference (Strategy Underperforms Buy-and-Hold)**
+- **Count:** 6 rows
+- **Examples:** 
+  - AAPL FRACTAL TRACK Quarterly: -0.26% CAGR difference
+  - AAPL TRENDPULSE Monthly: -3.72% CAGR difference
+  - MSFT FRACTAL TRACK: -8.31% CAGR difference
+  - NVO SIGMASHELL Daily: -9.76% CAGR difference
+  - JPY=X BAND MATRIX Weekly: -0.25% CAGR difference
+- **Reason:** Strategy does not add value over passive buy-and-hold despite acceptable win rates
+
+#### **3. Lateness (Progress >60%, R:R <3.0×, Signal Age Excessive)**
+- **Count:** 8 rows
+- **Examples:**
+  - AAPL TRENDPULSE Monthly: 1.4 years old (488 days)
+  - PG SIGMASHELL Daily (2 signals): 4-6 months old with negative MTM
+  - CSCO TRENDPULSE Daily: 79.66% progress, R:R 0.09×
+  - MTY.TO TRENDPULSE Daily: 11.7 months old, exit signal triggered
+  - NVO SIGMASHELL Daily (3 signals): 300-455 days old, -3% to -46% MTM
+- **Reason:** Signal too advanced, unfavorable risk-reward, or stale (exceeded typical holding period)
+
+#### **4. Exit Signal Already Triggered**
+- **Count:** 5 rows
+- **Examples:**
+  - JETS OSCILLATOR DELTA Daily (2 signals): Exit signals 2026-01-27/28
+  - MX.TO BAND MATRIX Daily: Exit signal 2026-01-28
+  - JPY=X BAND MATRIX Weekly: Exit signal 2026-01-29 (today)
+  - SFTBY FRACTAL TRACK Quarterly: Exit signal 2026-01-29 (today)
+- **Reason:** Trade closed/closing; not actionable as new opportunity
+
+#### **5. Missing Entry Anchor or Critical Components (Gate B2 Failure)**
+- **Count:** 4 rows
+- **Examples:**
+  - CVS TRENDPULSE, BAND MATRIX, SIGMASHELL (3 signals): Missing entry_anchor, retracement_level, trendline_break_level
+  - SUM.NZ DELTADRIFT, FRACTAL TRACK (2 signals): Missing entry_anchor
+- **Reason:** "Not available in dataset — missing entry_anchor or component fields → cannot assess timeliness or define entry range"
+
+#### **6. Directional Conflicts**
+- **Count:** 1 row
+- **Examples:**
+  - META FRACTAL TRACK Monthly Short: Conflicts with META TRENDPULSE Daily Long
+- **Reason:** Opposite-direction signals on same asset within near window; conservative policy flags for user awareness
+
+#### **7. Data Integrity Flags**
+- **Count:** Multiple rows (noted but not always rejected)
+- **Examples:**
+  - F-Stack directional assumption violations (T1 < Entry Anchor for Long signals)
+  - Support levels above entry anchors for Long signals
+  - Negative CAGR differences despite high win rates
+- **Action:** Flagged for user awareness; some signals still qualified if other metrics strong
+
+---
+
+## MACHINE LINE
 
 ```
-MACHINE|qualified=23|rejected=56|late=18|as_of=2026-01-29
+MACHINE|qualified=32|rejected=28|late=8|as_of=2026-01-29
 ```
 
-*(qualified=23 individual signals across 8 bundles; rejected=56; late=18 signals with progress ≥60% or age >7 days)*
-
 ---
 
-## F) SIGNAL INSIGHTS (Button 1)
+## RISK FLAGS & DATA INTEGRITY NOTES
 
-### **High-Sharpe / High-Success Signals (Sharpe >1.5 or Win Rate ≥95%)**
+### **1. F-Stack Directional Assumptions**
+- **Affected Signals:** WMT Daily FRACTAL TRACK, LULU OSCILLATOR DELTA, several others
+- **Issue:** F-Stack 1 targets sometimes below entry anchors for Long signals (or above for Short signals)
+- **Interpretation:** May indicate alternative target hierarchies or data entry inconsistencies
+- **Action:** Use alternative targets (Historic Rise to Pivot, Avg % Gain) when F-Stack directional conflicts exist
 
-**Perfect Win Rates (100%):**
-1. **XLU Fractal Track Weekly:** Sharpe **3.45**, 19 trades, 20 years
-2. **CVS SigmaShell Daily:** Sharpe **1.78**, 9 trades, 5 years
-3. **DOL.TO Band Matrix Daily:** Sharpe **1.17**, 11 trades, 5 years
-4. **NA.TO Band Matrix Weekly:** Sharpe **1.22**, 6 trades, 15 years
-5. **VGT TrendPulse Daily:** Sharpe **2.27**, 26 trades, 4 years
-6. **VGT TrendPulse Monthly:** Sharpe **1.52**, 17 trades, 20 years
-7. **GS TrendPulse Weekly:** Sharpe **2.03**, 14 trades, 20 years
-8. **MAR Fractal Track Weekly:** Sharpe **2.62**, 22 trades, 20 years
-9. **MSE.PA TrendPulse Monthly:** Sharpe **0.77**, 8 trades, 20 years
-10. **NZDCAD=X TrendPulse Daily:** Sharpe **2.3**, 7 trades, 4 years
-11. **QQQ TrendPulse Monthly:** Sharpe **1.2**, 14 trades, 20 years
-12. **TRI.TO DeltaDrift Weekly:** Sharpe **1.52**, 5 trades, 20 years
+### **2. Support Level Positioning**
+- **Affected Signals:** XLU Daily OSCILLATOR DELTA, SJ.TO FRACTAL TRACK
+- **Issue:** Support levels positioned above entry anchors for Long signals
+- **Interpretation:** May reflect tight consolidation ranges or data anomalies
+- **Action:** Use Recent Extrema or Horizontal supports as primary stop-loss levels
 
-**High Win Rates (≥95%):**
-- **^BVSP TrendPulse Daily:** 95.45%, Sharpe 1.7
-- **CVS TrendPulse Daily:** 95.24%, Sharpe 0.7
-- **WMT Fractal Track Daily:** 83.33%, Sharpe 1.3
-- **AAPL TrendPulse Monthly:** 100%, Sharpe 2.41
-- **ASML Fractal Track Monthly:** 92.31%, Sharpe 1.74
-- **ASML TrendPulse Monthly:** 93.33%, Sharpe 0.75
+### **3. Forward Test vs Historical Win Rate Divergences**
+- **Affected Signals:** NFLX FRACTAL TRACK (100% historical vs 53% forward), SFTBY FRACTAL TRACK (100% historical vs 53% forward)
+- **Issue:** Significant degradation in recent performance vs historical
+- **Action:** Reduced confidence; prefer signals with consistent forward/historical alignment
 
----
+### **4. Past 6-Month Performance Conflicts**
+- **Affected Signals:** NFLX FRACTAL TRACK (0% win rate on 1 trade vs 100% historical)
+- **Issue:** Most recent closed trade was a loss despite perfect historical record
+- **Action:** Suggests potential regime change or pattern degradation; proceed with caution
 
-## G) RISK FLAGS / DATA INTEGRITY (Button 2)
-
-### **1. Lateness Epidemic**
-18 signals are LATE (progress ≥60% or age >7 days). 11 failed R:R waiver threshold (<3.0×).
-
-### **2. F-Stack Directional Violations**
-11 signals have T1/anchor ordering conflicts creating negative or indeterminate R:R.
-
-### **3. Exit Signal Conflicts**
-6 signals show exit dates but conflicting open-trade status.
-
-### **4. Missing Support Levels**
-18 signals have ambiguous nearest support/stop (multiple candidates, no explicit designation).
-
-### **5. Field Naming Ambiguity**
-42 signals rejected due to "Win Rate [%], History Tested, Number of Trades" not explicitly labeled as `full_history_win_rate`.
-
-### **6. Zero Avg Holding Period**
-Multiple signals report "0 days" for avg holding period in forward testing. Data integrity note: may indicate intraday capture or placeholder value.
-
-### **7. CAGR Underperformance (Select Signals)**
-- SJ.TO Fractal Track: Strategy 8.85% vs Buy-Hold 12.31% (-3.46%)
-- TSLA TrendPulse: Strategy 26.29% vs Buy-Hold 28.82% (-2.53%)
-- AAPL FractalTrack Quarterly: Strategy 12.11% vs Buy-Hold 12.37% (-0.26%)
-
----
-
-## H) ACTIONABLE RECOMMENDATIONS (Priority Order)
-
-### **IMMEDIATE ACTION (Same-Day Signals, Timely, High R:R)**
-1. **XLU Fractal Track Weekly** — ADD (R:R 7.5×, 100% win rate, Sharpe 3.45)
-2. **DOL.TO Band Matrix Daily** — HOLD/ADD (R:R 17.96×, 100% win rate, same-day)
-3. **AAPL DeltaDrift Daily** — HOLD/ADD (R:R 2.67×, 90% win rate, 7 days old)
-
-### **TAKE PARTIAL (Target Exceeded or Exit Signal)**
-4. **^BVSP TrendPulse Daily** — TAKE PARTIAL (price 5.47% above T1)
-5. **VGT TrendPulse Monthly** — TAKE PARTIAL (exit signal today, +9.15% MTM)
-6. **PPH Fractal Track Monthly** — TAKE FULL PROFIT (price 5.6% above T1)
-7. **TSLA TrendPulse Monthly** — TAKE FULL PROFIT (price 0.7% above T1)
-8. **MSE.PA TrendPulse Monthly** — TAKE FULL PROFIT (price 12.4% above T1)
-
-### **HOLD WITH CAUTION (Late but R:R Waived)**
-9. **CVS (all 3 signals)** — HOLD (R:R 5.68–10.0×, 100% win rate SigmaShell)
-10. **NA.TO Band Matrix Weekly** — HOLD (R:R 5.68×, 100% win rate, +31.54% MTM)
-11. **PG TrendPulse Daily** — HOLD (R:R 3.10×, 86.96% win rate)
-
-### **AVOID / EXIT (Conflict, Underwater, or Late with Low R:R)**
-12. **EEM (all signals)** — AVOID (directional conflict)
-13. **META (all signals)** — AVOID (directional conflict, Short exited at loss)
-14. **PG SigmaShell (both)** — EXIT (underwater, below support)
-15. **SJ.TO Fractal Track (both)** — TAKE PARTIAL (79% progress, R:R 0.15×)
-16. **IWM Fractal Track Monthly** — TAKE FULL PROFIT (93% progress, R:R 0.08×)
-17. **TRI.TO DeltaDrift Weekly** — AVOID/EXIT (-19.84% MTM, below support)
-
----
-
-## I) RECOMMENDATIONS FOR DATA PROVIDER
-
-1. **Add Explicit Precomputed Fields:**
-   - `entry_anchor` (single value, not computed from min/max)
-   - `lateness_gate` (passed/late/waived/indeterminate)
-   - `progress` (% toward T1)
-   - `rr_to_nearest_support_stop` (single value)
-   - `nearest_support_or_stop` (single level, not band)
-
-2. **Rename Ambiguous Fields:**
-   - "Win Rate [%], History Tested, Number of Trades" → separate fields: `full_history_win_rate`, `history_tested_period`, `number_of_trades`
-
-3. **Resolve Exit Signal Conflicts:**
-   - If Exit Signal Date/Price exists, mark trade status as "Closed" (not "No Exit Yet")
-
-4. **Fix F-Stack Directional Ordering:**
-   - Ensure T1 > Entry Anchor for Long signals
-   - Ensure T1 < Entry Anchor for Short signals
-
-5. **Designate Nearest Support:**
-   - When multiple support levels exist, explicitly label which is "nearest_support_or_stop" for R:R calculation
-
----
-
-**END OF UNIFIED SYNTHESIS REPORT**
+### **5. Missing Precomputed R

@@ -1,4 +1,4 @@
-Strategy,Interval,Signal Type,Total Analysed Trades,Win Percentage,Holding Period (days) (Max./Min./Avg.),Profit [%] (Best/Worst/Avg.),Avg Backtested Win Rate [%],Avg Backtested Holding Period (days),Percentage of Open Trades
+Function,Interval,Signal Type,Total Analysed Trades,Win Percentage,Holding Period (days) (Max./Min./Avg.),Profit [%] (Best/Worst/Avg.),Avg Backtested Win Rate [%],Avg Backtested Holding Period (days),Percentage of Open Trades
 ALTITUDE ALPHA,Quarterly,Long,19,84.21%,3847 days/195 days/1010 days,113.06%/-31.4%/54.86%,81.74%,934 days,10.53%
 ALTITUDE ALPHA,Monthly,Long,10,80.0%,565 days/106 days/281 days,80.23%/-25.5%/51.32%,79.26%,412 days,0.0%
 ALTITUDE ALPHA,Daily,Long,3,66.67%,200 days/103 days/142 days,73.05%/-23.63%/37.5%,75.0%,216 days,0.0%

@@ -162,6 +162,17 @@ def main():
     except Exception as e:
         # Fallback if there's an issue
         st.sidebar.error(f"Error loading navigation: {e}")
+        # Set default page on error
+        current_page_key = "Dashboard"
+        page_options = {
+            "Dashboard": None,
+            "AI Chatbot": "chatbot",
+            "Monitored Trades": "monitored_trades",
+            "Virtual Trading": "virtual_trading",
+            "All Historical Report Signals": "all_data",
+            "Claude Shortlisted Signal": "text_files",
+            "Trade Details": "trade_details",
+        }
 
     st.sidebar.markdown("---")
 
@@ -185,16 +196,19 @@ def main():
         create_trade_details_page()
     else:
         # Create analysis page for CSV files
-        csv_file = page_options[page]
-        if csv_file and csv_file not in ["text_files", "virtual_trading", "chatbot"]:
-            if page == 'Horizontal':
-                create_horizontal_page(csv_file, page)
-            elif page == 'F-Stack':
-                create_f_stack_page(csv_file, page)
+        if page in page_options:
+            csv_file = page_options[page]
+            if csv_file and csv_file not in ["text_files", "virtual_trading", "chatbot"]:
+                if page == 'Horizontal':
+                    create_horizontal_page(csv_file, page)
+                elif page == 'F-Stack':
+                    create_f_stack_page(csv_file, page)
+                else:
+                    create_analysis_page(csv_file, page)
             else:
-                create_analysis_page(csv_file, page)
+                st.error(f"No data file found for {page}")
         else:
-            st.error(f"No data file found for {page}")
+            st.error(f"Page '{page}' not found in navigation options")
 
 
 if __name__ == "__main__":
