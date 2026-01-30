@@ -1001,13 +1001,12 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
 
 def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None):
     """
-    Update current prices in all chatbot data files using live prices from stock_data.
+    Update current prices in consolidated CSV files using live prices from stock_data.
     
     This function:
-    1. Scans all CSV files in chatbot/data (entry, exit, portfolio_target_achieved)
+    1. Reads consolidated CSV files (entry.csv, exit.csv, portfolio_target_achieved.csv)
     2. For each file, extracts symbols and updates "Current Trading Date/Price[$], Current Price vs Signal" column
     3. Uses the latest price from stock_data CSV files
-    4. Handles all three cases: entry signals, exit signals, and portfolio target achieved
     
     Args:
         data_base_dir: Base directory for chatbot data (uses config default if None)
@@ -1017,19 +1016,7 @@ def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None)
         data_base_dir = str(CHATBOT_DATA_DIR)
     if stock_data_dir is None:
         stock_data_dir = str(STOCK_DATA_DIR)
-    """
-    Update current prices in all chatbot data files using live prices from stock_data.
     
-    This function:
-    1. Scans all CSV files in chatbot/data (entry, exit, portfolio_target_achieved)
-    2. For each file, extracts symbols and updates "Current Trading Date/Price[$], Current Price vs Signal" column
-    3. Uses the latest price from stock_data CSV files
-    4. Handles all three cases: entry signals, exit signals, and portfolio target achieved
-    
-    Args:
-        data_base_dir: Base directory for chatbot data (default: chatbot/data)
-        stock_data_dir: Directory containing stock_data CSV files (default: trade_store/stock_data)
-    """
     print("\n" + "="*80)
     print("UPDATING CURRENT PRICES FROM LIVE STOCK DATA")
     print("="*80 + "\n")
@@ -1045,152 +1032,115 @@ def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None)
         print(f"✗ Stock data directory not found: {stock_data_dir}")
         return
     
-    # Define the three signal types to process
-    signal_types = {
-        'entry': 'Entry Signals (Open Positions)',
-        'exit': 'Exit Signals (Completed Trades)',
-        'portfolio_target_achieved': 'Portfolio Target Achieved'
+    # Define consolidated CSV files to process
+    csv_files = {
+        'entry': (data_base / 'entry.csv', 'Entry Signals (Open Positions)'),
+        'exit': (data_base / 'exit.csv', 'Exit Signals (Completed Trades)'),
+        'portfolio_target_achieved': (data_base / 'portfolio_target_achieved.csv', 'Portfolio Target Achieved')
     }
     
-    # Find all CSV files in entry, exit, and portfolio_target_achieved folders
-    csv_files_by_type = {}
-    for folder, description in signal_types.items():
-        folder_path = data_base / folder
-        if folder_path.exists():
-            files = list(folder_path.rglob("*.csv"))
-            csv_files_by_type[folder] = files
-            print(f"✓ Found {len(files)} {description} files")
-        else:
-            csv_files_by_type[folder] = []
-            print(f"⚠ {description} folder not found: {folder_path}")
-    
-    total_files = sum(len(files) for files in csv_files_by_type.values())
-    
-    if total_files == 0:
-        print("⚠ No CSV files found to update")
-        return
-    
-    print(f"\n✓ Total files to process: {total_files}")
+    # Column name for current price
+    current_price_column = "Current Trading Date/Price[$], Current Price vs Signal"
     
     updated_count = 0
     skipped_count = 0
     price_not_found_count = 0
-    entry_updated = 0
-    exit_updated = 0
-    portfolio_updated = 0
+    total_rows_updated = 0
     
-    # Column name that exists in all three cases (entry, exit, portfolio_target_achieved)
-    current_price_column = "Current Trading Date/Price[$], Current Price vs Signal"
-    
-    # Process each signal type
-    for signal_type, csv_files in csv_files_by_type.items():
-        if not csv_files:
+    # Process each consolidated CSV file
+    for signal_type, (csv_path, description) in csv_files.items():
+        if not csv_path.exists():
+            print(f"⚠ {description} file not found: {csv_path}")
             continue
         
-        print(f"\n📂 Processing {signal_types[signal_type]}...")
+        print(f"\n📂 Processing {description}...")
         
-        for csv_file in csv_files:
-            try:
-                # Skip master files
-                if csv_file.name == "all_targets.csv":
-                    continue
+        try:
+            df = pd.read_csv(csv_path)
+            
+            if df.empty:
+                print(f"  ℹ File is empty, skipping")
+                continue
+            
+            # Check if the current price column exists
+            if current_price_column not in df.columns:
+                # Try case-insensitive search
+                found_column = None
+                for col in df.columns:
+                    if "Current Trading Date" in col and "Current Price" in col:
+                        found_column = col
+                        break
                 
-                df = pd.read_csv(csv_file)
-                
-                if df.empty:
-                    continue
-                
-                # Check if the current price column exists (handle all three cases)
-                # Try exact match first
-                if current_price_column not in df.columns:
-                    # Try case-insensitive search for the column
-                    found_column = None
-                    for col in df.columns:
-                        if "Current Trading Date" in col and "Current Price" in col:
-                            found_column = col
-                            break
-                    
-                    if found_column:
-                        current_price_column_actual = found_column
-                    else:
-                        skipped_count += 1
-                        continue
+                if found_column:
+                    current_price_column_actual = found_column
                 else:
-                    current_price_column_actual = current_price_column
+                    print(f"  ⚠ Current price column not found, skipping")
+                    skipped_count += 1
+                    continue
+            else:
+                current_price_column_actual = current_price_column
+            
+            rows_updated_in_file = 0
+            
+            # Process each row
+            for idx, row in df.iterrows():
+                # Extract symbol from the row
+                symbol = None
                 
-                file_updated = False
+                # Parse from compound column
+                if 'Symbol, Signal, Signal Date/Price[$]' in row.index:
+                    symbol_data = row['Symbol, Signal, Signal Date/Price[$]']
+                    if pd.notna(symbol_data):
+                        parsed_symbol, _, _, _ = parse_symbol_signal_column(symbol_data)
+                        if parsed_symbol:
+                            symbol = parsed_symbol
                 
-                # Process each row
-                for idx, row in df.iterrows():
-                    # Extract symbol from the row (works for all three cases)
-                    symbol = None
-                    
-                    # Method 1: Try direct Symbol column (exists in all three cases)
-                    if 'Symbol' in row.index:
-                        symbol_val = row['Symbol']
-                        if pd.notna(symbol_val) and str(symbol_val).strip():
-                            symbol = str(symbol_val).strip()
-                    
-                    # Method 2: Parse from compound column (works for entry and exit)
-                    if not symbol and 'Symbol, Signal, Signal Date/Price[$]' in row.index:
-                        symbol_data = row['Symbol, Signal, Signal Date/Price[$]']
-                        if pd.notna(symbol_data):
-                            parsed_symbol, _, _, _ = parse_symbol_signal_column(symbol_data)
-                            if parsed_symbol:
-                                symbol = parsed_symbol
-                    
-                    if not symbol or pd.isna(symbol) or symbol == '':
-                        continue
-                    
-                    # Get latest price from stock_data (always refresh from latest stock_data)
-                    latest_date, latest_price = get_latest_price_from_stock_data(symbol, stock_data_dir)
-                    
-                    if latest_date is None or latest_price is None:
-                        price_not_found_count += 1
-                        continue
-                    
-                    # Extract signal price to calculate percentage change
-                    signal_price = None
-                    if 'Symbol, Signal, Signal Date/Price[$]' in row.index:
-                        symbol_data = row['Symbol, Signal, Signal Date/Price[$]']
-                        if pd.notna(symbol_data):
-                            _, _, _, signal_price = parse_symbol_signal_column(symbol_data)
-                    
-                    # Calculate percentage change
-                    if signal_price is not None and signal_price > 0:
-                        price_change_str = calculate_price_change_percentage(latest_price, signal_price)
-                    else:
-                        price_change_str = "0.0% below"
-                    
-                    # Update the current price column with fresh data from stock_data
-                    new_current_price_value = f"{latest_date} (Price: {latest_price:.4f}), {price_change_str}"
-                    df.at[idx, current_price_column_actual] = new_current_price_value
-                    file_updated = True
+                if not symbol or pd.isna(symbol) or symbol == '':
+                    continue
                 
-                # Save updated file if changes were made
-                if file_updated:
-                    df.to_csv(csv_file, index=False)
-                    updated_count += 1
-                    
-                    # Track updates by type
-                    if signal_type == 'entry':
-                        entry_updated += 1
-                    elif signal_type == 'exit':
-                        exit_updated += 1
-                    elif signal_type == 'portfolio_target_achieved':
-                        portfolio_updated += 1
-                    
-            except Exception as e:
-                print(f"  ⚠ Error updating {csv_file}: {e}")
-                skipped_count += 1
+                # Get latest price from stock_data
+                latest_date, latest_price = get_latest_price_from_stock_data(symbol, stock_data_dir)
+                
+                if latest_date is None or latest_price is None:
+                    price_not_found_count += 1
+                    continue
+                
+                # Extract signal price to calculate percentage change
+                signal_price = None
+                if 'Symbol, Signal, Signal Date/Price[$]' in row.index:
+                    symbol_data = row['Symbol, Signal, Signal Date/Price[$]']
+                    if pd.notna(symbol_data):
+                        _, _, _, signal_price = parse_symbol_signal_column(symbol_data)
+                
+                # Calculate percentage change
+                if signal_price is not None and signal_price > 0:
+                    price_change_str = calculate_price_change_percentage(latest_price, signal_price)
+                else:
+                    price_change_str = "0.0% below"
+                
+                # Update the current price column
+                new_current_price_value = f"{latest_date} (Price: {latest_price:.4f}), {price_change_str}"
+                df.at[idx, current_price_column_actual] = new_current_price_value
+                rows_updated_in_file += 1
+            
+            # Save updated file if changes were made
+            if rows_updated_in_file > 0:
+                df.to_csv(csv_path, index=False)
+                updated_count += 1
+                total_rows_updated += rows_updated_in_file
+                print(f"  ✓ Updated {rows_updated_in_file} rows")
+            else:
+                print(f"  ℹ No rows updated")
+                
+        except Exception as e:
+            print(f"  ⚠ Error updating {csv_path}: {e}")
+            skipped_count += 1
     
     print("\n" + "-"*80)
     print("PRICE UPDATE SUMMARY")
     print("-"*80)
     print(f"✓ Total files updated: {updated_count}")
-    print(f"   - Entry signals: {entry_updated}")
-    print(f"   - Exit signals: {exit_updated}")
-    print(f"   - Portfolio target achieved: {portfolio_updated}")
+    print(f"✓ Total rows updated: {total_rows_updated}")
     print(f"⚠ Files skipped: {skipped_count}")
     print(f"⚠ Symbols with no price data: {price_not_found_count}")
     print("="*80 + "\n")

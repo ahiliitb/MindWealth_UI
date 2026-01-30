@@ -1,404 +1,489 @@
-# COMPREHENSIVE SIGNAL ANALYSIS REPORT - SYNTHESIZED FROM ALL PARALLEL PROCESSING GROUPS
+# UNIFIED SYNTHESIS REPORT — PARALLEL SIGNAL ANALYSIS
+
+**ANALYSIS_DATE: 2026-01-29**  
+*(Determined from: "Current Trading Date" fields present across all payload groups; no explicit `as_of` field provided.)*
+
+---
 
 ## EXECUTIVE SUMMARY
 
-After comprehensive parallel analysis of all signal groups, **I must report that the vast majority of signals fail to meet the minimum quality thresholds**. Out of all signals analyzed across 8 parallel processing groups, only a small subset qualifies for recommendation, and several groups found ZERO qualifying signals.
+**Total Rows Processed Across 8 Groups:** 79  
+**Qualified Asset Bundles:** 8 (23 individual signals)  
+**Rejected Signals:** 56  
+**Directional Conflicts Detected:** 2 (EEM, META)
 
-### Qualifying Signals Summary:
-
-|||GS,Weekly,TRENDPULSE,2025-12-28,Long|MAR,Weekly,FRACTAL TRACK,2025-11-16,Long|WPM,Daily,TRENDPULSE,2026-01-20,Long|BABA,Weekly,FRACTAL TRACK,2026-01-25,Long|HDB,Weekly,BAND MATRIX,2026-01-25,Long|^BVSP,Daily,TRENDPULSE,2026-01-22,Long|^BVSP,Daily,TRENDPULSE,2026-01-15,Long|SOXX,Quarterly,TRENDPULSE,2025-12-31,Long|BDGI.TO,Quarterly,TRENDPULSE,2025-12-31,Long|NVO,Weekly,TRENDPULSE,2026-01-04,Long|MTY.TO,Daily,TRENDPULSE,2026-01-07,Long|||
-
----
-
-## KEY INSIGHTS AND CRITICAL FINDINGS
-
-### 1. **SYSTEMATIC QUALITY ISSUES ACROSS GROUPS**
-
-**Critical Filtering Failures Identified:**
-
-- **Sharpe Ratio Failures**: 60-80% of signals across groups failed the 0.75 minimum threshold
-  - Group 2: 80% failure rate on Sharpe ratio criterion
-  - Group 7: All signals below 0.75 except 4 out of 6
-  - Group 8: 5 out of 7 signals failed
-
-- **CAGR Deficiencies**: Multiple signals showed negative CAGR differences vs. buy-and-hold
-  - Particularly problematic in Groups 2, 7, and 8
-  - Group 8: 5 signals failed the 15% CAGR minimum threshold
-
-- **Signal Staleness**: Majority of signals exceeded acceptable age for their intervals
-  - Daily signals 5+ days old (should be <5 days)
-  - Weekly signals months old (should be <15 days)
-  - Monthly signals 5+ months old (should be <25 days)
-
-- **Late Entry Risk**: Most signals showed 10-40% mark-to-market gains, indicating missed entry opportunities
-
-### 2. **SECTOR AND GEOGRAPHIC CONCENTRATION**
-
-**Strong Performance Areas:**
-- **Brazilian Equities** (^BVSP): Exceptional momentum with 95.45% win rates
-- **Semiconductors** (SOXX, ASML): Strong but entry timing concerns due to substantial gains already captured
-- **Financials** (GS): Perfect 100% win rate with fresh signal
-- **Precious Metals** (WPM): Strong performance with timely entries
-- **International Markets**: BABA (China), HDB (India), NVO (Denmark) showing strength
-
-**Weak/Problematic Areas:**
-- Technology stocks (MSFT, ORCL, AAPL): Showing negative MTM or poor Sharpe ratios
-- Healthcare (CVS): Multiple conflicting signals with negative performance
-- Emerging Markets (EEM): Contradictory signals from different functions
-- Currency Pairs: Generally poor Sharpe ratios and insufficient trade history
-
-### 3. **FUNCTION-SPECIFIC PERFORMANCE ANALYSIS**
-
-**TRENDPULSE:**
-- Most represented function in qualifying signals
-- Best performance on Daily and Quarterly intervals
-- Weekly TrendPulse showing mixed results
-- **Yearly TrendPulse historically strongest** but limited current signals
-
-**FRACTAL TRACK:**
-- Excellent when signals are fresh (BABA, MAR, HDB)
-- **CRITICAL ISSUE**: 0% latest performance in Group 8 suggests recent strategy breakdown
-- Price distance from Track Level often exceeds 10% threshold
-- Long-term signals (Quarterly) showing better quality than short-term
-
-**BAND MATRIX:**
-- Strong historical win rates (often 100%)
-- Signals frequently too old (months to years)
-- Best performance on Weekly interval
-- Latest performance varies significantly (82-100%)
-
-**OSCILLATOR DELTA & DELTADRIFT:**
-- Good Sharpe ratios when present
-- Consistently fail CAGR threshold
-- Limited qualifying signals
-- Entry timing frequently problematic
-
-**SIGMASHELL:**
-- Mixed results - strong when working (CVS 100% win rate)
-- Some signals showing catastrophic losses (NVO -46%)
-- Function-specific performance highly variable by asset
-
-### 4. **SIGNAL CONFLICTS AND CONTRADICTIONS**
-
-**Major Conflicts Identified:**
-
-- **EEM (Emerging Markets ETF)**: Two LONG signals vs. one SHORT signal (Group 2)
-  - Creates directional confusion and reduces confidence
-  - Recommendation: AVOID until resolution
-
-- **CVS Health**: Three concurrent LONG signals, all showing negative MTM
-  - SigmaShell Daily: -0.75% MTM (exit signal generated)
-  - Band Matrix Daily: -4.8% MTM (already exited)
-  - TrendPulse Daily: -11.24% MTM
-  - Despite multiple confirmations, negative performance suggests market weakness
-
-- **DOL.TO**: Entry signal one day after exit signal from different function
-  - Band Matrix entry 01/28 vs. Fractal Track exit 01/27
-  - Indicates poor coordination and timing risk
-
-- **VGT**: Daily entry signal while Monthly signal exits same day
-  - Conflicting timeframe signals reduce conviction
-
-- **META**: Daily LONG (TrendPulse) vs. Monthly SHORT (Fractal Track, -13.95% MTM)
-  - Monthly short reaching exit resolves conflict in favor of daily long
-
-### 5. **TIMELINESS AND ENTRY TIMING CONCERNS**
-
-**Signals Ranked by Entry Timeliness:**
-
-**EXCELLENT (Fresh with minimal capture):**
-1. GS (1.1 months, 3.65% MTM) - **BEST ENTRY OPPORTUNITY**
-2. ^BVSP Daily (7 days, 4.3% MTM) - **STRONG MOMENTUM**
-3. BABA (4 days, 0.59% MTM) - **EXCELLENT TIMING**
-4. HDB (4 days, 1.53% MTM) - **EXCELLENT TIMING**
-
-**GOOD (Recent with moderate capture):**
-5. WPM Daily (Already exited at +10.32% - **COMPLETED SUCCESSFULLY**)
-6. MAR (2.5 months, 11.92% MTM) - **ACCEPTABLE**
-7. NVO (25 days, 13.25% MTM, exit signal generated) - **CAUTION**
-
-**BORDERLINE (Aging with significant capture):**
-8. ^BVSP Daily (14 days, 10.61% MTM) - **APPROACHING TARGETS**
-9. MTY.TO (22 days, 4.67% MTM) - **APPROACHING EXIT DATE**
-
-**LATE ENTRY (Substantial gains captured):**
-10. SOXX (29 days, 19.92% MTM) - **42% OF UPSIDE CAPTURED**
-11. BDGI.TO (29 days, 7.14% MTM) - **ACCEPTABLE FOR LONG-TERM**
-12. QQQ (5 months, 10.35% MTM) - **AGING**
-13. XIU.TO (5 months, 12.85% MTM) - **AGING**
-
-**TOO LATE (Avoid new entry):**
-- ASML (3 months, 37.38% MTM) - **60% OF MOVE CAPTURED**
-- NA.TO (11.3 months, 31.54% MTM) - **96% OF EXPECTED GAIN REALIZED**
-- IWM (7.1 months, 22.05% MTM) - **EXCEEDED AVERAGE RETURN**
-- PPH (7.1 months, 20.11% MTM) - **TARGETS EXCEEDED**
+**Key Findings:**
+- **Multi-confirmation leaders:** CVS (3 signals), XLU (3 signals), AAPL (3 signals), PG (3 signals)
+- **Perfect historical win rates (100%):** 12 signals across multiple assets
+- **Critical data integrity issues:** F-Stack directional violations, missing support levels, ambiguous field naming
+- **Conservative policy impact:** 42 signals excluded due to <70% win-rate threshold or missing eligibility confirmation
 
 ---
 
-## FILTERED AND RANKED SIGNALS - FINAL RECOMMENDATIONS
+## A) TOP-RANKED QUALIFIED BUNDLES (Synthesized Across All Groups)
 
-### **TOP-TIER LONG SIGNALS (Immediate Entry Recommended)**
+### **RANK 1: CVS — Long — confirmations=3** ✓ STRONGEST MULTI-CONFIRMATION
 
----
+**Bundle Synopsis:**  
+Aligned modules: TrendPulse Daily, Band Matrix Daily, SigmaShell Daily  
+Intervals: Daily (all)  
+Best historical win rate: **100.0%** (SigmaShell)  
+Best forward hit rate: **82.89%** (TrendPulse)  
+**Timeliness:** 1 passed, 2 late (both waived by R:R ≥3.0×)
 
-### **1. GS (Goldman Sachs) - HIGHEST CONVICTION**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2025-12-28
-- **Signal**: Long
-- **Interval**: Weekly
-- **Signal Price**: $907.04
-- **Win Rate (Backtested)**: 100.0%
-- **Latest Performance Win Rate**: 95.35%
-- **CAGR**: Strategy (9.45%) - Buy and Hold (7.78%) = +1.67%
-- **Sharpe Ratio**: 2.03 (Strategy) vs 0.4 (Buy & Hold)
-- **Average Return of Historical Winning Trades**: 8.74%
-- **Max Single Trade Loss Historically**: 0%
-- **Potential Upside (from signal price)**: 2.52% to 27.58%
-- **Target Exit Date (Win Trades) (Max/Min/Avg.)**: 2028-02-18/2026-02-26/2026-09-19
-- **Current Price, Current Mark to Market**: $940.12, +3.65%
-- **Target Prices**: 929.99/986.32/1157.11/No Horizontal/931.15/1236.84/No EMA 200
-- **Support Levels**: 470.81/288.56/794.58/634.53/No F-Track/No F-Track/700.80
-- **Recommended Stop Loss**: $794.58 (F-Stack 1 support, approximately 15.5% below current price). This represents major technical support and provides adequate protection while allowing for normal volatility.
-- **Recommended Take Profit**: $986.32 (Average % gain target, approximately 4.9% upside from current). Conservative first target aligned with historical patterns. Secondary target: $1,157.11 (+23.1% from current).
-- **Is Signal Timely?**: Yes - Only 3.65% captured, 24.93% additional upside to highest target remains.
-- **P/E Ratio**: 18.31
-- **PEG Ratio**: 1.66
+**Key Metrics (Best Signal - SigmaShell Daily):**
+- **Entry Anchor:** $74.44 (current price as minimum)
+- **Current Price:** $74.44
+- **T1 (Target):** $116.37
+- **Nearest Support:** $70.26
+- **R:R to Support:** **10.0×** (reward: $41.93, risk: $4.18)
+- **Historical Sharpe:** **1.78** (highest in bundle)
+- **CAGR:** **25.69%** vs Buy-Hold 5.11% (+20.58% edge)
+- **Win Rate:** **100.0%** (9 trades, 5 years)
+- **Forward Hit Rate:** 74.78%
+- **6m Closed Win Rate:** 85.95%
 
-**Notes**: **STRONGEST SIGNAL IN ENTIRE DATASET**. Perfect 100% win rate over 14 trades (10 years). Exceptional Sharpe ratio of 2.03 (highest among fresh signals). Signal only 1.1 months old - very timely. Latest performance 95.35% confirms continued effectiveness. Weekly interval adds robustness vs. daily noise. Strong support structure provides downside protection. Financial sector strength evident.
+**Data Integrity Flags:**
+- Band Matrix: Exit signal conflict (shows 2026-01-27 exit @ $72.00 but "No Exit Yet" status)
+- SigmaShell: Exit signal today (2026-01-29 @ $74.44) but MTM indicates still open (-0.75%)
 
----
-
-### **2. ^BVSP (Bovespa Index - Brazil) - Signal 1**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2026-01-22
-- **Signal**: Long
-- **Interval**: Daily
-- **Signal Price**: 175,589.0
-- **Win Rate (Backtested)**: 95.45%
-- **Latest Performance Win Rate**: 88.26%
-- **CAGR**: Strategy (10.46%) - Buy and Hold (4.14%) = +6.32%
-- **Sharpe Ratio**: 1.7 (Strategy) vs 0.2 (Buy & Hold)
-- **Average Return of Historical Winning Trades**: 2.87%
-- **Max Single Trade Loss Historically**: 1.68%
-- **Potential Upside (from signal price)**: 6.07% to 9.53%
-- **Target Exit Date (Win Trades) (Max/Min/Avg.)**: 2026-10-05/2026-02-01/2026-03-06
-- **Current Price, Current Mark to Market**: 183,133.75, +4.3%
-- **Target Prices**: 186,229.69/180,628.40/185,967.2/No Horizontal/173,653.97/192,289.6/No Moving Avg
-- **Support Levels**: 157,327.0/96,132.0/121,313.6/110,617.73/No F-Track/No F-Track/144,087.66
-- **Recommended Stop Loss**: 157,327 (approximately 14.1% below current, at Recent Extrema support - represents most recent significant low)
-- **Recommended Take Profit**: 186,230 (first target, approximately 1.7% upside from current, 6.07% from signal). Multiple higher targets available (up to 192,290).
-- **Is Signal Timely?**: Partially - 41% of potential to first target captured, but substantial upside to higher targets remains.
-- **P/E Ratio**: N/A (Index)
-- **PEG Ratio**: N/A (Index)
-
-**Notes**: Exceptional momentum signal with 95.45% win rate over 22 trades (4 years). Strong 4.3% gain in just 7 days demonstrates powerful trend. CAGR difference of +6.32% significantly outperforms buy-and-hold. Sharpe ratio of 1.7 indicates excellent risk-adjusted returns. Brazilian market showing exceptional strength - consider as emerging market exposure. Very fresh signal (7 days).
+**Actionable Next Step:**  
+**HOLD** — If still open per MTM, hold above $70.26 support. Target T1 $116.37 or partial at $83.37 (avg historic win level). Stop-loss below $70.26 (risk = $4.18/share from $74.44). Despite exit signal conflicts, R:R remains exceptional.
 
 ---
 
-### **3. BABA (Alibaba Group) - HIGH CONVICTION**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2026-01-25
-- **Signal**: Long
-- **Interval**: Weekly
-- **Signal Price**: $173.23
-- **Win Rate (Backtested)**: 100.0%
-- **Latest Performance Win Rate**: 94.55%
-- **CAGR**: Strategy (20.27%) - Buy and Hold (3.28%) = +16.99%
-- **Sharpe Ratio**: 1.72 (Strategy) vs 0.23 (Buy & Hold)
-- **Average Return of Historical Winning Trades**: 24.63%
-- **Max Single Trade Loss Historically**: 0%
-- **Potential Upside (from signal price)**: 12.94% to 43.67%
-- **Target Exit Date (Win Trades) (Max/Min/Avg.)**: 2027-02-24/2026-05-17/2026-08-21
-- **Current Price, Current Mark to Market**: $174.25, +0.59%
-- **Target Prices**: 195.65/215.90/248.85/No Horizontal/399.16/524.25/No Moving Avg
-- **Support Levels**: 149.79/67.50/144.42/No Support/No F-Track/No F-Track/141.24
-- **Recommended Stop Loss**: $144.42 (F-Stack 1 support, approximately 17% below current). Primary technical support from Fibonacci analysis. Track Level at $144.52 provides additional confirmation.
-- **Recommended Take Profit**: $215.90 (Average % gain target, approximately 24% upside). Aligns with 24.63% average historical return. Consider trailing stops toward $248.85 (+43%).
-- **Is Signal Timely?**: Yes - Only 0.59% captured, leaving 95%+ of potential upside available. Excellent entry timing.
-- **P/E Ratio**: 23.17
-- **PEG Ratio**: 2.26
+### **RANK 2: XLU — Long — confirmations=3** ✓ PERFECT HISTORICAL RECORD
 
-**Notes**: **EXCEPTIONAL QUALITY SIGNAL**. Perfect 100% win rate over 7 trades (11 years). Outstanding CAGR outperformance of +16.99% (highest among fresh signals). Fractal Track 38.2% retracement pattern from major upmove (2024-01-28 to 2025-10-05). Current price 20.57% above Track Level - within acceptable parameters given substantial upside. Conflicting Daily TrendPulse exited 2026-01-27, but Weekly Fractal Track takes precedence due to superior metrics. Average 4.8-month holding period. Chinese equities exposure with strong technical setup.
+**Bundle Synopsis:**  
+Aligned modules: Oscillator Delta Daily, Fractal Track Weekly, Fractal Track Monthly  
+Intervals: Daily, Weekly, Monthly  
+Best historical win rate: **100.0%** (Fractal Track Weekly)  
+Best forward hit rate: **74.31%** (Fractal Track Weekly)  
+**Timeliness:** 1 passed (Daily), 1 passed (Weekly), 1 late waived (Monthly)
 
----
+**Key Metrics (Best Signal - Fractal Track Weekly):**
+- **Entry Anchor:** $42.51 (Recent Extrema)
+- **Current Price:** $43.33
+- **T1 (Target):** $49.49
+- **Nearest Support:** $42.51
+- **R:R to Support:** **7.5×** (reward: $6.16, risk: $0.82)
+- **Historical Sharpe:** **3.45** (exceptional)
+- **CAGR:** **10.1%** vs Buy-Hold 3.65% (+6.45% edge)
+- **Win Rate:** **100.0%** (19 trades, 20 years — NO HISTORICAL LOSSES)
+- **Forward Hit Rate:** 74.31%
+- **6m Closed Win Rate:** 94.55%
 
-### **4. HDB (HDFC Bank) - LONG-TERM POSITION**
-- **Function**: BAND MATRIX
-- **Signal Date**: 2026-01-25
-- **Signal**: Long
-- **Interval**: Weekly
-- **Signal Price**: $32.06
-- **Win Rate (Backtested)**: 100.0%
-- **Latest Performance Win Rate**: 100.0%
-- **CAGR**: Strategy (16.45%) - Buy and Hold (7.23%) = +9.22%
-- **Sharpe Ratio**: 0.72 (Strategy) vs 0.37 (Buy & Hold)
-- **Average Return of Historical Winning Trades**: 64.35%
-- **Max Single Trade Loss Historically**: 0%
-- **Potential Upside (from signal price)**: 27.65% to 64.35%
-- **Target Exit Date (Win Trades) (Max/Min/Avg.)**: 2035-03-16/2027-08-21/2029-08-20
-- **Current Price, Current Mark to Market**: $32.55, +1.53%
-- **Target Prices**: 29.16/52.69/40.92/39.38/40.72/47.49/36.21
-- **Support Levels**: 29.16/25.69/21.19/14.07/No F-Track/No F-Track/No Moving Avg
-- **Recommended Stop Loss**: $29.16 (Recent Extrema support, approximately 10.4% below current). Represents both recent low and historic pivot level - strong technical floor. Tight stop creates excellent risk-reward ratio of 1:6.
-- **Recommended Take Profit**: $40.92 (Function target, approximately 25.7% upside). Conservative first target. Given 64.35% average return, consider trailing stop strategy. Average holding: 2.5 years.
-- **Is Signal Timely?**: Yes - Only 1.53% captured, leaving 98%+ of potential available. Excellent entry timing.
-- **P/E Ratio**: 22.60
-- **PEG Ratio**: N/A
-
-**Notes**: **EXCEPTIONAL LONG-TERM SIGNAL**. Perfect 100% win rate over 5 trades (15 years). Band Matrix specializes in major trend reversals. Outstanding +9.22% CAGR outperformance. **NOTE**: Sharpe ratio 0.72 is slightly below 0.75 threshold but included due to perfect win rate, exceptional CAGR, and 100% latest performance. Average return 64.35% with max 218.12% indicates substantial upside. **CRITICAL**: Very long holding period (average 2.5 years, max 6.4 years) - suitable only for patient long-term investors. Worst MTM drawdown 32.59% requires appropriate position sizing. Indian banking sector exposure. Current price only 1.53% above signal - pristine entry timing.
+**Actionable Next Step:**  
+**ADD** — Strongest signal in dataset. Perfect historical record (19/19 trades), exceptional Sharpe (3.45), favorable R:R (7.5×) with tight stop ($0.82 risk).  
+- **Entry:** $43.20–43.50 (current range)
+- **Stop:** $42.40 (below Recent Extrema $42.51)
+- **T1:** $49.49
+- **T2:** $65.25
+- **Trail Stop:** If price breaks above $46, trail to $44.50 (protect 3% gain)
 
 ---
 
-### **SECOND-TIER LONG SIGNALS (Good Quality, Some Concerns)**
+### **RANK 3: AAPL — Long — confirmations=3** ✓ MIXED TIMELINESS
+
+**Bundle Synopsis:**  
+Aligned modules: DeltaDrift Daily, FractalTrack Quarterly, TrendPulse Monthly  
+Intervals: Daily, Quarterly, Monthly  
+Best historical win rate: **100.0%** (FractalTrack Quarterly, TrendPulse Monthly)  
+Best forward hit rate: **78.71%** (DeltaDrift)  
+**Timeliness:** 1 passed (Daily), 2 late (Quarterly underwater, Monthly late)
+
+**Key Metrics (Best Signal - DeltaDrift Daily):**
+- **Entry Anchor:** $248.35
+- **Current Price:** $258.28
+- **T1 (Target):** $289.24
+- **Nearest Support:** $246.70
+- **R:R to Support:** **2.67×** (reward: $30.96, risk: $11.58)
+- **Historical Sharpe:** 0.77
+- **CAGR:** 8.79% vs Buy-Hold 8.71% (+0.08%)
+- **Win Rate:** **90.0%** (10 trades, 4 years)
+- **Forward Hit Rate:** 78.71%
+- **MTM:** +3.99% (7 days holding)
+
+**Data Integrity Flag:**  
+FractalTrack Quarterly shows Recent Extrema support of $23.90, inconsistent with current price $258.28 (likely multi-decade low; practical support at $202.80 F-Stack 1).
+
+**Actionable Next Step:**  
+**HOLD / ADD** (Daily signal) — Timely signal (24.3% progress, R:R 2.67×). Hold above $246.70. Target $289.24 or partial at $258.16 (avg historic win).  
+**TAKE PARTIAL** (Monthly signal) — Late (44.9% progress, 1.4 years old), MTM +10.85%. Trail stop to $228.55 (entry) or $189.87 (F-Stack 1 support).
 
 ---
 
-### **5. WPM (Wheaton Precious Metals) - COMPLETED TRADE**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2026-01-20
-- **Signal**: Long
-- **Interval**: Daily
-- **Signal Price**: $141.68
-- **Win Rate (Backtested)**: 96.3%
-- **Latest Performance Win Rate**: 88.26%
-- **CAGR**: Strategy (22.59%) - Buy and Hold (17.13%) = +5.46%
-- **Sharpe Ratio**: 1.09 (Strategy) vs 0.81 (Buy & Hold)
-- **Average Return of Historical Winning Trades**: 6.3%
-- **Max Single Trade Loss Historically**: 14.18%
-- **Potential Upside (from signal price)**: 7.77% to 16.57%
-- **Target Exit Date (Win Trades) (Max/Min/Avg.)**: 2026-07-04/2026-01-25/2026-03-17
-- **Current Price, Current Mark to Market**: $152.70, +7.78%
-- **Exit Date**: 2026-01-28 at $156.30 (+10.32% gain)
-- **Target Prices**: 152.67/150.61/165.19/No Horizontal/131.44/145.62/No Moving Avg
-- **Support Levels**: 104.96/38.34/98.52/93.69/No F-Track/No F-Track/98.56
-- **Recommended Stop Loss**: N/A (Trade completed)
-- **Recommended Take Profit**: N/A (Trade completed at +10.32%)
-- **Is Signal Timely?**: N/A - Signal already exited successfully
-- **P/E Ratio**: 69.41
-- **PEG Ratio**: N/A
+### **RANK 4: ^BVSP (Bovespa) — Long — confirmations=2** ⚠️ TARGET EXCEEDED
 
-**Notes**: **INCLUDED FOR REFERENCE AS SUCCESSFUL COMPLETED TRADE**. Signal generated profitable exit on 2026-01-28 after capturing +10.32% gain in just 8 days. Demonstrates TrendPulse Daily function's effectiveness for WPM. Met all quality criteria: Sharpe 1.09, CAGR +5.46%, win rate 96.3%, latest performance 88.26%. Quick execution validates signal quality. **Note**: Weekly TrendPulse signal still active (from 2026-01-25) but with lower quality metrics (Sharpe 0.63, CAGR +0.21%) - not recommended for new entry.
+**Bundle Synopsis:**  
+Aligned modules: TrendPulse Daily (2 signals, different dates)  
+Intervals: Daily  
+Best historical win rate: **95.45%**  
+Best forward hit rate: **82.89%**  
+**Timeliness:** Both LATE (progress >100%, price exceeded T1)
+
+**Key Metrics (Signal Date: 2026-01-22):**
+- **Entry Anchor:** 171,817.0
+- **Current Price:** 183,133.75
+- **T1 (Target):** 173,653.97 **(EXCEEDED)**
+- **Progress:** **616.5%** (price 5.47% above T1)
+- **R:R to Support:** **−0.37×** (negative; price above target)
+- **Historical Sharpe:** 1.7
+- **CAGR:** 10.46% vs Buy-Hold 4.14% (+6.32%)
+- **Win Rate:** 95.45%
+
+**Actionable Next Step:**  
+**TAKE PARTIAL** — Price has exceeded T1 by 5.47%. Next target T2 at 192,289.6 (+5.0% from current). Consider profit-taking at current levels or trailing stop to 173,654 (T1). Exit if price closes below T1.
 
 ---
 
-### **6. MAR (Marriott International)**
-- **Function**: FRACTAL TRACK
-- **Signal Date**: 2025-11-16
-- **Signal**: Long
-- **Interval**: Weekly
-- **Signal Price**: $285.72
-- **Win Rate (Backtested)**: 100.0%
-- **Latest Performance Win Rate**: 94.55%
-- **CAGR**: Strategy (13.69%) - Buy and Hold (8.26%) = +5.43%
-- **Sharpe Ratio**: 2.62 (Strategy) vs 0.41 (Buy & Hold)
-- **Average Return of Historical Winning Trades**: 16.44%
-- **Max Single Trade Loss Historically**: 0%
-- **Potential Upside (from signal price)**: 5.14% to 21.63%
-- **Target Exit Date (Win Trades) (Max/Min/Avg.)**: 2030-02-27/2025-12-16/2026-10-29
-- **Current Price, Current Mark to Market**: $319.77, +11.92%
-- **Target Prices**: 300.38/332.69/347.50/No Horizontal/372.97/399.37/No EMA 200
-- **Support Levels**: 260.20/129.12/275.40/235.55/No F-Track/No F-Track/275.33
-- **Recommended Stop Loss**: $275.40 (F-Stack 1 support, approximately 13.9% below current). Aligns with both F-Stack support and EMA 200 - strong technical support.
-- **Recommended Take Profit**: $347.50 (Function target, approximately 8.7% upside). Fractal Track target based on reference upmove pattern. Consider staged exits at $332.69 and $372.97.
-- **Is Signal Timely?**: Partially - 11.92% MTM captured out of 21.63% total (55% realized). However, 8.7% upside to primary target remains meaningful. Signal 2.5 months old - acceptable for weekly.
-- **P/E Ratio**: 33.70
-- **PEG Ratio**: 1.67
+### **RANK 5: VGT — Long — confirmations=2** ⚠️ EXIT SIGNAL ISSUED
 
-**Notes**: Exceptional Fractal Track signal with perfect 100% win rate over 22 trades (20 years). Outstanding Sharpe ratio of 2.62 (highest in dataset). Strong CAGR outperformance +5.43%. Track Level at $256.04 (50% retracement) well below current - provides reference. Reference upmove: $204.55 to $307.52 (2024-08-11 to 2025-02-09). Multiple target levels $332-$399 offer staged exits. Strong support at F-Stack/EMA 200 near $275. Hospitality sector recovery play. **Timing concern**: 55% of move captured, but signal quality justifies continued holding or new entry with tight stops.
+**Bundle Synopsis:**  
+Aligned modules: TrendPulse Daily, TrendPulse Monthly  
+Intervals: Daily, Monthly  
+Best historical win rate: **100.0%** (both)  
+Best forward hit rate: **82.89%** (Daily)  
+**Timeliness:** Daily passed (2 days old, -1.18% MTM); Monthly passed (exit signal issued today)
 
----
+**Key Metrics (Daily):**
+- **Entry Anchor:** $766.41
+- **Current Price:** $760.80
+- **T1 (Target):** $807.01
+- **R:R to Support:** **1.46×**
+- **Historical Sharpe:** 2.27 (exceptional)
+- **Win Rate:** 100.0% (26 trades, 4 years)
 
-### **7. ^BVSP (Bovespa Index - Brazil) - Signal 2**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2026-01-15
-- **Signal**: Long
-- **Interval**: Daily
-- **Signal Price**: 165,568.0
-- **Win Rate (Backtested)**: 95.45%
-- **Latest Performance Win Rate**: 88.26%
-- **CAGR**: Strategy (10.46%) - Buy and Hold (4.14%) = +6.32%
-- **Sharpe Ratio**: 1.7 (Strategy) vs 0.2 (Buy & Hold)
-- **Average Return of Historical Winning Trades**: 2.87%
-- **Max Single Trade Loss Historically**: 1.68%
-- **Potential Upside (from signal price)**: 6.06% to 14.28%
-- **Target Exit Date (Win Trades) (Max/Min/Avg.)**: 2026-09-28/2026-01-25/2026-02-27
-- **Current Price, Current Mark to Market**: 183,133.75, +10.61%
-- **Target Prices**: 175,601.42/170,319.80/171,680.2/No Horizontal/173,653.97/192,289.6/No Moving Avg
-- **Support Levels**: 157,327.0/96,132.0/121,313.6/110,617.73/No F-Track/No F-Track/143,125.97
-- **Recommended Stop Loss**: 157,327 (approximately 14.1% below current, at Recent Extrema support)
-- **Recommended Take Profit**: 192,290 (F-Stack 2 target, approximately 5.0% upside from current, 16.1% from signal). Highest target represents strong resistance.
-- **Is Signal Timely?**: Significantly advanced - First three targets exceeded. However, highest target at 192,290 offers 5% upside.
-- **P/E Ratio**: N/A (Index)
-- **PEG Ratio**: N/A (Index)
+**Key Metrics (Monthly):**
+- **Entry Anchor:** $683.16
+- **Current Price:** $760.80
+- **Progress:** **56.68%** (well-progressed)
+- **Exit Signal:** Issued 2026-01-29 @ $760.80 (today)
+- **MTM:** +9.15% (5 months)
+- **Historical Sharpe:** 1.52
+- **Win Rate:** 100.0% (17 trades, 20 years)
 
-**Notes**: Earlier signal from same function as Signal #1. Strong 10.61% gain in 14 days. **IMPORTANT**: Signal has exceeded minimum exit date (2026-01-25) and approaching average exit date (2026-02-27). Most immediate targets achieved. Same exceptional statistics as Signal #1. **Recommendation**: For existing positions, consider profit-taking or trailing stops. For new entries, Signal #1 (01/22) is preferred due to better timing. Brazilian market strength confirmed by multiple signals.
+**Actionable Next Step:**  
+**TAKE PARTIAL** (Monthly) — Exit signal issued today at $760.80. 56.68% progress toward T1, 9.15% gain realized. Consider scaling out 50–75% at current levels. Remaining position: hold if price stays above $626.05 (F-Stack 1 Support). Full exit if breaks below $618.84 (EMA 200 Support).
 
 ---
 
-### **THIRD-TIER LONG SIGNALS (Acceptable with Cautions)**
+### **RANK 6: DOL.TO — Long — confirmations=2** ⚠️ MIXED SIGNALS
+
+**Bundle Synopsis:**  
+Aligned modules: Band Matrix Daily, Fractal Track Daily  
+Intervals: Daily  
+Best historical win rate: **100.0%** (Band Matrix)  
+Best forward hit rate: **75.98%** (Band Matrix)  
+**Timeliness:** Band Matrix passed (same-day); Fractal Track LATE (exit signal 2026-01-27)
+
+**Key Metrics (Band Matrix Daily):**
+- **Entry Anchor:** 186.3
+- **Current Price:** 185.27
+- **T1 (Target):** 294.08
+- **R:R to Support:** **17.96×** (exceptional)
+- **Historical Sharpe:** 1.17
+- **Win Rate:** 100.0% (11 trades, 5 years)
+
+**Data Integrity Flag:**  
+Fractal Track shows exit signal 2026-01-27 @ 186.36 but still listed as open trade with MTM -7.78%.
+
+**Actionable Next Step:**  
+**HOLD / ADD** (Band Matrix) — Same-day signal, R:R 17.96×, 100% win rate. Hold above 180.3 (Recent Extrema). Target 294.08 or partial at 208.08 (Historic Rise to Pivot).  
+**AVOID** (Fractal Track) — Exit signal issued; price -7.78% from entry.
 
 ---
 
-### **8. SOXX (iShares Semiconductor ETF)**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2025-12-31
-- **Signal**: Long
-- **Interval**: Quarterly
-- **Signal Price**: $301.15
-- **Win Rate (Backtested)**: 100.0%
-- **Latest Performance Win Rate**: 86.67%
-- **CAGR**: Strategy (16.0%) - Buy and Hold (8.74%) = +7.26%
-- **Sharpe Ratio**: 0.66 (Strategy) vs 0.45 (Buy & Hold)
-- **Average Return of Historical Winning Trades**: 47.75%
-- **Max Single Trade Loss Historically**: 0.0%
-- **Potential Upside (from signal price)**: 33.43% to 53.89%
-- **Target Exit Date (Win Trades) (Max/Min/Avg.)**: 2030-09-16/2027-11-08/2028-09-16
-- **Current Price, Current Mark to Market**: $361.13, +19.92%
-- **Target Prices**: 401,854.6/444,949.1/463.42/No Horizontal/348,224.2/411,031.9/No Moving Avg
-- **Support Levels**: 106.24/110.475/285,434.2/254,997.0/No F-Track/No F-Track/246.22
-- **Recommended Stop Loss**: 285,434 (approximately 21% below current, at F-Stack 1 support - significant technical level)
-- **Recommended Take Profit**: 401,855 (first target, approximately 11.3% upside from current, 33.4% from signal). Conservative with substantial additional upside to 53.89%.
-- **Is Signal Timely?**: Partially - 42% of potential to first target captured (19.92% MTM vs 33.43% total). However, 100% win rate and 47.75% average return suggest substantial upside remains.
-- **P/E Ratio**: 45.56
-- **PEG Ratio**: N/A
+### **RANK 7: NA.TO — Long — confirmations=1** ✓ PERFECT RECORD
 
-**Notes**: **EXCEPTIONAL BUT TIMING CONCERN**. Perfect 100% win rate over 7 trades (24 years). Average return 47.75%, max 74.51%. CAGR +7.26% excellent. **Sharpe ratio 0.66 below 0.75 threshold** but included due to 100% win rate and substantial upside (33-54% from signal). Current 19.92% gain in 29 days shows strong momentum. Semiconductor sector strength evident. **CRITICAL**: Extended holding periods (average 1.9 years) require long-term commitment. Worst MTM -41.23% indicates potential significant drawdowns - size position accordingly. **Entry timing concern**: 42% of initial move captured, but given extraordinary historical returns, remaining upside justifies entry with disciplined stops.
+**Bundle Synopsis:**  
+Aligned modules: Band Matrix Weekly  
+Best historical win rate: **100.0%**  
+Best forward hit rate: **80.68%**  
+**Timeliness:** LATE (waived by R:R 5.68×)
+
+**Key Metrics:**
+- **Entry Anchor:** $124.43
+- **Current Price:** $163.68
+- **T1 (Target):** $188.66
+- **Progress:** **61.22%** (approaching target)
+- **R:R to Support:** **5.68×**
+- **Historical Sharpe:** 1.22
+- **Win Rate:** 100.0% (6 trades, 15 years)
+- **MTM:** +31.54%
+
+**Actionable Next Step:**  
+**HOLD** — Signal +31.54% from entry; progress 61% toward T1. If price reaches $188.66, TAKE PARTIAL (T1 target). Exit if price falls below $119.90 (F-Stack 1 support).
 
 ---
 
-### **9. BDGI.TO (Badger Infrastructure Solutions)**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2025-12-31
-- **Signal**: Long
-- **Interval**: Quarterly
-- **Signal Price**: $73.13
-- **Win Rate (Backtested)**: 100.0%
-- **Latest Performance Win Rate**: 86.67%
-- **CAGR**: Strategy (16.49%) - Buy and Hold (8.5%) = +7.99%
-- **Sharpe Ratio**: 0.7 (Strategy) vs 0.42 (Buy & Hold)
-- **Average Return of Historical Winning Trades**: 158.83%
-- **Max Single Trade Loss Historically**: 0.0%
-- **Potential Upside (from signal price)**: 106.26% to 158.79%
-- **Target Exit Date (Win Trades) (Max/Min/Avg.)**: 2028-07-26/2027-11-08/2028-04-13
-- **Current Price, Current Mark to Market**: $78.35, +7.14%
-- **Target Prices**: 150.85/189.28/98.01/No Horizontal/79.88/88.32/No Moving Avg
-- **Support Levels**: 26.66/24.32/70.62/63.28/No F-Track/No F-Track/55.48
-- **Recommended Stop Loss**: $70.62 (approximately 9.9% below current, at F-Stack 1 support - very close to signal price, provides strong nearby support)
-- **Recommended Take Profit**: $150.85 (first target, approximately 92.5% upside from current, 106.3% from signal - extraordinary potential)
-- **Is Signal Timely?**: Yes, excellent - Only 6.5% of potential to first target captured (7.14% MTM vs 106.26% total). With 100% win rate and 158.83% average return, exceptional risk-reward.
-- **P/E Ratio**: 31.72
-- **PEG Ratio**: N/A
+### **RANK 8: PG — Long — confirmations=3** ⚠️ MIXED PERFORMANCE
 
-**Notes**: **OUTSTANDING LONG-TERM SIGNAL**. Perfect 100% win rate over 6 trades (33 years). Average return extraordinary 158.83%, max 227.42%. **Highest CAGR outperformance** at +7.99%. Current 7.14% gain in 29 days shows early momentum. First target $150.85 = 106% gain from signal. **Sharpe ratio 0.7 below 0.75 threshold** but included due to perfect win rate and exceptional upside. **MULTI-YEAR POSITION**: Average holding 1.6 years requires long-term capital commitment. Worst MTM -36.34% suggests patience required. Stop at $70.62 very tight to signal price provides excellent risk control. P/E 31.72 reflects growth expectations. Infrastructure sector diversification. **Recommendation**: Suitable for patient long-term investors willing to endure volatility for potentially life-changing returns.
+**Bundle Synopsis:**  
+Aligned modules: TrendPulse Daily, SigmaShell Daily (2 signals)  
+Intervals: Daily  
+Best historical win rate: **100.0%** (SigmaShell)  
+Best forward hit rate: **82.89%** (TrendPulse)  
+**Timeliness:** 1 passed (TrendPulse), 2 indeterminate (SigmaShell underwater)
+
+**Key Metrics (TrendPulse Daily - Best Signal):**
+- **Entry Anchor:** $144.46
+- **Current Price:** $149.90
+- **T1 (Target):** $186.65
+- **R:R to Support:** **3.10×**
+- **Historical Sharpe:** 0.36
+- **Win Rate:** 86.96%
+
+**SigmaShell Signals (Both Underwater):**
+- Signal 1 (2025-10-02): Entry $152.72, Current $149.90, MTM -3.1%
+- Signal 2 (2025-08-01): Entry $151.78, Current $149.90, MTM -2.2%
+- Both below nearest support ($150.47), R:R negative
+
+**Actionable Next Step:**  
+**HOLD / ADD** (TrendPulse) — R:R 3.10×, timely signal. Hold above $138.04 (Recent Extrema). Target $186.65.  
+**AVOID / EXIT** (SigmaShell) — Both signals underwater and below support. Exit if price closes below $140.23 (F-Stack 1 support).
 
 ---
 
-### **10. NVO (Novo Nordisk)**
-- **Function**: TRENDPULSE
-- **Signal Date**: 2026-01-04
-- **Signal**: Long
-- **Interval**: Weekly
-- **Signal Price**: $52.39
-- **Win Rate (Backtested)**: 85.71%
-- **Latest Performance Win Rate**: 95.35%
-- **CAGR**: Strategy (9.13%) - Buy and Hold
+## B) DIRECTIONAL CONFLICTS (AVOID)
+
+### **EEM — Long vs Short Conflict** ⚠️ ENTIRE BUNDLE EXCLUDED
+
+**Conflicting Signals:**
+1. **Long TrendPulse Daily** (2026-01-27, Price: $60.34, Win Rate: 90.91%)
+2. **Long TrendPulse Weekly** (2026-01-25, Price: $59.07, Win Rate: 96.15%)
+3. **Short DeltaDrift Daily** (2026-01-29, Price: $60.44, Win Rate: 80.0%) **← SAME-DAY**
+
+**Conflict Analysis:**
+- Opposite directions overlap within ±0.7% price and 0 days (same current date)
+- Short signal is more recent (same-day) and contradicts two Long signals (2 days and 4 days old)
+- Per Section 7 Hard Conflict Rule: **Conservative override → AVOID entire bundle**
+
+---
+
+### **META — Long vs Short Conflict** ⚠️ ENTIRE BUNDLE EXCLUDED
+
+**Conflicting Signals:**
+1. **Long TrendPulse Daily** (2026-01-27, Price: $672.36, Win Rate: 95.0%)
+2. **Short Fractal Track Monthly** (2025-12-03, Price: $647.95, Win Rate: 100.0%, Exit 2026-01-29 @ $738.31, MTM -13.95%)
+
+**Conflict Analysis:**
+- Opposite directions within ±14% price and 57 days
+- Short signal exited today (2026-01-29) at loss, suggesting reversal
+- Per Section 7 Hard Conflict Rule: **Conservative override → AVOID entire bundle**
+
+---
+
+## C) CRITICAL DATA INTEGRITY ISSUES (Synthesized)
+
+### **1. F-Stack Directional Violations (11 Signals)**
+
+**Affected Assets:** WMT, WPM, ASML, GS, QQQ, PPH, TSLA, MSE.PA, SUM.NZ, WPM.TO, IHI
+
+**Issue:** Current price exceeds T1 (Long) or T1 exceeds current price (Short), creating negative or indeterminate R:R calculations.
+
+**Examples:**
+- **WMT Daily:** T1 $114.64 < Entry $116.20 (Long) → negative reward
+- **PPH Monthly:** Current $105.65 > T1 $100.02 → signal exceeded target
+- **TSLA Monthly:** Current $416.56 > T1 $413.68 → signal exceeded target
+- **WPM Weekly:** T1 $131.44 < Entry $140.00 (Long) → negative reward
+
+**Impact:** Cannot compute valid progress or R:R; signals flagged as indeterminate or late.
+
+---
+
+### **2. Missing/Ambiguous Nearest Support (18 Signals)**
+
+**Affected Assets:** BRK-B, USO, USDCHF=X, BABA, HDB, ENZL, XLE, EFA, SUM.NZ, IHI
+
+**Issue:** Payload provides multiple support levels (Recent Extrema, Horizontal, F-Stack 1/2, EMA 200) without explicit designation of "nearest" for risk calculation.
+
+**Example (BABA):**
+- Recent Extrema: $149.79
+- Horizontal: $67.495
+- F-Stack 1: $144.416
+- EMA 200: $141.24
+- **No explicit "nearest" designation → cannot compute R:R deterministically**
+
+**Impact:** Excluded per conservative no-guessing policy.
+
+---
+
+### **3. Exit Signal Conflicts (6 Signals)**
+
+**Issue:** Exit Signal Date/Price provided but trade status shows "No Exit Yet" or MTM indicates still open.
+
+**Examples:**
+- **CVS Band Matrix:** Exit 2026-01-27 @ $72.00 but "No Exit Yet" status
+- **CVS SigmaShell:** Exit 2026-01-29 @ $74.44 but MTM -0.75% (still open)
+- **VGT TrendPulse Monthly:** Exit 2026-01-29 @ $760.80 but listed as open
+- **DOL.TO Fractal Track:** Exit 2026-01-27 @ $186.36 but MTM -7.78%
+
+**Impact:** Conflicting status prevents clear actionable recommendation.
+
+---
+
+### **4. Missing Eligibility Field (42 Signals Rejected)**
+
+**Issue:** Payload provides "Win Rate [%], History Tested, Number of Trades" but does not explicitly label as `full_history_win_rate`.
+
+**Examples:**
+- MTY.TO: "96.0%, Past 4 years, 25" (would pass if confirmed)
+- NVO: "85.71%, Past 10 years, 21" (would pass if confirmed)
+- SOXX: "100.0%, Past 24 years, 7" (would pass if confirmed)
+- All Group 8 signals (MX.TO, JPY=X, LULU, JETS, SFTBY, NFLX)
+
+**Impact:** Conservative policy requires exact field name or unambiguous mapping; ambiguity triggered policy exclusion for 42 signals.
+
+---
+
+## D) REJECTION SUMMARY BY GATE
+
+**Total Rejected:** 56 signals
+
+### **Gate B2 (Field Completeness) — 18 Rejections**
+- Missing T1 (F-Stack 1): EFA (2 signals)
+- Ambiguous nearest support/stop: BABA (2), HDB, ENZL, XLE, USDCHF=X, SUM.NZ, IHI
+- Missing precomputed anchor/progress/R:R: All Group 8 signals (7)
+
+### **Conservative Eligibility Filter — 42 Rejections**
+- Missing/ambiguous `full_history_win_rate` field: MTY.TO, NVO (4 signals), SOXX, BDGI.TO, All Group 8 (7)
+- Forward testing <70%: BRK-B Oscillator Delta (63.74%), XLU Oscillator Delta (63.74%)
+- Negative MTM + prudential exclusion: MSFT (2 signals), ORCL, IHI (despite passing win-rate threshold)
+
+### **Gate B3 (Duplicates) — 2 Rejections**
+- JETS/Short/OSCILLATOR DELTA/Daily (duplicate; kept more recent signal)
+- USO/Long/TRENDPULSE/Daily (2 signals, different dates, both late)
+
+### **Directional Conflict (Section 7) — 5 Rejections**
+- EEM (3 signals: 2 Long, 1 Short)
+- META (2 signals: 1 Long, 1 Short)
+
+### **Lateness (No R:R Waiver) — 11 Rejections**
+- SJ.TO (2 signals, R:R 0.15×)
+- IWM (R:R 0.08×)
+- WPM (2 signals, R:R 0.21×)
+- DBC (2 signals, already exited)
+- MSE.PA (R:R -0.34×, far exceeded target)
+
+---
+
+## E) MACHINE LINE (Unified Across All Groups)
+
+```
+MACHINE|qualified=23|rejected=56|late=18|as_of=2026-01-29
+```
+
+*(qualified=23 individual signals across 8 bundles; rejected=56; late=18 signals with progress ≥60% or age >7 days)*
+
+---
+
+## F) SIGNAL INSIGHTS (Button 1)
+
+### **High-Sharpe / High-Success Signals (Sharpe >1.5 or Win Rate ≥95%)**
+
+**Perfect Win Rates (100%):**
+1. **XLU Fractal Track Weekly:** Sharpe **3.45**, 19 trades, 20 years
+2. **CVS SigmaShell Daily:** Sharpe **1.78**, 9 trades, 5 years
+3. **DOL.TO Band Matrix Daily:** Sharpe **1.17**, 11 trades, 5 years
+4. **NA.TO Band Matrix Weekly:** Sharpe **1.22**, 6 trades, 15 years
+5. **VGT TrendPulse Daily:** Sharpe **2.27**, 26 trades, 4 years
+6. **VGT TrendPulse Monthly:** Sharpe **1.52**, 17 trades, 20 years
+7. **GS TrendPulse Weekly:** Sharpe **2.03**, 14 trades, 20 years
+8. **MAR Fractal Track Weekly:** Sharpe **2.62**, 22 trades, 20 years
+9. **MSE.PA TrendPulse Monthly:** Sharpe **0.77**, 8 trades, 20 years
+10. **NZDCAD=X TrendPulse Daily:** Sharpe **2.3**, 7 trades, 4 years
+11. **QQQ TrendPulse Monthly:** Sharpe **1.2**, 14 trades, 20 years
+12. **TRI.TO DeltaDrift Weekly:** Sharpe **1.52**, 5 trades, 20 years
+
+**High Win Rates (≥95%):**
+- **^BVSP TrendPulse Daily:** 95.45%, Sharpe 1.7
+- **CVS TrendPulse Daily:** 95.24%, Sharpe 0.7
+- **WMT Fractal Track Daily:** 83.33%, Sharpe 1.3
+- **AAPL TrendPulse Monthly:** 100%, Sharpe 2.41
+- **ASML Fractal Track Monthly:** 92.31%, Sharpe 1.74
+- **ASML TrendPulse Monthly:** 93.33%, Sharpe 0.75
+
+---
+
+## G) RISK FLAGS / DATA INTEGRITY (Button 2)
+
+### **1. Lateness Epidemic**
+18 signals are LATE (progress ≥60% or age >7 days). 11 failed R:R waiver threshold (<3.0×).
+
+### **2. F-Stack Directional Violations**
+11 signals have T1/anchor ordering conflicts creating negative or indeterminate R:R.
+
+### **3. Exit Signal Conflicts**
+6 signals show exit dates but conflicting open-trade status.
+
+### **4. Missing Support Levels**
+18 signals have ambiguous nearest support/stop (multiple candidates, no explicit designation).
+
+### **5. Field Naming Ambiguity**
+42 signals rejected due to "Win Rate [%], History Tested, Number of Trades" not explicitly labeled as `full_history_win_rate`.
+
+### **6. Zero Avg Holding Period**
+Multiple signals report "0 days" for avg holding period in forward testing. Data integrity note: may indicate intraday capture or placeholder value.
+
+### **7. CAGR Underperformance (Select Signals)**
+- SJ.TO Fractal Track: Strategy 8.85% vs Buy-Hold 12.31% (-3.46%)
+- TSLA TrendPulse: Strategy 26.29% vs Buy-Hold 28.82% (-2.53%)
+- AAPL FractalTrack Quarterly: Strategy 12.11% vs Buy-Hold 12.37% (-0.26%)
+
+---
+
+## H) ACTIONABLE RECOMMENDATIONS (Priority Order)
+
+### **IMMEDIATE ACTION (Same-Day Signals, Timely, High R:R)**
+1. **XLU Fractal Track Weekly** — ADD (R:R 7.5×, 100% win rate, Sharpe 3.45)
+2. **DOL.TO Band Matrix Daily** — HOLD/ADD (R:R 17.96×, 100% win rate, same-day)
+3. **AAPL DeltaDrift Daily** — HOLD/ADD (R:R 2.67×, 90% win rate, 7 days old)
+
+### **TAKE PARTIAL (Target Exceeded or Exit Signal)**
+4. **^BVSP TrendPulse Daily** — TAKE PARTIAL (price 5.47% above T1)
+5. **VGT TrendPulse Monthly** — TAKE PARTIAL (exit signal today, +9.15% MTM)
+6. **PPH Fractal Track Monthly** — TAKE FULL PROFIT (price 5.6% above T1)
+7. **TSLA TrendPulse Monthly** — TAKE FULL PROFIT (price 0.7% above T1)
+8. **MSE.PA TrendPulse Monthly** — TAKE FULL PROFIT (price 12.4% above T1)
+
+### **HOLD WITH CAUTION (Late but R:R Waived)**
+9. **CVS (all 3 signals)** — HOLD (R:R 5.68–10.0×, 100% win rate SigmaShell)
+10. **NA.TO Band Matrix Weekly** — HOLD (R:R 5.68×, 100% win rate, +31.54% MTM)
+11. **PG TrendPulse Daily** — HOLD (R:R 3.10×, 86.96% win rate)
+
+### **AVOID / EXIT (Conflict, Underwater, or Late with Low R:R)**
+12. **EEM (all signals)** — AVOID (directional conflict)
+13. **META (all signals)** — AVOID (directional conflict, Short exited at loss)
+14. **PG SigmaShell (both)** — EXIT (underwater, below support)
+15. **SJ.TO Fractal Track (both)** — TAKE PARTIAL (79% progress, R:R 0.15×)
+16. **IWM Fractal Track Monthly** — TAKE FULL PROFIT (93% progress, R:R 0.08×)
+17. **TRI.TO DeltaDrift Weekly** — AVOID/EXIT (-19.84% MTM, below support)
+
+---
+
+## I) RECOMMENDATIONS FOR DATA PROVIDER
+
+1. **Add Explicit Precomputed Fields:**
+   - `entry_anchor` (single value, not computed from min/max)
+   - `lateness_gate` (passed/late/waived/indeterminate)
+   - `progress` (% toward T1)
+   - `rr_to_nearest_support_stop` (single value)
+   - `nearest_support_or_stop` (single level, not band)
+
+2. **Rename Ambiguous Fields:**
+   - "Win Rate [%], History Tested, Number of Trades" → separate fields: `full_history_win_rate`, `history_tested_period`, `number_of_trades`
+
+3. **Resolve Exit Signal Conflicts:**
+   - If Exit Signal Date/Price exists, mark trade status as "Closed" (not "No Exit Yet")
+
+4. **Fix F-Stack Directional Ordering:**
+   - Ensure T1 > Entry Anchor for Long signals
+   - Ensure T1 < Entry Anchor for Short signals
+
+5. **Designate Nearest Support:**
+   - When multiple support levels exist, explicitly label which is "nearest_support_or_stop" for R:R calculation
+
+---
+
+**END OF UNIFIED SYNTHESIS REPORT**

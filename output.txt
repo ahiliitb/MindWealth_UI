@@ -163,3 +163,20 @@ Consolidated CSV files updated:
   📁 Using file: 2026-01-29_outstanding_signal.csv
   ✅ Monitored trades updated successfully!
 🔄 Adding files to git...
+💾 Committing changes...
+[main 70096c651] Update trade data: CSV files from cache and trade_store/US
+ Committer: Ahil Khan <ahilkhaniitb@Ahils-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly:
+
+    git config --global user.name "Your Name"
+    git config --global user.email you@example.com
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 6 files changed, 295 insertions(+), 39 deletions(-)
+🚀 Pushing to GitHub...
+✅ All done! Data updated and pushed to GitHub.
