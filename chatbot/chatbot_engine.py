@@ -667,8 +667,16 @@ Please answer the user's query based on the comprehensive analysis report above.
                 return f"Error extracting query components: {error_msg}", {"error": error_msg}
             
             # Extract all components from unified result
-            selected_signal_types = extraction_result.get("signal_types", [])
-            signal_type_reasoning = extraction_result.get("signal_types_reasoning", "")
+            # Only use extracted signal types if none were provided by caller
+            if not selected_signal_types:
+                selected_signal_types = extraction_result.get("signal_types", [])
+                signal_type_reasoning = extraction_result.get("signal_types_reasoning", "")
+                logger.info(f"Using AI-extracted signal types: {selected_signal_types}")
+            else:
+                # Keep the provided signal types
+                logger.info(f"Using provided signal types: {selected_signal_types}")
+                if not signal_type_reasoning:
+                    signal_type_reasoning = extraction_result.get("signal_types_reasoning", "")
             
             # SPECIAL CASE: If claude_report is in signal types, route to old query() method
             # Claude report doesn't need table data, functions, or column extraction

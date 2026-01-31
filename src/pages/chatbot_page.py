@@ -974,6 +974,11 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
     
     last_signal_types = st.session_state.get("last_signal_types", DEFAULT_SIGNAL_TYPES)
     last_signal_reason = st.session_state.get("last_signal_reason", "")
+    
+    # Handle None case for last_signal_types
+    if last_signal_types is None:
+        last_signal_types = DEFAULT_SIGNAL_TYPES
+    
     render_signal_selection(last_signal_types, last_signal_reason)
     
     with st.sidebar.expander("Available Signal Types", expanded=False):
@@ -1147,13 +1152,15 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
     user_input = st.chat_input("Ask a question about your trading signals...")
     
     if user_input:
-        ai_signal_types, ai_reason = chatbot.determine_signal_types(user_input)
-        if not ai_signal_types:
-            ai_signal_types = DEFAULT_SIGNAL_TYPES.copy()
-        selected_signal_types = list(ai_signal_types)
-        st.session_state.last_signal_types = selected_signal_types
-        st.session_state.last_signal_reason = ai_reason
-        render_signal_selection(selected_signal_types, ai_reason)
+        # Don't call determine_signal_types here - let smart_followup_query do it internally
+        # This avoids duplicate extraction calls
+        # Use default signal types as placeholder - will be determined by AI in smart_query
+        selected_signal_types = DEFAULT_SIGNAL_TYPES.copy()
+        ai_reason = None
+        # Don't render signal selection here - will be shown after query completes
+        # Keep last signal types as default until we get AI response
+        st.session_state.last_signal_types = DEFAULT_SIGNAL_TYPES.copy()
+        st.session_state.last_signal_reason = "Analyzing..."
         
         # Add user message to history (store clean user input for UI display)
         st.session_state.chat_history.append({
@@ -1170,23 +1177,36 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
         
         # Get AI response
         with st.chat_message("assistant"):
-            selection_text = ", ".join(get_signal_type_label(sig) for sig in selected_signal_types)
-            st.markdown(f"**AI Signal Type Selection:** {selection_text}")
-            if ai_reason:
-                st.caption(f"💡 {ai_reason}")
             with st.spinner("🤔 Analyzing your query with conversation context..."):
                 try:
                     # Always use smart follow-up query to maintain conversation context (like ChatGPT)
+                    # Pass empty list for selected_signal_types to let AI determine them
                     response, metadata = chatbot.smart_followup_query(
                         user_message=user_input,
-                        selected_signal_types=selected_signal_types,
+                        selected_signal_types=[],  # Let AI determine signal types
                         assets=selected_tickers if not use_auto_extract_tickers else None,
                         from_date=from_date.strftime('%Y-%m-%d'),
                         to_date=to_date.strftime('%Y-%m-%d'),
                         functions=selected_functions if not use_auto_extract else None,
                         auto_extract_tickers=use_auto_extract_tickers,
-                        signal_type_reasoning=ai_reason
+                        signal_type_reasoning=None  # Will be determined by AI
                     )
+                    
+                    # Get AI-determined signal types from metadata
+                    ai_selected_signal_types = metadata.get('selected_signal_types', [])
+                    ai_reason = metadata.get('signal_type_reasoning', '')
+                    
+                    # Update session state with AI-determined signal types
+                    if ai_selected_signal_types:
+                        st.session_state.last_signal_types = ai_selected_signal_types
+                        st.session_state.last_signal_reason = ai_reason
+                    
+                    # Display AI signal type selection at the top
+                    if ai_selected_signal_types:
+                        selection_text = ", ".join(get_signal_type_label(sig) for sig in ai_selected_signal_types)
+                        st.markdown(f"**AI Signal Type Selection:** {selection_text}")
+                        if ai_reason:
+                            st.caption(f"💡 {ai_reason}")
                     
                     # Display response
                     st.markdown(response)
