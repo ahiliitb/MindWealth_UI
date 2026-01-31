@@ -115,65 +115,79 @@ def create_analysis_page(data_file, page_title):
     # Function filter - only show if multiple functions exist
     if not is_single_function:
         st.sidebar.markdown("**Functions:**")
-        if st.sidebar.button("All", key=f"select_all_functions_{page_title}", help="Select all functions", use_container_width=True):
-            all_functions = list(unique_functions)
-            st.session_state[f'selected_functions_{page_title}'] = all_functions
-            st.session_state[f"functions_multiselect_{page_title}"] = all_functions
+        
+        # Add "All Functions" option at the beginning
+        all_functions_list = list(unique_functions)
+        options_with_all = ["All Functions"] + all_functions_list
         
         # Initialize session state for functions
         if f'selected_functions_{page_title}' not in st.session_state:
-            st.session_state[f'selected_functions_{page_title}'] = list(unique_functions)
+            st.session_state[f'selected_functions_{page_title}'] = all_functions_list
         
-        # Display function selection status
-        if len(st.session_state[f'selected_functions_{page_title}']) == len(unique_functions):
-            st.sidebar.markdown("*All functions selected*")
-        else:
-            st.sidebar.markdown(f"*{len(st.session_state[f'selected_functions_{page_title}'])} of {len(unique_functions)} selected*")
+        # Get stored functions from session state
+        stored_functions = st.session_state.get(f'selected_functions_{page_title}', all_functions_list)
+        valid_stored_functions = [f for f in stored_functions if f in all_functions_list]
         
-        with st.sidebar.expander("Select Functions", expanded=False):
-            functions = st.multiselect(
-                "",
-                options=unique_functions,
-                default=st.session_state[f'selected_functions_{page_title}'],
-                key=f"functions_multiselect_{page_title}",
-                label_visibility="collapsed"
-            )
+        functions = st.sidebar.multiselect(
+            "Select Functions",
+            options=options_with_all,
+            default=valid_stored_functions,
+            key=f"functions_multiselect_{page_title}",
+            help="Choose one or more functions. Select 'All Functions' to include all."
+        )
+        
+        # Handle "All Functions" selection
+        if "All Functions" in functions:
+            functions = all_functions_list
         
         # Update session state
-        st.session_state[f'selected_functions_{page_title}'] = functions
+        valid_selected_functions = [f for f in functions if f in all_functions_list and f != "All Functions"]
+        if valid_selected_functions:
+            st.session_state[f'selected_functions_{page_title}'] = valid_selected_functions
+        elif functions:
+            st.session_state[f'selected_functions_{page_title}'] = all_functions_list
+        else:
+            st.session_state[f'selected_functions_{page_title}'] = []
     else:
         # For single-function pages, auto-select the only function
         functions = list(unique_functions)
         st.session_state[f'selected_functions_{page_title}'] = functions
     
-    # Symbol filter with select all button
+    # Symbol filter
     st.sidebar.markdown("**Symbols:**")
-    if st.sidebar.button("All", key=f"select_all_symbols_{page_title}", help="Select all symbols", use_container_width=True):
-        all_symbols = list(df['Symbol'].unique())
-        st.session_state[f'selected_symbols_{page_title}'] = all_symbols
-        st.session_state[f"symbols_multiselect_{page_title}"] = all_symbols
+    
+    # Add "All Symbols" option at the beginning
+    all_symbols_list = list(df['Symbol'].unique())
+    symbol_options_with_all = ["All Symbols"] + all_symbols_list
     
     # Initialize session state for symbols
     if f'selected_symbols_{page_title}' not in st.session_state:
-        st.session_state[f'selected_symbols_{page_title}'] = list(df['Symbol'].unique())
+        st.session_state[f'selected_symbols_{page_title}'] = all_symbols_list
     
-    # Display symbol selection status
-    if len(st.session_state[f'selected_symbols_{page_title}']) == len(df['Symbol'].unique()):
-        st.sidebar.markdown("*All symbols selected*")
-    else:
-        st.sidebar.markdown(f"*{len(st.session_state[f'selected_symbols_{page_title}'])} of {len(df['Symbol'].unique())} selected*")
+    # Get stored symbols from session state
+    stored_symbols = st.session_state.get(f'selected_symbols_{page_title}', all_symbols_list)
+    valid_stored_symbols = [s for s in stored_symbols if s in all_symbols_list]
     
-    with st.sidebar.expander("Select Symbols", expanded=False):
-        symbols = st.multiselect(
-            "",
-            options=df['Symbol'].unique(),
-            default=st.session_state[f'selected_symbols_{page_title}'],
-            key=f"symbols_multiselect_{page_title}",
-            label_visibility="collapsed"
-        )
+    symbols = st.sidebar.multiselect(
+        "Select Symbols",
+        options=symbol_options_with_all,
+        default=valid_stored_symbols,
+        key=f"symbols_multiselect_{page_title}",
+        help="Choose one or more symbols. Select 'All Symbols' to include all."
+    )
+    
+    # Handle "All Symbols" selection
+    if "All Symbols" in symbols:
+        symbols = all_symbols_list
     
     # Update session state
-    st.session_state[f'selected_symbols_{page_title}'] = symbols
+    valid_selected_symbols = [s for s in symbols if s in all_symbols_list and s != "All Symbols"]
+    if valid_selected_symbols:
+        st.session_state[f'selected_symbols_{page_title}'] = valid_selected_symbols
+    elif symbols:
+        st.session_state[f'selected_symbols_{page_title}'] = all_symbols_list
+    else:
+        st.session_state[f'selected_symbols_{page_title}'] = []
     
     # Win rate filter
     min_win_rate = st.sidebar.slider(

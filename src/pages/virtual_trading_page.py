@@ -84,55 +84,59 @@ def create_virtual_trading_page():
     
     # Function filter
     st.sidebar.markdown("**Functions:**")
-    if st.sidebar.button("All", key="select_all_functions_vt", help="Select all functions", use_container_width=True):
-        all_functions = list(df['Function'].unique())
-        st.session_state['selected_functions_vt'] = all_functions
-        st.session_state["functions_multiselect_vt"] = all_functions
-    
+    available_functions = sorted(df['Function'].unique())
+
+    all_functions_label = "All Functions"
+    function_options_with_all = [all_functions_label] + list(available_functions)
+
     if 'selected_functions_vt' not in st.session_state:
-        st.session_state['selected_functions_vt'] = list(df['Function'].unique())
-    
-    if len(st.session_state['selected_functions_vt']) == len(df['Function'].unique()):
-        st.sidebar.markdown("*All functions selected*")
+        st.session_state['selected_functions_vt'] = list(available_functions)
+
+    stored_functions = st.session_state.get('selected_functions_vt', list(available_functions))
+    valid_stored_functions = [f for f in stored_functions if f in available_functions]
+
+    functions = st.sidebar.multiselect(
+        "Select Functions",
+        options=function_options_with_all,
+        default=valid_stored_functions,
+        key="functions_multiselect_vt",
+        help=f"Choose one or more functions. Select '{all_functions_label}' to include all."
+    )
+
+    if all_functions_label in functions or not functions:
+        st.session_state['selected_functions_vt'] = list(available_functions)
     else:
-        st.sidebar.markdown(f"*{len(st.session_state['selected_functions_vt'])} of {len(df['Function'].unique())} selected*")
-    
-    with st.sidebar.expander("Select Functions", expanded=False):
-        functions = st.multiselect(
-            "",
-            options=df['Function'].unique(),
-            default=st.session_state['selected_functions_vt'],
-            key="functions_multiselect_vt",
-            label_visibility="collapsed"
-        )
-    
-    st.session_state['selected_functions_vt'] = functions
+        st.session_state['selected_functions_vt'] = [f for f in functions if f in available_functions]
+
+    functions = st.session_state['selected_functions_vt']
     
     # Symbol filter
     st.sidebar.markdown("**Symbols:**")
-    if st.sidebar.button("All", key="select_all_symbols_vt", help="Select all symbols", use_container_width=True):
-        all_symbols = list(df['Symbol'].unique())
-        st.session_state['selected_symbols_vt'] = all_symbols
-        st.session_state["symbols_multiselect_vt"] = all_symbols
-    
+    available_symbols = sorted(df['Symbol'].unique())
+
+    all_symbols_label = "All Symbols"
+    symbol_options_with_all = [all_symbols_label] + list(available_symbols)
+
     if 'selected_symbols_vt' not in st.session_state:
-        st.session_state['selected_symbols_vt'] = list(df['Symbol'].unique())
-    
-    if len(st.session_state['selected_symbols_vt']) == len(df['Symbol'].unique()):
-        st.sidebar.markdown("*All symbols selected*")
+        st.session_state['selected_symbols_vt'] = list(available_symbols)
+
+    stored_symbols = st.session_state.get('selected_symbols_vt', list(available_symbols))
+    valid_stored_symbols = [s for s in stored_symbols if s in available_symbols]
+
+    symbols = st.sidebar.multiselect(
+        "Select Symbols",
+        options=symbol_options_with_all,
+        default=valid_stored_symbols,
+        key="symbols_multiselect_vt",
+        help=f"Choose one or more symbols. Select '{all_symbols_label}' to include all."
+    )
+
+    if all_symbols_label in symbols or not symbols:
+        st.session_state['selected_symbols_vt'] = list(available_symbols)
     else:
-        st.sidebar.markdown(f"*{len(st.session_state['selected_symbols_vt'])} of {len(df['Symbol'].unique())} selected*")
-    
-    with st.sidebar.expander("Select Symbols", expanded=False):
-        symbols = st.multiselect(
-            "",
-            options=df['Symbol'].unique(),
-            default=st.session_state['selected_symbols_vt'],
-            key="symbols_multiselect_vt",
-            label_visibility="collapsed"
-        )
-    
-    st.session_state['selected_symbols_vt'] = symbols
+        st.session_state['selected_symbols_vt'] = [s for s in symbols if s in available_symbols]
+
+    symbols = st.session_state['selected_symbols_vt']
     
     # Win rate filter (slider)
     min_win_rate = st.sidebar.slider(

@@ -94,37 +94,33 @@ def create_performance_summary_page(data_file, page_title):
     
     # Function filter
     st.sidebar.markdown("**Functions:**")
-    col1, col2 = st.sidebar.columns(2)
-    with col1:
-        if st.button("All", key=f"select_all_strategies_{page_title}", help="Select all functions", use_container_width=True):
-            st.session_state[f'selected_strategies_{page_title}'] = list(df['Strategy'].unique())
-    with col2:
-        if st.button("None", key=f"deselect_all_strategies_{page_title}", help="Deselect all functions", use_container_width=True):
-            st.session_state[f'selected_strategies_{page_title}'] = []
-    
+    available_strategies = sorted(df['Strategy'].dropna().unique())
+
+    all_functions_label = "All Functions"
+    function_options_with_all = [all_functions_label] + list(available_strategies)
+
     # Initialize session state for strategies
     if f'selected_strategies_{page_title}' not in st.session_state:
-        st.session_state[f'selected_strategies_{page_title}'] = list(df['Strategy'].unique())
-    
-    # Display function selection status
-    if len(st.session_state[f'selected_strategies_{page_title}']) == len(df['Strategy'].unique()):
-        st.sidebar.markdown("*All functions selected*")
-    elif len(st.session_state[f'selected_strategies_{page_title}']) == 0:
-        st.sidebar.markdown("*No functions selected*")
+        st.session_state[f'selected_strategies_{page_title}'] = list(available_strategies)
+
+    stored_strategies = st.session_state.get(f'selected_strategies_{page_title}', list(available_strategies))
+    valid_stored_strategies = [s for s in stored_strategies if s in available_strategies]
+
+    strategies = st.sidebar.multiselect(
+        "Select Functions",
+        options=function_options_with_all,
+        default=valid_stored_strategies,
+        key=f"strategies_multiselect_{page_title}",
+        help=f"Choose one or more functions. Select '{all_functions_label}' to include all."
+    )
+
+    # Treat empty selection as "All" for consistency
+    if all_functions_label in strategies or not strategies:
+        st.session_state[f'selected_strategies_{page_title}'] = list(available_strategies)
     else:
-        st.sidebar.markdown(f"*{len(st.session_state[f'selected_strategies_{page_title}'])} of {len(df['Strategy'].unique())} selected*")
-    
-    with st.sidebar.expander("Select Functions", expanded=False):
-        strategies = st.multiselect(
-            "",
-            options=df['Strategy'].unique(),
-            default=st.session_state[f'selected_strategies_{page_title}'],
-            key=f"strategies_multiselect_{page_title}",
-            label_visibility="collapsed"
-        )
-    
-    # Update session state
-    st.session_state[f'selected_strategies_{page_title}'] = strategies
+        st.session_state[f'selected_strategies_{page_title}'] = [s for s in strategies if s in available_strategies]
+
+    strategies = st.session_state[f'selected_strategies_{page_title}']
     
     
     # Win rate filter

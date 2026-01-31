@@ -90,30 +90,30 @@ def create_all_data_page():
     if all_functions:
         st.sidebar.markdown("**Functions:**")
         all_functions_list = sorted(list(all_functions))
-        
-        if st.sidebar.button("All Functions", key="select_all_functions_global",
-                           help="Select all functions", use_container_width=True):
-            st.session_state['selected_functions_global'] = all_functions_list
-            st.session_state["functions_multiselect_global"] = all_functions_list
+
+        all_functions_label = "All Functions"
+        function_options_with_all = [all_functions_label] + list(all_functions_list)
 
         if 'selected_functions_global' not in st.session_state:
             st.session_state['selected_functions_global'] = all_functions_list
 
-        if len(st.session_state['selected_functions_global']) == len(all_functions_list):
-            st.sidebar.markdown("*All functions selected*")
+        stored_functions = st.session_state.get('selected_functions_global', all_functions_list)
+        valid_stored_functions = [f for f in stored_functions if f in all_functions_list]
+
+        selected_functions = st.sidebar.multiselect(
+            "Select Functions",
+            options=function_options_with_all,
+            default=valid_stored_functions,
+            key="functions_multiselect_global",
+            help=f"Choose one or more functions. Select '{all_functions_label}' to include all."
+        )
+
+        if all_functions_label in selected_functions or not selected_functions:
+            st.session_state['selected_functions_global'] = all_functions_list
         else:
-            st.sidebar.markdown(f"*{len(st.session_state['selected_functions_global'])} of {len(all_functions_list)} selected*")
+            st.session_state['selected_functions_global'] = [f for f in selected_functions if f in all_functions_list]
 
-        with st.sidebar.expander("Select Functions", expanded=False):
-            selected_functions = st.multiselect(
-                "",
-                options=all_functions_list,
-                default=st.session_state['selected_functions_global'],
-                key="functions_multiselect_global",
-                label_visibility="collapsed"
-            )
-
-        st.session_state['selected_functions_global'] = selected_functions
+        selected_functions = st.session_state['selected_functions_global']
     else:
         selected_functions = []
 
@@ -121,30 +121,30 @@ def create_all_data_page():
     if all_symbols:
         st.sidebar.markdown("**Symbols:**")
         all_symbols_list = sorted(list(all_symbols))
-        
-        if st.sidebar.button("All Symbols", key="select_all_symbols_global",
-                           help="Select all symbols", use_container_width=True):
-            st.session_state['selected_symbols_global'] = all_symbols_list
-            st.session_state["symbols_multiselect_global"] = all_symbols_list
+
+        all_symbols_label = "All Symbols"
+        symbol_options_with_all = [all_symbols_label] + list(all_symbols_list)
 
         if 'selected_symbols_global' not in st.session_state:
             st.session_state['selected_symbols_global'] = all_symbols_list
 
-        if len(st.session_state['selected_symbols_global']) == len(all_symbols_list):
-            st.sidebar.markdown("*All symbols selected*")
+        stored_symbols = st.session_state.get('selected_symbols_global', all_symbols_list)
+        valid_stored_symbols = [s for s in stored_symbols if s in all_symbols_list]
+
+        selected_symbols = st.sidebar.multiselect(
+            "Select Symbols",
+            options=symbol_options_with_all,
+            default=valid_stored_symbols,
+            key="symbols_multiselect_global",
+            help=f"Choose one or more symbols. Select '{all_symbols_label}' to include all."
+        )
+
+        if all_symbols_label in selected_symbols or not selected_symbols:
+            st.session_state['selected_symbols_global'] = all_symbols_list
         else:
-            st.sidebar.markdown(f"*{len(st.session_state['selected_symbols_global'])} of {len(all_symbols_list)} selected*")
+            st.session_state['selected_symbols_global'] = [s for s in selected_symbols if s in all_symbols_list]
 
-        with st.sidebar.expander("Select Symbols", expanded=False):
-            selected_symbols = st.multiselect(
-                "",
-                options=all_symbols_list,
-                default=st.session_state['selected_symbols_global'],
-                key="symbols_multiselect_global",
-                label_visibility="collapsed"
-            )
-
-        st.session_state['selected_symbols_global'] = selected_symbols
+        selected_symbols = st.session_state['selected_symbols_global']
     else:
         selected_symbols = []
 
