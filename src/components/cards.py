@@ -442,9 +442,9 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                     
                     # Handle current status (skip Current MTM for portfolio pages)
                     if 'Current_Date' in row and row['Current_Date'] != 'Unknown':
-                        st.write(f"**Current Date:** {row['Current_Date']}")
+                        st.write(f"**Today's Date:** {row['Current_Date']}")
                         if 'Current_Price' in row and pd.notna(row.get('Current_Price')) and row['Current_Price'] != 0:
-                            st.write(f"**Current Price:** ${row['Current_Price']:.4f}")
+                            st.write(f"**Today's Price:** ${row['Current_Price']:.4f}")
                     else:
                         if not is_portfolio_page:
                             st.write(f"**Current MTM:** {raw_data.get('Current Mark to Market and Holding Period', 'N/A')}")

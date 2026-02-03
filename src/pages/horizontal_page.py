@@ -25,14 +25,14 @@ def create_horizontal_page(data_file: str, page_title: str):
             
             ### Why is it used?
             - **Level Identification**: Identify key horizontal support/resistance levels
-            - **Price Comparison**: Compare current price with identified horizontal levels
+            - **Price Comparison**: Compare today's price with identified horizontal levels
             - **Technical Analysis**: Use horizontal levels for entry/exit decisions
             - **Chart Visualization**: View interactive charts with horizontal level overlays
             
             ### How to use?
             1. **Browse Cards**: Scroll through strategy cards showing horizontal levels for each symbol
             2. **View Charts**: Click "📊 View Interactive Chart" to see candlestick chart with horizontal line
-            3. **Check Difference**: Review the percentage difference between current price and horizontal level
+            3. **Check Difference**: Review the percentage difference between today's price and horizontal level
             4. **Analyze Status**: See if price is above or below the horizontal level
             5. **Compare Intervals**: Analyze horizontal levels across different time intervals
             
@@ -64,7 +64,7 @@ def create_horizontal_page(data_file: str, page_title: str):
         return
 
     # Normalize expected columns
-    expected_cols = ['Symbol', 'Interval', 'Latest Horizontal', 'Current Price', 'Difference (%)']
+    expected_cols = ['Symbol', 'Interval', 'Latest Horizontal', 'Today\'s Price', 'Difference (%)']
     missing = [c for c in expected_cols if c not in df.columns]
     if missing:
         st.warning(f"Missing columns in Horizontal CSV: {missing}")
@@ -81,7 +81,9 @@ def create_horizontal_page(data_file: str, page_title: str):
             symbol = str(row.get('Symbol', 'Unknown'))
             interval = str(row.get('Interval', 'Daily'))
             latest_horizontal = row.get('Latest Horizontal', None)
-            current_price = row.get('Current Price', None)
+            current_price = row.get('Today\'s Price', None)
+            if current_price is None:
+                current_price = row.get('Current Price', None)  # Fallback for old data
             difference = row.get('Difference (%)', None)
             
             # Create expandable card with title format similar to other strategy cards
@@ -112,7 +114,7 @@ def create_horizontal_page(data_file: str, page_title: str):
                 with col2:
                     st.markdown("**📊 Price Information**")
                     if current_price is not None:
-                        st.write(f"**Current Price:** {current_price}")
+                        st.write(f"**Today's Price:** {current_price}")
                     if difference is not None and difference != "":
                         # Color code the difference
                         try:

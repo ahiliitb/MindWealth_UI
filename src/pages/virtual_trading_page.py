@@ -244,8 +244,15 @@ def display_interval_tabs(df, position_name, trade_status):
                     lambda x: f"${x:.4f}" if pd.notna(x) and str(x).strip() else "N/A"
                 )
             
-            if 'Current Price' in display_df.columns:
-                display_df['Current Price'] = display_df['Current Price'].apply(
+            # Support both old and new column names
+            if 'Today\\'s Price' in display_df.columns:
+                display_df['Today\\'s Price'] = display_df['Today\\'s Price'].apply(
+                    lambda x: f\"${x:.4f}\" if pd.notna(x) and str(x).strip() else \"N/A\"
+                )
+            elif 'Current Price' in display_df.columns:
+                # Rename old column to new name
+                display_df.rename(columns={'Current Price': 'Today\\'s Price'}, inplace=True)
+                display_df['Today\\'s Price'] = display_df['Today\\'s Price'].apply(
                     lambda x: f"${x:.4f}" if pd.notna(x) and str(x).strip() else "N/A"
                 )
             

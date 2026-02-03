@@ -794,7 +794,7 @@ def get_latest_price_from_stock_data(symbol, stock_data_dir=None):
 
 def parse_current_price_column(value):
     """
-    Parse the "Current Trading Date/Price[$], Current Price vs Signal" column.
+    Parse the "Today's Trading Date/Price[$], Today's Price vs Signal" column.
     
     Example: "2025-11-18 (Price: 401.25), 0.0% below"
     Returns: (date, price, percentage_change) or (None, None, None)
@@ -828,13 +828,13 @@ def parse_current_price_column(value):
         return date, price, percentage
         
     except Exception as e:
-        print(f"  ⚠ Error parsing current price: {value} - {e}")
+        print(f"  ⚠ Error parsing today's price: {value} - {e}")
         return None, None, None
 
 
 def calculate_price_change_percentage(current_price, signal_price):
     """
-    Calculate percentage change between current price and signal price.
+    Calculate percentage change between today's price and signal price.
     
     Args:
         current_price: Current/live price
@@ -991,11 +991,11 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
 
 def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None):
     """
-    Update current prices in consolidated CSV files using live prices from stock_data.
+    Update today's prices in consolidated CSV files using live prices from stock_data.
     
     This function:
     1. Reads consolidated CSV files (entry.csv, exit.csv, portfolio_target_achieved.csv)
-    2. For each file, extracts symbols and updates "Current Trading Date/Price[$], Current Price vs Signal" column
+    2. For each file, extracts symbols and updates "Today's Trading Date/Price[$], Today's Price vs Signal" column
     3. Uses the latest price from stock_data CSV files
     
     Args:
@@ -1008,7 +1008,7 @@ def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None)
         stock_data_dir = str(STOCK_DATA_DIR)
     
     print("\n" + "="*80)
-    print("UPDATING CURRENT PRICES FROM LIVE STOCK DATA")
+    print("UPDATING TODAY'S PRICES FROM LIVE STOCK DATA")
     print("="*80 + "\n")
     
     data_base = Path(data_base_dir)
@@ -1029,8 +1029,8 @@ def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None)
         'portfolio_target_achieved': (data_base / 'portfolio_target_achieved.csv', 'Portfolio Target Achieved')
     }
     
-    # Column name for current price
-    current_price_column = "Current Trading Date/Price[$], Current Price vs Signal"
+    # Column name for today's price
+    current_price_column = "Today's Trading Date/Price[$], Today's Price vs Signal"
     
     updated_count = 0
     skipped_count = 0
@@ -1052,19 +1052,19 @@ def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None)
                 print(f"  ℹ File is empty, skipping")
                 continue
             
-            # Check if the current price column exists
+            # Check if today's price column exists
             if current_price_column not in df.columns:
                 # Try case-insensitive search
                 found_column = None
                 for col in df.columns:
-                    if "Current Trading Date" in col and "Current Price" in col:
+                    if "Trading Date" in col and "Price vs Signal" in col:
                         found_column = col
                         break
                 
                 if found_column:
                     current_price_column_actual = found_column
                 else:
-                    print(f"  ⚠ Current price column not found, skipping")
+                    print(f"  ⚠ Today's price column not found, skipping")
                     skipped_count += 1
                     continue
             else:
@@ -1108,7 +1108,7 @@ def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None)
                 else:
                     price_change_str = "0.0% below"
                 
-                # Update the current price column
+                # Update today's price column
                 new_current_price_value = f"{latest_date} (Price: {latest_price:.4f}), {price_change_str}"
                 df.at[idx, current_price_column_actual] = new_current_price_value
                 rows_updated_in_file += 1
@@ -1329,9 +1329,9 @@ def main():
     else:
         print(f"⚠ No Claude report files found (pattern: *_claude_signals_report.txt)")
     
-    # Update current prices in all chatbot data files using live prices from stock_data
+    # Update today's prices in all chatbot data files using live prices from stock_data
     print("\n" + "-" * 80)
-    print("Updating current prices from live stock data")
+    print("Updating today's prices from live stock data")
     print("-" * 80)
     update_current_prices_in_data_files(
         data_base_dir=str(CHATBOT_DATA_DIR),
@@ -1347,7 +1347,7 @@ def main():
     print("  - chatbot/data/portfolio_target_achieved.csv (target achievements)")
     print("  - chatbot/data/breadth.csv (market breadth)")
     print("  - chatbot/data/claude_report.txt (Claude signals analysis)")
-    print("\n✓ Current prices updated from live stock data")
+    print("\n✓ Today's prices updated from live stock data")
     print()
 
 
