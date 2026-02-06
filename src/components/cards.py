@@ -209,7 +209,7 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                 chart_enabled_pages = [
                     "Band Matrix", "DeltaDrift", "Fractal Track", "BaselineDiverge",
                     "Altitude Alpha", "Oscillator Delta", "SigmaShell", "PulseGauge",
-                    "TrendPulse", "Outstanding Signals", "Outstanding Signals Exit", "New Signals"
+                    "TrendPulse", "Outstanding Signals", "Outstanding Signals Exit", "New Signals", "Claude Signals"
                 ]
                 
                 # Create unique identifier for buttons (needed for both chart and add to monitored)
@@ -327,8 +327,8 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                     if page_name == 'Outstanding Signals Exit':
                         # Fetch original signal data and display chart with exit marker
                         create_outstanding_exit_signal_chart(row, raw_data)
-                    elif page_name in ['Outstanding Signals', 'New Signals']:
-                        # For New Signals and Outstanding Signals, fetch original data from function CSVs
+                    elif page_name in ['Outstanding Signals', 'New Signals', 'Claude Signals']:
+                        # For New Signals, Outstanding Signals, and Claude Signals, fetch original data from function CSVs
                         create_outstanding_signal_chart(row, raw_data)
                     elif page_name == 'Oscillator Delta':
                         # Divergence chart with divergence line

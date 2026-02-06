@@ -89,12 +89,13 @@ def load_stock_data_file(symbol, start_date, end_date, interval='Daily'):
     import os
     
     # Map interval to pandas frequency
+    # Note: Using 'ME' (month end) instead of deprecated 'M' for pandas 2.2+
     INTERVAL_LETTER_DICT = {
         'Daily': 'D',
         'Weekly': 'W',
-        'Monthly': 'M',
-        'Quarterly': 'Q',
-        'Yearly': 'Y'
+        'Monthly': 'ME',
+        'Quarterly': 'QE',
+        'Yearly': 'YE'
     }
     
     # Construct the file path - now using CSV files
