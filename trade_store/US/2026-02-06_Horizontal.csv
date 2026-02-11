@@ -1,4 +1,4 @@
-Symbol,Interval,Latest Horizontal,Today's price,Difference (%),Type
+Symbol,Interval,Latest Horizontal,Today price,Difference (%),Type
 NZDUSD=X,Daily,0.6059,0.6016,0.71,Resistance
 NZDCAD=X,Weekly,0.8305,0.8196,1.31,Resistance
 NZDCAD=X,Daily,0.8068,0.8196,1.58,Resistance

@@ -175,6 +175,9 @@ def create_breadth_page(data_file, page_title):
     
     if csv_data:
         original_df = pd.DataFrame(csv_data)
+        # Exclude Signal Open Price - backend deduplication only, never display
+        if 'Signal Open Price' in original_df.columns:
+            original_df = original_df.drop(columns=['Signal Open Price'])
         
         # Display with better formatting and autosize for ALL columns
         st.dataframe(

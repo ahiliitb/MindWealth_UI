@@ -25,14 +25,14 @@ def create_horizontal_page(data_file: str, page_title: str):
             
             ### Why is it used?
             - **Level Identification**: Identify key horizontal support/resistance levels
-            - **Price Comparison**: Compare today's price with identified horizontal levels
+            - **Price Comparison**: Compare today price with identified horizontal levels
             - **Technical Analysis**: Use horizontal levels for entry/exit decisions
             - **Chart Visualization**: View interactive charts with horizontal level overlays
             
             ### How to use?
             1. **Browse Cards**: Scroll through strategy cards showing horizontal levels for each symbol
             2. **View Charts**: Click "📊 View Interactive Chart" to see candlestick chart with horizontal line
-            3. **Check Difference**: Review the percentage difference between today's price and horizontal level
+            3. **Check Difference**: Review the percentage difference between today price and horizontal level
             4. **Analyze Status**: See if price is above or below the horizontal level
             5. **Compare Intervals**: Analyze horizontal levels across different time intervals
             
@@ -114,7 +114,7 @@ def create_horizontal_page(data_file: str, page_title: str):
                 with col2:
                     st.markdown("**📊 Price Information**")
                     if current_price is not None:
-                        st.write(f"**Today's Price:** {current_price}")
+                        st.write(f"**Today Price:** {current_price}")
                     if difference is not None and difference != "":
                         # Color code the difference
                         try:
@@ -141,16 +141,18 @@ def create_horizontal_page(data_file: str, page_title: str):
 
     st.markdown("---")
     st.markdown("### 📋 Detailed Data Table (Original CSV)")
+    # Exclude Signal Open Price - backend deduplication only, never display
+    display_df = df.drop(columns=['Signal Open Price']) if 'Signal Open Price' in df.columns else df
     # Ensure ALL columns get autosize (no width parameter = autosize)
     st.dataframe(
-        df, 
+        display_df, 
         use_container_width=True, 
         height=600,
         column_config={
             col: st.column_config.Column(
                 col
                 # No width parameter = autosize
-            ) for col in df.columns
+            ) for col in display_df.columns
         }
     )
 

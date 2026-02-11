@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Script to update column names from "Current" to "Today's" in all CSV and JSON files.
+Script to update column names from "Current" to "Today" in all CSV and JSON files.
 Updates:
-- "Current Trading Date/Price[$], Current Price vs Signal" -> "Today's Trading Date/Price[$], Today's Price vs Signal"
-- "Trading Days between Signal and Current Date" -> "Trading Days between Signal and Today's Date"
-- "Current Price" -> "Today's Price"
+- "Current Trading Date/Price[$], Current Price vs Signal" -> "Today Trading Date/Price[$], Today Price vs Signal"
+- "Trading Days between Signal and Current Date" -> "Trading Days between Signal and Today Date"
+- "Current Price" -> "Today Price"
 """
 
 import os
@@ -27,11 +27,11 @@ def update_csv_file(file_path):
         original_content = content
         content = content.replace(
             "Current Trading Date/Price[$], Current Price vs Signal",
-            "Today's Trading Date/Price[$], Today's Price vs Signal"
+            "Today Trading Date/Price[$], Today Price vs Signal"
         )
         content = content.replace(
             "Trading Days between Signal and Current Date",
-            "Trading Days between Signal and Today's Date"
+            "Trading Days between Signal and Today Date"
         )
         # Only replace "Current Price" if it's a column header (followed by comma or end of line)
         # and not part of the longer column name
@@ -67,11 +67,11 @@ def update_json_file(file_path):
         original_content = content
         content = content.replace(
             "Current Trading Date/Price[$], Current Price vs Signal",
-            "Today's Trading Date/Price[$], Today's Price vs Signal"
+            "Today Trading Date/Price[$], Today Price vs Signal"
         )
         content = content.replace(
             "Trading Days between Signal and Current Date",
-            "Trading Days between Signal and Today's Date"
+            "Trading Days between Signal and Today Date"
         )
         
         # Write back if changed

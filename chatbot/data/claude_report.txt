@@ -66,7 +66,7 @@ All Tier A signals include:
 # TRADER-READY SIGNAL REPORT
 
 **ANALYSIS_DATE: 2026-02-06**  
-*Determination: Derived from "Today's Trading Date/Price[$]" field consistently appearing as 2026-02-06 across all parallel processing results.*
+*Determination: Derived from "Today Trading Date/Price[$]" field consistently appearing as 2026-02-06 across all parallel processing results.*
 
 ---
 
@@ -119,7 +119,7 @@ Bundles ranked by:
 #### **Row: GS/Long/BAND MATRIX/Daily**
 
 - **Signal Date & Price:** 2026-02-05, $890.41
-- **Today's Price:** 2026-02-05, $890.41 (0% change, fresh signal)
+- **Today Price:** 2026-02-05, $890.41 (0% change, fresh signal)
 - **Timeliness:** 0 days elapsed, PASSED (fresh)
 - **Entry Anchor:** $890.41 signal / $901.67 open
 - **Targets:** T1 $968.68 (+8.8%), T2 $1040.62 (+16.9%), Function $1004.65
@@ -136,7 +136,7 @@ Bundles ranked by:
 #### **Row: GS/Long/TRENDPULSE/Monthly (January 2026)**
 
 - **Signal Date & Price:** 2026-01-31, $935.41
-- **Today's Price:** 2026-02-05, $890.41 (-4.81% pullback from signal)
+- **Today Price:** 2026-02-05, $890.41 (-4.81% pullback from signal)
 - **Timeliness:** 6 days elapsed, PASSED (fresh; negative progress = pullback, not lateness)
 - **Entry Anchor:** $935.41 signal / $884.0 open / $935.41 confirmed
 - **Targets:** T1 $1116.97 (+25.4% from current), T2 $1157.48
@@ -170,7 +170,7 @@ Bundles ranked by:
 #### **Row: TSM/Long/FRACTAL TRACK/Daily**
 
 - **Signal Date & Price:** 2026-02-02, $341.36
-- **Today's Price:** 2026-02-06, $344.90 (+1.04%)
+- **Today Price:** 2026-02-06, $344.90 (+1.04%)
 - **Timeliness:** 4 days, PASSED (4.09% above track level $331.33, substantial upside to targets)
 - **Entry Anchor:** Track Level $331.33 (23.66% retracement), Signal $341.36, Open $330.76
 - **Targets:** T1 $372.46 (+7.99%), T2 $380.62 (+10.35%), Function $392.07 (+13.68%)
@@ -190,7 +190,7 @@ Bundles ranked by:
 #### **Row: META/Long/FRACTAL TRACK/Weekly**
 
 - **Signal Date & Price:** 2026-02-06, $670.21
-- **Today's Price:** 2026-02-06, $670.21 (0% change, fresh)
+- **Today Price:** 2026-02-06, $670.21 (0% change, fresh)
 - **Timeliness:** 0 days, PASSED (fresh signal)
 - **Entry Anchor:** Signal $670.21, Open $714.37 (note: signal below open, potential intraday timing)
 - **Targets:** T1 $833.34 (+24.3%), T2 $785.69 (+17.2%), Function $1134.36
@@ -210,7 +210,7 @@ Bundles ranked by:
 #### **Row: MCD/Long/TRENDPULSE/Weekly**
 
 - **Signal Date & Price:** 2026-02-06, $323.48
-- **Today's Price:** 2026-02-05, $323.48 (0% change)
+- **Today Price:** 2026-02-05, $323.48 (0% change)
 - **Timeliness:** 0 days, PASSED
 - **Entry Anchor:** Signal $323.48, Open $319.0
 - **Targets:** T1 $345.06 (+6.7%), T2 $339.43 (+4.9%)
@@ -230,7 +230,7 @@ Bundles ranked by:
 #### **Row: ETH-USD/Long/DELTADRIFT/Daily**
 
 - **Signal Date & Price:** 2026-02-06, $1978.07
-- **Today's Price:** 2026-02-06, $1978.07 (0% change, fresh)
+- **Today Price:** 2026-02-06, $1978.07 (0% change, fresh)
 - **Timeliness:** 0 days, PASSED
 - **Entry Anchor:** Signal $1978.07, Open $1823.20
 - **Targets:** T1 $2100.51 (+6.2%), T2 $2199.61 (+11.2%), Function $2150.06
@@ -250,7 +250,7 @@ Bundles ranked by:
 #### **Row: ^NZ50/Long/FRACTAL TRACK/Daily**
 
 - **Signal Date & Price:** 2026-02-03, $13,421.52
-- **Today's Price:** 2026-02-05, $13,444.02 (+0.17%)
+- **Today Price:** 2026-02-05, $13,444.02 (+0.17%)
 - **Timeliness:** 2 days, PASSED (very fresh, 3.15% above track level $13,033.31)
 - **Entry Anchor:** Track Level $13,033.31 (23.66% retracement), Signal $13,421.52, Open $13,412.44
 - **Targets:** T1 $13,667.13 (+1.66%), T2 $14,150.31 (+5.25%), Function $15,258.55 (+13.50%)
@@ -270,7 +270,7 @@ Bundles ranked by:
 #### **Row: CNR.TO/Long/BAND MATRIX/Daily**
 
 - **Signal Date & Price:** 2026-02-02, $130.79 CAD
-- **Today's Price:** 2026-02-06, $137.72 CAD (+5.3%)
+- **Today Price:** 2026-02-06, $137.72 CAD (+5.3%)
 - **Timeliness:** 4 days, PASSED (but near Function Target $139.23, 1.1% away)
 - **Entry Anchor:** Signal $130.79, Open $137.00
 - **Targets:** T1 $136.49 (exceeded), T2 $141.96 (+3.08%), Function $139.23 (+1.10% **NEAR**)
@@ -290,7 +290,7 @@ Bundles ranked by:
 #### **Row: DOL.TO/Long/OSCILLATOR DELTA/Daily**
 
 - **Signal Date & Price:** 2026-02-02, $187.00 CAD
-- **Today's Price:** 2026-02-06, $193.05 CAD (+3.24%)
+- **Today Price:** 2026-02-06, $193.05 CAD (+3.24%)
 - **Timeliness:** 4 days, PASSED (approaching T1 $201.31, 4.28% away)
 - **Entry Anchor:** Signal $187.00, Open $185.16
 - **Targets:** T1 $201.31 (+4.28%), T2 $206.28 (+6.85%), Function $203.83 (+5.58%), Horizontal $197.56 (+2.34% **NEAR**)
@@ -310,7 +310,7 @@ Bundles ranked by:
 #### **Row: CAD=X/Long/DELTADRIFT/Daily**
 
 - **Signal Date & Price:** 2026-02-02, $1.3636
-- **Today's Price:** 2026-02-06, $1.3629 (-0.05%, essentially flat)
+- **Today Price:** 2026-02-06, $1.3629 (-0.05%, essentially flat)
 - **Timeliness:** 4 days, PASSED (minimal progress, avg hold 13 days)
 - **Entry Anchor:** Signal $1.3636, Open $1.3636
 - **Targets:** T1 $1.3856 (+1.67%), T2 $1.3811 (+1.34%), Function $1.38
@@ -331,7 +331,7 @@ Bundles ranked by:
 
 - **Signal Date & Price:** 2026-01-09, $33.10
 - **Exit Triggered:** 2026-02-05, $33.99
-- **Today's Price:** 2026-02-06, $34.085 (+2.98%)
+- **Today Price:** 2026-02-06, $34.085 (+2.98%)
 - **Timeliness:** 28 days, but EXIT triggered (profit-taking mode)
 - **Entry Anchor:** Signal $33.10, Open $33.10
 - **Targets:** T1 $35.68 (+4.9%), T2 $34.29 (+0.6% **NEAR**), Function $34.99 (+2.7%)
@@ -351,7 +351,7 @@ Bundles ranked by:
 #### **Row: UPS/Long/TRENDPULSE/Daily**
 
 - **Signal Date & Price:** 2026-02-05, $116.55
-- **Today's Price:** 2026-02-05, $116.55 (0% change, fresh)
+- **Today Price:** 2026-02-05, $116.55 (0% change, fresh)
 - **Timeliness:** 0 days, PASSED
 - **Entry Anchor:** Signal $116.55, Open $116.0
 - **Targets:** T1 $118.87 (+2%), T2 $120.76 (+3.6%)

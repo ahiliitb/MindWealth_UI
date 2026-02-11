@@ -11,16 +11,9 @@ def parse_signal_csv(df, function_name):
     processed_data = []
 
     for _, row in df.iterrows():
-        # Check if 'Signal Open Price' column exists and has a valid value
-        signal_open_price = row.get('Signal Open Price', '')
-        if signal_open_price and str(signal_open_price).strip():
-            try:
-                signal_price = float(str(signal_open_price).strip())
-            except:
-                signal_price = 0
-        else:
-            # Fallback to parsing from the complex string
-            signal_price = 0
+        # Signal Price: ALWAYS from Symbol, Signal, Signal Date/Price[$] (Price: X)
+        # Signal Open Price is for backend deduplication only - never used for display
+        signal_price = 0
 
         # Parse symbol and signal info
         symbol_info = row.get('Symbol, Signal, Signal Date/Price[$]', '')
@@ -30,12 +23,10 @@ def parse_signal_csv(df, function_name):
             symbol = symbol_match.group(1).strip()
             signal_type = symbol_match.group(2).strip()
             signal_date = symbol_match.group(3).strip()
-            # Use the extracted signal_price if not already set from Signal Open Price column
-            if signal_price == 0:
-                try:
-                    signal_price = float(symbol_match.group(4).strip())
-                except:
-                    signal_price = 0
+            try:
+                signal_price = float(symbol_match.group(4).strip())
+            except:
+                signal_price = 0
         else:
             symbol, signal_type, signal_date = "Unknown", "Unknown", "Unknown"
         
@@ -124,16 +115,9 @@ def parse_detailed_signal_csv(df):
 
     for idx, row in df.iterrows():
         try:
-            # Check if 'Signal Open Price' column exists and has a valid value
-            signal_open_price = row.get('Signal Open Price', '')
-            if signal_open_price and str(signal_open_price).strip():
-                try:
-                    signal_price = float(str(signal_open_price).strip())
-                except:
-                    signal_price = 0
-            else:
-                # Fallback to parsing from the complex string
-                signal_price = 0
+            # Signal Price: ALWAYS from Symbol, Signal, Signal Date/Price[$] (Price: X)
+            # Signal Open Price is for backend deduplication only - never used for display
+            signal_price = 0
 
             # Parse symbol and signal info
             symbol_info = row.get('Symbol, Signal, Signal Date/Price[$]', '')
@@ -143,12 +127,10 @@ def parse_detailed_signal_csv(df):
                 symbol = symbol_match.group(1).strip()
                 signal_type = symbol_match.group(2).strip()
                 signal_date = symbol_match.group(3).strip()
-                # Use the extracted signal_price if not already set from Signal Open Price column
-                if signal_price == 0:
-                    try:
-                        signal_price = float(symbol_match.group(4).strip())
-                    except:
-                        signal_price = 0
+                try:
+                    signal_price = float(symbol_match.group(4).strip())
+                except:
+                    signal_price = 0
             else:
                 # Fallback: try to extract symbol from the beginning of the string
                 parts = str(symbol_info).split(',')
@@ -159,9 +141,11 @@ def parse_detailed_signal_csv(df):
                     date_match = re.search(r'([0-9]{4}-[0-9]{2}-[0-9]{2})', str(symbol_info))
                     signal_date = date_match.group(1) if date_match else "Unknown"
                     price_match = re.search(r'Price:\s*([0-9.]+)', str(symbol_info))
-                    # Use the extracted signal_price if not already set from Signal Open Price column
-                    if signal_price == 0:
-                        signal_price = float(price_match.group(1)) if price_match else 0
+                    if price_match:
+                        try:
+                            signal_price = float(price_match.group(1))
+                        except:
+                            signal_price = 0
                 else:
                     symbol, signal_type, signal_date = "Unknown", "Unknown", "Unknown"
             

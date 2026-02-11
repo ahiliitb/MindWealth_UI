@@ -192,6 +192,9 @@ def apply_table_styling():
 
 def display_styled_dataframe(df, height=400, key_suffix=""):
     """Display dataframe with enhanced styling and larger fonts."""
+    # Exclude Signal Open Price - backend deduplication only, never display
+    if not df.empty and 'Signal Open Price' in df.columns:
+        df = df.drop(columns=['Signal Open Price'])
     # Reorder columns: Symbol/Signal first, Exit Signal second, Function third
     from ..utils.helpers import reorder_dataframe_columns, find_column_by_keywords
     df = reorder_dataframe_columns(df)

@@ -47,16 +47,9 @@ def parse_sentiment(df):
     processed_data = []
 
     for _, row in df.iterrows():
-        # Check if 'Signal Open Price' column exists and has a valid value
-        signal_open_price = row.get('Signal Open Price', '')
-        if signal_open_price and str(signal_open_price).strip():
-            try:
-                signal_price = float(str(signal_open_price).strip())
-            except:
-                signal_price = 0
-        else:
-            # Fallback to parsing from the complex string
-            signal_price = 0
+        # Signal Price: ALWAYS from Symbol, Signal, Signal Date/Price[$] (Price: X)
+        # Signal Open Price is for backend deduplication only - never used for display
+        signal_price = 0
 
         # Parse symbol and signal info - handle quoted first column
         symbol_info = row.get('Symbol, Signal, Signal Date/Price[$]', '')
@@ -68,12 +61,10 @@ def parse_sentiment(df):
             symbol = symbol_match.group(1).strip()
             signal_type = symbol_match.group(2).strip()
             signal_date = symbol_match.group(3).strip()
-            # Use the extracted signal_price if not already set from Signal Open Price column
-            if signal_price == 0:
-                try:
-                    signal_price = float(symbol_match.group(4).strip())
-                except:
-                    signal_price = 0
+            try:
+                signal_price = float(symbol_match.group(4).strip())
+            except:
+                signal_price = 0
         else:
             symbol, signal_type, signal_date = "Unknown", "Unknown", "Unknown"
         

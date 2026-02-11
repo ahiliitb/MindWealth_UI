@@ -52,16 +52,46 @@ def create_summary_cards(df):
         """, unsafe_allow_html=True)
 
 
+def _filter_df_by_asset_search(df, search_query):
+    """Filter dataframe by asset/symbol name. Returns filtered df."""
+    if not search_query or not search_query.strip():
+        return df
+    search_lower = search_query.strip().lower()
+    if 'Symbol' in df.columns:
+        mask = df['Symbol'].astype(str).str.lower().str.contains(search_lower, na=False)
+        return df[mask].copy()
+    if 'Symbol, Signal, Signal Date/Price[$]' in df.columns:
+        def _extract_symbol(val):
+            if pd.isna(val): return ""
+            s = str(val).strip()
+            return s.split(',')[0].strip().lower() if ',' in s else s.lower()
+        mask = df['Symbol, Signal, Signal Date/Price[$]'].apply(
+            lambda x: search_lower in _extract_symbol(x)
+        )
+        return df[mask].copy()
+    return df
+
+
 def create_strategy_cards(df, page_name="Unknown", tab_context=""):
-    """Create individual strategy cards with pagination for large datasets"""
+    """Create individual strategy cards with pagination for large datasets. Returns filtered df for use in detail table."""
+    # Search box - filter by asset name
+    search_key = f"asset_search_{page_name}_{tab_context}".replace(" ", "_")
+    search_query = st.text_input(
+        "🔍 Search by asset name",
+        key=search_key,
+        placeholder="Type asset symbol to filter cards and table...",
+        help="Filter strategy cards and detail table by asset/symbol name"
+    )
+    filtered_df = _filter_df_by_asset_search(df, search_query)
+
     st.markdown("### 📊 Strategy Performance Cards")
     st.markdown("Click on any card to see important trade details")
     
-    total_signals = len(df)
+    total_signals = len(filtered_df)
     
     if total_signals == 0:
         st.warning("No signals match the current filters.")
-        return
+        return filtered_df
     # Display total count
     st.markdown(f"**Total Signals: {total_signals}**")
     
@@ -72,7 +102,7 @@ def create_strategy_cards(df, page_name="Unknown", tab_context=""):
     # Create tabs for pagination - always use tabs instead of dropdown
     if total_signals <= cards_per_page:
         # If all signals fit in one page, just display them
-        display_strategy_cards_page(df, page_name, tab_context)
+        display_strategy_cards_page(filtered_df, page_name, tab_context)
     else:
         # Generate tab labels
         tab_labels = []
@@ -88,12 +118,14 @@ def create_strategy_cards(df, page_name="Unknown", tab_context=""):
             with tab:
                 start_idx = i * cards_per_page
                 end_idx = min((i + 1) * cards_per_page, total_signals)
-                page_df = df.iloc[start_idx:end_idx]
+                page_df = filtered_df.iloc[start_idx:end_idx]
                 st.markdown(f"**Showing signals {start_idx + 1} to {end_idx} of {total_signals}**")
                 # Add pagination context to make keys unique across pagination tabs
                 pagination_context = f"{tab_context}_page{i}"
 
                 display_strategy_cards_page(page_df, page_name, pagination_context)
+
+    return filtered_df
 
 
 def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
@@ -442,9 +474,9 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                     
                     # Handle current status (skip Current MTM for portfolio pages)
                     if 'Current_Date' in row and row['Current_Date'] != 'Unknown':
-                        st.write(f"**Today's Date:** {row['Current_Date']}")
+                        st.write(f"**Today Date:** {row['Current_Date']}")
                         if 'Current_Price' in row and pd.notna(row.get('Current_Price')) and row['Current_Price'] != 0:
-                            st.write(f"**Today's Price:** ${row['Current_Price']:.4f}")
+                            st.write(f"**Today Price:** ${row['Current_Price']:.4f}")
                     else:
                         if not is_portfolio_page:
                             st.write(f"**Current MTM:** {raw_data.get('Current Mark to Market and Holding Period', 'N/A')}")

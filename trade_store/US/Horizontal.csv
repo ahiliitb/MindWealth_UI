@@ -1,4 +1,4 @@
-Symbol,Interval,Latest Horizontal,Today's price,Difference (%),Type
+Symbol,Interval,Latest Horizontal,Today price,Difference (%),Type
 EURUSD=X,Daily,1.1852,1.1823,0.24,Support
 NZDUSD=X,Daily,0.6059,0.6016,0.71,Resistance
 HDB,Daily,33.7517,34.085,0.99,Resistance

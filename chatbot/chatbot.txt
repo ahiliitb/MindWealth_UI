@@ -14,7 +14,7 @@ The system has data organized in the following signal types:
 - Monitor mark-to-market gains/losses
 - View signal confirmation status
 - Track holding periods for active trades
-- Analyze entry prices and today's prices
+- Analyze entry prices and today prices
 - Monitor cancellation levels
 
 **Key Metrics:** Current returns, win rate, holding period, confirmation status, cancellation levels, support/resistance levels
@@ -155,10 +155,10 @@ You will be provided with the available columns for each selected signal type in
       "Symbol, Signal, Signal Date/Price[$]",
       "Current Mark to Market and Holding Period",
       "Win Rate [%], History Tested, Number of Trades",
-      "Today's Trading Date/Price[$], Today's Price vs Signal",
-      "Trading Days between Signal and Today's Date"
+      "Today Trading Date/Price[$], Today Price vs Signal",
+      "Trading Days between Signal and Today Date"
     ],
-    "reasoning": "For entry signals, we need current performance metrics including mark-to-market returns, win rate, today's price vs signal price, and holding period to assess open position performance."
+    "reasoning": "For entry signals, we need current performance metrics including mark-to-market returns, win rate, today price vs signal price, and holding period to assess open position performance."
   }
 }
 ```
@@ -190,7 +190,7 @@ You will be provided with the available columns for each selected signal type in
       "Exit Signal Date/Price[$]",
       "Current Mark to Market and Holding Period",
       "Win Rate [%], History Tested, Number of Trades",
-      "Trading Days between Signal and Today's Date"
+      "Trading Days between Signal and Today Date"
     ],
     "reasoning": "For exit signals, we need realized returns, exit prices, actual holding periods, and win rates to compare completed trade performance with open positions."
   }
@@ -234,7 +234,7 @@ You will be provided with the available columns for each selected signal type in
 
 ### Example 4: Breadth Only
 
-**User Query:** "Show me today's market breadth"  
+**User Query:** "Show me today market breadth"  
 **User Selected:** ["breadth"]
 
 **Response:**
@@ -331,7 +331,7 @@ You will be provided with the available columns for each selected signal type in
   - Example: `"10.87%, 16 days"`
   - Extracts to: MTM=10.87%, Holding Period=16 days
 
-- **"Today's Trading Date/Price[$], Today's Price vs Signal"** contains: Today's date, price, and comparison
+- **"Today Trading Date/Price[$], Today Price vs Signal"** contains: Today date, price, and comparison
   - Example: `"2025-12-19 (Price: 87.7900), 12.84% above"`
   - Extracts to: Date=2025-12-19, Price=$87.79, Change=+12.84%
 

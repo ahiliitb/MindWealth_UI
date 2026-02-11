@@ -206,7 +206,7 @@ def get_latest_price_from_stock_data(symbol: str) -> Tuple[Optional[float], Opti
 
 
 def calculate_price_change_percentage(current_price, signal_price, signal_type):
-    """Calculate percentage change between today's price and signal price"""
+    """Calculate percentage change between today price and signal price"""
     if not current_price or not signal_price or signal_price == 0:
         return "0.0% below"
     
@@ -254,7 +254,7 @@ def calculate_mark_to_market(current_price, signal_price, signal_type):
 
 
 def update_monitored_trades_prices() -> bool:
-    """Update today's prices for all monitored trades and update Raw_Data"""
+    """Update today prices for all monitored trades and update Raw_Data"""
     df = load_monitored_trades()
     
     if df.empty:
@@ -295,8 +295,8 @@ def update_monitored_trades_prices() -> bool:
                     # Calculate price change percentage
                     price_change_str = calculate_price_change_percentage(current_price, signal_price, signal_type)
                     
-                    # Update "Today's Trading Date/Price[$], Today's Price vs Signal" column
-                    current_price_col = "Today's Trading Date/Price[$], Today's Price vs Signal"
+                    # Update "Today Trading Date/Price[$], Today Price vs Signal" column
+                    current_price_col = "Today Trading Date/Price[$], Today Price vs Signal"
                     raw_data[current_price_col] = f"{current_date} (Price: {current_price:.4f}), {price_change_str}"
                     
                     # Calculate holding period
@@ -309,8 +309,8 @@ def update_monitored_trades_prices() -> bool:
                     mtm_col = "Current Mark to Market and Holding Period"
                     raw_data[mtm_col] = f"{mtm_pct}, {holding_days} days"
                     
-                    # Update "Trading Days between Signal and Today's Date" column
-                    trading_days_col = "Trading Days between Signal and Today's Date"
+                    # Update "Trading Days between Signal and Today Date" column
+                    trading_days_col = "Trading Days between Signal and Today Date"
                     raw_data[trading_days_col] = f"{holding_days} days"
                     
                     # Save updated Raw_Data back
@@ -430,7 +430,7 @@ def check_exit_signals_in_outstanding(df: pd.DataFrame, outstanding_df: pd.DataF
                             exit_col = "Exit Signal Date/Price[$]"
                             raw_data[exit_col] = f"{exit_date} (Price: {exit_price:.4f})"
                             
-                            # Update today's price to exit price for closed trades
+                            # Update today price to exit price for closed trades
                             signal_price = df.at[idx, 'Signal_Price'] if 'Signal_Price' in df.columns else monitored_row.get('Signal_Price', 0)
                             signal_type = df.at[idx, 'Signal_Type'] if 'Signal_Type' in df.columns else monitored_row.get('Signal_Type', 'Long')
                             signal_date = df.at[idx, 'Signal_Date'] if 'Signal_Date' in df.columns else monitored_row.get('Signal_Date', '')
@@ -450,8 +450,8 @@ def check_exit_signals_in_outstanding(df: pd.DataFrame, outstanding_df: pd.DataF
                             current_price_col = "Current Trading Date/Price[$], Current Price vs Signal"
                             raw_data[current_price_col] = f"{exit_date} (Price: {exit_price:.4f}), {price_change_str}"
                             
-                            # Update "Trading Days between Signal and Today's Date" column (use exit date as current)
-                            trading_days_col = "Trading Days between Signal and Today's Date"
+                            # Update "Trading Days between Signal and Today Date" column (use exit date as current)
+                            trading_days_col = "Trading Days between Signal and Today Date"
                             raw_data[trading_days_col] = f"{holding_days} days"
                             
                             # Save updated Raw_Data back

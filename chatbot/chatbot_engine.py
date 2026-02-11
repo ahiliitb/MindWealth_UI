@@ -650,7 +650,7 @@ Please answer the user's query based on the comprehensive analysis report above.
             logger.info("="*60)
 
             # Standard no-data message used by UI when there are no rows
-            NO_DATA_MESSAGE = "No Data for Choosen Date Range, Please change range and try again"
+            NO_DATA_MESSAGE = "No Signal for Choosen Date Range, Please change range and try again"
 
             # STAGE 1: UNIFIED EXTRACTION - Extract everything in ONE GPT call
             logger.info("STAGE 1: Using unified extractor (single GPT call for all extractions)...")

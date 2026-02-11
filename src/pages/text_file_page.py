@@ -173,15 +173,27 @@ def create_text_file_page():
             create_summary_cards(parsed_df)
             st.markdown("---")
         
-        # Strategy cards with function-specific column logic
-        create_strategy_cards(parsed_df, page_name="Claude Signals", tab_context="claude_signals")
+        # Strategy cards with function-specific column logic (with search)
+        search_filtered_parsed_df = create_strategy_cards(parsed_df, page_name="Claude Signals", tab_context="claude_signals")
         st.markdown("---")
         
-        # Detail table - exclude function-specific columns (same logic as other pages)
+        # Detail table - exclude function-specific columns (uses search-filtered data)
         st.markdown("### 📋 Detailed Data Table (Original CSV Format)")
         
+        # Build table from search-filtered parsed data's Raw_Data
+        csv_data = []
+        for _, row in search_filtered_parsed_df.iterrows():
+            if 'Raw_Data' in row and pd.notna(row.get('Raw_Data')):
+                raw_data = row['Raw_Data']
+                csv_data.append(raw_data if isinstance(raw_data, dict) else {})
+            else:
+                csv_data.append({})
+        original_df = pd.DataFrame(csv_data) if csv_data else pd.DataFrame()
+        
         # Columns to exclude from detail table (only show in strategy cards if not "No Information")
+        # Signal Open Price: backend deduplication only - never display
         columns_to_exclude = [
+            'Signal Open Price',
             'Sigmashell, Success Rate of Past Analysis [%]',
             'Divergence observed with, Signal Type',
             'Maxima Broken Date/Price[$]',
@@ -191,37 +203,40 @@ def create_text_file_page():
         ]
         
         # Remove excluded columns if they exist
-        columns_to_display = [col for col in raw_df.columns if col not in columns_to_exclude]
-        filtered_raw_df = raw_df[columns_to_display]
+        columns_to_display = [col for col in original_df.columns if col not in columns_to_exclude]
+        filtered_raw_df = original_df[columns_to_display] if not original_df.empty else pd.DataFrame()
         
-        # Reorder columns: Symbol/Signal first, Exit Signal second, Function third
-        from ..utils.helpers import reorder_dataframe_columns, find_column_by_keywords
-        filtered_raw_df = reorder_dataframe_columns(filtered_raw_df)
-        
-        # Find Symbol and Exit Signal columns for pinning
-        symbol_col = find_column_by_keywords(filtered_raw_df.columns, ['Symbol, Signal', 'Symbol'])
-        if not symbol_col:
+        if filtered_raw_df.empty:
+            st.info("No data to display for the current search.")
+        else:
+            # Reorder columns: Symbol/Signal first, Exit Signal second, Function third
+            from ..utils.helpers import reorder_dataframe_columns, find_column_by_keywords
+            filtered_raw_df = reorder_dataframe_columns(filtered_raw_df)
+            
+            # Find Symbol and Exit Signal columns for pinning
+            symbol_col = find_column_by_keywords(filtered_raw_df.columns, ['Symbol, Signal', 'Symbol'])
+            if not symbol_col:
+                for col in filtered_raw_df.columns:
+                    if 'Symbol' in col and 'Signal' in col and 'Exit' not in col:
+                        symbol_col = col
+                        break
+            exit_col = find_column_by_keywords(filtered_raw_df.columns, ['Exit Signal Date', 'Exit Signal', 'Exit'])
+            
+            # Display with better formatting and autosize for ALL columns
+            column_config = {}
             for col in filtered_raw_df.columns:
-                if 'Symbol' in col and 'Signal' in col and 'Exit' not in col:
-                    symbol_col = col
-                    break
-        exit_col = find_column_by_keywords(filtered_raw_df.columns, ['Exit Signal Date', 'Exit Signal', 'Exit'])
-        
-        # Display with better formatting and autosize for ALL columns
-        column_config = {}
-        for col in filtered_raw_df.columns:
-            column_config[col] = st.column_config.TextColumn(
-                col,
-                help=f"Original CSV column: {col}"
-                # No width parameter = autosize
+                column_config[col] = st.column_config.TextColumn(
+                    col,
+                    help=f"Original CSV column: {col}"
+                    # No width parameter = autosize
+                )
+            
+            st.dataframe(
+                filtered_raw_df,
+                use_container_width=True,
+                height=600,
+                column_config=column_config
             )
-        
-        st.dataframe(
-            filtered_raw_df,
-            use_container_width=True,
-            height=600,
-            column_config=column_config
-        )
     except pd.errors.EmptyDataError:
         st.info("No data available in Claude signals CSV.")
     except Exception as e:

@@ -1,4 +1,4 @@
-Function,Symbol,Signal,Interval,Entry Date,Entry Price,Exit Date,Exit Price,Today's price,Realised/Unrealised Profit,Holding Period,Status,Backtested Win Rate [%]
+Function,Symbol,Signal,Interval,Entry Date,Entry Price,Exit Date,Exit Price,Today price,Realised/Unrealised Profit,Holding Period,Status,Backtested Win Rate [%]
 FRACTAL TRACK,WIPRO.NS,Short,Quarterly,2026-02-06,229.77,,,229.77,0.0000%,,Open,85.71
 FRACTAL TRACK,WIPRO.NS,Short,Quarterly,2026-02-04,232.82,,,229.77,1.3100%,,Open,85.71
 OSCILLATOR DELTA,WPM.TO,Short,Daily,2026-02-04,191.49,2026-02-05,179.19,179.19,6.4233%,1.0,Closed,100.0

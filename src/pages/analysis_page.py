@@ -233,24 +233,28 @@ def create_analysis_page(data_file, page_title):
             
             st.markdown("---")
             
-            # Strategy cards - pass tab context to ensure unique keys across tabs
-            create_strategy_cards(filtered_df, page_title, chart_key)
+            # Strategy cards (with search) - pass tab context to ensure unique keys across tabs
+            search_filtered_df = create_strategy_cards(filtered_df, page_title, chart_key)
             
             st.markdown("---")
             
-            # Data table - Original CSV format
+            # Data table - Original CSV format (uses search-filtered data)
             st.markdown(f"### 📋 Detailed Data Table - {position_name} {tab_name} (Original CSV Format)")
             
-            # Create a dataframe with original CSV data
+            # Create a dataframe with original CSV data from search-filtered rows
             csv_data = []
-            for _, row in filtered_df.iterrows():
+            for _, row in search_filtered_df.iterrows():
                 csv_data.append(row['Raw_Data'])
             
-            if csv_data:
+            if not csv_data:
+                st.info("No data to display for the current search.")
+            else:
                 original_df = pd.DataFrame(csv_data)
                 
                 # Columns to exclude from detail table (only show in strategy cards if not "No Information")
+                # Signal Open Price: backend deduplication only - never display
                 columns_to_exclude = [
+                    'Signal Open Price',
                     'Sigmashell, Success Rate of Past Analysis [%]',
                     'Divergence observed with, Signal Type',
                     'Maxima Broken Date/Price[$]',

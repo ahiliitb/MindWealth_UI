@@ -404,21 +404,24 @@ def create_trade_details_page():
                                                 st.markdown(f"### {tab_name} Signals ({len(filtered_df)} trades)")
                                             
                                             # Display the filtered CSV data table with autosize
-                                            table_height = min(700, max(400, (len(filtered_df) + 1) * 35))
+                                            display_df = filtered_df.copy()
+                                            if 'Signal Open Price' in display_df.columns:
+                                                display_df = display_df.drop(columns=['Signal Open Price'])
+                                            table_height = min(700, max(400, (len(display_df) + 1) * 35))
                                             st.dataframe(
-                                                filtered_df, 
+                                                display_df, 
                                                 use_container_width=True, 
                                                 height=table_height,
                                                 column_config={
                                                     col: st.column_config.Column(
                                                         col
                                                         # No width parameter = autosize
-                                                    ) for col in filtered_df.columns
+                                                    ) for col in display_df.columns
                                                 }
                                             )
                                             
                                             # Download button for filtered data
-                                            csv_data = filtered_df.to_csv(index=False)
+                                            csv_data = display_df.to_csv(index=False)
                                             assets_str = "_".join(selected_assets[:3])  # Limit filename length
                                             if len(selected_assets) > 3:
                                                 assets_str += f"_and_{len(selected_assets)-3}_more"
@@ -434,21 +437,24 @@ def create_trade_details_page():
                         else:
                             # No signal types found, show all data
                             with st.container(height=850, border=True):
-                                table_height = min(700, max(400, (len(combined_df) + 1) * 35))
+                                display_combined = combined_df.copy()
+                                if 'Signal Open Price' in display_combined.columns:
+                                    display_combined = display_combined.drop(columns=['Signal Open Price'])
+                                table_height = min(700, max(400, (len(display_combined) + 1) * 35))
                                 st.dataframe(
-                                    combined_df, 
+                                    display_combined, 
                                     use_container_width=True, 
                                     height=table_height,
                                     column_config={
                                         col: st.column_config.Column(
                                             col
                                             # No width parameter = autosize
-                                        ) for col in combined_df.columns
+                                        ) for col in display_combined.columns
                                     }
                                 )
                                 
                                 # Download button
-                                csv_data = combined_df.to_csv(index=False)
+                                csv_data = display_combined.to_csv(index=False)
                                 assets_str = "_".join(selected_assets[:3])
                                 if len(selected_assets) > 3:
                                     assets_str += f"_and_{len(selected_assets)-3}_more"
@@ -462,21 +468,24 @@ def create_trade_details_page():
                     else:
                         # No Signal column, show all data
                         with st.container(height=850, border=True):
-                            table_height = min(700, max(400, (len(combined_df) + 1) * 35))
+                            display_combined2 = combined_df.copy()
+                            if 'Signal Open Price' in display_combined2.columns:
+                                display_combined2 = display_combined2.drop(columns=['Signal Open Price'])
+                            table_height = min(700, max(400, (len(display_combined2) + 1) * 35))
                             st.dataframe(
-                                combined_df, 
+                                display_combined2, 
                                 use_container_width=True, 
                                 height=table_height,
                                 column_config={
                                     col: st.column_config.Column(
                                         col
                                         # No width parameter = autosize
-                                    ) for col in combined_df.columns
+                                    ) for col in display_combined2.columns
                                 }
                             )
                             
                             # Download button
-                            csv_data = combined_df.to_csv(index=False)
+                            csv_data = display_combined2.to_csv(index=False)
                             assets_str = "_".join(selected_assets[:3])
                             if len(selected_assets) > 3:
                                 assets_str += f"_and_{len(selected_assets)-3}_more"

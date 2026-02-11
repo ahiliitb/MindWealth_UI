@@ -47,7 +47,7 @@ def create_monitored_trades_page():
             
             ### How to use?
             1. **Add Trades**: Use the "⭐ Add to Monitored" button on Outstanding Signals or New Signals pages
-            2. **Update Prices**: Click "🔄 Update Prices" button in sidebar to refresh today's prices
+            2. **Update Prices**: Click "🔄 Update Prices" button in sidebar to refresh today prices
             3. **View Status**: Switch between All Trades, Open Trades, and Closed Trades tabs
             4. **Apply Filters**: Use sidebar filters to focus on specific functions, symbols, or intervals
             5. **Remove Trades**: Remove trades you no longer want to monitor
@@ -80,7 +80,7 @@ def create_monitored_trades_page():
     st.sidebar.markdown("### 🔧 Controls")
     
     # Update prices button
-    if st.sidebar.button("🔄 Update Prices", help="Update today's prices from stock data"):
+    if st.sidebar.button("🔄 Update Prices", help="Update today prices from stock data"):
         with st.spinner("Updating prices..."):
             # Load outstanding signals to check for exits
             try:
@@ -280,13 +280,13 @@ def display_interval_tabs(df, position_name, trade_status):
             # Display summary metrics
             display_monitored_trades_metrics(interval_df, interval, position_name)
             
-            # Display strategy cards
-            create_strategy_cards(interval_df, page_name="Monitored Trades", tab_context=f"{trade_status}_{position_name}_{interval}")
+            # Display strategy cards (with search)
+            search_filtered_df = create_strategy_cards(interval_df, page_name="Monitored Trades", tab_context=f"{trade_status}_{position_name}_{interval}")
             st.markdown("---")
             
-            # Display detailed data table
+            # Display detailed data table (uses search-filtered data)
             st.markdown("### 📋 Detailed Data Table (Original CSV Format)")
-            display_trades_table(interval_df, f"{position_name} - {interval}")
+            display_trades_table(search_filtered_df, f"{position_name} - {interval}")
 
 
 def display_monitored_trades_metrics(df, interval, position_name):
@@ -301,7 +301,7 @@ def display_monitored_trades_metrics(df, interval, position_name):
     with col2:
         # Calculate actual win rate:
         # - For closed trades: based on actual profit (exit price vs signal price)
-        # - For open trades: based on current mark to market (today's price vs signal price)
+        # - For open trades: based on current mark to market (today price vs signal price)
         winning_trades = 0
         total_trades_counted = 0
         
@@ -326,7 +326,7 @@ def display_monitored_trades_metrics(df, interval, position_name):
                     if pnl > 0:
                         winning_trades += 1
             elif row['Status'] == 'Open':
-                # For open trades: use today's price to calculate mark to market
+                # For open trades: use today price to calculate mark to market
                 current_price = row.get('Current_Price')
                 if pd.notna(current_price):
                     total_trades_counted += 1
@@ -421,8 +421,10 @@ def display_trades_table(df: pd.DataFrame, title: str):
         original_df = pd.DataFrame(csv_data)
         
         # Columns to exclude from detail table (same as Outstanding Signals)
+        # Signal Open Price: backend deduplication only - never display
         # Only show in strategy cards if not "No Information"
         columns_to_exclude = [
+            'Signal Open Price',
             'Sigmashell, Success Rate of Past Analysis [%]',
             'Divergence observed with, Signal Type',
             'Maxima Broken Date/Price[$]',

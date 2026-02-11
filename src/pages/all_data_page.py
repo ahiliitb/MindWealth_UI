@@ -15,6 +15,18 @@ from ..config_paths import (
 )
 
 
+def _extract_symbol_from_signal_col(val):
+    """Extract asset name from 'Symbol, Signal, Signal Date/Price[$]' format.
+    Format: 'ASML, Long, 2026-01-16 (Price: 1358.5699)' -> 'ASML'
+    """
+    if pd.isna(val) or not str(val).strip():
+        return None
+    s = str(val).strip()
+    if ',' in s:
+        return s.split(',')[0].strip()
+    return s
+
+
 def create_all_data_page():
     """Create All Data page with chatbot data files"""    # Info button at the top
     if st.button("ℹ️ Info About Page", key="info_all_data", help="Click to learn about this page"):
@@ -76,9 +88,12 @@ def create_all_data_page():
             if 'Function' in df.columns:
                 all_functions.update(df['Function'].dropna().unique())
             
-            # Collect all symbols
+            # Collect unique asset names (symbols only, not full trade info)
             if 'Symbol, Signal, Signal Date/Price[$]' in df.columns:
-                all_symbols.update(df['Symbol, Signal, Signal Date/Price[$]'].dropna().unique())
+                for val in df['Symbol, Signal, Signal Date/Price[$]'].dropna():
+                    sym = _extract_symbol_from_signal_col(val)
+                    if sym:
+                        all_symbols.add(sym)
         except Exception as e:
             st.error(f"Error loading {file_path}: {str(e)}")
             all_data[tab_name] = pd.DataFrame()
@@ -200,9 +215,13 @@ def display_data_file(tab_name, df, selected_functions, selected_symbols, min_wi
         if 'Function' in filtered_df.columns and selected_functions:
             filtered_df = filtered_df[filtered_df['Function'].isin(selected_functions)]
         
-        # Apply symbol filter if symbol column exists and we have selected symbols
+        # Apply symbol filter by asset name (extract from combined column)
         if 'Symbol, Signal, Signal Date/Price[$]' in filtered_df.columns and selected_symbols:
-            filtered_df = filtered_df[filtered_df['Symbol, Signal, Signal Date/Price[$]'].isin(selected_symbols)]
+            filtered_df = filtered_df[
+                filtered_df['Symbol, Signal, Signal Date/Price[$]'].apply(
+                    lambda x: _extract_symbol_from_signal_col(x) in selected_symbols
+                )
+            ]
         
         # Apply win rate filter if column exists
         if 'Win_Rate' in filtered_df.columns and min_win_rate > 0:
@@ -343,14 +362,10 @@ def display_interval_tabs(df, position_name, tab_name):
             # Display detailed data table
             st.markdown("### 📊 Detailed Data Table")
 
-            # Prepare dataframe for display
+            # Prepare dataframe for display - exclude Signal Open Price (backend deduplication only)
             display_df = interval_df.copy()
-
-            # Format Signal Open Price for better display
             if 'Signal Open Price' in display_df.columns:
-                display_df['Signal Open Price'] = display_df['Signal Open Price'].apply(
-                    lambda x: f"${x}" if pd.notna(x) and str(x).strip() else "N/A"
-                )
+                display_df = display_df.drop(columns=['Signal Open Price'])
 
             # Display the dataframe with autosize for ALL columns
             st.dataframe(
