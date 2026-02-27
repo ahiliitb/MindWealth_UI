@@ -1453,3 +1453,12 @@ Date,Function,Bullish Asset vs Total Asset (%),Bullish Signal vs Total Signal (%
 2026-02-25,BASELINEDIVERGENCE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
 2026-02-25,All Function Combined,0.2%,100.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
 2026-02-25,Combined (TrendPulse + DeltaDrift + BandMatrix),0.8%,100.0%,12,23,0,4
+2026-02-26,FRACTAL TRACK,0.4%,66.67%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-26,DELTADRIFT,0.0%,0%,1,10,3,4
+2026-02-26,TRENDPULSE,0.2%,100.0%,5,14,0,1
+2026-02-26,OSCILLATOR DELTA,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-26,SIGMASHELL,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-26,PULSEGAUGE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-26,BASELINEDIVERGENCE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-26,All Function Combined,0.6%,75.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-26,Combined (TrendPulse + DeltaDrift + BandMatrix),0.4%,100.0%,6,23,3,4
