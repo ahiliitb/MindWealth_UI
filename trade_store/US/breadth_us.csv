@@ -1372,3 +1372,102 @@ Date,Function,Bullish Asset vs Total Asset (%),Bullish Signal vs Total Signal (%
 2026-02-12,BASELINEDIVERGENCE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
 2026-02-12,All Function Combined,0.4%,50.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
 2026-02-12,Combined (TrendPulse + DeltaDrift + BandMatrix),0.4%,100.0%,21,22,3,3
+2026-02-13,FRACTAL TRACK,0.0%,0.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-13,DELTADRIFT,0.2%,100.0%,9,10,1,4
+2026-02-13,TRENDPULSE,0.8%,100.0%,19,15,1,2
+2026-02-13,OSCILLATOR DELTA,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-13,SIGMASHELL,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-13,PULSEGAUGE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-13,BASELINEDIVERGENCE,0.2%,100.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-13,All Function Combined,1.2%,85.71%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-13,Combined (TrendPulse + DeltaDrift + BandMatrix),2.8%,100.0%,32,23,2,4
+2026-02-16,FRACTAL TRACK,0.0%,0.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-16,DELTADRIFT,0.0%,0%,0,10,0,4
+2026-02-16,TRENDPULSE,0.0%,0%,0,15,0,2
+2026-02-16,OSCILLATOR DELTA,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-16,SIGMASHELL,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-16,PULSEGAUGE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-16,BASELINEDIVERGENCE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-16,All Function Combined,0.0%,0.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-16,Combined (TrendPulse + DeltaDrift + BandMatrix),0.0%,0%,0,23,0,4
+2026-02-17,FRACTAL TRACK,0.0%,0.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-17,DELTADRIFT,0.0%,0%,7,10,6,4
+2026-02-17,TRENDPULSE,0.0%,0%,2,15,0,2
+2026-02-17,OSCILLATOR DELTA,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-17,SIGMASHELL,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-17,PULSEGAUGE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-17,BASELINEDIVERGENCE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-17,All Function Combined,0.0%,0.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-17,Combined (TrendPulse + DeltaDrift + BandMatrix),0.0%,0%,9,23,6,4
+2026-02-18,FRACTAL TRACK,0.2%,100.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-18,DELTADRIFT,0.0%,0%,6,10,1,4
+2026-02-18,TRENDPULSE,0.2%,100.0%,3,15,0,2
+2026-02-18,OSCILLATOR DELTA,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-18,SIGMASHELL,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-18,PULSEGAUGE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-18,BASELINEDIVERGENCE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-18,All Function Combined,0.4%,100.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-18,Combined (TrendPulse + DeltaDrift + BandMatrix),0.6%,100.0%,9,23,1,4
+2026-02-19,FRACTAL TRACK,0.2%,50.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-19,DELTADRIFT,0.0%,0%,2,10,0,4
+2026-02-19,TRENDPULSE,0.0%,0%,5,15,0,2
+2026-02-19,OSCILLATOR DELTA,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-19,SIGMASHELL,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-19,PULSEGAUGE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-19,BASELINEDIVERGENCE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-19,All Function Combined,0.2%,50.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-19,Combined (TrendPulse + DeltaDrift + BandMatrix),1.0%,100.0%,8,23,0,4
+2026-02-20,FRACTAL TRACK,0.4%,100.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-20,DELTADRIFT,0.2%,100.0%,0,10,0,4
+2026-02-20,TRENDPULSE,0.0%,0%,3,15,0,2
+2026-02-20,OSCILLATOR DELTA,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-20,SIGMASHELL,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-20,PULSEGAUGE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-20,BASELINEDIVERGENCE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-20,All Function Combined,0.6%,100.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-20,Combined (TrendPulse + DeltaDrift + BandMatrix),1.4%,100.0%,3,23,0,4
+2026-02-23,FRACTAL TRACK,0.0%,0.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-23,DELTADRIFT,0.0%,0%,3,10,3,4
+2026-02-23,TRENDPULSE,0.0%,0%,8,15,1,2
+2026-02-23,OSCILLATOR DELTA,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-23,SIGMASHELL,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-23,PULSEGAUGE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-23,BASELINEDIVERGENCE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-23,All Function Combined,0.0%,0.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-23,Combined (TrendPulse + DeltaDrift + BandMatrix),0.2%,100.0%,11,23,4,4
+2026-02-24,FRACTAL TRACK,0.2%,100.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-24,DELTADRIFT,0.0%,0%,1,10,2,4
+2026-02-24,TRENDPULSE,0.0%,0%,4,15,0,1
+2026-02-24,OSCILLATOR DELTA,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-24,SIGMASHELL,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-24,PULSEGAUGE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-24,BASELINEDIVERGENCE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-24,All Function Combined,0.2%,100.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-24,Combined (TrendPulse + DeltaDrift + BandMatrix),0.2%,100.0%,5,23,2,4
+2026-02-25,FRACTAL TRACK,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-25,DELTADRIFT,0.2%,100.0%,7,10,0,4
+2026-02-25,TRENDPULSE,0.0%,0%,4,14,0,1
+2026-02-25,OSCILLATOR DELTA,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-25,SIGMASHELL,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-25,PULSEGAUGE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-25,BASELINEDIVERGENCE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-25,All Function Combined,0.2%,100.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-25,Combined (TrendPulse + DeltaDrift + BandMatrix),0.8%,100.0%,12,23,0,4
+2026-02-26,FRACTAL TRACK,0.4%,66.67%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-26,DELTADRIFT,0.0%,0%,1,10,3,4
+2026-02-26,TRENDPULSE,0.2%,100.0%,5,14,0,1
+2026-02-26,OSCILLATOR DELTA,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-26,SIGMASHELL,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-26,PULSEGAUGE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-26,BASELINEDIVERGENCE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-26,All Function Combined,0.6%,75.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-26,Combined (TrendPulse + DeltaDrift + BandMatrix),0.4%,100.0%,6,23,3,4
+2026-02-27,FRACTAL TRACK,0.2%,100.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-27,DELTADRIFT,0.2%,100.0%,0,10,1,4
+2026-02-27,TRENDPULSE,0.0%,0%,11,14,0,1
+2026-02-27,OSCILLATOR DELTA,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-27,SIGMASHELL,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-27,PULSEGAUGE,0.0%,0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-27,BASELINEDIVERGENCE,0.2%,100.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-27,All Function Combined,0.6%,100.0%,Not Applicable,Not Applicable,Not Applicable,Not Applicable
+2026-02-27,Combined (TrendPulse + DeltaDrift + BandMatrix),1.8%,100.0%,11,23,1,4
