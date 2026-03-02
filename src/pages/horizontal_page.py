@@ -60,7 +60,7 @@ def create_horizontal_page(data_file: str, page_title: str):
         return
 
     if df.empty:
-        st.info("No data available in Horizontal report.")
+        st.info("No signal data available in Horizontal report.")
         return
 
     # Normalize expected columns
@@ -140,7 +140,7 @@ def create_horizontal_page(data_file: str, page_title: str):
                             pass
 
     st.markdown("---")
-    st.markdown("### 📋 Detailed Data Table (Original CSV)")
+    st.markdown("### 📋 Detailed Signal Data Table (Original CSV)")
     # Exclude Signal Open Price - backend deduplication only, never display
     display_df = df.drop(columns=['Signal Open Price']) if 'Signal Open Price' in df.columns else df
     # Ensure ALL columns get autosize (no width parameter = autosize)

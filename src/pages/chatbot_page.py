@@ -55,7 +55,7 @@ def extract_user_prompt(content: str, metadata: Optional[dict] = None) -> str:
     if cleaned.startswith('User Query:'):
         cleaned = cleaned.replace('User Query:', '', 1).strip()
     
-    # Remove any data context sections (everything from first === onwards)
+    # Remove any signal data context sections (everything from first === onwards)
     if '===' in cleaned:
         cleaned = cleaned.split('===', 1)[0].strip()
     
@@ -355,25 +355,25 @@ def render_chatbot_page():
         with st.expander("📖 AI Trading Assistant Information", expanded=True):
             st.markdown("""
             ### What is this page?
-            The AI Trading Assistant is an intelligent chatbot powered by advanced AI that helps you analyze trading data, answer questions about signals, and provide strategic insights.
+            The AI Trading Assistant is an intelligent chatbot powered by advanced AI that helps you analyze trading signal data, answer questions about signal data, and provide strategic insights.
             
             ### Why is it used?
-            - **Interactive Analysis**: Ask questions about your trading data in natural language
+            - **Interactive Analysis**: Ask questions about your trading signal data in natural language
             - **Smart Insights**: Get AI-powered analysis of signals, strategies, and performance
-            - **Quick Answers**: Find information faster than manually searching through data
-            - **Data Exploration**: Explore complex trading data through conversational interface
+            - **Quick Answers**: Find information faster than manually searching through signals
+            - **Signal Data Exploration**: Explore complex trading signal data through conversational interface
             
             ### How to use?
-            1. **Select Signal Types**: Choose which data sources to include (Entry, Exit, Breadth, etc.)
+            1. **Select Signal Types**: Choose which signal data sources to include (Entry, Exit, Breadth, etc.)
             2. **Ask Questions**: Type your question in the chat input box
-            3. **Review Responses**: Read the AI's analysis and view any tables or data provided
+            3. **Review Responses**: Read the AI's analysis and view any tables or signal data provided
             4. **Follow-up**: Ask follow-up questions for deeper insights
             5. **Manage Chats**: Use sidebar to create new chats, rename, or delete old ones
             6. **View History**: Access your previous conversations from the sidebar
             
             ### Key Features:
-            - Natural language querying of trading data
-            - Multi-source data integration
+            - Natural language querying of trading signal data
+            - Multi-source signal data integration
             - Conversation history management
             - Interactive tables and visualizations
             - Context-aware responses
@@ -385,7 +385,7 @@ def render_chatbot_page():
     # Display data fetch datetime at top of page
     from ..utils.helpers import display_data_fetch_info
     display_data_fetch_info(location="header")
-    st.markdown("Ask questions about your trading signals and get AI-powered insights!")
+    st.markdown("Ask questions about your trading signal data and get AI-powered insights!")
     
     # Apply custom styling for larger table fonts
     apply_table_styling()
@@ -499,7 +499,7 @@ def render_chatbot_page():
                     # Display response
                     st.markdown(response)
 
-                    # Display Smart Query Details with signal data
+                    # Display Smart Query Details with signals
                     if metadata.get('input_type') in ['smart_query', 'smart_followup'] or metadata.get('selected_signal_types'):
                         with st.expander("📊 Smart Query Details", expanded=False):
                             # Show signal types and reasoning
@@ -594,7 +594,7 @@ def render_chatbot_page():
                     # Display response
                     st.markdown(response)
 
-                    # Display Smart Query Details with signal data
+                    # Display Smart Query Details with signals
                     with st.expander("📊 Smart Query Details", expanded=False):
                         # Show signal types and reasoning
                         st.markdown(f"**AI Signal Types:** {get_signal_type_label(selected_signal_types[0])}")
@@ -644,7 +644,7 @@ def render_chatbot_page():
         
         # For breadth analysis, we only want breadth signals
         selected_signal_types = ["breadth"]  # Only breadth signals
-        ai_reason = "Breadth Analysis focuses on market breadth data and percentile analysis"
+        ai_reason = "Breadth Analysis focuses on market breadth signal data and percentile analysis"
         
         # Update session state
         st.session_state.last_signal_types = selected_signal_types
@@ -668,10 +668,10 @@ def render_chatbot_page():
             selection_text = ", ".join(get_signal_type_label(sig) for sig in selected_signal_types)
             st.markdown(f"**AI Signal Type Selection:** {selection_text}")
             st.caption(f"💡 {ai_reason}")
-            with st.spinner("📊 Analyzing breadth data and calculating percentiles..."):
+            with st.spinner("📊 Analyzing breadth signal data and calculating percentiles..."):
                 try:
                     # Use smart_followup_query to send the breadth analysis prompt
-                    # No specific assets - analyze all breadth data
+                    # No specific assets - analyze all breadth signal data
                     response, metadata = chatbot.smart_followup_query(
                         user_message=breadth_prompt,
                         selected_signal_types=selected_signal_types,
@@ -689,11 +689,11 @@ def render_chatbot_page():
                     # Display full signal tables if available
                     full_signal_tables = metadata.get('full_signal_tables', {})
                     if full_signal_tables:
-                        st.markdown("### 📊 Complete Breadth Data Used in Analysis")
+                        st.markdown("### 📊 Complete Breadth Signal Data Used in Analysis")
                         
                         for signal_type, signal_df in full_signal_tables.items():
                             if not signal_df.empty:
-                                st.markdown(f"#### {get_signal_type_label(signal_type, uppercase=True)} Data ({len(signal_df)} records)")
+                                st.markdown(f"#### {get_signal_type_label(signal_type, uppercase=True)} Signals ({len(signal_df)} records)")
                                 display_styled_dataframe(
                                     signal_df, 
                                     height=min(400, (len(signal_df) + 1) * 40),
@@ -741,14 +741,14 @@ def render_chatbot_page():
         from_date = st.date_input(
             "From Date",
             value=default_from_date,
-            help="Start date for data (default: 15 days ago)"
+            help="Start date for signal data (default: 15 days ago)"
         )
     
     with col2:
         to_date = st.date_input(
             "To Date",
             value=default_to_date,
-            help="End date for data (default: today)"
+            help="End date for signal data (default: today)"
         )
     
     # Render Chat History after Query Configuration
@@ -806,7 +806,7 @@ Overlaps between exit dates on short-term signals and open longer-term entries.
 
 Assess alignment between short-term and medium-term outlooks based strictly on the verified signals in the Streamlit reports.
 
-Determine stance — whether the current setup indicates a Buy, Hold, or Sell — using only the pre-computed data and the historically observed holding periods for each function.
+Determine stance — whether the current setup indicates a Buy, Hold, or Sell — using only the pre-computed signal data and the historically observed holding periods for each function.
 
 Important:
 
@@ -821,7 +821,7 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
             st.session_state.pending_analysis_to_date = to_date
             st.rerun()
     else:
-        st.sidebar.info("No assets available. Please ensure data files are present.")
+        st.sidebar.info("No assets available. Please ensure signal data files are present.")
     
     # Signal Insights button (works across all assets, entry signals only)
     # This button is always visible, regardless of asset availability
@@ -857,7 +857,7 @@ Focus on identifying high-quality signals that meet the following criteria:
 1. **High Sharpe Ratio**: Strategy Sharpe Ratio > 1.5
 2. **High Win Rate (Full History)**: Win Rate > 80% based on full historical testing
 3. **Latest Performance Win Rate**: Win Rate > 85% for past 4 years
-4. **Forward Testing Win Rate**: Win Rate > 65% from forward testing data
+4. **Forward Testing Win Rate**: Win Rate > 65% from forward testing signal data
 
 For each qualifying signal, provide:
 - Asset symbol
@@ -914,7 +914,7 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
         st.session_state.last_settings = None
         
         # Format the breadth analysis prompt
-        breadth_analysis_prompt = f"""Please analyze breadth report data for the date range {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}.
+        breadth_analysis_prompt = f"""Please analyze breadth report signal data for the date range {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}.
 
 Focus on the following analysis:
 
@@ -949,10 +949,10 @@ For each identified day (especially bottom 10 percentile days), provide:
 - Context about what this breadth level means
 
 Important:
-- Use only breadth data verifiable from the existing Streamlit reports
+- Use only breadth signal data verifiable from the existing Streamlit reports
 - Focus on breadth signal type and SBI type if available
-- Calculate percentiles based on historical breadth data
-- Do not fabricate or infer data
+- Calculate percentiles based on historical breadth signal data
+- Do not fabricate or infer signal data
 
 Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}"""
         
@@ -1068,7 +1068,7 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
                                         for col in cols:
                                             st.text(f"  • {col}")
                             
-                            # Show data statistics
+                            # Show signal data statistics
                             col1, col2, col3 = st.columns(3)
                             
                             with col1:
@@ -1128,12 +1128,12 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
                             
                             with col1:
                                 if batch_mode == 'single':
-                                    st.metric("Batch Mode", "Single 🎯", help="All data processed in one optimized batch")
+                                    st.metric("Batch Mode", "Single 🎯", help="All signal data processed in one optimized batch")
                                 else:
                                     if 'synthesis' in finish_reason:
                                         st.metric("Batch Mode", f"Multi + Synthesis ✨", help=f"{batch_count} batches with AI synthesis for unified response")
                                     else:
-                                        st.metric("Batch Mode", f"Multi ({batch_count}) 🔄", help="Data split across multiple batches for optimal processing")
+                                        st.metric("Batch Mode", f"Multi ({batch_count}) 🔄", help="Signal data split across multiple batches for optimal processing")
                             
                             with col2:
                                 total_tokens = tokens_used.get('total', 0)
@@ -1152,7 +1152,7 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
     # Chat input
     st.markdown("### 💬 Ask a Question")
     
-    user_input = st.chat_input("Ask a question about your trading signals...")
+    user_input = st.chat_input("Ask a question about your trading signal data...")
     
     if user_input:
         # Don't call determine_signal_types here - let smart_followup_query do it internally
@@ -1214,7 +1214,7 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
                     # Display response
                     st.markdown(response)
 
-                    # Display Smart Query Details with signal data
+                    # Display Smart Query Details with signals
                     with st.expander("📊 Smart Query Details", expanded=False):
                         # Show signal types and reasoning
                         st.markdown(f"**AI Signal Types:** {', '.join(get_signal_type_label(sig) for sig in selected_signal_types)}")
@@ -1265,7 +1265,7 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
                                     for col in cols:
                                         st.text(f"  • {col}")
 
-                        # Show data statistics - same format for all queries
+                        # Show signal data statistics - same format for all queries
                         col1, col2, col3 = st.columns(3)
 
                         with col1:

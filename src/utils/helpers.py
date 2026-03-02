@@ -152,7 +152,7 @@ def display_data_fetch_info(json_path=None, location="sidebar"):
         
         if location == "sidebar":
             st.sidebar.markdown("---")
-            st.sidebar.markdown("### 📅 Data Last Updated")
+            st.sidebar.markdown("### 📅 Signal Data Last Updated")
             st.sidebar.markdown(f"**Date:** {date}")
             st.sidebar.markdown(f"**Time:** {time} {timezone}")
             st.sidebar.caption(f"Last fetch: {datetime_str} {timezone}")
@@ -194,7 +194,7 @@ def display_data_fetch_info(json_path=None, location="sidebar"):
     else:
         if location == "sidebar":
             st.sidebar.markdown("---")
-            st.sidebar.caption("⚠️ Data fetch time not available")
+            st.sidebar.caption("⚠️ Signal data fetch time not available")
         else:  # header
             st.markdown("**📅 Report Date:** Not available")
 

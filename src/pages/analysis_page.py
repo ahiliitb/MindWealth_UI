@@ -19,7 +19,7 @@ def create_analysis_page(data_file, page_title):
     df = load_data_from_file(f'{data_file}', page_title)
     
     if df.empty:
-        st.warning(f"No data available for {page_title}")
+        st.warning(f"No signal data available for {page_title}")
         return
     
     # Check if this is a breadth data page (after processing) - handle separately
@@ -40,10 +40,10 @@ def create_analysis_page(data_file, page_title):
         with st.expander("📖 Analysis Page Information", expanded=True):
             st.markdown("""
             ### What is this page?
-            The Analysis Page provides detailed insights into trading signals and strategy performance for specific CSV data files.
+            The Analysis Page provides detailed insights into trading signal data and strategy performance for specific CSV signal data files.
             
             ### Why is it used?
-            - **Signal Analysis**: Analyze trading signals with detailed metrics
+            - **Signal Analysis**: Analyze trading signal data with detailed metrics
             - **Performance Tracking**: Track the performance of different strategies
             - **Position Management**: View and filter long and short positions separately
             - **Strategy Comparison**: Compare different functions and intervals
@@ -52,14 +52,14 @@ def create_analysis_page(data_file, page_title):
             1. **Select Filters**: Use the sidebar to filter by functions, symbols, and intervals
             2. **Choose Position Type**: Switch between ALL, Long, or Short positions using the tabs
             3. **View Cards**: Scroll through strategy cards for detailed signal information
-            4. **Analyze Data**: Review the data table at the bottom for comprehensive details
+            4. **Analyze Signals**: Review the signal data table at the bottom for comprehensive details
             5. **Use Quick Filters**: Click "All" or "None" buttons for quick selection
             
             ### Key Features:
             - Multi-tab interface for different position types
             - Advanced filtering by function, symbol, and interval
             - Visual cards with expandable details
-            - Interactive data tables
+            - Interactive signal data tables
             - Real-time win rate and performance metrics
             """)
     
@@ -221,7 +221,7 @@ def create_analysis_page(data_file, page_title):
         def display_tab_content(filtered_df, tab_name):
             """Display content for each tab"""
             if filtered_df.empty:
-                st.warning(f"No {tab_name} data matches the selected filters. Please adjust your filters.")
+                st.warning(f"No {tab_name} signal data matches the selected filters. Please adjust your filters.")
                 return
             
             # Create unique key prefix for charts
@@ -239,7 +239,7 @@ def create_analysis_page(data_file, page_title):
             st.markdown("---")
             
             # Data table - Original CSV format (uses search-filtered data)
-            st.markdown(f"### 📋 Detailed Data Table - {position_name} {tab_name} (Original CSV Format)")
+            st.markdown(f"### 📋 Detailed Signal Data Table - {position_name} {tab_name} (Original CSV Format)")
             
             # Create a dataframe with original CSV data from search-filtered rows
             csv_data = []
@@ -247,7 +247,7 @@ def create_analysis_page(data_file, page_title):
                 csv_data.append(row['Raw_Data'])
             
             if not csv_data:
-                st.info("No data to display for the current search.")
+                st.info("No signal data to display for the current search.")
             else:
                 original_df = pd.DataFrame(csv_data)
                 

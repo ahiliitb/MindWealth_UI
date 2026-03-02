@@ -214,7 +214,7 @@ class ChatbotEngine:
                 
                 metadata = {
                     "is_followup": True,
-                    "message": "Follow-up question using previous data context"
+                    "message": "Follow-up question using previous signal data context"
                 }
                 
                 # Add user message to history
@@ -387,7 +387,7 @@ class ChatbotEngine:
             elif tickers and data_already_in_context:
                 # Data already in conversation history, skip reloading
                 metadata["data_reused_from_history"] = True
-                metadata["note"] = "Using data from previous query in conversation history"
+                metadata["note"] = "Using signal data from previous query in conversation history"
                 logger.info(f"Reusing data from history for tickers: {tickers}, dates: {from_date} to {to_date}")
             
             # Load breadth data if requested (independent of tickers)
@@ -419,22 +419,9 @@ class ChatbotEngine:
                     "total_records": total_records
                 }
                 
-                # CHECK: If data loaded but empty (no records), return "No Signal Found"
+                # CHECK: If data loaded but empty (no records), return fixed no-signal message
                 if total_records == 0:
-                    no_signal_message = "**No Signal Found**\n\nNo trading signals were found for the specified criteria."
-                    
-                    if tickers:
-                        no_signal_message += f"\n\n**Searched for:**\n- Assets: {', '.join(tickers[:10])}"
-                        if len(tickers) > 10:
-                            no_signal_message += f" (and {len(tickers) - 10} more)"
-                    if functions:
-                        no_signal_message += f"\n- Functions: {', '.join(functions)}"
-                    if from_date and to_date:
-                        no_signal_message += f"\n- Date range: {from_date} to {to_date}"
-                    if signal_types:
-                        no_signal_message += f"\n- Signal types: {', '.join(signal_types)}"
-                    
-                    no_signal_message += "\n\n💡 *Try expanding your date range or adjusting search criteria.*"
+                    no_signal_message = "No Signal in the Specified date duration choosen, Please choose different date duration."
                     
                     metadata["no_data_found"] = True
                     self.history_manager.add_message(
@@ -446,29 +433,10 @@ class ChatbotEngine:
                     
                     return no_signal_message, metadata
             
-            # CHECK: If no data found and tickers were expected, return "No Signal Found"
+            # CHECK: If no data found and tickers were expected, return fixed no-signal message
             if not stock_data and not data_already_in_context and (tickers is not None or auto_extract_tickers):
-                # No data was loaded and we were looking for ticker-specific data
-                no_signal_message = "**No Signal Found**\n\nNo trading signals were found matching your criteria."
-                
-                if tickers is not None and len(tickers) == 0:
-                    # Tickers list is empty - no matching tickers found
-                    if functions:
-                        no_signal_message += f"\n\n**Searched for:**\n- Functions: {', '.join(functions)}"
-                        no_signal_message += "\n\n*No assets found with the specified function(s).*"
-                    else:
-                        no_signal_message += "\n\n*No assets match your criteria.*"
-                elif tickers:
-                    # Tickers were specified but no data loaded
-                    no_signal_message += f"\n\n**Searched for:**\n- Assets: {', '.join(tickers[:10])}"
-                    if len(tickers) > 10:
-                        no_signal_message += f" (and {len(tickers) - 10} more)"
-                    if functions:
-                        no_signal_message += f"\n- Functions: {', '.join(functions)}"
-                    if from_date and to_date:
-                        no_signal_message += f"\n- Date range: {from_date} to {to_date}"
-                
-                no_signal_message += "\n\n💡 *Try adjusting your search criteria or date range.*"
+                # No data was loaded for the chosen date duration / criteria
+                no_signal_message = "No Signal in the Specified date duration choosen, Please choose different date duration."
                 
                 metadata["no_data_found"] = True
                 self.history_manager.add_message(
@@ -496,7 +464,7 @@ class ChatbotEngine:
 
 Please answer the user's query based on the comprehensive analysis report above."""
             elif data_context:
-                # For regular queries with table data
+                # For regular queries with table signals
                 complete_message = f"""User Query: {user_message}
 
 {data_context}"""
@@ -650,7 +618,7 @@ Please answer the user's query based on the comprehensive analysis report above.
             logger.info("="*60)
 
             # Standard no-data message used by UI when there are no rows
-            NO_DATA_MESSAGE = "No Signal for Choosen Date Range, Please change range and try again"
+            NO_DATA_MESSAGE = "No Signal in the Specified date duration choosen, Please choose different date duration."
 
             # STAGE 1: UNIFIED EXTRACTION - Extract everything in ONE GPT call
             logger.info("STAGE 1: Using unified extractor (single GPT call for all extractions)...")
@@ -872,7 +840,7 @@ Please answer the user's query based on the comprehensive analysis report above.
                     complete_message += f"\n  Columns: {', '.join(columns_by_signal_type[signal_type])}"
                     complete_message += f"\n  Reasoning: {reasoning_by_signal_type.get(signal_type, '')}"
             
-            complete_message += f"\n\n=== DATA CONTEXT ===\n{data_context}"
+            complete_message += f"\n\n=== SIGNAL DATA CONTEXT ===\n{data_context}"
 
             if additional_context:
                 complete_message += f"\n\n=== ADDITIONAL CONTEXT ===\n{additional_context}"
@@ -1089,11 +1057,16 @@ NOTE: Use the conversation context above to understand what we've discussed, but
             
             patterns = [
                 r"===\s*COLUMN SELECTION BY SIGNAL TYPE\s*===[\s\S]*?(?====|$)",
-                r"===\s*DATA CONTEXT\s*===[\s\S]*?(?====|$)",
-                r"===\s*TRADING DATA[\s\S]*?(?====|$)",
-                r"===\s*NEW DATA FETCHED[\s\S]*?(?====|$)",
+                r"===\s*SIGNAL DATA CONTEXT\s*===[\s\S]*?(?====|$)",
+                r"===\s*SIGNAL CONTEXT\s*===[\s\S]*?(?====|$)",  # legacy
+                r"===\s*DATA CONTEXT\s*===[\s\S]*?(?====|$)",  # legacy
+                r"===\s*TRADING SIGNALS[\s\S]*?(?====|$)",
+                r"===\s*TRADING DATA[\s\S]*?(?====|$)",  # legacy
+                r"===\s*NEW SIGNALS FETCHED[\s\S]*?(?====|$)",
+                r"===\s*NEW DATA FETCHED[\s\S]*?(?====|$)",  # legacy
                 r"===\s*NEW COLUMNS ADDED[\s\S]*?(?====|$)",
-                r"===\s*PROVIDED DATA\s*===[\s\S]*?(?====|$)",
+                r"===\s*PROVIDED SIGNALS\s*===[\s\S]*?(?====|$)",
+                r"===\s*PROVIDED DATA\s*===[\s\S]*?(?====|$)",  # legacy
                 r"===\s*ENTRY SIGNALS \(JSON\)[\s\S]*?(?====|$)",
                 r"===\s*EXIT SIGNALS \(JSON\)[\s\S]*?(?====|$)",
                 r"===\s*PORTFOLIO_TARGET_ACHIEVED SIGNALS \(JSON\)[\s\S]*?(?====|$)",
@@ -1724,7 +1697,7 @@ Create a professional, well-structured response that reads as one cohesive analy
             if num_batches == 1:
                 # Single batch - process directly
                 batch = batches[0]
-                data_context = "\n=== BATCH DATA (JSON) ===\n"
+                data_context = "\n=== BATCH SIGNAL DATA (JSON) ===\n"
                 for sig_type, df in batch['data'].items():
                     records = df.to_dict('records')
                     payload = {"signal_type": sig_type, "record_count": len(records), "data": records}
@@ -1775,8 +1748,8 @@ Create a professional, well-structured response that reads as one cohesive analy
                 for idx, batch in enumerate(batches, 1):
                     logger.info(f"Processing batch {idx}/{num_batches}")
                     
-                    # Create data context for this batch
-                    data_context = "\n=== BATCH DATA (JSON) ===\n"
+                    # Create signal data context for this batch
+                    data_context = "\n=== BATCH SIGNAL DATA (JSON) ===\n"
                     for sig_type, df in batch['data'].items():
                         records = df.to_dict('records')
                         payload = {"signal_type": sig_type, "record_count": len(records), "data": records}

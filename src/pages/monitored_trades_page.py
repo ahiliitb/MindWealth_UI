@@ -54,7 +54,7 @@ def create_monitored_trades_page():
             
             ### Key Features:
             - Personal portfolio tracking
-            - Automated price updates from stock data
+            - Automated price updates from stock signal data
             - Integration with outstanding signals for exit detection
             - Open vs closed trade segregation
             - Real-time profit/loss tracking
@@ -80,7 +80,7 @@ def create_monitored_trades_page():
     st.sidebar.markdown("### 🔧 Controls")
     
     # Update prices button
-    if st.sidebar.button("🔄 Update Prices", help="Update today prices from stock data"):
+    if st.sidebar.button("🔄 Update Prices", help="Update today prices from stock signal data"):
         with st.spinner("Updating prices..."):
             # Load outstanding signals to check for exits
             try:
@@ -216,7 +216,7 @@ def display_monitored_trades_content(df, tab_name, selected_functions, selected_
     """Display monitored trades content with position and interval tabs"""
     
     if df.empty:
-        st.warning(f"No data available for {tab_name}")
+        st.warning(f"No signal data available for {tab_name}")
         return
     
     # Apply filters
@@ -234,7 +234,7 @@ def display_monitored_trades_content(df, tab_name, selected_functions, selected_
         filtered_df = filtered_df[filtered_df['Strategy_Sharpe'].fillna(-999) >= min_sharpe_ratio]
     
     if filtered_df.empty:
-        st.warning(f"No data matches the current filters for {tab_name}")
+        st.warning(f"No signal data matches the current filters for {tab_name}")
         return
     
     # Create position tabs (Long/Short/All)
@@ -253,7 +253,7 @@ def display_monitored_trades_content(df, tab_name, selected_functions, selected_
 
 
 def display_interval_tabs(df, position_name, trade_status):
-    """Display interval tabs for monitored trades data"""
+    """Display interval tabs for monitored trades signal data"""
     
     if df.empty:
         st.info(f"No {position_name} available for {trade_status}")
@@ -274,7 +274,7 @@ def display_interval_tabs(df, position_name, trade_status):
                 interval_df = df[df['Interval'] == interval]
             
             if interval_df.empty:
-                st.info(f"No data available for {interval}")
+                st.info(f"No signal data available for {interval}")
                 continue
             
             # Display summary metrics
@@ -285,7 +285,7 @@ def display_interval_tabs(df, position_name, trade_status):
             st.markdown("---")
             
             # Display detailed data table (uses search-filtered data)
-            st.markdown("### 📋 Detailed Data Table (Original CSV Format)")
+            st.markdown("### 📋 Detailed Signal Data Table (Original CSV Format)")
             display_trades_table(search_filtered_df, f"{position_name} - {interval}")
 
 
@@ -474,4 +474,4 @@ def display_trades_table(df: pd.DataFrame, title: str):
             column_config=column_config
         )
     else:
-        st.warning("No original CSV data available for display")
+        st.warning("No original CSV signal data available for display")

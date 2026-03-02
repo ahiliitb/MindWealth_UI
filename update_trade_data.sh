@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to copy trade data files and push to GitHub
-# This script copies CSV files from ../MindWealth/cache to trade_store/stock_data
+# This script copies all CSV files from ../MindWealth/cache/US to trade_store/stock_data (full copy)
 
 set -e  # Exit on any error
 
@@ -13,15 +13,16 @@ echo "🔄 Starting trade data update process..."
 echo "📁 Working directory: $SCRIPT_DIR"
 
 # Define directories
-CACHE_DIR="../MindWealth/cache"
+# Stock data: copy from cache/US (all CSVs - full copy, new and old)
+CACHE_US_DIR="../MindWealth/cache/US"
 TARGET_STOCK_DATA_DIR="trade_store/stock_data"
 SOURCE_TRADE_DIR="../MindWealth/trade_store/US"
 SOURCE_VIRTUAL_TRADING_DIR="../MindWealth/trade_store"
 TARGET_TRADE_DIR="trade_store/US"
 
-# Check if cache directory exists
-if [ ! -d "$CACHE_DIR" ]; then
-    echo "❌ Error: Cache directory $CACHE_DIR does not exist!"
+# Check if cache US directory exists (source for stock_data)
+if [ ! -d "$CACHE_US_DIR" ]; then
+    echo "❌ Error: Cache US directory $CACHE_US_DIR does not exist!"
     exit 1
 fi
 
@@ -31,9 +32,9 @@ if [ ! -d "$SOURCE_TRADE_DIR" ]; then
     exit 1
 fi
 
-# Copy all CSV files from cache to stock_data
-echo "📊 Copying stock data CSV files from cache..."
-cp "$CACHE_DIR"/*.csv "$TARGET_STOCK_DATA_DIR"/ 2>/dev/null || echo "⚠️  No CSV files found in cache"
+# Full copy: all CSV files from cache/US to stock_data (overwrites destination, so all data is synced)
+echo "📊 Copying all stock data CSV files from cache/US to trade_store/stock_data..."
+cp "$CACHE_US_DIR"/*.csv "$TARGET_STOCK_DATA_DIR"/ 2>/dev/null || echo "⚠️  No CSV files found in $CACHE_US_DIR"
 
 # Copy all CSV files from trade_store/US
 # Exclude dated versions of forward_testing.csv and latest_performance.csv

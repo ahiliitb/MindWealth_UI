@@ -28,7 +28,7 @@ def _extract_symbol_from_signal_col(val):
 
 
 def create_all_data_page():
-    """Create All Data page with chatbot data files"""    # Info button at the top
+    """Create All Data page with chatbot signal data files"""    # Info button at the top
     if st.button("ℹ️ Info About Page", key="info_all_data", help="Click to learn about this page"):
         st.session_state['show_info_all_data'] = not st.session_state.get('show_info_all_data', False)
     
@@ -40,7 +40,7 @@ def create_all_data_page():
             
             ### Why is it used?
             - **Centralized View**: Access all signal types in one place
-            - **Comprehensive Analysis**: View entry, exit, portfolio targets, and breadth data together
+            - **Comprehensive Analysis**: View entry, exit, portfolio targets, and breadth signal data together
             - **Cross-Signal Comparison**: Compare different signal types and their performance
             - **Unified Filtering**: Apply consistent filters across all signal types
             
@@ -49,7 +49,7 @@ def create_all_data_page():
             2. **Apply Filters**: Use sidebar filters to narrow down by functions and symbols
             3. **View Summary**: Check summary cards at the top for quick metrics
             4. **Explore Cards**: Scroll through strategy cards for detailed information
-            5. **Analyze Table**: Review the comprehensive data table at the bottom
+            5. **Analyze Table**: Review the comprehensive signal data table at the bottom
             
             ### Key Features:
             - Multi-tab interface for different signal types
@@ -194,11 +194,11 @@ def create_all_data_page():
 
 
 def display_data_file(tab_name, df, selected_functions, selected_symbols, min_win_rate=0, min_sharpe_ratio=-5.0):
-    """Display a specific data file with filters and tabs"""
+    """Display a specific signal file with filters and tabs"""
 
     # Check if data is loaded
     if df.empty:
-        st.warning(f"No data available for {tab_name}")
+        st.warning(f"No signal data available for {tab_name}")
         return
 
     # Determine signal type for filtering logic
@@ -233,7 +233,7 @@ def display_data_file(tab_name, df, selected_functions, selected_symbols, min_wi
             filtered_df = filtered_df[sharpe_series >= min_sharpe_ratio]
 
     if filtered_df.empty:
-        st.warning(f"No data matches the current filters for {tab_name}")
+        st.warning(f"No signal data matches the current filters for {tab_name}")
         return
 
     # Create position tabs (Long/Short/All) for signals, skip for breadth
@@ -256,7 +256,7 @@ def display_data_file(tab_name, df, selected_functions, selected_symbols, min_wi
 
 
 def display_interval_tabs(df, position_name, tab_name):
-    """Display interval tabs for data"""
+    """Display interval tabs for signals"""
 
     if df.empty:
         st.info(f"No {position_name} available for {tab_name}")
@@ -315,7 +315,7 @@ def display_interval_tabs(df, position_name, tab_name):
                     interval_df = df
 
             if interval_df.empty:
-                st.info(f"No data available for {interval}")
+                st.info(f"No signal data available for {interval}")
                 continue
 
             # Add Key Performance Metrics section
@@ -360,7 +360,7 @@ def display_interval_tabs(df, position_name, tab_name):
             st.markdown("---")
 
             # Display detailed data table
-            st.markdown("### 📊 Detailed Data Table")
+            st.markdown("### 📊 Detailed Signal Data Table")
 
             # Prepare dataframe for display - exclude Signal Open Price (backend deduplication only)
             display_df = interval_df.copy()
@@ -399,14 +399,14 @@ def display_data_metrics(df, tab_name, signal_type):
             unique_functions = df['Function'].nunique()
             st.metric("Unique Functions", unique_functions)
         else:
-            st.metric("Data Points", total_records)
+            st.metric("Signal Data Points", total_records)
 
     with col3:
         if 'Function' in df.columns:
             unique_functions = df['Function'].nunique()
             st.metric("Functions", unique_functions)
         else:
-            st.metric("Data Points", total_records)
+            st.metric("Signal Data Points", total_records)
 
     with col4:
         if 'Date' in df.columns:
@@ -432,7 +432,7 @@ def display_interval_metrics(df, interval, position_name):
             unique_functions = df['Function'].nunique()
             st.metric("Functions", unique_functions)
         else:
-            st.metric("Data Points", records_count)
+            st.metric("Signal Data Points", records_count)
 
     with col3:
         if 'Date' in df.columns:

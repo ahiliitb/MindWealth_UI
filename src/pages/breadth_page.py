@@ -13,7 +13,7 @@ from ..utils.file_discovery import extract_date_from_filename
 
 
 def create_breadth_page(data_file, page_title):
-    """Create a specialized page for breadth data"""
+    """Create a specialized page for breadth signal data"""
     # Info button at the top
     if st.button("ℹ️ Info About Page", key=f"info_breadth_{page_title}", help="Click to learn about this page"):
         st.session_state[f'show_info_breadth_{page_title}'] = not st.session_state.get(f'show_info_breadth_{page_title}', False)
@@ -38,12 +38,13 @@ def create_breadth_page(data_file, page_title):
             5. **Track Trends**: Monitor breadth changes over time
             
             ### Key Features:
+            - **S&P 500 universe**: All breadth SBI metrics are based on S&P 500 stocks
             - Bullish asset percentage tracking
             - Bullish signal percentage tracking
             - Strategy-by-strategy breadth analysis
             - Historical breadth trend visualization
             - Combined "All Functions" breadth view
-            - Date-stamped breadth data
+            - Date-stamped breadth signal data
             """)
     
     st.title(f"📊 {page_title}")
@@ -58,7 +59,7 @@ def create_breadth_page(data_file, page_title):
     df = load_data_from_file(f'{data_file}', page_title)
     
     if df.empty:
-        st.warning(f"No data available for {page_title}")
+        st.warning(f"No signal data available for {page_title}")
         return
     
     # Breadth summary cards
@@ -159,14 +160,14 @@ def create_breadth_page(data_file, page_title):
 
             st.plotly_chart(fig, use_container_width=True)
         else:
-            st.info("No 'All Function Combined' observations found in breadth data.")
+            st.info("No 'All Function Combined' observations found in breadth signal data.")
     except Exception as e:
         st.warning(f"Unable to render SBI graph: {e}")
 
     st.markdown("---")
     
     # Data table - Original CSV format
-    st.markdown("### 📋 Detailed Data Table (Original CSV Format)")
+    st.markdown("### 📋 Detailed Signal Data Table (Original CSV Format)")
     
     # Create a dataframe with original CSV data
     csv_data = []

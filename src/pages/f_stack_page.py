@@ -33,7 +33,7 @@ def _format_date(value):
 def _render_signal_cards(df):
     st.markdown("### 📊 F-Stack Signal Cards")
     if df.empty:
-        st.warning("No signals match current filters for card display.")
+        st.warning("No signal data matches current filters for card display.")
         return
     
     for _, row in df.iterrows():
@@ -80,7 +80,7 @@ def create_f_stack_page(data_file, page_title="F-Stack"):
         with st.expander("📖 F-Stack Analyzer Information", expanded=True):
             st.markdown("""
             ### What is this page?
-            The F-Stack Analyzer visualizes and analyzes Fibonacci-based band structures and extension levels for trading signals.
+            The F-Stack Analyzer visualizes and analyzes Fibonacci-based band structures and extension levels for trading signal data.
             
             ### Why is it used?
             - **Technical Analysis**: Understand Fibonacci-based price levels and bands
@@ -93,7 +93,7 @@ def create_f_stack_page(data_file, page_title="F-Stack"):
             2. **Check Band Structure**: View current extension level, band range, and composition
             3. **Identify Targets**: Look at next band levels and Fibonacci retracements
             4. **Apply Filters**: Use sidebar filters for functions, symbols, and intervals
-            5. **Analyze Table**: Review the complete data table for detailed metrics
+            5. **Analyze Table**: Review the complete signal data table for detailed metrics
             
             ### Key Features:
             - Fibonacci extension level analysis
@@ -119,7 +119,7 @@ def create_f_stack_page(data_file, page_title="F-Stack"):
     df = load_data_from_file(data_file, page_title)
 
     if df.empty:
-        st.warning("No F-Stack data available for the selected report.")
+        st.warning("No F-Stack signal data available for the selected report.")
         return
 
     df = df.copy()
@@ -241,7 +241,7 @@ def create_f_stack_page(data_file, page_title="F-Stack"):
 
     st.markdown("---")
 
-    st.markdown("### 📋 Detailed Data Table - F-Stack Analyzer")
+    st.markdown("### 📋 Detailed Signal Data Table - F-Stack Analyzer")
     display_columns = [
         'Symbol',
         'Signal',
@@ -281,7 +281,7 @@ def create_f_stack_page(data_file, page_title="F-Stack"):
 
     csv_data = display_df.to_csv(index=False).encode('utf-8')
     st.download_button(
-        label="Download filtered data as CSV",
+        label="Download filtered signal data as CSV",
         data=csv_data,
         file_name="f_stack_analyzer_filtered.csv",
         mime="text/csv",

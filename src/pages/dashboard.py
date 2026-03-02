@@ -26,16 +26,16 @@ def create_top_signals_dashboard():
             ### Why is it used?
             - **Overview**: Get a quick overview of all available strategy analysis pages
             - **Navigation**: Easily navigate to different sections of the application
-            - **Status Check**: See which strategies have data available and which don't
+            - **Status Check**: See which strategies have signal data available and which don't
             
             ### How to use?
             1. **View Available Strategies**: Check the list of model function strategies and signal pages
-            2. **Check Data Availability**: Green checkmarks (✅) indicate available data, red crosses (❌) indicate missing data
+            2. **Check Signal Data Availability**: Green checkmarks (✅) indicate available signal data, red crosses (❌) indicate missing signal data
             3. **Navigate**: Use the sidebar menu to access specific strategy pages
             4. **Explore Features**: Review the additional features section to see what else is available
             
             ### Key Features:
-            - Real-time data loading from CSV files
+            - Real-time signal data loading from CSV files
             - Dynamic strategy analysis with filters and visualizations
             - Access to Claude AI output and reports
             - Comprehensive view of all trading strategies
@@ -65,7 +65,7 @@ def create_top_signals_dashboard():
             if page in csv_files:
                 st.markdown(f"✅ {page}")
             else:
-                st.markdown(f"❌ {page} (No data)")
+                st.markdown(f"❌ {page} (No signal data)")
     
     with col2:
         st.markdown("**Signal & Performance Pages:**")
@@ -77,10 +77,10 @@ def create_top_signals_dashboard():
             if page in csv_files:
                 st.markdown(f"✅ {page}")
             else:
-                st.markdown(f"❌ {page} (No data)")
+                st.markdown(f"❌ {page} (No signal data)")
     
     st.markdown("### 📄 Additional Features")
     st.markdown("• **Claude Output**: View text file outputs")
     st.markdown("• **Dynamic Analysis**: Each page provides detailed strategy analysis with filters and visualizations")
-    st.markdown("• **Real-time Data**: All data is loaded dynamically from CSV files")
+    st.markdown("• **Real-time Signal Data**: All signal data is loaded dynamically from CSV files")
 

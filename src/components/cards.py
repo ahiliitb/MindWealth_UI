@@ -90,7 +90,7 @@ def create_strategy_cards(df, page_name="Unknown", tab_context=""):
     total_signals = len(filtered_df)
     
     if total_signals == 0:
-        st.warning("No signals match the current filters.")
+        st.warning("No signal data matches the current filters.")
         return filtered_df
     # Display total count
     st.markdown(f"**Total Signals: {total_signals}**")

@@ -68,7 +68,7 @@ def create_virtual_trading_page():
     df = pd.concat([df_long, df_short], ignore_index=True)
     
     if df.empty:
-        st.warning("No virtual trading data available")
+        st.warning("No virtual trading signal data available")
         return
     
     # Clean and prepare data
@@ -168,7 +168,7 @@ def display_virtual_trading_content(df, tab_name, selected_functions, selected_s
     """Display virtual trading content with position and interval tabs"""
     
     if df.empty:
-        st.warning(f"No data available for {tab_name}")
+        st.warning(f"No signal data available for {tab_name}")
         return
     
     # Apply filters
@@ -182,7 +182,7 @@ def display_virtual_trading_content(df, tab_name, selected_functions, selected_s
         filtered_df = filtered_df[filtered_df['Backtested Win Rate [%]'] >= min_win_rate]
     
     if filtered_df.empty:
-        st.warning(f"No data matches the current filters for {tab_name}")
+        st.warning(f"No signal data matches the current filters for {tab_name}")
         return
     
     # Create position tabs (Long/Short/All)
@@ -201,7 +201,7 @@ def display_virtual_trading_content(df, tab_name, selected_functions, selected_s
 
 
 def display_interval_tabs(df, position_name, trade_status):
-    """Display interval tabs for virtual trading data"""
+    """Display interval tabs for virtual trading signal data"""
     
     if df.empty:
         st.info(f"No {position_name} available for {trade_status}")
@@ -221,14 +221,14 @@ def display_interval_tabs(df, position_name, trade_status):
                 interval_df = df[df['Interval'] == interval]
             
             if interval_df.empty:
-                st.info(f"No data available for {interval}")
+                st.info(f"No signal data available for {interval}")
                 continue
             
             # Display summary metrics
             display_virtual_trading_metrics(interval_df, interval, position_name)
             
             # Display detailed data table
-            st.markdown("### 📊 Detailed Data Table")
+            st.markdown("### 📊 Detailed Signal Data Table")
             
             # Prepare dataframe for display (remove internal Position column if needed, or keep it)
             display_df = interval_df.copy()

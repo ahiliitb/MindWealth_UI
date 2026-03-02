@@ -53,7 +53,7 @@ def create_performance_summary_page(data_file, page_title):
             - **Strategy Evaluation**: Evaluate the effectiveness of different trading strategies
             - **Performance Metrics**: Review key performance indicators like win rate and profit
             - **Comparison**: Compare performance across strategies, intervals, and signal types
-            - **Historical Analysis**: Analyze historical performance data
+            - **Historical Analysis**: Analyze historical performance signal data
             
             ### How to use?
             1. **Select Signal Type**: Choose between All, Long, or Short signals using tabs
@@ -79,7 +79,7 @@ def create_performance_summary_page(data_file, page_title):
     df = load_data_from_file(f'{data_file}', page_title)
     
     if df.empty:
-        st.warning(f"No data available for {page_title}")
+        st.warning(f"No signal data available for {page_title}")
         return
     
     # Display data fetch datetime at top of page
@@ -136,7 +136,7 @@ def create_performance_summary_page(data_file, page_title):
     def display_performance_content(filtered_df, tab_name, signal_type_filter=None):
         """Display performance content for each tab"""
         if filtered_df.empty:
-            st.warning(f"No {tab_name} data matches the selected filters. Please adjust your filters.")
+            st.warning(f"No {tab_name} signal data matches the selected filters. Please adjust your filters.")
             return
         
         show_cards = page_title not in DETAILED_TABLE_ONLY_PAGES
@@ -157,7 +157,7 @@ def create_performance_summary_page(data_file, page_title):
         
         # Data table - Original CSV format
         if show_cards:
-            detail_heading = f"### 📋 Detailed Data Table - {tab_name} (Original CSV Format)"
+            detail_heading = f"### 📋 Detailed Signal Data Table - {tab_name} (Original CSV Format)"
         else:
             detail_heading = f"### 📋 Detailed Performance Table - {tab_name}"
         st.markdown(detail_heading)

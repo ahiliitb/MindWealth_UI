@@ -61,24 +61,24 @@ def create_text_file_page():
         with st.expander("📖 Claude Signals Report Information", expanded=True):
             st.markdown("""
             ### What is this page?
-            The Claude Signals Report page displays AI-generated analysis of trading signals using Claude AI, showing both textual analysis and structured data.
+            The Claude Signals Report page displays AI-generated analysis of trading signal data using Claude AI, showing both textual analysis and structured signal data.
             
             ### Why is it used?
-            - **AI Insights**: Get Claude AI's analysis and recommendations on trading signals
-            - **Comprehensive Reports**: View both narrative text reports and structured CSV data
+            - **AI Insights**: Get Claude AI's analysis and recommendations on trading signal data
+            - **Comprehensive Reports**: View both narrative text reports and structured CSV signals
             - **Signal Summary**: See a consolidated view of important signals analyzed by AI
             - **Quick Reference**: Access Claude's latest market analysis and trading suggestions
             
             ### How to use?
             1. **Read Text Analysis**: Start with the text report section for Claude's narrative analysis
             2. **Review Cards**: Scroll through strategy cards for quick signal overview
-            3. **Check Table**: Examine the detailed data table at the bottom
-            4. **Filter Data**: Use sidebar filters to focus on specific strategies or symbols
+            3. **Check Table**: Examine the detailed signal data table at the bottom
+            4. **Filter Signals**: Use sidebar filters to focus on specific strategies or symbols
             5. **Compare Signals**: Cross-reference Claude's insights with your own analysis
             
             ### Key Features:
             - AI-powered signal analysis from Claude
-            - Dual format: Text report + structured data
+            - Dual format: Text report + structured signal data
             - Automated date-stamped reports
             - Integration with signal cards and tables
             - Historical report access
@@ -115,7 +115,7 @@ def create_text_file_page():
     csv_path = csv_file if csv_file else GPT_SIGNALS_REPORT_CSV_PATH_US
     
     if not os.path.exists(csv_path):
-        st.info("No data available - Claude signals CSV file not found.")
+        st.info("No signal data available - Claude signals CSV file not found.")
         return
     
     try:
@@ -123,7 +123,7 @@ def create_text_file_page():
         raw_df = pd.read_csv(csv_path)
         
         if raw_df.empty:
-            st.info("No data available in Claude signals CSV.")
+            st.info("No signal data available in Claude signals CSV.")
             return
         
         # Claude Signals CSV has the same structure as outstanding_signal.csv
@@ -132,7 +132,7 @@ def create_text_file_page():
         parsed_df = parse_detailed_signal_csv(raw_df)
         
         if parsed_df.empty:
-            st.info("No data could be parsed from Claude signals CSV.")
+            st.info("No signal data could be parsed from Claude signals CSV.")
             return
         
         # Sidebar Filters
@@ -161,7 +161,7 @@ def create_text_file_page():
             parsed_df = parsed_df[parsed_df['Strategy_Sharpe'].fillna(-999) >= min_sharpe_ratio]
         
         if parsed_df.empty:
-            st.info("No signals match the current filter criteria.")
+            st.info("No signal data matches the current filter criteria.")
             return
         
         # Strategy cards - use parsed data which has Raw_Data column
@@ -178,7 +178,7 @@ def create_text_file_page():
         st.markdown("---")
         
         # Detail table - exclude function-specific columns (uses search-filtered data)
-        st.markdown("### 📋 Detailed Data Table (Original CSV Format)")
+        st.markdown("### 📋 Detailed Signal Data Table (Original CSV Format)")
         
         # Build table from search-filtered parsed data's Raw_Data
         csv_data = []
@@ -207,7 +207,7 @@ def create_text_file_page():
         filtered_raw_df = original_df[columns_to_display] if not original_df.empty else pd.DataFrame()
         
         if filtered_raw_df.empty:
-            st.info("No data to display for the current search.")
+            st.info("No signal data to display for the current search.")
         else:
             # Reorder columns: Symbol/Signal first, Exit Signal second, Function third
             from ..utils.helpers import reorder_dataframe_columns, find_column_by_keywords
@@ -238,7 +238,7 @@ def create_text_file_page():
                 column_config=column_config
             )
     except pd.errors.EmptyDataError:
-        st.info("No data available in Claude signals CSV.")
+        st.info("No signal data available in Claude signals CSV.")
     except Exception as e:
         st.error(f"Error reading CSV report: {str(e)}")
         import traceback

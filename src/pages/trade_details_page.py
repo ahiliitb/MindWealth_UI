@@ -102,7 +102,7 @@ def get_available_assets_for_function_interval(base_folder, function, interval):
 
 
 def load_trade_data(base_folder, function, asset, interval):
-    """Load CSV data for the selected combination"""
+    """Load CSV signals for the selected combination"""
     csv_path = os.path.join(base_folder, function, asset, f"{interval}.csv")
     
     if not os.path.exists(csv_path):
@@ -112,7 +112,7 @@ def load_trade_data(base_folder, function, asset, interval):
         df = pd.read_csv(csv_path)
         return df
     except Exception as e:
-        st.error(f"Error loading data: {str(e)}")
+        st.error(f"Error loading signal data: {str(e)}")
         return None
 
 
@@ -130,7 +130,7 @@ def create_trade_details_page():
             
             ### Why is it used?
             - **Detailed Analysis**: Examine specific trades for each strategy function
-            - **Historical Data**: Access historical trade data for different assets
+            - **Historical Signals**: Access historical trade signal data for different assets
             - **Interval Analysis**: Compare performance across different time intervals
             - **Success Metrics**: Review success rates and forward testing results
             
@@ -139,11 +139,11 @@ def create_trade_details_page():
             2. **Pick Function**: Select a strategy function from the dropdown
             3. **Choose Interval**: Select the time interval you want to analyze
             4. **Select Asset**: Pick a specific asset/symbol to view its trades
-            5. **Analyze Table**: Review the detailed trade data in the table
+            5. **Analyze Table**: Review the detailed trade signal data in the table
             
             ### Key Features:
             - Hierarchical navigation: Folder → Function → Interval → Asset
-            - Multiple data sources: success_rate, forward_testing, latest_performance
+            - Multiple signal data sources: success_rate, forward_testing, latest_performance
             - Comprehensive trade history
             - Performance metrics per asset
             - Interval-based analysis
@@ -324,21 +324,21 @@ def create_trade_details_page():
                         all_dataframes[selected_asset] = df
                 
                 if missing_assets:
-                    st.warning(f"Data files not found for: {', '.join(missing_assets)}")
+                    st.warning(f"Signal data files not found for: {', '.join(missing_assets)}")
                 
                 if all_dataframes:
                     # Combine all dataframes if multiple assets selected
                     if len(all_dataframes) > 1:
                         combined_df = pd.concat(all_dataframes.values(), ignore_index=True)
                         st.markdown("---")
-                        st.markdown(f"### 📈 Trade Data: {selected_function} - {len(selected_assets)} Assets - {selected_interval}")
+                        st.markdown(f"### 📈 Trade Signal Data: {selected_function} - {len(selected_assets)} Assets - {selected_interval}")
                         st.markdown(f"**Selected Assets:** {', '.join(selected_assets)}")
                     else:
                         # Single asset - use the first (and only) dataframe
                         asset_name = list(all_dataframes.keys())[0]
                         combined_df = all_dataframes[asset_name]
                         st.markdown("---")
-                        st.markdown(f"### 📈 Trade Data: {selected_function} - {asset_name} - {selected_interval}")
+                        st.markdown(f"### 📈 Trade Signal Data: {selected_function} - {asset_name} - {selected_interval}")
                     
                     # Check if Signal column exists and get unique signal types
                     if 'Signal' in combined_df.columns:
@@ -497,7 +497,7 @@ def create_trade_details_page():
                                 key=f"download_{folder_name}_{selected_function}_{selected_interval}_no_signal"
                             )
                 elif not missing_assets:
-                    st.info("No data available for the selected combination")
+                    st.info("No signal data available for the selected combination")
             else:
-                st.info("Please select Function, Interval, and at least one Asset to view trade data")
+                st.info("Please select Function, Interval, and at least one Asset to view trade signal data")
 
