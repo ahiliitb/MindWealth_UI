@@ -1002,6 +1002,9 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
             combined_df = new_row_df
 
         combined_df = normalize_today_price_columns(combined_df)
+        # Ensure legacy duplicate column is never written (defense in depth)
+        if TODAY_PRICE_COLUMN_LEGACY in combined_df.columns:
+            combined_df = combined_df.drop(columns=[TODAY_PRICE_COLUMN_LEGACY])
         
         # Note: NO additional deduplication needed here
         # Deduplication is already handled by the key matching logic above
@@ -1132,8 +1135,10 @@ def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None)
                 df.at[idx, current_price_column] = new_current_price_value
                 rows_updated_in_file += 1
             
-            # Save updated file if changes were made
+            # Save updated file if changes were made (ensure legacy column is never written)
             if rows_updated_in_file > 0:
+                if TODAY_PRICE_COLUMN_LEGACY in df.columns:
+                    df = df.drop(columns=[TODAY_PRICE_COLUMN_LEGACY])
                 df.to_csv(csv_path, index=False)
                 updated_count += 1
                 total_rows_updated += rows_updated_in_file
