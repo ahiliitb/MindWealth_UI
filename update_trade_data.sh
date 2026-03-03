@@ -32,9 +32,30 @@ if [ ! -d "$SOURCE_TRADE_DIR" ]; then
     exit 1
 fi
 
-# Full copy: all CSV files from cache/US to stock_data (overwrites destination, so all data is synced)
-echo "📊 Copying all stock data CSV files from cache/US to trade_store/stock_data..."
-cp "$CACHE_US_DIR"/*.csv "$TARGET_STOCK_DATA_DIR"/ 2>/dev/null || echo "⚠️  No CSV files found in $CACHE_US_DIR"
+# Full sync: all CSV files from cache/US to stock_data.
+# Use rsync when available for reliable updates and clear error reporting.
+echo "📊 Syncing stock data CSV files from cache/US to trade_store/stock_data..."
+if [ ! -d "$TARGET_STOCK_DATA_DIR" ]; then
+    echo "❌ Error: Target stock data directory $TARGET_STOCK_DATA_DIR does not exist!"
+    exit 1
+fi
+
+if command -v rsync >/dev/null 2>&1; then
+    # --delete removes files that no longer exist in source, keeping directories in sync.
+    # If you want to keep extra destination files, remove --delete.
+    rsync -av --delete --include="*.csv" --exclude="*" "$CACHE_US_DIR"/ "$TARGET_STOCK_DATA_DIR"/
+else
+    # Fallback when rsync is not available: copy CSV files with explicit checks.
+    shopt -s nullglob
+    cache_csv_files=("$CACHE_US_DIR"/*.csv)
+    if [ ${#cache_csv_files[@]} -eq 0 ]; then
+        echo "⚠️  No CSV files found in $CACHE_US_DIR"
+    else
+        cp -f "${cache_csv_files[@]}" "$TARGET_STOCK_DATA_DIR"/
+        echo "✅ Copied ${#cache_csv_files[@]} stock CSV file(s)"
+    fi
+    shopt -u nullglob
+fi
 
 # Copy all CSV files from trade_store/US
 # Exclude dated versions of forward_testing.csv and latest_performance.csv

@@ -32,6 +32,33 @@ from config import (
 # Cache for stock data to avoid repeated file reads
 _stock_data_cache = {}
 
+# Canonical/legacy names for "today price" column.
+TODAY_PRICE_COLUMN = "Today Trading Date/Price[$], Today Price vs Signal"
+TODAY_PRICE_COLUMN_LEGACY = "Today Trading Date/Price[$], Today price vs Signal"
+
+
+def normalize_today_price_columns(df):
+    """
+    Normalize today-price column naming and collapse legacy duplicate columns.
+
+    Returns:
+        DataFrame with canonical today-price column name only.
+    """
+    if df is None or df.empty:
+        return df
+
+    if TODAY_PRICE_COLUMN in df.columns and TODAY_PRICE_COLUMN_LEGACY in df.columns:
+        # Prefer canonical values; backfill from legacy when canonical is empty.
+        canonical_series = df[TODAY_PRICE_COLUMN]
+        legacy_series = df[TODAY_PRICE_COLUMN_LEGACY]
+        empty_mask = canonical_series.isna() | (canonical_series.astype(str).str.strip() == "")
+        df.loc[empty_mask, TODAY_PRICE_COLUMN] = legacy_series.loc[empty_mask]
+        df = df.drop(columns=[TODAY_PRICE_COLUMN_LEGACY])
+    elif TODAY_PRICE_COLUMN_LEGACY in df.columns:
+        df = df.rename(columns={TODAY_PRICE_COLUMN_LEGACY: TODAY_PRICE_COLUMN})
+
+    return df
+
 
 def parse_symbol_signal_column(value):
     """
@@ -890,6 +917,7 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
         
         # Prepare new row DataFrame
         new_row_df = pd.DataFrame([row])
+        new_row_df = normalize_today_price_columns(new_row_df)
         
         # Helper: Extract dedup key based on signal type
         def get_dedup_key(row_data, sig_type):
@@ -947,6 +975,7 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
         # Read existing CSV if it exists
         if csv_path.exists():
             existing_df = pd.read_csv(csv_path)
+            existing_df = normalize_today_price_columns(existing_df)
             
             # Find if key already exists
             key_exists = False
@@ -971,6 +1000,8 @@ def append_to_consolidated_csv(row, signal_type, data_base_dir=None):
             # File doesn't exist yet → INSERT new row
             
             combined_df = new_row_df
+
+        combined_df = normalize_today_price_columns(combined_df)
         
         # Note: NO additional deduplication needed here
         # Deduplication is already handled by the key matching logic above
@@ -1029,8 +1060,8 @@ def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None)
         'portfolio_target_achieved': (data_base / 'portfolio_target_achieved.csv', 'Portfolio Target Achieved')
     }
     
-    # Column name for today price
-    current_price_column = "Today Trading Date/Price[$], Today Price vs Signal"
+    # Canonical column name for today price
+    current_price_column = TODAY_PRICE_COLUMN
     
     updated_count = 0
     skipped_count = 0
@@ -1047,28 +1078,16 @@ def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None)
         
         try:
             df = pd.read_csv(csv_path)
+            df = normalize_today_price_columns(df)
             
             if df.empty:
                 print(f"  ℹ File is empty, skipping")
                 continue
             
-            # Check if today price column exists
             if current_price_column not in df.columns:
-                # Try case-insensitive search
-                found_column = None
-                for col in df.columns:
-                    if "Trading Date" in col and "Price vs Signal" in col:
-                        found_column = col
-                        break
-                
-                if found_column:
-                    current_price_column_actual = found_column
-                else:
-                    print(f"  ⚠ Today price column not found, skipping")
-                    skipped_count += 1
-                    continue
-            else:
-                current_price_column_actual = current_price_column
+                print(f"  ⚠ Today price column not found, skipping")
+                skipped_count += 1
+                continue
             
             rows_updated_in_file = 0
             
@@ -1110,7 +1129,7 @@ def update_current_prices_in_data_files(data_base_dir=None, stock_data_dir=None)
                 
                 # Update today price column
                 new_current_price_value = f"{latest_date} (Price: {latest_price:.4f}), {price_change_str}"
-                df.at[idx, current_price_column_actual] = new_current_price_value
+                df.at[idx, current_price_column] = new_current_price_value
                 rows_updated_in_file += 1
             
             # Save updated file if changes were made
