@@ -32,15 +32,17 @@ def extract_user_prompt(content: str, metadata: Optional[dict] = None) -> str:
     This ensures both current and historical messages show only the clean user question,
     not the internal conversation context that's appended for the AI.
     """
-    # First priority: use display_prompt from metadata if available
-    if metadata and metadata.get("display_prompt"):
-        return metadata["display_prompt"]
+    # Use display_prompt from metadata only if it does NOT contain conversation context
+    # (older sessions may have stored full context in display_prompt)
+    display = (metadata or {}).get("display_prompt") or ""
+    if display and "CONVERSATION CONTEXT (for reference)" not in display:
+        return display.strip()
     
     cleaned = content or ""
     
-    # Handle follow-up queries with conversation context
+    # Handle follow-up queries with conversation context (from content or bad display_prompt)
     if 'CONVERSATION CONTEXT (for reference):' in cleaned:
-        # Extract only the CURRENT QUESTION part
+        # Extract only the CURRENT QUESTION part for UI display
         if 'CURRENT QUESTION:' in cleaned:
             cleaned = cleaned.split('CURRENT QUESTION:', 1)[1].strip()
         else:

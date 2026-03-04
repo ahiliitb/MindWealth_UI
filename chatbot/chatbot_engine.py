@@ -591,7 +591,8 @@ Please answer the user's query based on the comprehensive analysis report above.
         functions: Optional[List[str]] = None,
         additional_context: Optional[str] = None,
         auto_extract_tickers: bool = False,
-        signal_type_reasoning: Optional[str] = None
+        signal_type_reasoning: Optional[str] = None,
+        display_prompt_override: Optional[str] = None,
     ) -> Tuple[str, Dict]:
         """
         Process a query using the two-stage smart column selection system.
@@ -860,11 +861,11 @@ Please answer the user's query based on the comprehensive analysis report above.
                 "signal_type_reasoning": signal_type_reasoning,
             }
             
-            # Add user message to history
+            # Add user message to history (use display_prompt_override for UI so only current question is shown)
             self.history_manager.add_message(
                 "user",
                 complete_message,
-                self._prepare_user_metadata(metadata, user_message)
+                self._prepare_user_metadata(metadata, display_prompt_override if display_prompt_override is not None else user_message)
             )
             
             # Get conversation history for API
@@ -1006,6 +1007,7 @@ CURRENT QUESTION: {user_message}
 NOTE: Use the conversation context above to understand what we've discussed, but perform fresh analysis for this specific question. You can choose different signal types, functions, or columns as needed."""
             
             # Call smart_query which will do fresh signal type determination, column selection, and data fetching
+            # Pass display_prompt_override so the stored user message shows only the current question in UI
             response, metadata = self.smart_query(
                 user_message=enhanced_user_message,
                 selected_signal_types=selected_signal_types,  # Will be re-determined by AI if needed
@@ -1015,7 +1017,8 @@ NOTE: Use the conversation context above to understand what we've discussed, but
                 functions=functions,
                 additional_context=additional_context,
                 auto_extract_tickers=auto_extract_tickers,
-                signal_type_reasoning=signal_type_reasoning
+                signal_type_reasoning=signal_type_reasoning,
+                display_prompt_override=user_message,
             )
             
             # Mark this as a followup query in metadata
@@ -1023,8 +1026,6 @@ NOTE: Use the conversation context above to understand what we've discussed, but
             metadata["followup_mode"] = "dynamic_fresh"
             metadata["conversation_context_used"] = True
             metadata["history_exchanges_used"] = MAX_HISTORY_LENGTH
-            # Override display_prompt to show only the actual user question (not the enhanced context)
-            metadata["display_prompt"] = user_message
             
             logger.info(f"Dynamic follow-up query completed with fresh analysis")
             logger.info("="*60)

@@ -2,8 +2,9 @@
 
 [server]
 headless = true
-enableCORS = false
-port = 8501
+port = 8502
+# enableCORS must be true when enableXsrfProtection is true (Streamlit default); omit or set true to avoid warning
+enableCORS = true
 
 [browser]
 gatherUsageStats = false
