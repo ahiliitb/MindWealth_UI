@@ -1,36 +1,36 @@
 Function,Interval,Signal Type,Total Analysed Trades,Win Percentage,Holding Period (days) (Max/Min/Avg),Profit [%] (Max/Min/Avg.),Avg Backtested Win Rate [%],Avg Backtested Holding Period (days),Percentage of Open Trades
-ALTITUDE ALPHA,Yearly,Long,34,70.59%,6.3 years/0 days/2.2 years,128.08%/-51.05%/31.1%,82.14%,2.6 years,35.29%
-ALTITUDE ALPHA,Quarterly,Long,116,58.62%,7.1 years/0 days/1.9 year,158.12%/-52.35%/21.78%,81.26%,2.6 years,34.48%
-ALTITUDE ALPHA,Weekly,Long,73,57.53%,3.0 years/1.3 month/1.5 year,72.24%/-25.75%/18.02%,83.42%,2.6 years,46.58%
-ALTITUDE ALPHA,Monthly,Long,111,53.15%,5.0 years/18 days/1.7 year,109.05%/-36.64%/18.87%,78.59%,2.2 years,33.33%
-ALTITUDE ALPHA,Daily,Long,13,46.15%,1.3 year/17 days/5.8 months,63.58%/-30.92%/6.53%,74.18%,3.9 months,30.77%
-BAND MATRIX,Weekly,Long,93,69.89%,2.6 years/0 days/1.1 year,177.33%/-70.46%/14.53%,92.17%,2.1 years,52.69%
-BAND MATRIX,Daily,Long,302,64.57%,1.9 year/5 days/4.6 months,224.0%/-47.85%/7.02%,82.37%,6.2 months,23.84%
-BAND MATRIX,Monthly,Long,1,100.0%,8.7 months/8.7 months/8.7 months,12.71%/12.71%/12.71%,100.0%,9.4 years,100.0%
-BASELINEDIVERGENCE,Weekly,Long,575,64.0%,9.0 months/0 days/3.2 months,90.19%/-52.42%/2.84%,84.85%,3.6 months,17.74%
-DELTADRIFT,Weekly,Long,116,85.34%,9.3 months/7 days/2.3 months,29.94%/-40.46%/4.47%,86.25%,2.2 months,4.31%
-DELTADRIFT,Daily,Long,518,73.55%,3.1 months/1 day/15 days,22.83%/-24.18%/0.78%,82.45%,13 days,6.95%
+ALTITUDE ALPHA,Yearly,Long,34,67.65%,6.3 years/0 days/2.2 years,128.08%/-51.05%/30.62%,82.14%,2.6 years,35.29%
+ALTITUDE ALPHA,Quarterly,Long,116,57.76%,7.1 years/0 days/1.9 year,158.12%/-52.35%/21.46%,81.26%,2.6 years,34.48%
+ALTITUDE ALPHA,Weekly,Long,72,54.17%,3.0 years/1.3 month/1.5 year,71.0%/-25.75%/16.68%,83.19%,2.6 years,47.22%
+ALTITUDE ALPHA,Monthly,Long,111,53.15%,5.0 years/19 days/1.7 year,109.05%/-36.64%/18.34%,78.59%,2.2 years,33.33%
+ALTITUDE ALPHA,Daily,Long,13,46.15%,1.3 year/17 days/5.8 months,63.58%/-30.92%/6.01%,74.18%,3.9 months,30.77%
+BAND MATRIX,Weekly,Long,93,69.89%,2.6 years/0 days/1.1 year,170.74%/-70.96%/14.01%,92.17%,2.1 years,52.69%
+BAND MATRIX,Daily,Long,299,63.88%,1.9 year/0 days/4.6 months,224.0%/-48.19%/6.75%,82.43%,6.2 months,24.41%
+BAND MATRIX,Monthly,Long,1,100.0%,8.7 months/8.7 months/8.7 months,13.08%/13.08%/13.08%,100.0%,9.4 years,100.0%
+BASELINEDIVERGENCE,Weekly,Long,572,64.86%,9 months/0 days/3.3 months,90.19%/-52.72%/2.95%,84.82%,3.6 months,17.31%
+DELTADRIFT,Weekly,Long,115,84.35%,9.3 months/7 days/2.5 months,29.94%/-40.46%/4.15%,86.34%,2.2 months,4.35%
+DELTADRIFT,Daily,Long,517,73.69%,3.1 months/1 day/15 days,22.83%/-24.18%/0.77%,82.45%,13 days,6.77%
 DELTADRIFT,Monthly,Long,2,100.0%,1.0 year/3.1 months/7.6 months,32.59%/5.59%/19.09%,77.5%,4.9 months,0.0%
-DELTADRIFT,Weekly,Short,30,80.0%,4.2 months/7 days/1.1 month,10.21%/-15.51%/1.55%,86.24%,22 days,3.33%
-DELTADRIFT,Daily,Short,104,69.23%,1.1 month/1 day/6 days,12.36%/-13.35%/0.36%,87.39%,6 days,0.96%
-DELTADRIFT,Monthly,Short,4,25.0%,10.1 months/0 days/3.7 months,1.66%/-18.52%/-7.45%,90.0%,2.0 month,50.0%
-FRACTAL TRACK,Monthly,Long,59,66.1%,2.7 years/0 days/9.9 months,33.35%/-51.51%/6.59%,88.43%,1.6 year,49.15%
-FRACTAL TRACK,Weekly,Long,149,58.39%,2.1 years/0 days/7.6 months,47.4%/-42.5%/3.35%,93.79%,1.3 year,47.65%
-FRACTAL TRACK,Daily,Long,54,42.59%,1.5 year/7 days/5.1 months,13.18%/-50.43%/-4.23%,95.93%,5.1 months,57.41%
+DELTADRIFT,Weekly,Short,30,80.0%,4.4 months/7 days/1.2 month,10.21%/-15.51%/1.78%,86.24%,22 days,3.33%
+DELTADRIFT,Daily,Short,104,69.23%,1.1 month/1 day/6 days,12.36%/-13.35%/0.34%,87.39%,6 days,0.96%
+DELTADRIFT,Monthly,Short,3,33.33%,10.1 months/1.6 month/4.9 months,2.85%/-18.52%/-9.54%,86.67%,2.0 months,33.33%
+FRACTAL TRACK,Monthly,Long,59,62.71%,2.7 years/0 days/9.9 months,33.35%/-51.54%/6.27%,88.43%,1.6 year,49.15%
+FRACTAL TRACK,Weekly,Long,149,57.72%,2.1 years/0 days/7.6 months,47.4%/-44.49%/3.07%,93.79%,1.3 year,47.65%
+FRACTAL TRACK,Daily,Long,54,44.44%,1.5 year/7 days/5.2 months,13.18%/-51.64%/-4.18%,95.93%,5.1 months,57.41%
 FRACTAL TRACK,Quarterly,Long,1,100.0%,1.5 year/1.5 year/1.5 year,43.26%/43.26%/43.26%,100.0%,2.2 years,0.0%
 FRACTAL TRACK,Monthly,Short,17,35.29%,4.0 months/0 days/1.3 month,20.46%/-20.37%/-1.22%,93.03%,1.7 month,29.41%
-FRACTAL TRACK,Quarterly,Short,9,33.33%,6.1 months/0 days/2.7 months,29.71%/-28.92%/-2.89%,94.05%,3.8 months,33.33%
-FRACTAL TRACK,Weekly,Short,6,33.33%,1.6 month/10 days/21 days,10.25%/-12.37%/-1.74%,92.5%,18 days,16.67%
-FRACTAL TRACK,Daily,Short,7,28.57%,18 days/1 day/4 days,5.08%/-11.24%/-2.84%,95.45%,3 days,14.29%
-OSCILLATOR DELTA,Daily,Long,407,80.59%,7.6 months/1 day/27 days,18.53%/-24.12%/0.47%,88.07%,21 days,0.0%
-OSCILLATOR DELTA,Daily,Short,124,71.77%,10.5 months/1 day/1.3 month,12.87%/-22.93%/-1.14%,95.0%,24 days,0.0%
-PULSEGAUGE,Weekly,Long,244,73.36%,2.8 years/14 days/6.7 months,80.04%/-49.02%/7.4%,84.41%,9.0 months,22.13%
-PULSEGAUGE,Weekly,Short,51,62.75%,6.7 months/1 day/18 days,16.75%/-23.1%/-0.31%,87.76%,21 days,3.92%
-SIGMASHELL,Daily,Long,237,67.93%,1.3 year/2 days/3.7 months,92.68%/-52.26%/4.63%,86.37%,3.6 months,14.77%
-TRENDPULSE,Daily,Long,518,80.12%,10.2 months/0 days/1.4 month,39.76%/-45.94%/1.52%,91.96%,28 days,11.39%
-TRENDPULSE,Weekly,Long,265,76.23%,1.5 year/3 days/3.6 months,58.03%/-52.77%/4.15%,89.61%,3.7 months,26.42%
-TRENDPULSE,Monthly,Long,127,62.99%,2.3 years/0 days/9.6 months,58.2%/-38.33%/5.48%,90.08%,10.6 months,46.46%
-TRENDPULSE,Quarterly,Long,3,33.33%,1.5 year/2.6 months/10.7 months,11.34%/-19.73%/-7.06%,93.94%,1.8 year,100.0%
-TRENDPULSE,Daily,Short,18,61.11%,2.1 months/6 days/20 days,7.26%/-9.01%/-0.06%,91.72%,9 days,0.0%
+FRACTAL TRACK,Weekly,Short,6,33.33%,1.6 month/11 days/21 days,9.94%/-12.37%/-1.8%,92.5%,18 days,16.67%
+FRACTAL TRACK,Quarterly,Short,10,30.0%,6.1 months/0 days/2.4 months,29.71%/-28.92%/-2.6%,94.64%,4.0 months,40.0%
+FRACTAL TRACK,Daily,Short,7,28.57%,18 days/1 day/4 days,5.08%/-11.24%/-3.12%,95.45%,3 days,14.29%
+OSCILLATOR DELTA,Daily,Long,404,80.45%,7.6 months/1 day/27 days,18.53%/-24.12%/0.43%,88.06%,21 days,0.0%
+OSCILLATOR DELTA,Daily,Short,123,72.36%,10.6 months/1 day/1.3 month,12.87%/-22.93%/-1.08%,95.04%,24 days,0.0%
+PULSEGAUGE,Weekly,Long,244,72.54%,2.8 years/14 days/6.7 months,80.04%/-49.02%/7.3%,84.41%,9.0 months,21.31%
+PULSEGAUGE,Weekly,Short,51,62.75%,6.7 months/1 day/18 days,16.75%/-23.1%/-0.28%,87.76%,21 days,3.92%
+SIGMASHELL,Daily,Long,238,64.29%,1.3 year/0 days/3.7 months,92.68%/-52.26%/4.06%,86.39%,3.6 months,15.97%
+TRENDPULSE,Daily,Long,517,80.08%,10.2 months/1 day/1.4 month,39.76%/-47.52%/1.39%,91.94%,28 days,11.41%
+TRENDPULSE,Weekly,Long,266,75.19%,1.5 year/4 days/3.7 months,52.44%/-53.58%/4.02%,89.65%,3.7 months,26.32%
+TRENDPULSE,Monthly,Long,127,62.2%,2.3 years/0 days/9.6 months,58.2%/-38.33%/5.07%,90.08%,10.6 months,46.46%
+TRENDPULSE,Quarterly,Long,3,33.33%,1.5 year/2.6 months/10.7 months,7.14%/-18.79%/-8.91%,93.94%,1.8 year,100.0%
+TRENDPULSE,Daily,Short,18,61.11%,2.1 months/6 days/20 days,7.26%/-9.01%/-0.04%,91.72%,9 days,0.0%
 TRENDPULSE,Weekly,Short,14,35.71%,2.8 months/21 days/1.6 month,15.96%/-26.5%/-0.98%,97.04%,2.1 months,7.14%
 TRENDPULSE,Monthly,Short,7,0.0%,1.1 year/3.0 months/7.2 months,-2.03%/-10.46%/-6.32%,95.13%,6.8 months,0.0%
