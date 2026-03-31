@@ -1,0 +1,5 @@
+Date,Function,Total New Long Signal,Last 6 Month Top 10 Percentile No of Long Signal,Total New Short Signal,Last 6 Month Top 10 Percentile No of Short Signal
+2026-03-30,TRENDPULSE,3,13,1,2
+2026-03-30,DELTADRIFT,4,12,1,4
+2026-03-30,BAND MATRIX,3,6,0,0
+2026-03-30,Combined (TrendPulse + DeltaDrift + BandMatrix),10,28,2,4
