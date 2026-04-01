@@ -32,30 +32,35 @@ if [ ! -d "$SOURCE_TRADE_DIR" ]; then
     exit 1
 fi
 
-# Full sync: all CSV files from cache/US to stock_data.
-# Use rsync when available for reliable updates and clear error reporting.
+# Sync stock data CSV files from cache/US to stock_data (file-by-file).
+# For each CSV in cache/US: delete the destination file (if present), then copy.
 echo "📊 Syncing stock data CSV files from cache/US to trade_store/stock_data..."
 if [ ! -d "$TARGET_STOCK_DATA_DIR" ]; then
     echo "❌ Error: Target stock data directory $TARGET_STOCK_DATA_DIR does not exist!"
     exit 1
 fi
 
-if command -v rsync >/dev/null 2>&1; then
-    # --delete removes files that no longer exist in source, keeping directories in sync.
-    # If you want to keep extra destination files, remove --delete.
-    rsync -av --delete --include="*.csv" --exclude="*" "$CACHE_US_DIR"/ "$TARGET_STOCK_DATA_DIR"/
+shopt -s nullglob
+cache_csv_files=("$CACHE_US_DIR"/*.csv)
+if [ ${#cache_csv_files[@]} -eq 0 ]; then
+    echo "⚠️  No CSV files found in $CACHE_US_DIR"
 else
-    # Fallback when rsync is not available: copy CSV files with explicit checks.
-    shopt -s nullglob
-    cache_csv_files=("$CACHE_US_DIR"/*.csv)
-    if [ ${#cache_csv_files[@]} -eq 0 ]; then
-        echo "⚠️  No CSV files found in $CACHE_US_DIR"
-    else
-        cp -f "${cache_csv_files[@]}" "$TARGET_STOCK_DATA_DIR"/
-        echo "✅ Copied ${#cache_csv_files[@]} stock CSV file(s)"
-    fi
-    shopt -u nullglob
+    copied_count=0
+    for src_file in "${cache_csv_files[@]}"; do
+        [ -f "$src_file" ] || continue
+        base_name="$(basename "$src_file")"
+        dest_file="$TARGET_STOCK_DATA_DIR/$base_name"
+
+        if [ -f "$dest_file" ]; then
+            rm -f "$dest_file"
+        fi
+
+        cp "$src_file" "$dest_file"
+        copied_count=$((copied_count + 1))
+    done
+    echo "✅ Synced $copied_count stock CSV file(s) (delete then copy)"
 fi
+shopt -u nullglob
 
 # Copy all CSV files from trade_store/US
 # Exclude dated versions of forward_testing.csv and latest_performance.csv
