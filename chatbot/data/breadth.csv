@@ -783,3 +783,91 @@ Date,Function,Bullish Asset vs Total Asset (%),Bullish Signal vs Total Signal (%
 2026-03-04,DELTADRIFT,,,,,,
 2026-03-04,BAND MATRIX,,,,,,
 2026-03-04,Combined (TrendPulse + DeltaDrift + BandMatrix),,,,,,
+2026-03-07,TRENDPULSE,,,,,,
+2026-03-07,DELTADRIFT,,,,,,
+2026-03-07,BAND MATRIX,,,,,,
+2026-03-07,Combined (TrendPulse + DeltaDrift + BandMatrix),,,,,,
+2026-03-08,TRENDPULSE,,,,,,
+2026-03-08,DELTADRIFT,,,,,,
+2026-03-08,BAND MATRIX,,,,,,
+2026-03-08,Combined (TrendPulse + DeltaDrift + BandMatrix),,,,,,
+2026-03-10,TRENDPULSE,,,,,,
+2026-03-10,DELTADRIFT,,,,,,
+2026-03-10,BAND MATRIX,,,,,,
+2026-03-10,Combined (TrendPulse + DeltaDrift + BandMatrix),,,,,,
+2026-03-11,TRENDPULSE,,,,,,
+2026-03-11,DELTADRIFT,,,,,,
+2026-03-11,BAND MATRIX,,,,,,
+2026-03-11,Combined (TrendPulse + DeltaDrift + BandMatrix),,,,,,
+2026-03-12,TRENDPULSE,,,,,,
+2026-03-12,DELTADRIFT,,,,,,
+2026-03-12,BAND MATRIX,,,,,,
+2026-03-12,Combined (TrendPulse + DeltaDrift + BandMatrix),,,,,,
+2026-03-13,TRENDPULSE,,,,,,
+2026-03-13,DELTADRIFT,,,,,,
+2026-03-13,BAND MATRIX,,,,,,
+2026-03-13,Combined (TrendPulse + DeltaDrift + BandMatrix),,,,,,
+2026-03-14,TRENDPULSE,,,,,,
+2026-03-14,DELTADRIFT,,,,,,
+2026-03-14,BAND MATRIX,,,,,,
+2026-03-14,Combined (TrendPulse + DeltaDrift + BandMatrix),,,,,,
+2026-03-15,TRENDPULSE,,,,,,
+2026-03-15,DELTADRIFT,,,,,,
+2026-03-15,BAND MATRIX,,,,,,
+2026-03-15,Combined (TrendPulse + DeltaDrift + BandMatrix),,,,,,
+2026-03-17,TRENDPULSE,,,0,14,0,2
+2026-03-17,DELTADRIFT,,,29,11,0,4
+2026-03-17,BAND MATRIX,,,3,6,0,0
+2026-03-17,Combined (TrendPulse + DeltaDrift + BandMatrix),,,34,28,0,4
+2026-03-18,TRENDPULSE,,,5,13,0,2
+2026-03-18,DELTADRIFT,,,6,11,0,4
+2026-03-18,BAND MATRIX,,,2,6,0,0
+2026-03-18,Combined (TrendPulse + DeltaDrift + BandMatrix),,,13,28,0,4
+2026-03-19,TRENDPULSE,,,1,13,0,2
+2026-03-19,DELTADRIFT,,,0,11,0,4
+2026-03-19,BAND MATRIX,,,1,6,0,0
+2026-03-19,Combined (TrendPulse + DeltaDrift + BandMatrix),,,2,28,0,4
+2026-03-20,TRENDPULSE,,,2,13,1,2
+2026-03-20,DELTADRIFT,,,4,11,0,4
+2026-03-20,BAND MATRIX,,,1,6,0,0
+2026-03-20,Combined (TrendPulse + DeltaDrift + BandMatrix),,,7,28,2,4
+2026-03-21,TRENDPULSE,,,1,13,0,2
+2026-03-21,DELTADRIFT,,,4,11,0,4
+2026-03-21,BAND MATRIX,,,7,6,0,0
+2026-03-21,Combined (TrendPulse + DeltaDrift + BandMatrix),,,13,28,0,4
+2026-03-22,TRENDPULSE,,,1,13,0,2
+2026-03-22,DELTADRIFT,,,4,11,0,4
+2026-03-22,BAND MATRIX,,,7,6,0,0
+2026-03-22,Combined (TrendPulse + DeltaDrift + BandMatrix),,,13,28,0,4
+2026-03-24,TRENDPULSE,,,1,13,1,2
+2026-03-24,DELTADRIFT,,,22,12,2,4
+2026-03-24,BAND MATRIX,,,5,6,0,0
+2026-03-24,Combined (TrendPulse + DeltaDrift + BandMatrix),,,29,29,3,4
+2026-03-25,TRENDPULSE,,,1,13,0,2
+2026-03-25,DELTADRIFT,,,12,12,0,4
+2026-03-25,BAND MATRIX,,,12,6,0,0
+2026-03-25,Combined (TrendPulse + DeltaDrift + BandMatrix),,,26,29,0,4
+2026-03-26,TRENDPULSE,,,7,13,0,2
+2026-03-26,DELTADRIFT,,,7,12,0,4
+2026-03-26,BAND MATRIX,,,0,6,0,0
+2026-03-26,Combined (TrendPulse + DeltaDrift + BandMatrix),,,15,29,0,4
+2026-03-27,TRENDPULSE,,,5,13,0,2
+2026-03-27,DELTADRIFT,,,3,12,1,4
+2026-03-27,BAND MATRIX,,,0,6,0,0
+2026-03-27,Combined (TrendPulse + DeltaDrift + BandMatrix),,,7,29,1,4
+2026-03-28,TRENDPULSE,,,3,13,0,2
+2026-03-28,DELTADRIFT,,,0,12,0,4
+2026-03-28,BAND MATRIX,,,1,6,0,0
+2026-03-28,Combined (TrendPulse + DeltaDrift + BandMatrix),,,5,29,0,4
+2026-03-29,TRENDPULSE,,,3,13,0,2
+2026-03-29,DELTADRIFT,,,0,12,0,4
+2026-03-29,BAND MATRIX,,,1,6,0,0
+2026-03-29,Combined (TrendPulse + DeltaDrift + BandMatrix),,,5,29,0,4
+2026-03-31,TRENDPULSE,,,3,13,1,2
+2026-03-31,DELTADRIFT,,,4,12,1,4
+2026-03-31,BAND MATRIX,,,3,6,0,0
+2026-03-31,Combined (TrendPulse + DeltaDrift + BandMatrix),,,10,28,2,4
+2026-04-01,TRENDPULSE,,,1,13,0,2
+2026-04-01,DELTADRIFT,,,6,12,1,4
+2026-04-01,BAND MATRIX,,,2,6,0,0
+2026-04-01,Combined (TrendPulse + DeltaDrift + BandMatrix),,,10,28,1,4
