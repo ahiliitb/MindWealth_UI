@@ -44,11 +44,6 @@ def parse_outstanding_signal(df):
     return parse_detailed_signal_csv(df)
 
 
-def parse_outstanding_exit_signal(df):
-    """Parse outstanding_exit_signal.csv"""
-    return parse_detailed_signal_csv(df)
-
-
 def parse_new_signal(df):
     """Parse new_signal.csv"""
     return parse_detailed_signal_csv(df)

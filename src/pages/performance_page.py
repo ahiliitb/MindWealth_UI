@@ -9,7 +9,7 @@ from ..components.cards import create_performance_summary_cards, create_performa
 from ..utils.data_loader import load_data_from_file
 from ..utils.helpers import format_days
 
-DETAILED_TABLE_ONLY_PAGES = {"Latest Performance", "Forward Testing Performance"}
+DETAILED_TABLE_ONLY_PAGES = {"Combined Performance Report"}
 
 
 def display_summary_metrics_basic(df, tab_name):
@@ -86,9 +86,6 @@ def create_performance_summary_page(data_file, page_title):
     from ..utils.helpers import display_data_fetch_info
     display_data_fetch_info(location="header")
     
-    # Create main tabs for signal types
-    main_tab1, main_tab2, main_tab3 = st.tabs(["📊 ALL Signal Types", "📈 Long Signals", "📉 Short Signals"])
-    
     # Sidebar filters for performance data
     st.sidebar.markdown("#### 🔍 Filters")
     
@@ -132,6 +129,24 @@ def create_performance_summary_page(data_file, page_title):
         help="Minimum win rate threshold",
         key=f"win_rate_slider_{page_title}"
     )
+
+    def get_filtered_df(source_df, interval=None, signal_type=None):
+        filtered_df = source_df[
+            (source_df['Strategy'].isin(strategies)) &
+            (source_df['Win_Percentage'] >= min_win_rate)
+        ]
+
+        if interval:
+            filtered_df = filtered_df[
+                filtered_df['Interval'].str.contains(interval, case=False, na=False)
+            ]
+
+        if signal_type:
+            filtered_df = filtered_df[
+                filtered_df['Signal_Type'].str.contains(signal_type, case=False, na=False)
+            ]
+
+        return filtered_df
     
     def display_performance_content(filtered_df, tab_name, signal_type_filter=None):
         """Display performance content for each tab"""
@@ -186,196 +201,60 @@ def create_performance_summary_page(data_file, page_title):
                     ) for col in original_df.columns
                 }
             )
-    
-    # ALL Signal Types
-    with main_tab1:
-        # Create interval tabs for ALL signal types
+
+    def render_interval_tabs(source_df, signal_type=None):
         interval_tab1, interval_tab2, interval_tab3, interval_tab4, interval_tab5, interval_tab6 = st.tabs([
             "📊 ALL", "📅 Daily", "📆 Weekly", "📈 Monthly", "📋 Quarterly", "📊 Yearly"
         ])
-        
-        # ALL Intervals
-        with interval_tab1:
-            filtered_df = df[
-                (df['Strategy'].isin(strategies)) &
-                (df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "ALL Intervals", "ALL")
-        
-        # Daily
-        with interval_tab2:
-            daily_df = df[df['Interval'].str.contains('Daily', case=False, na=False)]
-            filtered_df = daily_df[
-                (daily_df['Strategy'].isin(strategies)) &
-                (daily_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Daily", "ALL")
-        
-        # Weekly
-        with interval_tab3:
-            weekly_df = df[df['Interval'].str.contains('Weekly', case=False, na=False)]
-            filtered_df = weekly_df[
-                (weekly_df['Strategy'].isin(strategies)) &
-                (weekly_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Weekly", "ALL")
-        
-        # Monthly
-        with interval_tab4:
-            monthly_df = df[df['Interval'].str.contains('Monthly', case=False, na=False)]
-            filtered_df = monthly_df[
-                (monthly_df['Strategy'].isin(strategies)) &
-                (monthly_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Monthly", "ALL")
-        
-        # Quarterly
-        with interval_tab5:
-            quarterly_df = df[df['Interval'].str.contains('Quarterly', case=False, na=False)]
-            filtered_df = quarterly_df[
-                (quarterly_df['Strategy'].isin(strategies)) &
-                (quarterly_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Quarterly", "ALL")
-        
-        # Yearly
-        with interval_tab6:
-            yearly_df = df[df['Interval'].str.contains('Yearly', case=False, na=False)]
-            filtered_df = yearly_df[
-                (yearly_df['Strategy'].isin(strategies)) &
-                (yearly_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Yearly", "ALL")
-    
-    # Long Signals
-    with main_tab2:
-        # Create interval tabs for Long signals
-        interval_tab1, interval_tab2, interval_tab3, interval_tab4, interval_tab5, interval_tab6 = st.tabs([
-            "📊 ALL", "📅 Daily", "📆 Weekly", "📈 Monthly", "📋 Quarterly", "📊 Yearly"
-        ])
-        
-        # ALL Intervals
-        with interval_tab1:
-            filtered_df = df[
-                (df['Strategy'].isin(strategies)) &
-                (df['Signal_Type'].str.contains('Long', case=False, na=False)) &
-                (df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "ALL Intervals", "Long")
-        
-        # Daily
-        with interval_tab2:
-            daily_df = df[df['Interval'].str.contains('Daily', case=False, na=False)]
-            filtered_df = daily_df[
-                (daily_df['Strategy'].isin(strategies)) &
-                (daily_df['Signal_Type'].str.contains('Long', case=False, na=False)) &
-                (daily_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Daily", "Long")
-        
-        # Weekly
-        with interval_tab3:
-            weekly_df = df[df['Interval'].str.contains('Weekly', case=False, na=False)]
-            filtered_df = weekly_df[
-                (weekly_df['Strategy'].isin(strategies)) &
-                (weekly_df['Signal_Type'].str.contains('Long', case=False, na=False)) &
-                (weekly_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Weekly", "Long")
-        
-        # Monthly
-        with interval_tab4:
-            monthly_df = df[df['Interval'].str.contains('Monthly', case=False, na=False)]
-            filtered_df = monthly_df[
-                (monthly_df['Strategy'].isin(strategies)) &
-                (monthly_df['Signal_Type'].str.contains('Long', case=False, na=False)) &
-                (monthly_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Monthly", "Long")
-        
-        # Quarterly
-        with interval_tab5:
-            quarterly_df = df[df['Interval'].str.contains('Quarterly', case=False, na=False)]
-            filtered_df = quarterly_df[
-                (quarterly_df['Strategy'].isin(strategies)) &
-                (quarterly_df['Signal_Type'].str.contains('Long', case=False, na=False)) &
-                (quarterly_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Quarterly", "Long")
-        
-        # Yearly
-        with interval_tab6:
-            yearly_df = df[df['Interval'].str.contains('Yearly', case=False, na=False)]
-            filtered_df = yearly_df[
-                (yearly_df['Strategy'].isin(strategies)) &
-                (yearly_df['Signal_Type'].str.contains('Long', case=False, na=False)) &
-                (yearly_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Yearly", "Long")
-    
-    # Short Signals
-    with main_tab3:
-        # Create interval tabs for Short signals
-        interval_tab1, interval_tab2, interval_tab3, interval_tab4, interval_tab5, interval_tab6 = st.tabs([
-            "📊 ALL", "📅 Daily", "📆 Weekly", "📈 Monthly", "📋 Quarterly", "📊 Yearly"
-        ])
-        
-        # ALL Intervals
-        with interval_tab1:
-            filtered_df = df[
-                (df['Strategy'].isin(strategies)) &
-                (df['Signal_Type'].str.contains('Short', case=False, na=False)) &
-                (df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "ALL Intervals", "Short")
-        
-        # Daily
-        with interval_tab2:
-            daily_df = df[df['Interval'].str.contains('Daily', case=False, na=False)]
-            filtered_df = daily_df[
-                (daily_df['Strategy'].isin(strategies)) &
-                (daily_df['Signal_Type'].str.contains('Short', case=False, na=False)) &
-                (daily_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Daily", "Short")
-        
-        # Weekly
-        with interval_tab3:
-            weekly_df = df[df['Interval'].str.contains('Weekly', case=False, na=False)]
-            filtered_df = weekly_df[
-                (weekly_df['Strategy'].isin(strategies)) &
-                (weekly_df['Signal_Type'].str.contains('Short', case=False, na=False)) &
-                (weekly_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Weekly", "Short")
-        
-        # Monthly
-        with interval_tab4:
-            monthly_df = df[df['Interval'].str.contains('Monthly', case=False, na=False)]
-            filtered_df = monthly_df[
-                (monthly_df['Strategy'].isin(strategies)) &
-                (monthly_df['Signal_Type'].str.contains('Short', case=False, na=False)) &
-                (monthly_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Monthly", "Short")
-        
-        # Quarterly
-        with interval_tab5:
-            quarterly_df = df[df['Interval'].str.contains('Quarterly', case=False, na=False)]
-            filtered_df = quarterly_df[
-                (quarterly_df['Strategy'].isin(strategies)) &
-                (quarterly_df['Signal_Type'].str.contains('Short', case=False, na=False)) &
-                (quarterly_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Quarterly", "Short")
-        
-        # Yearly
-        with interval_tab6:
-            yearly_df = df[df['Interval'].str.contains('Yearly', case=False, na=False)]
-            filtered_df = yearly_df[
-                (yearly_df['Strategy'].isin(strategies)) &
-                (yearly_df['Signal_Type'].str.contains('Short', case=False, na=False)) &
-                (yearly_df['Win_Percentage'] >= min_win_rate)
-            ]
-            display_performance_content(filtered_df, "Yearly", "Short")
+
+        tab_configs = [
+            (interval_tab1, "ALL Intervals", None),
+            (interval_tab2, "Daily", "Daily"),
+            (interval_tab3, "Weekly", "Weekly"),
+            (interval_tab4, "Monthly", "Monthly"),
+            (interval_tab5, "Quarterly", "Quarterly"),
+            (interval_tab6, "Yearly", "Yearly"),
+        ]
+
+        for interval_tab, label, interval in tab_configs:
+            with interval_tab:
+                filtered_df = get_filtered_df(source_df, interval=interval, signal_type=signal_type)
+                display_performance_content(filtered_df, label, signal_type or "ALL")
+
+    def render_signal_type_tabs(source_df):
+        main_tab1, main_tab2, main_tab3 = st.tabs(["📊 ALL Signal Types", "📈 Long Signals", "📉 Short Signals"])
+
+        with main_tab1:
+            render_interval_tabs(source_df)
+
+        with main_tab2:
+            render_interval_tabs(source_df, signal_type="Long")
+
+        with main_tab3:
+            render_interval_tabs(source_df, signal_type="Short")
+
+    if page_title == "Combined Performance Report" and 'Function' in df.columns:
+        latest_df = df[df['Function'].astype(str).str.contains('Latest Performance', case=False, na=False)]
+        forward_df = df[df['Function'].astype(str).str.contains('Forward Testing', case=False, na=False)]
+
+        combined_tabs = []
+        tab_datasets = []
+
+        if not latest_df.empty:
+            combined_tabs.append("📊 Latest Performance")
+            tab_datasets.append(("Latest Performance", latest_df))
+
+        if not forward_df.empty:
+            combined_tabs.append("🚀 Forward Testing")
+            tab_datasets.append(("Forward Testing", forward_df))
+
+        if tab_datasets:
+            for tab, (tab_name, tab_df) in zip(st.tabs(combined_tabs), tab_datasets):
+                with tab:
+                    st.caption(f"Showing `{tab_name}` rows from the combined performance report.")
+                    render_signal_type_tabs(tab_df)
+        else:
+            render_signal_type_tabs(df)
+    else:
+        render_signal_type_tabs(df)
 

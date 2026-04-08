@@ -12,6 +12,7 @@ from .chatbot_page import render_chatbot_page
 from .trade_details_page import create_trade_details_page
 from .f_stack_page import create_f_stack_page
 from .all_data_page import create_all_data_page
+from .levels_altitude_page import create_levels_altitude_page
 
 __all__ = [
     'create_top_signals_dashboard',
@@ -23,6 +24,7 @@ __all__ = [
     'render_chatbot_page',
     'create_trade_details_page',
     'create_f_stack_page',
-    'create_all_data_page'
+    'create_all_data_page',
+    'create_levels_altitude_page'
 ]
 

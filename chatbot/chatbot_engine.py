@@ -12,6 +12,7 @@ from .config import (
     CLAUDE_MODEL,
     CLAUDE_MAX_TOKENS,
     CLAUDE_TEMPERATURE,
+    CLAUDE_INPUT_TRUNCATION_TARGET_RATIO,
     OPENAI_API_KEY,
     SYSTEM_PROMPT,
     MAX_HISTORY_LENGTH,
@@ -171,6 +172,98 @@ class ChatbotEngine:
         meta_copy: Dict[str, Any] = dict(metadata) if metadata else {}
         meta_copy["display_prompt"] = (user_message or "").strip()
         return meta_copy
+
+    def _merge_batch_metadata(self, metadata: Dict[str, Any], batch_metadata: Dict[str, Any]) -> None:
+        """Propagate batch-level metadata into the response metadata."""
+        metadata["model"] = CLAUDE_MODEL
+        metadata["tokens_used"] = batch_metadata["tokens_used"]
+        metadata["finish_reason"] = batch_metadata["finish_reason"]
+        metadata["batch_processing_used"] = True
+        metadata["batch_count"] = batch_metadata.get("batch_count", 1)
+        metadata["batch_mode"] = batch_metadata.get("batch_mode", "single")
+        metadata["input_truncated"] = batch_metadata.get("input_truncated", False)
+        metadata["history_trimmed_count"] = batch_metadata.get("history_trimmed_count", 0)
+
+    def _estimate_tokens_from_text(self, text: Optional[str]) -> int:
+        """Estimate token count using the configured chars-per-token ratio."""
+        return len(str(text or "")) // ESTIMATED_CHARS_PER_TOKEN
+
+    def _estimate_tokens_from_messages(self, messages: List[Dict]) -> int:
+        """Estimate total token count across message contents."""
+        total_chars = sum(len(str(msg.get("content", ""))) for msg in messages)
+        return total_chars // ESTIMATED_CHARS_PER_TOKEN
+
+    def _truncate_text_to_token_budget(self, text: str, token_budget: int) -> Tuple[str, bool]:
+        """Trim oversized text to fit within a token budget."""
+        if not text:
+            return text, False
+
+        max_chars = max(0, token_budget * ESTIMATED_CHARS_PER_TOKEN)
+        if len(text) <= max_chars:
+            return text, False
+
+        truncation_notice = "\n\n[Content truncated to stay within Claude input limits.]"
+        keep_chars = max(0, max_chars - len(truncation_notice))
+        truncated_text = text[:keep_chars].rstrip()
+
+        if keep_chars <= 0:
+            truncated_text = truncation_notice.strip()
+        else:
+            truncated_text = f"{truncated_text}{truncation_notice}"
+
+        return truncated_text, True
+
+    def _fit_messages_within_claude_budget(self, messages: List[Dict]) -> Tuple[List[Dict], Dict[str, Any]]:
+        """
+        Keep the request comfortably under Claude's configured input limit.
+        First remove older history, then truncate the latest user payload if needed.
+        """
+        target_ratio = min(max(CLAUDE_INPUT_TRUNCATION_TARGET_RATIO, 0.1), 1.0)
+        target_tokens = max(1, int(MAX_INPUT_TOKENS_PER_CALL * target_ratio))
+        prepared_messages = [dict(msg) for msg in messages]
+        estimated_tokens = self._estimate_tokens_from_messages(prepared_messages)
+        trimmed_history_count = 0
+        truncated_latest_content = False
+
+        while estimated_tokens > target_tokens and len(prepared_messages) > MIN_HISTORY_MESSAGES:
+            if len(prepared_messages) <= 2:
+                break
+
+            removed_msg = prepared_messages.pop(1)
+            trimmed_history_count += 1
+            logger.warning(f"Trimmed old message to fit Claude budget (role: {removed_msg.get('role', 'unknown')})")
+            estimated_tokens = self._estimate_tokens_from_messages(prepared_messages)
+
+        if estimated_tokens > target_tokens and prepared_messages:
+            latest_user_idx = next(
+                (idx for idx in range(len(prepared_messages) - 1, -1, -1) if prepared_messages[idx].get("role") == "user"),
+                len(prepared_messages) - 1
+            )
+
+            latest_content = str(prepared_messages[latest_user_idx].get("content", ""))
+            latest_tokens = self._estimate_tokens_from_text(latest_content)
+            other_tokens = max(0, estimated_tokens - latest_tokens)
+            remaining_budget = max(1, target_tokens - other_tokens)
+            truncated_content, truncated_latest_content = self._truncate_text_to_token_budget(
+                latest_content,
+                remaining_budget
+            )
+            prepared_messages[latest_user_idx]["content"] = truncated_content
+            estimated_tokens = self._estimate_tokens_from_messages(prepared_messages)
+
+            if truncated_latest_content:
+                logger.warning(
+                    "Truncated latest user payload from ~%s tokens to fit Claude target budget of ~%s tokens",
+                    latest_tokens,
+                    target_tokens
+                )
+
+        return prepared_messages, {
+            "target_tokens": target_tokens,
+            "estimated_tokens": estimated_tokens,
+            "trimmed_history_count": trimmed_history_count,
+            "truncated_latest_content": truncated_latest_content,
+        }
     
     def query(
         self,
@@ -237,12 +330,7 @@ class ChatbotEngine:
                 assistant_message, batch_metadata = self._simple_batch_query(messages, estimated_tokens)
                 
                 # Update metadata
-                metadata["model"] = CLAUDE_MODEL
-                metadata["tokens_used"] = batch_metadata["tokens_used"]
-                metadata["finish_reason"] = batch_metadata["finish_reason"]
-                metadata["batch_processing_used"] = True
-                metadata["batch_count"] = batch_metadata.get("batch_count", 1)
-                metadata["batch_mode"] = batch_metadata.get("batch_mode", "single")
+                self._merge_batch_metadata(metadata, batch_metadata)
                 
                 # Add assistant response to history
                 self.history_manager.add_message("assistant", assistant_message, metadata)
@@ -498,12 +586,7 @@ Please answer the user's query based on the comprehensive analysis report above.
                 )
                 
                 # Update metadata with batch info
-                metadata["model"] = CLAUDE_MODEL
-                metadata["tokens_used"] = batch_metadata["tokens_used"]
-                metadata["finish_reason"] = batch_metadata["finish_reason"]
-                metadata["batch_processing_used"] = True
-                metadata["batch_count"] = batch_metadata["batch_count"]
-                metadata["batch_mode"] = batch_metadata["batch_mode"]
+                self._merge_batch_metadata(metadata, batch_metadata)
             else:
                 # For non-ticker queries (breadth only, Claude report, CSV text, etc.)
                 # Use simple batch method with automatic single/multi decision
@@ -514,12 +597,7 @@ Please answer the user's query based on the comprehensive analysis report above.
                 )
                 
                 # Update metadata
-                metadata["model"] = CLAUDE_MODEL
-                metadata["tokens_used"] = batch_metadata["tokens_used"]
-                metadata["finish_reason"] = batch_metadata["finish_reason"]
-                metadata["batch_processing_used"] = True
-                metadata["batch_count"] = batch_metadata.get("batch_count", 1)
-                metadata["batch_mode"] = batch_metadata.get("batch_mode", "single")
+                self._merge_batch_metadata(metadata, batch_metadata)
             
             # Extract full signal tables with all columns
             query_params = {
@@ -881,12 +959,7 @@ Please answer the user's query based on the comprehensive analysis report above.
             assistant_message, batch_metadata = self._simple_batch_query(messages, estimated_tokens)
             
             # Update metadata
-            metadata["model"] = CLAUDE_MODEL
-            metadata["tokens_used"] = batch_metadata["tokens_used"]
-            metadata["finish_reason"] = batch_metadata["finish_reason"]
-            metadata["batch_processing_used"] = True
-            metadata["batch_count"] = batch_metadata.get("batch_count", 1)
-            metadata["batch_mode"] = batch_metadata.get("batch_mode", "single")
+            self._merge_batch_metadata(metadata, batch_metadata)
             
             # Extract full signal tables with all columns
             query_params = {
@@ -1174,12 +1247,7 @@ NOTE: Use the conversation context above to understand what we've discussed, but
             assistant_message, batch_metadata = self._simple_batch_query(messages, estimated_tokens)
             
             # Add response metadata
-            metadata["model"] = CLAUDE_MODEL
-            metadata["tokens_used"] = batch_metadata["tokens_used"]
-            metadata["finish_reason"] = batch_metadata["finish_reason"]
-            metadata["batch_processing_used"] = True
-            metadata["batch_count"] = batch_metadata.get("batch_count", 1)
-            metadata["batch_mode"] = batch_metadata.get("batch_mode", "single")
+            self._merge_batch_metadata(metadata, batch_metadata)
             
             # Add assistant response to history
             self.history_manager.add_message("assistant", assistant_message, metadata)
@@ -1554,24 +1622,19 @@ Create a professional, well-structured response that reads as one cohesive analy
             # For non-ticker queries, we just make a single API call
             # These queries typically don't have the massive data volume of ticker-based queries
             logger.info(f"Processing non-ticker query with ~{estimated_tokens} tokens")
-            
-            # Trim history if needed to stay under token limit
-            trimmed_messages = list(messages)
-            trimmed_count = 0
-            
-            while estimated_tokens > MAX_INPUT_TOKENS_PER_CALL and len(trimmed_messages) > MIN_HISTORY_MESSAGES:
-                if len(trimmed_messages) > 2:
-                    removed_msg = trimmed_messages.pop(1)
-                    trimmed_count += 1
-                    logger.warning(f"Trimmed old message (role: {removed_msg.get('role', 'unknown')})")
-                    
-                    total_chars = sum(len(str(msg.get('content', ''))) for msg in trimmed_messages)
-                    estimated_tokens = total_chars // ESTIMATED_CHARS_PER_TOKEN
-                else:
-                    break
-            
-            if trimmed_count > 0:
-                logger.warning(f"Trimmed {trimmed_count} old messages to stay under token limit")
+
+            trimmed_messages, budget_info = self._fit_messages_within_claude_budget(messages)
+            estimated_tokens = budget_info["estimated_tokens"]
+
+            if budget_info["trimmed_history_count"] > 0:
+                logger.warning(
+                    "Trimmed %s old messages to stay within Claude target budget",
+                    budget_info["trimmed_history_count"]
+                )
+            if budget_info["truncated_latest_content"]:
+                logger.warning(
+                    "Latest prompt content was truncated to 75%% of the Claude input limit before sending"
+                )
             
             # Make single API call with Claude
             logger.info(f"Calling {CLAUDE_MODEL} with {len(trimmed_messages)} messages, ~{estimated_tokens} tokens")
@@ -1598,7 +1661,9 @@ Create a professional, well-structured response that reads as one cohesive analy
                 "finish_reason": response.stop_reason,
                 "batch_count": 1,
                 "batch_mode": "single",
-                "model": CLAUDE_MODEL
+                "model": CLAUDE_MODEL,
+                "input_truncated": budget_info["truncated_latest_content"],
+                "history_trimmed_count": budget_info["trimmed_history_count"]
             }
             
             logger.info(f"Simple batch completed: {metadata['tokens_used']['total']} tokens")
@@ -1709,9 +1774,11 @@ Create a professional, well-structured response that reads as one cohesive analy
 {data_context}"""
                 
                 messages = base_messages + [{"role": "user", "content": complete_message}]
-                
+
+                prepared_messages, budget_info = self._fit_messages_within_claude_budget(messages)
+
                 # Convert to Claude format and call Claude API
-                claude_messages = self._convert_to_claude_format(messages)
+                claude_messages = self._convert_to_claude_format(prepared_messages)
                 
                 response = self.claude_client.messages.create(
                     model=CLAUDE_MODEL,
@@ -1732,7 +1799,9 @@ Create a professional, well-structured response that reads as one cohesive analy
                     "finish_reason": response.stop_reason,
                     "batch_count": 1,
                     "batch_mode": "single",
-                    "model": CLAUDE_MODEL
+                    "model": CLAUDE_MODEL,
+                    "input_truncated": budget_info["truncated_latest_content"],
+                    "history_trimmed_count": budget_info["trimmed_history_count"]
                 }
                 
                 logger.info(f"Single batch completed: {metadata['tokens_used']['total']} tokens")

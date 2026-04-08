@@ -97,6 +97,7 @@ CLAUDE_API_KEY = get_claude_api_key()
 CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
 CLAUDE_MAX_TOKENS = int(os.getenv("CLAUDE_MAX_TOKENS", "6000"))
 CLAUDE_TEMPERATURE = float(os.getenv("CLAUDE_TEMPERATURE", "0.2"))
+CLAUDE_INPUT_TRUNCATION_TARGET_RATIO = float(os.getenv("CLAUDE_INPUT_TRUNCATION_TARGET_RATIO", "0.75"))
 
 # All other config from .env file (DEPRECATED OpenAI settings kept for backward compatibility)
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.2")  # DEPRECATED - using Claude now
