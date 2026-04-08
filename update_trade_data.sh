@@ -32,6 +32,23 @@ if [ ! -d "$SOURCE_TRADE_DIR" ]; then
     exit 1
 fi
 
+should_skip_trade_csv() {
+    local filename="$1"
+
+    # Legacy standalone UI CSVs replaced by combined reports
+    if [[ $filename =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}_(forward_testing|latest_performance|forward_backtesting|Horizontal)\.csv$ ]]; then
+        return 0
+    fi
+
+    case "$filename" in
+        forward_testing.csv|latest_performance.csv|forward_backtesting.csv|Horizontal.csv)
+            return 0
+            ;;
+    esac
+
+    return 1
+}
+
 # Sync stock data CSV files from cache/US to stock_data (file-by-file).
 # For each CSV in cache/US: delete the destination file (if present), then copy.
 echo "📊 Syncing stock data CSV files from cache/US to trade_store/stock_data..."
@@ -63,19 +80,45 @@ fi
 shopt -u nullglob
 
 # Copy all CSV files from trade_store/US
-# Exclude dated versions of forward_testing.csv and latest_performance.csv
+# Skip legacy standalone UI CSVs that are now replaced by combined reports
 echo "📊 Copying trade signal CSV files..."
 for file in "$SOURCE_TRADE_DIR"/*.csv; do
     if [ -f "$file" ]; then
         filename=$(basename "$file")
-        # Skip dated versions of forward_testing.csv and latest_performance.csv
-        if [[ $filename =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}_(forward_testing|latest_performance)\.csv$ ]]; then
-            echo "⏭️  Skipping dated file: $filename (using non-dated version only)"
+        if should_skip_trade_csv "$filename"; then
+            echo "⏭️  Skipping legacy UI CSV: $filename (covered by combined report flow)"
             continue
         fi
         cp "$file" "$TARGET_TRADE_DIR"/
     fi
 done
+
+# Remove legacy standalone UI CSVs from target if they already exist from older syncs
+echo "🧹 Removing legacy standalone UI CSV files from target..."
+shopt -s nullglob
+legacy_ui_files=(
+    "$TARGET_TRADE_DIR"/forward_testing.csv
+    "$TARGET_TRADE_DIR"/latest_performance.csv
+    "$TARGET_TRADE_DIR"/forward_backtesting.csv
+    "$TARGET_TRADE_DIR"/Horizontal.csv
+    "$TARGET_TRADE_DIR"/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_forward_testing.csv
+    "$TARGET_TRADE_DIR"/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_latest_performance.csv
+    "$TARGET_TRADE_DIR"/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_forward_backtesting.csv
+    "$TARGET_TRADE_DIR"/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_Horizontal.csv
+)
+removed_legacy_count=0
+for legacy_file in "${legacy_ui_files[@]}"; do
+    [ -e "$legacy_file" ] || continue
+    rm -f "$legacy_file"
+    echo "  🗑️  Removed legacy UI CSV: $(basename "$legacy_file")"
+    removed_legacy_count=$((removed_legacy_count + 1))
+done
+if [ $removed_legacy_count -eq 0 ]; then
+    echo "ℹ️  No legacy standalone UI CSV files found in target"
+else
+    echo "✅ Removed $removed_legacy_count legacy standalone UI CSV file(s)"
+fi
+shopt -u nullglob
 
 # Copy all TXT files from trade_store/US
 echo "📄 Copying trade signal TXT files..."
@@ -105,12 +148,7 @@ if [ -d "$TARGET_TRADE_DIR" ]; then
     while IFS= read -r base_name; do
         # Skip empty lines
         [ -z "$base_name" ] && continue
-                
-                # Skip cleanup for forward_testing.csv and latest_performance.csv
-                if [ "$base_name" = "forward_testing.csv" ] || [ "$base_name" = "latest_performance.csv" ]; then
-                    continue
-                fi
-                
+
         # Find all files for this base name using find (more reliable than glob)
         matching_files=$(find . -maxdepth 1 -type f -name "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_${base_name}" 2>/dev/null)
                 
