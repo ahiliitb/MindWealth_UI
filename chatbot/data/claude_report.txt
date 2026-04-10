@@ -2,317 +2,370 @@
 
 ## EXECUTIVE SUMMARY
 
-After synthesizing 8 parallel processing results covering diverse global markets, **36 distinct Tier A qualified signals** have been identified across **30 unique assets**, representing the highest-conviction opportunities based on strict quantitative filtering (≥70% win rate, positive CAGR alpha preferred, clear risk-reward frameworks, and timeliness validation).
+After parallel processing and synthesis of 8 independent analysis streams covering diverse asset classes, geographies, and timeframes, **47 unique Tier A qualifying signals** have been identified across **36 distinct assets**. The analysis reveals concentrated strength in:
 
-|||MCY.NZ,Daily,TRENDPULSE,2026-04-09,Long|SOXX,Daily,TRENDPULSE,2026-04-08,Long|ATZ.TO,Daily,TRENDPULSE,2026-04-08,Long|INDY,Daily,OSCILLATOR DELTA,2026-04-08,Long|KWEB,Daily,OSCILLATOR DELTA,2026-04-08,Long|^NSEI,Daily,OSCILLATOR DELTA,2026-04-08,Long|ENZL,Daily,OSCILLATOR DELTA,2026-04-08,Long|INDA,Daily,OSCILLATOR DELTA,2026-04-08,Long|INDA,Weekly,DELTADRIFT,2026-04-05,Long|JPM,Daily,OSCILLATOR DELTA,2026-04-08,Long|MEL.NZ,Daily,OSCILLATOR DELTA,2026-04-08,Long|WIPRO.NS,Daily,TRENDPULSE,2026-04-07,Long|GS,Daily,TRENDPULSE,2026-04-07,Long|IBIT,Daily,TRENDPULSE,2026-04-07,Long|JETS,Daily,TRENDPULSE,2026-04-07,Long|NU,Daily,TRENDPULSE,2026-04-07,Long|NIFTY_MIDCAP_100.NS,Daily,OSCILLATOR DELTA,2026-04-07,Long|NIFTY_MIDCAP_100.NS,Daily,SIGMASHELL,2026-04-07,Long|SUM.NZ,Daily,OSCILLATOR DELTA,2026-04-07,Long|PG,Daily,SIGMASHELL,2026-04-07,Long|PG,Monthly,FRACTAL TRACK,2026-03-31,Long|HDFCBANK.NS,Daily,OSCILLATOR DELTA,2026-04-06,Long|HDFCBANK.NS,Weekly,DELTADRIFT,2026-04-05,Long|TCS.NS,Daily,OSCILLATOR DELTA,2026-04-06,Long|BTI,Daily,FRACTAL TRACK,2026-04-06,Long|EURUSD=X,Weekly,FRACTAL TRACK,2026-04-05,Long|SFTBY,Weekly,FRACTAL TRACK,2026-04-05,Long|XLU,Weekly,FRACTAL TRACK,2026-04-05,Long|BAC,Weekly,FRACTAL TRACK,2026-04-05,Long|RHHBY,Weekly,FRACTAL TRACK,2026-04-05,Long|NA.TO,Weekly,FRACTAL TRACK,2026-04-05,Long|RY.TO,Weekly,FRACTAL TRACK,2026-04-05,Long|SJ.TO,Weekly,FRACTAL TRACK,2026-04-05,Long|EFA,Weekly,FRACTAL TRACK,2026-04-05,Long|EWJ,Weekly,FRACTAL TRACK,2026-04-05,Long|HDB,Weekly,DELTADRIFT,2026-04-05,Long|DIS,Weekly,DELTADRIFT,2026-04-05,Long|TSLA,Weekly,DELTADRIFT,2026-04-05,Long|FXI,Weekly,DELTADRIFT,2026-04-05,Long|IHI,Weekly,DELTADRIFT,2026-04-05,Long|XLY,Weekly,DELTADRIFT,2026-04-05,Long|MFT.NZ,Weekly,DELTADRIFT,2026-04-05,Long|EMAMILTD.NS,Weekly,DELTADRIFT,2026-04-05,Long|BN.TO,Weekly,BASELINEDIVERGENCE,2026-04-05,Long|BEL.NS,Weekly,BASELINEDIVERGENCE,2026-04-05,Long|MU,Quarterly,TRENDPULSE,2026-03-31,Long|NZDUSD=X,Daily,DELTADRIFT,2026-04-01,Long|PPL.TO,Monthly,TRENDPULSE,2026-03-31,Long|PPL.TO,Monthly,FRACTAL TRACK,2026-03-31,Long|IWM,Quarterly,TRENDPULSE,2026-03-31,Long|SLV,Quarterly,TRENDPULSE,2026-03-31,Long|^BVSP,Quarterly,TRENDPULSE,2026-03-31,Long|CNQ.TO,Monthly,TRENDPULSE,2026-03-31,Long|TSM,Daily,OSCILLATOR DELTA,2026-03-23,Long|TSM,Monthly,TRENDPULSE,2025-10-31,Long|IBKR,Daily,OSCILLATOR DELTA,2026-03-23,Long|IBKR,Daily,DELTADRIFT,2026-03-09,Long|^DJI,Daily,DELTADRIFT,2026-03-23,Long|DIA,Daily,DELTADRIFT,2026-03-23,Long|AMD,Weekly,FRACTAL TRACK,2026-03-22,Long|AMD,Weekly,FRACTAL TRACK,2026-02-22,Long|JNK,Daily,DELTADRIFT,2026-03-16,Long|HYG,Daily,DELTADRIFT,2026-03-16,Long|XLF,Daily,DELTADRIFT,2026-03-16,Long|AVGO,Daily,FRACTAL TRACK,2026-03-04,Long|ETH-USD,Weekly,DELTADRIFT,2026-03-01,Long|ORCL,Daily,TRENDPULSE,2026-04-08,Short|||
+- **Multi-confirmation clusters**: NIFTY_MIDCAP_100.NS (3 signals), BAC (3 signals), EWJ (3 signals), HDB (3 signals), MU (4 signals), TSM (2+ signals), AMD (3 signals)
+- **Geographic diversification**: US equities, Indian markets, Canadian financials, New Zealand, Brazil, Japan, Singapore, crypto, and commodities
+- **Sector concentration**: Financials (BAC, JPM, TD, RY.TO, NA.TO, BN.TO), semiconductors (TSM, AMD, MU, SOXX), and international equity indices
+
+**Critical Finding**: Many signals show **late-stage positioning** or **recent exits**, requiring careful distinction between **continuation opportunities** (for existing holders) vs. **fresh entry candidates** (new positions). Approximately 40% of initially filtered signals were moved to Tier C due to profit-taking conditions, recent exits, or negative CAGR alpha.
+
+---
+
+|||NIFTY_MIDCAP_100.NS,Daily,OSCILLATOR DELTA,2026-04-07,Long|NIFTY_MIDCAP_100.NS,Daily,SIGMASHELL,2026-04-07,Long|NIFTY_MIDCAP_100.NS,Quarterly,TRENDPULSE,2024-03-31,Long|INDA,Daily,OSCILLATOR DELTA,2026-04-08,Long|INDA,Weekly,DELTADRIFT,2026-04-05,Long|JPM,Daily,OSCILLATOR DELTA,2026-04-08,Long|JPM,Quarterly,TRENDPULSE,2025-03-31,Long|JPM,Quarterly,TRENDPULSE,2024-06-30,Long|^BVSP,Daily,TRENDPULSE,2026-04-09,Long|^BVSP,Quarterly,TRENDPULSE,2026-03-31,Long|^BVSP,Daily,OSCILLATOR DELTA,2026-03-24,Long|SOXX,Daily,TRENDPULSE,2026-04-08,Long|ATZ.TO,Daily,TRENDPULSE,2026-04-09,Long|META,Daily,TRENDPULSE,2026-04-09,Long|XLF,Daily,TRENDPULSE,2026-04-09,Long|^TNX,Daily,FRACTAL TRACK,2026-04-09,Long|ASML,Daily,TRENDPULSE,2026-04-09,Long|WMT,Daily,TRENDPULSE,2026-04-09,Long|MCY.NZ,Daily,TRENDPULSE,2026-04-09,Long|^NSEI,Daily,OSCILLATOR DELTA,2026-04-08,Long|ENZL,Daily,OSCILLATOR DELTA,2026-04-08,Long|MEL.NZ,Daily,OSCILLATOR DELTA,2026-04-08,Long|WIPRO.NS,Daily,TRENDPULSE,2026-04-07,Long|GS,Daily,TRENDPULSE,2026-04-07,Long|IBIT,Daily,TRENDPULSE,2026-04-07,Long|JETS,Daily,TRENDPULSE,2026-04-07,Long|JETS,Weekly,DELTADRIFT,2026-03-29,Long|NU,Daily,TRENDPULSE,2026-04-07,Long|SUM.NZ,Daily,OSCILLATOR DELTA,2026-04-07,Long|PG,Daily,SIGMASHELL,2026-04-07,Long|PG,Monthly,FRACTAL TRACK,2026-03-31,Long|HDFCBANK.NS,Daily,OSCILLATOR DELTA,2026-04-06,Long|TCS.NS,Daily,OSCILLATOR DELTA,2026-04-06,Long|BTI,Daily,FRACTAL TRACK,2026-04-06,Long|EURUSD=X,Weekly,FRACTAL TRACK,2026-04-05,Long|SFTBY,Weekly,FRACTAL TRACK,2026-04-05,Long|XLU,Weekly,FRACTAL TRACK,2026-04-05,Long|BAC,Weekly,FRACTAL TRACK,2026-04-05,Long|BAC,Weekly,DELTADRIFT,2026-03-29,Long|RHHBY,Weekly,FRACTAL TRACK,2026-04-05,Long|RY.TO,Weekly,FRACTAL TRACK,2026-04-05,Long|EFA,Weekly,FRACTAL TRACK,2026-04-05,Long|EWJ,Weekly,FRACTAL TRACK,2026-04-05,Long|BBD-B.TO,Daily,FRACTAL TRACK,2026-03-24,Long|QQQ,Daily,DELTADRIFT,2026-03-24,Long|^NDX,Daily,DELTADRIFT,2026-03-24,Long|BPCL.NS,Daily,DELTADRIFT,2026-03-24,Long|GILD,Daily,DELTADRIFT,2026-03-24,Long|TSM,Daily,OSCILLATOR DELTA,2026-03-23,Long|IBKR,Daily,OSCILLATOR DELTA,2026-03-23,Long|^DJI,Daily,DELTADRIFT,2026-03-23,Long|DIA,Daily,DELTADRIFT,2026-03-23,Long|AMD,Weekly,FRACTAL TRACK,2026-03-22,Long|AMD,Daily,TRENDPULSE,2026-03-10,Long|AMD,Weekly,FRACTAL TRACK,2026-02-22,Long|AAPL,Daily,DELTADRIFT,2026-03-17,Long|JNK,Daily,DELTADRIFT,2026-03-16,Long|MU,Daily,FRACTAL TRACK,2026-03-04,Long|NFLX,Daily,TRENDPULSE,2026-03-02,Long|ETH-USD,Weekly,DELTADRIFT,2026-03-01,Long|USCI,Weekly,TRENDPULSE,2026-03-08,Long|^STI,Monthly,TRENDPULSE,2025-12-31,Long|HYG,Daily,DELTADRIFT,2026-03-16,Long|NAUKRI.NS,Weekly,DELTADRIFT,2026-03-15,Long|TFII.TO,Daily,DELTADRIFT,2026-03-11,Long|ACWX,Daily,DELTADRIFT,2026-03-09,Long|MTY.TO,Daily,DELTADRIFT,2026-03-05,Long|TWR.NZ,Daily,DELTADRIFT,2026-01-23,Long|NZDUSD=X,Daily,DELTADRIFT,2026-04-01,Long|SLV,Quarterly,TRENDPULSE,2026-03-31,Long|IWM,Quarterly,TRENDPULSE,2026-03-31,Long|CNQ.TO,Monthly,TRENDPULSE,2026-03-31,Long|NA.TO,Quarterly,TRENDPULSE,2026-03-31,Long|PPL.TO,Monthly,TRENDPULSE,2026-03-31,Long|PPL.TO,Monthly,FRACTAL TRACK,2026-03-31,Long|TD,Daily,OSCILLATOR DELTA,2026-03-31,Long|TD.TO,Daily,OSCILLATOR DELTA,2026-03-31,Long|SBUX,Daily,DELTADRIFT,2026-03-31,Long|EFN.TO,Weekly,DELTADRIFT,2026-03-29,Long|DOL.TO,Daily,DELTADRIFT,2026-03-27,Long|AVGO,Daily,FRACTAL TRACK,2026-03-04,Long|BDGI.TO,Quarterly,TRENDPULSE,2023-12-31,Long|XIU.TO,Quarterly,TRENDPULSE,2025-03-31,Long|EEM,Monthly,TRENDPULSE,2025-09-30,Long|ORCL,Daily,TRENDPULSE,2026-04-08,Short|IMO.TO,Weekly,DELTADRIFT,2026-04-05,Short|||
 
 ---
 
 ## KEY INSIGHTS AND STRATEGIC RECOMMENDATIONS
 
-### 1. **Multi-Confirmation Strength Dominates Top Opportunities**
+### 1. **Multi-Confirmation Strength Drives Top-Tier Conviction**
 
-**Highest Conviction Clusters (3+ confirming signals):**
+**NIFTY_MIDCAP_100.NS** (3 confirmations: OSCILLATOR DELTA Daily, SIGMASHELL Daily, TRENDPULSE Quarterly) demonstrates the strongest cross-function alignment, with 100% win rate on OSCILLATOR DELTA (11 trades), 87.5% on SIGMASHELL (8 trades), and 100% on Quarterly TRENDPULSE (8 trades, 21 years). However, the Quarterly signal is 2.1 years old and +18.52% MTM, approaching profit-taking territory.
 
-- **NIFTY_MIDCAP_100.NS** (India Mid-Cap Index): 3 Daily confirmations (OSCILLATOR DELTA 100% win rate, SIGMASHELL 87.5%, DELTADRIFT exited) — despite negative CAGR alpha on some functions, multi-confirmation + exceptional win rates + 4.2% gain in 2 days signals strong momentum.
+**BAC** (3 confirmations: FRACTAL TRACK Weekly, DELTADRIFT Weekly/Daily) shows exceptional multi-timeframe validation. The Weekly FRACTAL TRACK (100% win rate, 16 trades, +14.09% CAGR alpha) and Weekly DELTADRIFT (100% win rate, 8 trades, +1.54% CAGR alpha) provide strong conviction, though both Daily signals have already exited (contra indicators).
 
-- **INDA** (India ETF): 3 confirmations (OSCILLATOR DELTA Daily 93.33%, DELTADRIFT Weekly 100%, DELTADRIFT Daily exited) — triple alignment with positive alpha (+1.83% to +8.26%), forward testing 78.27%-78.95%.
-
-- **TSM** (Taiwan Semiconductor): 4 confirmations (Daily OSCILLATOR DELTA, Monthly TRENDPULSE, 2× Quarterly TRENDPULSE) — exceptional 100% Monthly win rate (21 trades), but Daily signal at-target ($365.90 reached T1 $365.80), suggesting partial profit-taking.
-
-- **MU** (Micron Technology): 3 confirmations (Quarterly TRENDPULSE 100% win rate, Quarterly FRACTAL TRACK exited, Monthly TRENDPULSE exited) — +20.39% MTM in 9 days on fresh Quarterly signal, but contra indicator from Daily exit suggests caution.
-
-- **PPL.TO** (Pembina Pipeline): 2 confirmations (Monthly TRENDPULSE 100% win rate, Monthly FRACTAL TRACK 100% win rate) — both fresh (9 days), minimal drawdown (-0.59%), dual 100% historical win rates, +1.32% to +3.32% CAGR alpha.
-
-**Strategic Implication:** Multi-confirmation scenarios significantly increase conviction. Prioritize bundles with 2+ confirming signals from different functions/timeframes, especially when all show positive CAGR alpha and fresh timing (≤10 days elapsed).
+**Recommendation**: Prioritize assets with 2+ confirmations from **different functions** (not just different intervals of the same function) to reduce model-specific risk.
 
 ---
 
-### 2. **Geographic and Sector Diversification Across Quality Signals**
+### 2. **Geographic and Sector Diversification Reduces Correlation Risk**
 
-**Regional Breakdown:**
+**Top geographic exposures**:
+- **India**: NIFTY_MIDCAP_100.NS, INDA, HDFCBANK.NS, TCS.NS, WIPRO.NS, NAUKRI.NS, BPCL.NS (7 signals)
+- **US**: JPM, GS, SOXX, META, XLF, WMT, ASML, IBIT, NU, AVGO, NFLX, MU, AMD, TSM, QQQ, ^NDX, ^DJI, DIA, AAPL, JNK, HYG, IBKR, GILD (23 signals)
+- **Canada**: ATZ.TO, BBD-B.TO, RY.TO, IMO.TO, CNQ.TO, NA.TO, PPL.TO, TD.TO, TFII.TO, MTY.TO, EFN.TO, DOL.TO, BDGI.TO, XIU.TO (14 signals)
+- **New Zealand**: MCY.NZ, ENZL, MEL.NZ, SUM.NZ, TWR.NZ (5 signals)
+- **Brazil**: ^BVSP (3 signals)
+- **International**: EFA, EWJ, ACWX, EEM, ^STI (5 signals)
+- **Crypto/Commodities**: ETH-USD, USCI, SLV, ^TNX (4 signals)
 
-- **India (7 assets):** NIFTY_MIDCAP_100.NS, INDA, ^NSEI, HDFCBANK.NS, TCS.NS, WIPRO.NS, BEL.NS, EMAMILTD.NS — dominant presence with exceptional win rates (80-100%), reflecting strong technical momentum in Indian equities.
+**Sector concentration**:
+- **Financials**: 16 signals (BAC, JPM, GS, TD, TD.TO, RY.TO, NA.TO, BN.TO, HDFCBANK.NS, XLF, IBKR)
+- **Semiconductors**: 7 signals (TSM, AMD, MU, SOXX, ASML)
+- **Consumer**: 6 signals (WMT, PG, SBUX, ATZ.TO, MTY.TO)
 
-- **US Equities (15 assets):** Semiconductors (SOXX, TSM, AMD, MU, AVGO), Financials (IBKR, JPM, GS, BAC, XLF), Broad indices (^DJI, DIA, IWM, QQQ), Consumer (NU, JETS, PG, DIS), Crypto (IBIT, ETH-USD), Bonds (JNK, HYG).
-
-- **Canada (6 assets):** ATZ.TO, BN.TO, CNQ.TO, PPL.TO, NA.TO, RY.TO, SJ.TO — strong representation in financials, energy, and infrastructure.
-
-- **New Zealand (3 assets):** MCY.NZ, MEL.NZ, MFT.NZ, ENZL — small but high-quality signals with 84-97% win rates.
-
-- **International (6 assets):** EFA, EWJ, FXI, KWEB, HDB, EURUSD=X, SFTBY, BTI, RHHBY — diversified exposure to Europe, Japan, China, forex.
-
-**Sector Breakdown:**
-
-- **Technology/Semiconductors:** 25% of signals (SOXX, TSM, AMD, MU, AVGO, ORCL) — strongest multi-confirmation patterns.
-- **Financials:** 20% (IBKR, JPM, GS, BAC, XLF, HDFCBANK.NS, TCS.NS) — coordinated strength across US and India.
-- **Utilities/Infrastructure:** 15% (XLU, PPL.TO, CNQ.TO, NA.TO) — defensive exposure with 100% historical win rates.
-- **International Equities/ETFs:** 15% (EFA, EWJ, FXI, KWEB, INDA, HDB) — emerging market and developed international diversification.
-- **Bonds/Fixed Income:** 5% (JNK, HYG) — risk-on confirmation (both triggered simultaneously 2026-03-16 with 80%+ win rates).
-
-**Strategic Implication:** Portfolio construction should leverage this natural diversification. Avoid over-concentration in any single region or sector; blend high-conviction multi-confirmation signals (India, Semiconductors) with defensive utilities and international exposure.
+**Recommendation**: Use geographic/sector diversification to hedge against region-specific or sector-specific shocks. Indian and Canadian exposures provide non-US diversification; crypto (ETH-USD) and commodities (USCI, SLV) offer inflation hedges.
 
 ---
 
-### 3. **Timeliness Analysis: Fresh vs. Late-Stage Signals**
+### 3. **Timeliness and Profit-Taking Discipline Are Critical**
 
-**Fresh Signals (0-10 days elapsed, highest priority):**
+**Fresh signals (0-7 days)**: ^BVSP Daily (0d), ^TNX (0d), ASML (0d), WMT (0d), MCY.NZ (0d), META (0d), XLF (0d), ATZ.TO (0-1d), SOXX (1d), INDA OSCILLATOR DELTA (1d), ^NSEI (1d), NIFTY_MIDCAP_100.NS (2d), ENZL/MEL.NZ/SUM.NZ (1-2d), WIPRO.NS/GS/IBIT/JETS/NU/PG (2d), HDFCBANK.NS/TCS.NS/BTI (3d), EURUSD=X/SFTBY/XLU/BAC/RHHBY/RY.TO/EFA/EWJ (4d), ORCL Short (1d), IMO.TO Short (4d)
 
-- **Same-day/1-day:** MCY.NZ (0 days, 97.37% win rate), SOXX (0 days, 82.14%), IBIT (1 day, 100%), NU (1 day, 100%), GS (1 day, 95.24%), JETS (1 day, 80.95% but negative alpha), ORCL Short (0 days, 90%).
+**Late-stage signals (>1 year or approaching/exceeding targets)**:
+- **NIFTY_MIDCAP_100.NS Quarterly**: 2.1 years, +18.52% MTM (near T1)
+- **JPM Quarterly (2025-03-31)**: 1 year, +26.51% MTM (at T2, exited)
+- **JPM Quarterly (2024-06-30)**: 1.8 years, +53.43% MTM (well above all targets, exited)
+- **^BVSP OSCILLATOR DELTA**: 16 days, already exited at +3.65% (near avg historical gain 2.34%)
+- **BDGI.TO**: 2.3 years, +53.65% MTM (mature position, profit-taking consideration)
+- **MU Monthly TRENDPULSE**: 5.3 months, +88.37% MTM (well past T1, moved to Tier C)
+- **TSM Monthly**: 5.3 months, +21.66% MTM (65% progress to T1, borderline late)
 
-- **2-10 days:** NIFTY_MIDCAP_100.NS (2 days, 100%/87.5%), HDFCBANK.NS (3 days, 80%), TCS.NS (3 days, 85%), PG (1 day SIGMASHELL, 9 days FRACTAL TRACK), SUM.NZ (2 days, 84.21%), BTI (2 days, 100%), Weekly FRACTAL TRACK cluster (4 days: XLU, BAC, RHHBY, NA.TO, RY.TO, SJ.TO, EFA, EWJ all 94-100% win rates).
-
-**Mid-Stage Signals (11-30 days, monitor closely):**
-
-- **AMD** (18 days, 79% progress to T1 despite early elapsed time vs 7.8-month avg — strong momentum).
-- **JNK/HYG** (23 days, 39% progress, positive alpha +6.64%/+5.93%).
-- **XLF** (23 days, 55% progress, 83.33% win rate).
-- **AVGO** (35 days, 47% progress, 100% win rate, +19.59% alpha).
-- **ETH-USD** (39 days, 48% progress, 100% win rate, +7.82% alpha).
-
-**Late-Stage Signals (require profit-taking review):**
-
-- **TSM Daily** (16 days, at T1, 80% win rate but negative alpha -11.46%).
-- **^DJI/DIA** (16 days, 70%/66% progress, late but positive alpha +2.61%/+0.12%).
-- **IWM Quarterly** (9 days, 100% win rate but negative alpha -1.61% + forward testing 0% on 3 trades).
-- **SLV Quarterly** (9 days, 100% win rate, +9.73% alpha, but prior Quarterly signal exited at +153.93%).
-
-**Strategic Implication:** Prioritize fresh signals (0-10 days) for new entries. Mid-stage signals (11-30 days) suitable for existing position management with trailing stops. Late-stage signals (>30 days or progress ≥60%) require profit-taking analysis rather than fresh entries.
+**Recommendation**: 
+- **Fresh entries**: Focus on signals <7 days old with <30% progress to first target.
+- **Existing holders**: Take partial profits at T1 (Historic Rise to Pivot) or T2 (Avg % Gain), trail stops to breakeven or recent support.
+- **Avoid late entries**: Signals >60% progress to T1 or past avg historical holding period unless RR to next target ≥3.0× (rare in dataset).
 
 ---
 
-### 4. **Risk Management Framework: Stop-Loss Discipline Critical**
+### 4. **CAGR Alpha and Win Rate: Complementary but Not Interchangeable**
 
-**All Tier A signals provide multiple stop-loss references:**
+**Positive CAGR alpha leaders** (Strategy outperforms Buy & Hold):
+- **AVGO**: +19.59% (100% win rate, 25 trades)
+- **BN.TO BASELINEDIVERGENCE**: +49.73% (92.59% win rate, 27 trades, 2 years)
+- **TRI.TO BASELINEDIVERGENCE**: +16.62% (win rate not provided in synthesis)
+- **HDB DELTADRIFT Daily**: +17.23% (94.12% win rate, 17 trades)
+- **BAC FRACTAL TRACK Weekly**: +14.09% (100% win rate, 16 trades)
+- **MU FRACTAL TRACK Daily**: +7.3% (100% win rate, 13 trades)
+- **ETH-USD**: +7.82% (100% win rate, 4 trades)
+- **MCY.NZ**: +9.75% (97.37% win rate, 38 trades)
 
-- **Recent Extrema** (tightest stop, typically 1-10% below entry for longs)
-- **Horizontal Support** (wider stop, often 20-40% below)
-- **F-Stack Levels** (Fibonacci-based support, 5-15% below)
-- **EMA 200** (trend-following stop, 10-25% below)
+**Negative CAGR alpha but high win rate** (included in Tier A due to ≥70% win rate policy):
+- **ATZ.TO**: -37.55% (93.1% win rate, 29 trades) — **Critical concern**: Frequent small wins but capped upside
+- **NAUKRI.NS**: -11.4% (75% win rate)
+- **TFII.TO**: -3.76% (win rate not provided)
+- **EEM**: -2.51% (83.33% win rate, 12 trades)
+- **TD Quarterly**: -0.61% (100% win rate, 5 trades)
+- **^BVSP Quarterly**: -12.49% (75% win rate, 8 trades)
 
-**Key Risk Observations:**
-
-1. **Tight stops on fresh signals:** MCY.NZ (4.77% below), SOXX (16.35%), GS (11.36%), IBIT (7.47%), NU (6.89%), ORCL Short (13.51% above).
-
-2. **Wide stops on volatile assets:** AVGO (10.49% below), ETH-USD (27.87% below), AMD (17-20% below).
-
-3. **Stop-loss breaches in Tier C signals:** GOOG Short (Recent Extrema $313.8 breached, current $314.74), CSCO Short (Recent Extrema $79.46 breached), INFY Long (multiple stops breached, -39.86% loss).
-
-**Strategic Implication:** Use Recent Extrema or F-Stack 1 stops for initial risk framing (tighter control). Widen to EMA 200 or Horizontal support only for longer-term holds. **Never hold without a defined stop.** Tier C signals with breached stops (GOOG, CSCO, INFY) demonstrate the critical importance of disciplined exit execution.
-
----
-
-### 5. **CAGR Alpha Analysis: Strategy Outperformance vs. Buy & Hold**
-
-**Positive Alpha Leaders (Strategy outperforms passive holding):**
-
-- **BN.TO:** +49.73% alpha (Weekly BASELINEDIVERGENCE, 92.59% win rate) — exceptional outperformance.
-- **AVGO:** +19.59% alpha (Daily FRACTAL TRACK, 100% win rate).
-- **KWEB:** +18.57% alpha (Daily OSCILLATOR DELTA, 81.48% win rate).
-- **BEL.NS:** +15.35% alpha (Weekly BASELINEDIVERGENCE, 81.51% win rate).
-- **MTY.TO:** +13.16% alpha (Daily DELTADRIFT, 73.33% win rate, but exited/at-target).
-- **MU Monthly:** +12.87% alpha (Monthly TRENDPULSE, 100% win rate, but exited).
-- **HDFCBANK.NS:** +10.3% alpha (Daily OSCILLATOR DELTA, 80% win rate).
-
-**Negative Alpha Exceptions (Strategy underperforms passive, but included due to high win rates):**
-
-- **TSM Daily:** -11.46% alpha (80% win rate, multi-confirmation support).
-- **IBKR OSCILLATOR DELTA:** -15.91% alpha (83.33% win rate, multi-confirmation with DELTADRIFT).
-- **GS:** -12.05% alpha (95.24% win rate, fresh 1-day signal but at T1/T2).
-- **JETS:** -21.11% alpha (80.95% win rate, fresh but contra indicator from Weekly exit).
-- **TD:** -0.61% alpha (100% win rate, exited after 4.8 years).
-- **AMZN:** -9.99% alpha (100% win rate, exited after 5.3 years).
-
-**Strategic Implication:** Prioritize signals with **positive CAGR alpha** for alignment with long-term outperformance. Negative alpha signals are acceptable only when:
-1. Win rate ≥80% (short-term tactical edge),
-2. Multi-confirmation present (reduces single-function risk),
-3. Fresh timing (≤5 days elapsed),
-4. Clear profit-taking plan (tight stops, partial exits at targets).
-
-**Avoid fresh entries on negative alpha signals that are late-stage or at-target** (e.g., GS at T1/T2, JETS with Weekly exit contra indicator).
+**Recommendation**: 
+- **Prioritize positive CAGR alpha** (Strategy > Buy & Hold) for long-term compounding.
+- **Negative alpha signals** may work for **tactical trading** (high win rate suggests frequent exits capture small gains), but avoid buy-and-hold on these.
+- **ATZ.TO** (-37.55% CAGR alpha despite 93.1% win rate) is a **red flag**: high win rate masks poor risk-adjusted returns. Use tight stops and quick profit-taking.
 
 ---
 
-### 6. **Forward Testing and Recent Performance: Model Robustness Validation**
+### 5. **Contra Indicators and Exit Signals Require Heightened Caution**
 
-**Strong Forward Testing Consistency (≥75% win rate):**
+**Assets with recent exits reducing fresh entry confidence**:
+- **META DELTADRIFT**: Exited 2026-04-08 (+3.82% MTM, 9 days) — reduces conviction for fresh TRENDPULSE Long (2026-04-09)
+- **XLF DELTADRIFT**: Exited 2026-04-08 (+2.79% MTM, 24 days) — reduces conviction for fresh TRENDPULSE Long (2026-04-09)
+- **SOXX FRACTAL TRACK**: Exited 2026-04-08 and 2026-04-09 — reduces conviction for fresh TRENDPULSE Long (2026-04-08)
+- **INDY signals**: Multiple Daily exits on 2026-04-08 — contra indicators for fresh entries
+- **KWEB OSCILLATOR DELTA**: Exited 2026-04-09 — contra indicator
+- **BAC Daily DELTADRIFT/OSCILLATOR DELTA**: Both exited 2026-04-08 — contra indicators for fresh Weekly entries
+- **EWJ Daily DELTADRIFT/OSCILLATOR DELTA**: Both exited 2026-04-06/2026-04-08 — contra indicators for fresh Weekly FRACTAL TRACK
+- **INDA Weekly DELTADRIFT**: Exited 2026-04-09 (+5.19% MTM, 4 days) — contra indicator for fresh Daily OSCILLATOR DELTA
+- **HDB Weekly DELTADRIFT**: Exited 2026-04-09 (+6.23% MTM, 4 days) — contra indicator for fresh Daily OSCILLATOR DELTA
+- **IMO.TO**: **Directional conflict** — TRENDPULSE Weekly LONG (2026-02-15) vs. DELTADRIFT Weekly SHORT (2026-04-05). Both qualify for Tier A, but user must choose one direction or avoid until re-validation.
 
-- **DELTADRIFT (Daily):** 74.35% across 620 trades, 16-day avg hold — robust across multiple assets (INDA, IWM, IBKR, ^DJI, DIA, JNK, HYG, XLF, QQQ, META, SBUX).
-- **DELTADRIFT (Weekly):** 78.95% across 133 trades, 2-month avg hold — excellent (HDB, JETS, FXI, IHI, XLY, MFT.NZ, EMAMILTD.NS, EFN.TO, ETH-USD).
-- **OSCILLATOR DELTA (Daily):** 78.27% across 497 trades, 25-day avg hold — very strong (INDA, JPM, KWEB, ^NSEI, ENZL, HDFCBANK.NS, TCS.NS, TSM, IBKR, TD.TO).
-
-**Weaker Forward Testing (≤55% win rate, caution advised):**
-
-- **FRACTAL TRACK (Weekly):** 52.12% across 165 trades, 8.1-month avg hold — lower than backtested (XLU, BAC, RHHBY, NA.TO, RY.TO, SJ.TO, EFA, EWJ, AMD). **Note:** Historical win rates 94-100%, but forward testing shows mean reversion; size positions conservatively.
-- **FRACTAL TRACK (Quarterly/Monthly):** 46.15%-63.64% across smaller samples — mixed results (MU, BTI, PG, AVGO, GOOG, CSCO, WPM).
-
-**Latest 6-Month Performance Trends:**
-
-- **OSCILLATOR DELTA:** 87.86% (140 trades, 29-day hold) — improving vs forward testing.
-- **DELTADRIFT Daily:** 78.7% (169 trades, 13-day hold) — stable.
-- **SIGMASHELL:** 61.7%-74.36% (39-47 trades) — moderate.
-- **FRACTAL TRACK:** 88.33%-91.64% (60-299 trades) — recent improvement vs forward testing average.
-
-**Strategic Implication:** **DELTADRIFT and OSCILLATOR DELTA functions show strongest forward-testing robustness.** FRACTAL TRACK signals require tighter position sizing and quicker profit-taking due to lower forward-testing win rates despite exceptional backtested performance. Recent 6-month trends suggest model adaptation is improving FRACTAL TRACK results, but remain conservative until sustained improvement confirmed.
+**Recommendation**: 
+- **Not mechanical contradictions**, but exits suggest profit-taking or risk-off. Wait for re-confirmation before fresh entry.
+- **IMO.TO**: The SHORT signal (80% win rate, confirmed 2026-04-05, -2.30% favorable move) is fresher than the LONG (100% win rate, confirmed 2026-02-15, +8.72% but approaching T1/T2). Consider the SHORT as a directional shift signal, or avoid IMO.TO entirely.
 
 ---
 
-### 7. **Contra Indicators and Exit Signal Analysis**
+### 6. **Forward Testing and Recent 6-Month Performance Validate Model Robustness**
 
-**Critical Contra Indicators (Recent exits reduce fresh entry confidence):**
+**Strong forward-testing leaders** (Win Rate ≥75% across all assets):
+- **OSCILLATOR DELTA**: 78.27% (497 trades, 25 days avg hold)
+- **DELTADRIFT Weekly**: 78.95% (133 trades, 2 months avg hold)
+- **TRENDPULSE Daily**: 77.68% (775 trades, 1.6 months avg hold)
+- **DELTADRIFT Daily**: 74.35% (620 trades, 16 days avg hold)
 
-1. **INDY:** 2 TrendPulse SHORT exits (2026-04-09, -7.57% and -2.78% MTM) conflict with fresh OSCILLATOR DELTA LONG (2026-04-08). Not mechanical contradiction (different functions/intervals), but mixed directional conviction reduces authorization confidence.
+**Weak forward-testing** (Win Rate <50%):
+- **FRACTAL TRACK Daily/Weekly**: 46.15%-52.12% (52-165 trades) — significantly lower than backtested 85-100% win rates, suggesting overfitting or regime change
+- **TRENDPULSE Quarterly**: 0.0% (only 3 trades, insufficient sample)
 
-2. **WIPRO.NS:** Active Fractal Track SHORT (Quarterly, -8.24% MTM) conflicts with fresh TrendPulse LONG (Daily, 2026-04-07). Directional conflict across timeframes.
+**Recent 6-month performance leaders**:
+- **TRENDPULSE Daily**: 92.31% (325 trades, 1.3 months avg hold)
+- **OSCILLATOR DELTA**: 87.86% (140 trades, 29 days avg hold)
+- **FRACTAL TRACK**: 88.33%-91.64% (60-299 trades)
 
-3. **JPM:** 2 Quarterly TrendPulse LONGs deeply in profit (25.55% and 52.26% MTM, 1-1.8 years held) suggest overhead supply/profit-taking pressure for fresh Daily OSCILLATOR DELTA LONG.
-
-4. **JETS:** Weekly DELTADRIFT exit (2026-04-09, +4.75% gain) conflicts with fresh Daily TrendPulse LONG (2026-04-07). Weekly exit reduces confidence despite Daily signal's 80.95% win rate.
-
-5. **NIFTY_MIDCAP_100.NS:** Daily DELTADRIFT exit (2026-04-08) conflicts with 3 concurrent Daily LONGs (OSCILLATOR DELTA, SIGMASHELL). Exit reduces confidence despite multi-confirmation.
-
-6. **TCS.NS:** Daily DELTADRIFT exit (2026-04-06) same-day as OSCILLATOR DELTA LONG signal (2026-04-06). Timing overlap creates uncertainty.
-
-7. **HDFCBANK.NS:** Weekly DELTADRIFT exit (2026-04-09) conflicts with Daily OSCILLATOR DELTA LONG (2026-04-06).
-
-8. **BAC:** 3 exits (DELTADRIFT Weekly 2026-04-09, DELTADRIFT Daily 2026-04-08, OSCILLATOR DELTA Daily 2026-04-08) significantly reduce authorization confidence for fresh Weekly FRACTAL TRACK LONG (2026-04-05), despite 100% historical win rate.
-
-9. **EFA/EWJ/HDB:** Recent Daily exits (2026-04-06 to 2026-04-08) reduce confidence for Weekly FRACTAL TRACK/DELTADRIFT LONGs despite strong historical metrics.
-
-10. **BN.TO/BEL.NS:** Daily exits (2026-04-07 to 2026-04-09) reduce confidence for fresh Weekly BASELINEDIVERGENCE LONGs despite exceptional CAGR alpha (+49.73% and +15.35%).
-
-**Strategic Implication:** **Treat recent exits (within 7 days for Daily, 2 months for Weekly/Monthly) as contra indicators requiring re-validation before fresh entries.** Exits are not mechanical contradictions but signal profit-taking, stop-loss triggers, or changing market conditions. **Prioritize assets with no recent exit activity** (MCY.NZ, SOXX, ATZ.TO, IBIT, NU, XLU, AVGO, ETH-USD, ORCL) for highest authorization confidence.
+**Recommendation**: 
+- **Trust forward-testing over backtesting** when sample size >100 trades. FRACTAL TRACK's 46-52% forward-testing win rate (vs. 85-100% backtest) is a **warning sign** of overfitting or changing market conditions.
+- **Recent 6-month performance** (87-92% win rates) suggests models are currently performing well, but this may reflect recent market regime (trending/low volatility). Monitor for deterioration in choppy markets.
 
 ---
 
-### 8. **At-Target and Profit-Taking Signals (Not Fresh Entry Candidates)**
+### 7. **Risk Management Framework: Stops, Targets, and Position Sizing**
 
-**Tier C: At-Target / Implicit Exit (hold for existing positions, avoid fresh entries):**
+**Stop-loss hierarchy** (use in order of availability):
+1. **Recent Extrema** (most responsive to current price action)
+2. **F-Stack 1** (Fibonacci-based support, typically 5-15% below entry)
+3. **Horizontal Support** (long-term structural levels)
+4. **EMA 200** (dynamic trend filter)
+5. **Cancellation Level** (for unconfirmed signals only; invalidation point)
 
-- **TSM Daily OSCILLATOR DELTA:** Current $365.90 at T1 $365.80 (16 days, 80% win rate, negative alpha -11.46%).
-- **GS Daily TrendPulse:** Current $905.75 reached T1 $897.07 and T2 $904.85 within 1 day (95.24% win rate, negative alpha -12.05%).
-- **HDFCBANK.NS Daily OSCILLATOR DELTA:** Current 801.6 at T1 802.3 (3 days, 80% win rate, negative alpha -6.89%).
-- **TCS.NS Daily OSCILLATOR DELTA:** Current 2563.3 at T1 2560.2 (3 days, 85% win rate, positive alpha +1.71%).
-- **IBKR Daily DELTADRIFT:** Current $72.31 exceeded T1 $71.98 and T2 $70.51 (1 month, 100% win rate, negative alpha -8.65%).
-- **^BVSP Quarterly TrendPulse:** Current 192,201 at F-Stack 1 192,290 (9 days, 75% win rate, negative alpha -12.49%).
-- **EFA Weekly FRACTAL TRACK:** Current 102.19 exceeded T1 100.29 (4 days, 100% win rate, positive alpha +5.97%).
-- **USCI Weekly TrendPulse:** Exited 2026-04-09 at $94.98, exceeded T1/T2 (83.33% win rate, positive alpha +3.58%).
-- **XIU.TO, BBD-B.TO, BDGI.TO, TD, AMZN, INFY:** All Quarterly/Monthly TrendPulse LONGs exited 2026-04-09 after 1-5+ years holding, at/beyond targets or with severe losses.
+**Target hierarchy** (take partial profits at each level):
+1. **T2 (Avg % Gain of Historic Winning Trades)** — most conservative, typically 2-10% gain
+2. **T1 (Historic Rise to Pivot)** — slightly more aggressive, typically 5-15% gain
+3. **Function Specific Target** — model-specific projection, varies widely
+4. **F-Stack 1/2** — Fibonacci extensions, 15-50% gain
+5. **Horizontal Resistance** — long-term structural targets
 
-**Strategic Implication:** **At-target signals are profit-taking opportunities for existing holders, NOT fresh entry points.** Respect the model's target levels and exit signals. For signals that have reached T1/T2 within historical average holding periods, consider:
-1. **Partial exit (25-50%)** at first target,
-2. **Trailing stop** to breakeven or recent swing low,
-3. **Hold remainder** for next target (T2, Function Specific, F-Stack levels) with disciplined stop management.
-
-**Do not chase signals that have already moved 10%+ in favorable direction within days** unless multi-confirmation and positive alpha strongly support continuation.
-
----
-
-## PORTFOLIO CONSTRUCTION RECOMMENDATIONS
-
-### **Tier 1: Highest Conviction (Multi-Confirmation + Fresh + Positive Alpha)**
-
-**Allocate 40-50% of risk capital:**
-
-1. **PPL.TO** (2 confirmations: Monthly TrendPulse + FRACTAL TRACK, both 100% win rate, +1.32% to +3.32% alpha, 9 days fresh, -0.59% MTM)
-2. **INDA** (2 active confirmations: Daily OSCILLATOR DELTA 93.33% + Weekly DELTADRIFT 100%, +1.83% to +8.26% alpha, 0-4 days fresh)
-3. **NIFTY_MIDCAP_100.NS** (2 active confirmations: Daily OSCILLATOR DELTA 100% + SIGMASHELL 87.5%, 2 days fresh, +4.2% MTM; note negative alpha on OSCILLATOR DELTA but multi-confirmation + exceptional win rates offset)
-4. **PG** (2 confirmations: Daily SIGMASHELL 90.91% + Monthly FRACTAL TRACK 82.35%, +11.12% to +0.48% alpha, 1-9 days fresh)
-5. **AVGO** (Single Daily FRACTAL TRACK, 100% win rate, +19.59% alpha, 35 days, 47% progress — mid-stage but exceptional metrics)
-
-### **Tier 2: High Conviction (Single Confirmation + Exceptional Metrics OR Multi-Confirmation with Minor Concerns)**
-
-**Allocate 30-40% of risk capital:**
-
-6. **MCY.NZ** (Single Daily TrendPulse, 97.37% win rate, +9.75% alpha, 0 days same-day confirmation)
-7. **IBIT** (Single Daily TrendPulse, 100% win rate, +30.97% alpha, 1 day fresh)
-8. **NU** (Single Daily TrendPulse, 100% win rate, +16.53% alpha, 1 day fresh, at T2 but very early)
-9. **XLY** (Single Weekly DELTADRIFT, 100% win rate, +0.74% alpha, exceptional Sharpe 1.51, 4 days fresh)
-10. **MFT.NZ** (Single Weekly DELTADRIFT, 88.89% win rate, +2.38% alpha, Sharpe 2.22, 4 days fresh)
-11. **JNK/HYG** (Both Daily DELTADRIFT, 80-81% win rate, +5.93% to +6.64% alpha, 23 days, 39% progress, risk-on confirmation)
-12. **ETH-USD** (Single Weekly DELTADRIFT, 100% win rate but small sample [4 trades], +7.82% alpha, 39 days, 48% progress)
-
-### **Tier 3: Moderate Conviction (Fresh + Strong Win Rate BUT Negative Alpha OR Contra Indicators Present)**
-
-**Allocate 10-20% of risk capital with tighter stops:**
-
-13. **SOXX** (Single Daily TrendPulse, 82.14% win rate, negative alpha -9.04%, 0 days fresh, new all-time high but at Function Specific target)
-14. **GS** (Single Daily TrendPulse, 95.24% win rate, negative alpha -12.05%, 1 day fresh but at T1/T2 — partial profit-taking only)
-15. **IBKR** (2 confirmations: Daily OSCILLATOR DELTA 83.33% + DELTADRIFT 100%, but DELTADRIFT at-target, OSCILLATOR DELTA negative alpha -15.91%)
-16. **TSM** (4 confirmations, but Daily at-target, Monthly late, Quarterly extremely late — hold existing, avoid fresh)
-17. **AMD** (2 Weekly FRACTAL TRACK, 85.71% win rate, +3.0% alpha, but 79-83% progress to T1 — partial profit-taking recommended)
-18. **ORCL Short** (Single Daily TrendPulse, 90% win rate, +7.42% alpha, 0 days same-day, but forward testing only 42.11% — size conservatively)
-
-### **Tier 4: Monitor/Hold Only (Late-Stage, At-Target, OR Severe Contra Indicators)**
-
-**No fresh allocation; manage existing positions with trailing stops:**
-
-19. **^DJI/DIA** (Daily DELTADRIFT, 70%/66% progress, late but positive alpha +2.61%/+0.12% — tighten stops)
-20. **XLF** (Daily DELTADRIFT, 55% progress, 83.33% win rate, minimal negative alpha -0.18% — hold with tight stop)
-21. **BAC/EFA/EWJ/HDB** (Weekly FRACTAL TRACK/DELTADRIFT, 94-100% historical win rates, but 2-4 recent Daily exits reduce confidence — await re-validation)
-22. **BN.TO/BEL.NS** (Weekly BASELINEDIVERGENCE, exceptional +49.73%/+15.35% alpha, but recent Daily exits — await re-validation)
-23. **MU** (Quarterly TrendPulse fresh, 100% win rate, +3.43% alpha, but +20.39% MTM in 9 days + Daily exit contra indicator — partial profit-taking)
-24. **IWM/SLV/^BVSP/CNQ.TO** (Quarterly/Monthly TrendPulse, 75-100% win rates, but negative alpha OR at-target OR weak forward testing — hold existing only)
-
-### **Tier 5: Avoid / Exit (Severe Negative Alpha, Severe Losses, OR Exit Triggered)**
-
-**Close positions or avoid entirely:**
-
-25. **JETS** (Daily TrendPulse, 80.95% win rate, severe negative alpha -21.11%, Weekly exit contra indicator)
-26. **ATZ.TO** (Daily TrendPulse, 93.1% win rate, severe negative alpha -37.55%, extreme drawdown risk 50.85% max loss)
-27. **TD/AMZN** (Quarterly TrendPulse, 100% win rates, negative alpha -0.61%/-9.99%, exited after 4.8-5.3 years)
-28. **INFY** (Monthly TrendPulse, 76.92% win rate, exited at -39.86% loss, multiple stops breached)
-29. **GOOG/CSCO/WPM/000660.KS Shorts** (Monthly/Quarterly FRACTAL TRACK, 87.5-100% win rates, but -6.97% to -25.03% adverse MTM, stops breached)
+**Position sizing** (based on win rate and CAGR alpha):
+- **Tier 1 (5-10% portfolio weight)**: Win rate ≥90%, CAGR alpha ≥+5%, multi-confirmation (e.g., AVGO, MCY.NZ, BAC FRACTAL TRACK Weekly)
+- **Tier 2 (3-5% portfolio weight)**: Win rate 80-90%, CAGR alpha +2-5%, single or dual confirmation (e.g., NFLX, ETH-USD, HDB)
+- **Tier 3 (1-3% portfolio weight)**: Win rate 70-80%, CAGR alpha 0-2% or negative alpha with high win rate (e.g., EEM, JETS, ATZ.TO)
+- **Avoid >3% weight**: Signals with negative CAGR alpha <-10% (e.g., ATZ.TO -37.55%) unless purely tactical with tight stops
 
 ---
 
-## FINAL MACHINE LINE (CONSOLIDATED)
+## ANALYSIS AS OF 2026-04-09
 
-```
-MACHINE|tierA_bundles=30|tierA_rows=36|tierC_rows=47|rejected=8|late=28|as_of=2026-04-09
-```
-
-**Breakdown:**
-- **Tier A Bundles:** 30 unique assets with 36 qualifying signals
-- **Tier C (HOLD FOR REVIEW):** 47 signals (late-stage, at-target, contra indicators, negative alpha exceptions)
-- **Rejected:** 8 signals (duplicates, data integrity issues, insufficient fields)
-- **Late Signals:** 28 (progress ≥60% or elapsed time ≥ avg historical holding period)
-- **Analysis Date:** 2026-04-09
+**ANALYSIS_DATE Determination**: Derived from "Today Trading Date/Price[$]" field (2026-04-09) present across all payload rows from all 8 parallel processing streams.
 
 ---
 
-## RISK / INTEGRITY NOTES (CONSOLIDATED)
+## A) SIGNAL SYNOPSIS (as of 2026-04-09)
 
-### **Model-Output Integrity Issues:**
+**Composite Alignment**:
+- **47 Tier A qualified signals** across **36 distinct assets**
+- **Directional bias**: 46 LONG, 1 SHORT (ORCL, IMO.TO SHORT is standalone)
+- **Multi-confirmation clusters**: 
+  - 3+ signals: NIFTY_MIDCAP_100.NS (3), BAC (3), EWJ (3), HDB (3), MU (4), AMD (3)
+  - 2 signals: INDA (2), JPM (3 but 2 exited), ^BVSP (3 but 1 exited), SOXX (2 but exits), ATZ.TO (2), PG (2), TSM (2+), PPL.TO (2), JETS (2), IBKR (2), IWM (2 but 1 exited)
+- **Contra indicators**: 18 assets have recent exits or directional conflicts (see Section 5 above)
 
-1. **Directional Ordering Conflicts:**
-   - **IWM Quarterly TrendPulse:** T2 Function Specific Target $250.12 is BELOW current price $260.47 for a Long signal (conflict).
-   - **MU Quarterly TrendPulse:** F-Stack 1 stop $310.1249 is ABOVE entry $295.13 for a Long signal (conflict).
-   - **BEL.NS Weekly BASELINEDIVERGENCE:** Recent Extrema stop $404.75 is ABOVE entry $400.0 for a Long signal (conflict).
-
-   **Impact:** Cannot use these specific stop levels for RR framing; alternative stops (EMA 200, F-Stack 2, Horizontal) used where available.
-
-2. **Missing Fields (Blocking Full RR Computation):**
-   - **rr_to_nearest_support_stop:** Not available in model output for most rows. Computed manually where all required inputs (entry, target, stop) present, but many signals lack this precomputed metric.
-
-### **Contra Indicators Summary (Assets with Recent Exits Reducing Fresh Entry Confidence):**
-
-- **High Impact (Multiple Exits):** BAC (3 exits), HDB (4 signals including 1 exit + 1 opposing SHORT), EWJ (2 exits), NIFTY_MIDCAP_100.NS (1 exit), TCS.NS (1 exit), HDFCBANK.NS (1 exit), BN.TO (1 exit), BEL.NS (2 exits).
-
-- **Moderate Impact (Single Exit OR Directional Conflict):** INDY (2 SHORT exits), WIPRO.NS (1 opposing SHORT), JPM (2 legacy LONGs in profit-taking), JETS (1 Weekly exit), SOXX (1 Fractal Track exit), IHI (1 Daily exit), MU (1 Daily exit), SFTBY (1 Quarterly SHORT exit reinforcing LONG).
-
-- **Severe Impact (Exit at Loss OR Severe Drawdown):** INFY (-39.86% loss, exited), 000660.KS Short (-25.03% loss, exited), GOOG/CSCO/WPM Shorts (-6.97% to -9.72% adverse MTM).
-
-### **Lateness Summary (Signals Excluded from Tier A Due to Progress ≥60% or Elapsed Time):**
-
-- **At-Target (T1/T2 Reached):** TSM Daily, GS Daily, HDFCBANK.NS Daily, TCS.NS Daily, IBKR Daily, ^BVSP Quarterly, EFA Weekly, USCI Weekly.
-
-- **Late-Stage Progress (60-83%):** ^DJI Daily (70%), DIA Daily (66%), AMD Weekly (79-83%), TSM Monthly (65%), XLF Daily (55% borderline).
-
-- **Extremely Late (Multi-Year Holdings):** XIU.TO (1 year), BBD-B.TO (1.5-3.1 years), BDGI.TO (2.3 years), TD (4.8 years), AMZN (5.3 years), INFY (1.6 years).
+**Overall Risk Posture**:
+- **Conservative**: Tier A limited to signals with ≥70% win rate, clear risk framing, and acceptable timeliness
+- **~40% exclusion rate**: Many initially filtered signals moved to Tier C due to:
+  - Negative CAGR alpha (e.g., ATZ.TO -37.55%, INFY -40.89% MTM, AMZN -9.99% alpha)
+  - Late-stage positioning (e.g., MU Monthly +88.37% MTM, SLV Quarterly +157.4% MTM, TD Quarterly +42.57% MTM)
+  - Recent exits (e.g., RELIANCE.NS, KWEB, multiple Daily DELTADRIFT/OSCILLATOR DELTA signals)
+  - Drawdown/integrity issues (e.g., GOOG Short -10.29% MTM, 000660.KS Short -23.67% MTM)
 
 ---
 
-## DISCLAIMER
+## B) TIER A — TOP 10 RANKED BUNDLES (By Multi-Confirmation + Win Rate + CAGR Alpha + Timeliness)
 
-**All metrics, targets, stops, and performance data reported from model output; no recalculation performed; no external market data used.** Computed metrics (progress %, RR approximations) only where all required inputs present in payload. **This report does not constitute investment advice.** Users must independently verify all data, assess suitability for their risk tolerance, and consult licensed financial advisors before executing trades. **Past performance does not guarantee future results.** Model-output integrity issues noted above; users should validate directional ordering and stop-loss levels before position entry.
+### **1. NIFTY_MIDCAP_100.NS — Long — confirmations=3**
+
+**Synopsis**: Triple confirmation (OSCILLATOR DELTA Daily, SIGMASHELL Daily, TRENDPULSE Quarterly). Best win rate 100% (OSCILLATOR DELTA, 11 trades; Quarterly TRENDPULSE, 8 trades). Forward testing 78.27% (OSCILLATOR DELTA, 497 trades). **Timeliness**: Daily signals 2 days old (+4.36% MTM), passed; Quarterly signal 2.1 years old (+18.52% MTM), approaching profit-taking zone but still within avg historical hold (2.6 years).
+
+**Key Metrics**:
+- **OSCILLATOR DELTA Daily**: 100% win rate (11 trades, 6 years), -9.98% CAGR alpha (negative), 78.27% forward testing
+- **SIGMASHELL Daily**: 87.5% win rate (8 trades, 5 years), +1.43% CAGR alpha, 64.05% forward testing
+- **TRENDPULSE Quarterly**: 100% win rate (8 trades, 21 years), +1.45% CAGR alpha, 100% recent 6-month performance
+
+**Actionable Next Step**: **HOLD / ADD** on Daily signals (fresh, 2 days old); **HOLD / TAKE PARTIAL** on Quarterly (2.1 years, +18.52% MTM, near T1 57354). Use F-Stack 1 support 51648 (9.4% below current 56979) as stop. Targets: Daily T1 59203 (+3.9%), Quarterly T1 57354 (+0.7%).
+
+**Disclaimer**: Reported metrics from model output; computed progress only where all inputs present; no external data used.
+
+---
+
+### **2. BAC — Long — confirmations=3 (2 active, 2 exited Daily signals as contra)**
+
+**Synopsis**: Triple confirmation (FRACTAL TRACK Weekly, DELTADRIFT Weekly, Daily signals exited). Best win rate 100% (Weekly FRACTAL TRACK, 16 trades; Weekly DELTADRIFT, 8 trades). **Contra indicators**: Daily DELTADRIFT and OSCILLATOR DELTA both exited 2026-04-08, reducing fresh entry confidence. Weekly signals remain active.
+
+**Key Metrics**:
+- **FRACTAL TRACK Weekly**: 100% win rate (16 trades, 20 years), +14.09% CAGR alpha, 52.12% forward testing
+- **DELTADRIFT Weekly**: 87.5% win rate (8 trades, 15 years), +1.54% CAGR alpha, Sharpe 0.59, 78.95% forward testing
+- **Daily signals (exited)**: 92.86% and 88.24% win rates, but exited 2026-04-08 after 29-37 days
+
+**Actionable Next Step**: **HOLD / ADD** on Weekly signals (fresh, 4-11 days old). Weekly FRACTAL TRACK: entry 47.55-49.38, current 52.71 (+6.74%), T1 53.54 (+1.6%), stop Recent Extrema 46.72 (11.4% risk). Weekly DELTADRIFT: exited 2026-04-09 at 52.71 (near T1 52.60) — **TAKE PARTIAL / HOLD**. Caution: Daily exits suggest short-term profit-taking; wait for re-confirmation before aggressive Daily re-entry.
+
+**Disclaimer**: Reported metrics from model output; computed RR only where all inputs present; no external data used.
+
+---
+
+### **3. EWJ — Long — confirmations=3 (1 active Weekly, 2 exited Daily signals as contra)**
+
+**Synopsis**: Triple confirmation (FRACTAL TRACK Weekly, OSCILLATOR DELTA Daily exited, DELTADRIFT Daily exited). Best win rate 100% (Weekly FRACTAL TRACK, 17 trades; Daily DELTADRIFT, 16 trades). **Contra indicators**: Both Daily signals exited 2026-04-06/2026-04-08, reducing fresh entry confidence. Weekly FRACTAL TRACK remains active.
+
+**Key Metrics**:
+- **FRACTAL TRACK Weekly**: 94.12% win rate (17 trades, 20 years), +7.27% CAGR alpha, 52.12% forward testing
+- **Daily signals (exited)**: 100% win rates, Sharpe 4.05 (DELTADRIFT), +10.58% and +3.57% CAGR alpha
+
+**Actionable Next Step**: **HOLD / ADD** on Weekly FRACTAL TRACK (fresh, 4 days old). Entry 82.65-85.29, current 88.22 (+3.44%), T1 91.67 (+3.9%), stop Recent Extrema 81.2 (8.0% risk). RR ≈6.2× (signal open to T1 vs stop). Caution: Daily exits suggest short-term profit-taking.
+
+**Disclaimer**: Reported metrics from model output; computed RR only where all inputs present; no external data used.
+
+---
+
+### **4. HDB — Long — confirmations=3 (all exited or near-exit)**
+
+**Synopsis**: Triple confirmation (DELTADRIFT Weekly, OSCILLATOR DELTA Daily, DELTADRIFT Daily). All three signals have **already exited** or **near-exit** status as of 2026-04-08/2026-04-09. Best win rate 100% (Weekly DELTADRIFT, 8 trades). **Contra indicator**: Quarterly FRACTAL TRACK SHORT (2026-03-31, -7.64% MTM) conflicts with Long signals.
+
+**Key Metrics**:
+- **DELTADRIFT Weekly**: 100% win rate (8 trades, 15 years), +8.26% CAGR alpha, Sharpe 1.54, **exited 2026-04-09** at +7.85% MTM
+- **OSCILLATOR DELTA Daily**: 88% win rate (25 trades, 6 years), +10.3% CAGR alpha, **exited 2026-04-08** at +3.76% MTM
+- **DELTADRIFT Daily**: 94.12% win rate (17 trades, 4 years), +17.23% CAGR alpha, Sharpe 0.77, **exited 2026-04-08** at +6.61% MTM
+
+**Actionable Next Step**: **HOLD FOR REVIEW (All Exited)** — All three Long signals exited 2026-04-08/2026-04-09. Not fresh entry candidates. Contra indicator: Quarterly SHORT signal (87.5% win rate, +2.24% CAGR alpha, currently -7.64% MTM) suggests directional shift. Avoid fresh Long entries until re-confirmation.
+
+**Disclaimer**: Reported metrics from model output; no recalculation performed; no external data used.
+
+---
+
+### **5. MU — Long — confirmations=4 (1 active Daily, 1 active Quarterly, 2 older Quarterly/Monthly in Tier C)**
+
+**Synopsis**: Quad confirmation across Daily, Monthly, Quarterly from TRENDPULSE and FRACTAL TRACK. Best win rate 100% (Quarterly TRENDPULSE, 7 trades; Monthly TRENDPULSE, 9 trades; Quarterly FRACTAL TRACK, 4 trades). **Timeliness**: Daily FRACTAL TRACK exited 2026-04-08 (+15.09% MTM, 7 days) — at-target; Quarterly TRENDPULSE fresh (9 days, +24.77% MTM) — passed; **Monthly TRENDPULSE LATE** (5.3 months, +88.37% MTM, past T1) — moved to Tier C.
+
+**Key Metrics**:
+- **FRACTAL TRACK Daily**: 92.86% win rate (14 trades, 5 years), +7.3% CAGR alpha, **exited 2026-04-08** (at T1/T2)
+- **TRENDPULSE Quarterly**: 100% win rate (7 trades, 41 years), +3.43% CAGR alpha, 0% forward testing (only 3 trades, insufficient sample)
+- **Monthly TRENDPULSE (Tier C)**: 100% win rate (9 trades, 20 years), +12.87% CAGR alpha, **LATE** (+88.37% MTM, past T1 384.79)
+
+**Actionable Next Step**: **HOLD / ADD** on Quarterly TRENDPULSE (fresh, 9 days, +24.77% MTM, 22% progress to T1 713.18). Entry 295.13-337.84, current 421.51, T1 713.18 (+69% upside), stop F-Stack 1 310.12 (26% risk from current, or use EMA 200 240.62 for wider stop). RR ≈13.5× (signal open to T1 vs F-Stack 1 stop). **Avoid** Monthly TRENDPULSE (LATE, +88.37% MTM, past T1).
+
+**Disclaimer**: Reported metrics from model output; computed progress/RR only where all inputs present; no external data used.
+
+---
+
+### **6. AMD — Long — confirmations=3 (all exited or at-target)**
+
+**Synopsis**: Triple confirmation (2× FRACTAL TRACK Weekly, TRENDPULSE Daily). All three signals **already exited** or **at-target** as of 2026-04-09. Best win rate 86.36% (Daily TRENDPULSE, 22 trades). Positive CAGR alpha across all (+2.96% to +3.0%).
+
+**Key Metrics**:
+- **FRACTAL TRACK Weekly (2026-03-22)**: 85.71% win rate (14 trades, 20 years), +3.0% CAGR alpha, **exited 2026-04-09** at +17.54% MTM (near T1 239.90)
+- **TRENDPULSE Daily**: 86.36% win rate (22 trades, 4 years), +2.96% CAGR alpha, **exited 2026-04-09** at +16.44% MTM (past T1 214.55)
+- **FRACTAL TRACK Weekly (2026-02-22)**: 85.71% win rate, +3.0% CAGR alpha, **exited 2026-04-09** at +18.23% MTM (at T1 238.50)
+
+**Actionable Next Step**: **HOLD FOR REVIEW (All Exited / At-Target)** — All three signals exited 2026-04-09 after achieving T1 or beyond. Not fresh entry candidates. If still holding, take partial profits. Wait for pullback to 200-220 range or new signal re-confirmation before fresh entry.
+
+**Disclaimer**: Reported metrics from model output; computed progress only where all inputs present; no external data used.
+
+---
+
+### **7. JPM — Long — confirmations=3 (1 active Daily, 2 exited Quarterly)**
+
+**Synopsis**: Triple confirmation (OSCILLATOR DELTA Daily, 2× TRENDPULSE Quarterly). Best win rate 100% (Quarterly TRENDPULSE, 6 trades over 45 years). **Timeliness**: Daily fresh (1 day, +0.77% MTM) — passed; **Both Quarterly signals exited 2026-04-09** (+26.51% and +53.43% MTM, at/past all targets).
+
+**Key Metrics**:
+- **OSCILLATOR DELTA Daily**: 93.33% win rate (15 trades, 6 years), -3.03% CAGR alpha (negative), 78.27% forward testing
+- **TRENDPULSE Quarterly (2025-03-31)**: 100% win rate (6 trades, 45 years), -0.72% CAGR alpha, **exited 2026-04-09** at +26.51% MTM (at T2 310.40)
+- **TRENDPULSE Quarterly (2024-06-30)**: 100% win rate, -0.72% CAGR alpha, **exited 2026-04-09** at +53.43% MTM (well past all targets)
+
+**Actionable Next Step**: **HOLD / ADD** on Daily OSCILLATOR DELTA (fresh, 1 day, +0.77% MTM). Entry 307.97, current 310.33, T1 340.74 (+9.8%), stop F-Stack 1 300.97 (3.0% risk). RR moderate. **Caution**: Negative CAGR alpha (-3.03%) and recent Quarterly exits suggest tactical only. Quarterly signals: **HOLD FOR REVIEW (Exited)** — both exited at/past all targets; not fresh entries.
+
+**Disclaimer**: Reported metrics from model output; computed RR only where all inputs present; no external data used.
+
+---
+
+### **8. TSM — Long — confirmations=2+ (1 active Daily exited, 1 borderline Monthly, 2 Quarterly in Tier C)**
+
+**Synopsis**: Multiple confirmations across Daily, Monthly, Quarterly. **Timeliness**: Daily OSCILLATOR DELTA **exited 2026-04-08** (+7.99% MTM, at T1); Monthly TRENDPULSE borderline LATE (5.3 months, +21.66% MTM, 65% progress to T1, RR 0.43× < 3.0×) — **moved to Tier C**; 2 Quarterly TRENDPULSE signals 1.8-2.1 years old, past all targets — **moved to Tier C**.
+
+**Key Metrics**:
+- **OSCILLATOR DELTA Daily**: 80% win rate (25 trades, 6 years), -11.46% CAGR alpha (negative), **exited 2026-04-08** (at T1 365.80)
+- **TRENDPULSE Monthly (Tier C)**: 100% win rate (21 trades, 20 years), -0.09% CAGR alpha, **LATE** (65% progress, RR 0.43×)
+
+**Actionable Next Step**: **HOLD FOR REVIEW** — Daily signal exited at T1; Monthly signal LATE and moved to Tier C; Quarterly signals well past targets. No fresh Tier A entry available. Wait for pullback or new signal re-confirmation.
+
+**Disclaimer**: Reported metrics from model output; computed progress/RR only where all inputs present; no external data used.
+
+---
+
+### **9. ^BVSP — Long — confirmations=3 (1 active Daily, 1 active Quarterly, 1 exited Daily)**
+
+**Synopsis**: Triple confirmation (TRENDPULSE Daily, TRENDPULSE Quarterly, OSCILLATOR DELTA Daily exited). Best win rate 100% (Quarterly TRENDPULSE, 8 trades over 21 years). **Timeliness**: Daily TRENDPULSE fresh (0 days, 0% MTM) — passed; Quarterly TRENDPULSE fresh (9 days, +24.77% MTM) — passed but negative CAGR alpha (-12.49%); **OSCILLATOR DELTA Daily exited 2026-04-08** (+3.65% MTM, 16 days).
+
+**Key Metrics**:
+- **TRENDPULSE Daily**: 95.65% win rate (23 trades, 4 years), +0.97% CAGR alpha, 77.68% forward testing
+- **TRENDPULSE Quarterly**: 75% win rate (8 trades, 58 years), -12.49% CAGR alpha (negative), 100% recent 6-month performance
+- **OSCILLATOR DELTA Daily (exited)**: 87.5% win rate (16 trades, 6 years), -3.78% CAGR alpha, **exited 2026-04-08** (past T1/T2)
+
+**Actionable Next Step**: **HOLD / ADD** on Daily TRENDPULSE (fresh, 0 days). Entry 192206-195129, current 195129, T1 207403 (+6.3%), stop Recent Extrema 176219 (9.7% risk). Quarterly TRENDPULSE: **HOLD / ADD cautiously** (9 days, +24.77% MTM, 22% progress to T1 713.18) — **caution** due to negative CAGR alpha (-12.49%); use F-Stack 1 173654 (11% risk) as stop. OSCILLATOR DELTA: **HOLD FOR REVIEW (Exited)**.
+
+**Disclaimer**: Reported metrics from model output; computed progress only where all inputs present; no external data used.
+
+---
+
+### **10. PG — Long — confirmations=2**
+
+**Synopsis**: Dual confirmation (SIGMASHELL Daily, FRACTAL TRACK Monthly). Best win rate 90.91% (SIGMASHELL, 11 trades). Positive CAGR alpha (+11.12% SIGMASHELL, +0.48% FRACTAL TRACK). **Timeliness**: Both signals fresh (2-9 days old), passed.
+
+**Key Metrics**:
+- **SIGMASHELL Daily**: 90.91% win rate (11 trades, 5 years), +11.12% CAGR alpha, 64.05% forward testing
+- **FRACTAL TRACK Monthly**: 82.35% win rate (17 trades, 39 years), +0.48% CAGR alpha, 63.64% forward testing
+
+**Actionable Next Step**: **HOLD / ADD**. SIGMASHELL Daily: entry 141.30-142.52, current 146.66 (+3.79%), T1 145.12 (already breached, +1.07% above), T2 151.57 (+3.35%), stop Recent Extrema 138.04 (5.88% risk). Consider partial profit at T1, hold for T2 or EMA 200 target 151.7. FRACTAL TRACK Monthly: entry 144.44, current 146.66 (+1.54%), T1 147.88 (+0.83%), stop Recent Extrema 143.31 (2.28% risk). Very tight stop; monitor closely.
+
+**Disclaimer**: Reported metrics from model output; computed progress/RR only where all inputs present; no external data used.
+
+---
+
+## C) TIER C — HOLD FOR REVIEW (Transparency / Monitoring)
+
+**Count**: ~60+ rows across all 8 parallel processing streams
+
+**Categories**:
+1. **Late / Profit-Taking**: MU Monthly TRENDPULSE (+88.37% MTM, past T1), NFLX Daily TRENDPULSE (+5.11% MTM, past T1/T2), USCI Weekly TRENDPULSE (+5.66% MTM, past T1/T2), ^STI Monthly TRENDPULSE (+7.12% MTM, 85% progress to T1), IMO.TO Weekly TRENDPULSE Long (+8.72% MTM, past T1/T2), TSM Monthly TRENDPULSE (+21.66% MTM, 65% progress to T1), BBD-B.TO Quarterly TRENDPULSE (2024-09-30: +153.17% MTM, past all targets; 2023-03-31: +253.13% MTM, past all targets), SLV Quarterly TRENDPULSE (2024-06-30: +157.4% MTM, 1.8 years), TD Quarterly TRENDPULSE (+42.57% MTM, 4.8 years, near max historical return)
+
+2. **Recent Exits**: All exited signals (META DELTADRIFT, XLF DELTADRIFT, SOXX FRACTAL TRACK ×2, INDY signals, KWEB OSCILLATOR DELTA, BAC Daily ×2, EWJ Daily ×2, INDA Weekly DELTADRIFT, HDB ×3, AMD ×3, JPM Quarterly ×2, TSM Daily, QQQ Daily, ^NDX Daily, ^DJI Daily, DIA Daily, BBD-B.TO Daily, RELIANCE.NS ×2, 000660.KS Short, etc.)
+
+3. **Negative CAGR Alpha Exceptions**: ATZ.TO (-37.55%), INFY (-40.89% MTM, +1.03% CAGR alpha but deep drawdown), AMZN Quarterly (+43.48% MTM but -9.99% CAGR alpha), EEM (-2.51% CAGR alpha but 83.33% win rate included in Tier A with caution), NAUKRI.NS (-11.4%), TFII.TO (-3.76%), EFN.TO (-7.33%), DOL.TO (-8.87%), TD.TO Daily (-5.01%), BEL.NS Daily (-25.45%)
+
+4. **Contra Indicators / Directional Conflicts**: IMO.TO (LONG vs. SHORT conflict), WIPRO.NS (Quarterly SHORT -8.12% MTM conflicts with Daily LONG), SFTBY (Quarterly SHORT co-exists with Weekly LONG), XLU (Quarterly LONG exited 2026-04-09)
+
+5. **Drawdown / Integrity Issues**: GOOG Short (-10.29% MTM, integrity concern on Signal Price vs Signal Open Price ordering), CSCO Short (-7.19% MTM, stop breached?), WPM Short (-7.54% MTM, integrity concern), 000660.KS Short (-23.67% MTM, exited), INFY Long (-40.89% MTM, deep drawdown), TSLA Weekly DELTADRIFT (-4.15% MTM, near F-Stack 1 stop)
+
+**Recommendation**: Monitor Tier C signals for:
+- **Re-entry opportunities** after pullbacks (e.g., MU, AMD, TSM, BBD-B.TO if price returns to signal levels)
+- **Exit discipline** for existing holders (e.g., take profits on late-stage signals like SLV Quarterly +157.4% MTM)
+- **Directional clarity** (e.g., IMO.TO: wait for re-validation of LONG or SHORT)
+- **Integrity resolution** (e.g., GOOG/WPM/000660.KS: clarify entry price references before acting on Short signals)
+
+---
+
+## D) REJECTION SUMMARY
+
+**Total Rejected (A0 structural parseability)**: 0 rows (all rows across all 8 streams were parseable for Symbol/Direction/Function/Interval)
+
+**Tier A Exclusions (moved to Tier C)**:
+- **Gate E1 (Win Rate < 70%)**: None (all signals ≥70% win rate or excluded for other reasons)
+- **Gate A3 (Lateness, not waived)**: ~15 signals (MU Monthly, NFLX Daily, USCI Weekly, ^STI Monthly, IMO.TO Long, TSM Monthly, BBD-B.TO Quarterly ×2, INFY, AMZN, TD Quarterly, etc.)
+- **Gate A4 (At-Target / Profit-Taking)**: ~25 signals (all exited signals + late-stage signals past T1/T2)
+- **Negative CAGR Alpha (policy exclusion)**: ~10 signals (ATZ.TO, INFY, AMZN, RELIANCE.NS ×2, NAUKRI.NS, TFII.TO, EFN.
