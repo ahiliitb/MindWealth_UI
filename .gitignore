@@ -1,4 +1,11 @@
 venv
 
+src/__pycache__
+chatbot/__pycache__
+
+# Local env (API keys) — never commit
+.env
+.env.*
+
 # Streamlit secrets
 .streamlit/secrets.toml
