@@ -2,7 +2,6 @@
 UI Card Components for displaying trading strategy information
 """
 
-from curses import raw
 import streamlit as st
 import pandas as pd
 

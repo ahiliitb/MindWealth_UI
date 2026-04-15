@@ -95,6 +95,39 @@ def get_claude_api_key() -> str:
 
 CLAUDE_API_KEY = get_claude_api_key()
 CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-5-20250929")
+
+# Tavily Web Search Configuration
+def get_tavily_api_key() -> str:
+    """Get Tavily API key from Streamlit secrets or environment variables."""
+    if USING_STREAMLIT_SECRETS:
+        try:
+            import streamlit as st
+            if "tavily" in st.secrets and "TAVILY_API_KEY" in st.secrets["tavily"]:
+                return st.secrets["tavily"]["TAVILY_API_KEY"]
+            elif "TAVILY_API_KEY" in st.secrets:
+                return st.secrets["TAVILY_API_KEY"]
+        except Exception:
+            pass
+    return os.getenv("TAVILY_API_KEY", "")
+
+TAVILY_API_KEY = get_tavily_api_key()
+ENABLE_WEB_SEARCH = os.getenv("ENABLE_WEB_SEARCH", "true").lower() == "true"
+WEB_SEARCH_MAX_RESULTS = int(os.getenv("WEB_SEARCH_MAX_RESULTS", "3"))
+WEB_SEARCH_MAX_CHARS_PER_RESULT = int(os.getenv("WEB_SEARCH_MAX_CHARS_PER_RESULT", "1500"))
+# Lower default — Tavily scores vary; WebSearchAgent falls back to top-N if none pass threshold
+WEB_SEARCH_MIN_RELEVANCE_SCORE = float(os.getenv("WEB_SEARCH_MIN_RELEVANCE_SCORE", "0.15"))
+
+# Parallel Hybrid Architecture — controls the ParallelOrchestrator for HYBRID routes.
+# Set PARALLEL_HYBRID_ENABLED=false to fall back to the legacy sequential path.
+PARALLEL_HYBRID_ENABLED = os.getenv("PARALLEL_HYBRID_ENABLED", "true").lower() == "true"
+# How long to wait for the web search branch before giving up (seconds).
+WEB_SEARCH_HYBRID_TIMEOUT_SECONDS = int(os.getenv("WEB_SEARCH_HYBRID_TIMEOUT_SECONDS", "12"))
+# How long to wait for the internal data fetch branch before giving up (seconds).
+INTERNAL_FETCH_TIMEOUT_SECONDS = int(os.getenv("INTERNAL_FETCH_TIMEOUT_SECONDS", "45"))
+
+# LLM Router — decides web vs internal vs conversational (gpt-4o-mini JSON)
+LLM_ROUTER_ENABLED = os.getenv("LLM_ROUTER_ENABLED", "true").lower() == "true"
+LLM_ROUTER_MODEL = os.getenv("LLM_ROUTER_MODEL", "gpt-4o-mini")
 CLAUDE_MAX_TOKENS = int(os.getenv("CLAUDE_MAX_TOKENS", "6000"))
 CLAUDE_TEMPERATURE = float(os.getenv("CLAUDE_TEMPERATURE", "0.2"))
 
@@ -189,6 +222,21 @@ MAX_EXTRACTION_HISTORY_LENGTH = int(os.getenv("MAX_EXTRACTION_HISTORY_LENGTH", "
 
 # Chat History UI Settings
 MAX_CHATS_DISPLAY = int(os.getenv("MAX_CHATS_DISPLAY", "10"))  # Max number of chats to show in sidebar (default: 10)
+
+# ── Rolling Memory Log ────────────────────────────────────────────────────────
+# Cross-session stateful memory that bridges the "amnesia gap" across days.
+# Memory entries are extracted from completed sessions and injected into the
+# system prompt of new sessions.
+MEMORY_MAX_AGE_DAYS = int(os.getenv("MEMORY_MAX_AGE_DAYS", "30"))       # Drop entries older than N days
+MEMORY_MAX_ENTRIES = int(os.getenv("MEMORY_MAX_ENTRIES", "50"))          # Hard cap on stored entries
+MEMORY_MAX_CONTEXT_ENTRIES = int(os.getenv("MEMORY_MAX_CONTEXT_ENTRIES", "8"))  # Entries injected per session
+MEMORY_MIN_TURNS_TO_SAVE = int(os.getenv("MEMORY_MIN_TURNS_TO_SAVE", "2"))  # Min user turns before saving memory
+
+# ── Prompt Changelog ──────────────────────────────────────────────────────────
+# Lightweight versioning of all named prompts.  On each engine start-up the
+# current prompt content is compared against the last recorded hash; if changed,
+# a new version entry (with reason) is appended automatically.
+PROMPT_CHANGELOG_ENABLED = os.getenv("PROMPT_CHANGELOG_ENABLED", "true").lower() == "true"
 
 # Data deduplication settings
 DEDUP_COLUMNS = os.getenv("DEDUP_COLUMNS", "Function,Symbol,Interval,Signal,Signal Open Price").split(",")  # Columns to use for deduplication

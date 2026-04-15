@@ -3,6 +3,7 @@ Main chatbot engine for processing queries and generating responses.
 """
 
 import logging
+import re
 from typing import List, Dict, Optional, Tuple, Any
 from anthropic import Anthropic
 import time
@@ -22,7 +23,22 @@ from .config import (
     MIN_HISTORY_MESSAGES,
     MAX_ROWS_TO_INCLUDE,
     MAX_TOKENS,  # Deprecated, for backward compatibility
-    TEMPERATURE  # Deprecated, for backward compatibility
+    TEMPERATURE,  # Deprecated, for backward compatibility
+    TAVILY_API_KEY,
+    ENABLE_WEB_SEARCH,
+    WEB_SEARCH_MAX_RESULTS,
+    WEB_SEARCH_MAX_CHARS_PER_RESULT,
+    WEB_SEARCH_MIN_RELEVANCE_SCORE,
+    LLM_ROUTER_ENABLED,
+    LLM_ROUTER_MODEL,
+    MEMORY_MAX_AGE_DAYS,
+    MEMORY_MAX_ENTRIES,
+    MEMORY_MAX_CONTEXT_ENTRIES,
+    MEMORY_MIN_TURNS_TO_SAVE,
+    PROMPT_CHANGELOG_ENABLED,
+    PARALLEL_HYBRID_ENABLED,
+    WEB_SEARCH_HYBRID_TIMEOUT_SECONDS,
+    INTERNAL_FETCH_TIMEOUT_SECONDS,
 )
 from .data_processor import DataProcessor
 from .history_manager import HistoryManager
@@ -30,9 +46,73 @@ from .unified_extractor import UnifiedExtractor
 from .smart_data_fetcher import SmartDataFetcher
 from .signal_extractor import SignalExtractor
 from .signal_type_selector import SignalTypeSelector
+from .memory_manager import RollingMemoryLog, extract_memory_from_conversation
+from .prompt_changelog import PromptChangelog
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+def _query_implies_full_list_ignore_ui_dates(user_message: str) -> bool:
+    """
+    True when the user asks for a broad listing (e.g. "list all … entry signals")
+    without an explicit time window in the **natural-language** query.
+
+    The UI often passes a short default date range (e.g. last 15 days).  If the
+    CSV only has rows outside that window, date filtering yields zero rows even
+    though the user meant "all DELTADRIFT entries in the dataset".  Callers can
+    retry SmartDataFetcher with ``from_date=None, to_date=None`` (still
+    ``limit_rows`` capped) when this returns True.
+    """
+    text = user_message.strip()
+    low = text.lower()
+
+    if re.search(
+        r"\b(last|past|next)\s+\d+\s*(day|week|month|year)s?\b",
+        low,
+    ) or re.search(r"\b(this|last|past)\s+(week|month|quarter|year)\b", low):
+        return False
+    if re.search(r"\b(today|yesterday|ytd)\b", low):
+        return False
+    if re.search(r"\b(from|since|between|until)\b.*\d{4}-\d{2}-\d{2}", text):
+        return False
+    if re.search(r"\d{4}-\d{2}-\d{2}\s*[-–to]+\s*\d{4}-\d{2}-\d{2}", text):
+        return False
+
+    if re.search(r"\b(list|show|give|display)\s+all\b", low):
+        return True
+    if re.search(r"\ball\s+.+\s+(entry|exit)\s+signals?\b", low):
+        return True
+    if re.search(r"\bevery\s+.+\s+signals?\b", low):
+        return True
+    return False
+
+
+def _user_explicitly_mentions_date_window(user_message: str) -> bool:
+    """
+    Detect whether the user text itself asks for a date-constrained result.
+
+    This helps distinguish:
+    - explicit user date intent ("from 2026-01-01 to 2026-01-15", "last 30 days")
+    - implicit UI defaults that are passed as from_date/to_date behind the scenes
+    """
+    text = user_message.strip()
+    low = text.lower()
+
+    if re.search(r"\b(today|yesterday|ytd)\b", low):
+        return True
+    if re.search(
+        r"\b(last|past|next)\s+\d+\s*(day|week|month|year)s?\b",
+        low,
+    ):
+        return True
+    if re.search(r"\b(this|last|past)\s+(week|month|quarter|year)\b", low):
+        return True
+    if re.search(r"\b(from|since|between|until)\b.*\d{4}-\d{2}-\d{2}", text):
+        return True
+    if re.search(r"\d{4}-\d{2}-\d{2}\s*[-–to]+\s*\d{4}-\d{2}-\d{2}", text):
+        return True
+    return False
 
 
 class ChatbotEngine:
@@ -76,16 +156,34 @@ class ChatbotEngine:
         self.smart_data_fetcher = SmartDataFetcher()
         self.signal_extractor = SignalExtractor()
         self.signal_type_selector = SignalTypeSelector(api_key=OPENAI_API_KEY)
-        
+
+        # ── Rolling memory log (cross-session stateful memory) ───────────────
+        self.memory_log = RollingMemoryLog(
+            max_age_days=MEMORY_MAX_AGE_DAYS,
+            max_entries=MEMORY_MAX_ENTRIES,
+        )
+
+        # ── Prompt changelog (version-tracks all named prompts) ──────────────
+        self.prompt_changelog = PromptChangelog()
+        if PROMPT_CHANGELOG_ENABLED:
+            self._register_all_prompts()
+
         # Set available tickers for unified extractor
         available_tickers = self.data_processor.get_available_tickers()
         self.unified_extractor.set_available_tickers(available_tickers)
-        
-        # Add system prompt to history if this is a new session
+
+        # Build enriched system prompt: base SYSTEM_PROMPT + cross-session memory
         if not self.history_manager.conversation_history:
-            self.history_manager.add_message("system", SYSTEM_PROMPT)
-        
+            memory_context = self.memory_log.build_memory_context(
+                max_entries=MEMORY_MAX_CONTEXT_ENTRIES
+            )
+            enriched_system_prompt = SYSTEM_PROMPT + memory_context
+            self.history_manager.add_message("system", enriched_system_prompt)
+
         logger.info(f"Initialized ChatbotEngine with session {self.history_manager.session_id}")
+
+        # ── Agentic orchestration layer (lazy-init) ─────────────────────────────
+        self._master_router = None  # initialised on first use via _get_router()
     
     def _convert_to_claude_format(self, messages: List[Dict]) -> Dict:
         """
@@ -171,6 +269,126 @@ class ChatbotEngine:
         meta_copy: Dict[str, Any] = dict(metadata) if metadata else {}
         meta_copy["display_prompt"] = (user_message or "").strip()
         return meta_copy
+
+    def _estimate_tokens_from_messages(self, messages: List[Dict]) -> int:
+        """Rough token estimator used for pre-flight budgeting."""
+        total_chars = sum(len(str(msg.get("content", ""))) for msg in messages)
+        return total_chars // ESTIMATED_CHARS_PER_TOKEN
+
+    def _truncate_user_content(self, content: str, max_chars: int) -> str:
+        """
+        Truncate oversized user payload while preserving the core query.
+        Keeps the leading query and trims large context sections.
+        """
+        if len(content) <= max_chars:
+            return content
+
+        truncation_note = "\n\n[Context truncated to stay within model input limit. Ask a follow-up for deeper drill-down.]"
+
+        # Preserve primary query header if present.
+        query_prefix = ""
+        match = re.search(r"^User Query:\s*.*?(?:\n\n|$)", content, flags=re.IGNORECASE | re.DOTALL)
+        if match:
+            query_prefix = match.group(0).strip() + "\n\n"
+
+        budget_for_body = max_chars - len(query_prefix) - len(truncation_note)
+        if budget_for_body <= 0:
+            return (content[: max(0, max_chars - len(truncation_note))] + truncation_note).strip()
+
+        # Prefer keeping textual narrative and only a prefix of giant data sections.
+        section_patterns = [
+            r"===\s*SIGNAL DATA CONTEXT\s*===",
+            r"===\s*CLAUDE COMPREHENSIVE ANALYSIS REPORT\s*===",
+            r"===\s*PROVIDED DATA\s*===",
+            r"===\s*ENTRY SIGNALS \(JSON\)\s*===",
+            r"===\s*EXIT SIGNALS \(JSON\)\s*===",
+            r"===\s*PORTFOLIO_TARGET_ACHIEVED SIGNALS \(JSON\)\s*===",
+            r"===\s*BREADTH SIGNALS \(JSON\)\s*===",
+            r"===\s*ADDITIONAL CONTEXT\s*===",
+        ]
+
+        body = content[len(query_prefix):] if query_prefix else content
+        section_pos = None
+        for pat in section_patterns:
+            m = re.search(pat, body, flags=re.IGNORECASE)
+            if m and (section_pos is None or m.start() < section_pos):
+                section_pos = m.start()
+
+        if section_pos is not None and section_pos > 0:
+            intro = body[:section_pos]
+            remainder = body[section_pos:]
+            intro_budget = min(len(intro), max(0, budget_for_body // 2))
+            rem_budget = max(0, budget_for_body - intro_budget)
+            truncated_body = intro[:intro_budget] + remainder[:rem_budget]
+        else:
+            truncated_body = body[:budget_for_body]
+
+        # End cleanly on a line boundary if possible.
+        if "\n" in truncated_body:
+            truncated_body = truncated_body.rsplit("\n", 1)[0]
+
+        return (query_prefix + truncated_body.strip() + truncation_note).strip()
+
+    def _fit_messages_to_limit(self, messages: List[Dict], token_limit: int) -> Tuple[List[Dict], int, bool]:
+        """
+        Fit messages to token budget by trimming old history first, then truncating the latest user payload.
+
+        Returns:
+            (trimmed_messages, estimated_tokens, truncated_latest_user)
+        """
+        trimmed_messages = list(messages)
+        truncated_latest_user = False
+
+        estimated_tokens = self._estimate_tokens_from_messages(trimmed_messages)
+
+        # Step 1: remove oldest non-system messages while preserving minimum context.
+        while estimated_tokens > token_limit and len(trimmed_messages) > MIN_HISTORY_MESSAGES:
+            removable_idx = None
+            for idx in range(1, len(trimmed_messages) - 1):
+                if trimmed_messages[idx].get("role") in {"user", "assistant"}:
+                    removable_idx = idx
+                    break
+            if removable_idx is None:
+                break
+            removed = trimmed_messages.pop(removable_idx)
+            logger.warning(f"Trimmed message to fit token budget (role={removed.get('role', 'unknown')})")
+            estimated_tokens = self._estimate_tokens_from_messages(trimmed_messages)
+
+        # Step 2: if still oversized, truncate last user message content.
+        if estimated_tokens > token_limit and trimmed_messages:
+            last_idx = len(trimmed_messages) - 1
+            if trimmed_messages[last_idx].get("role") == "user":
+                other_tokens = self._estimate_tokens_from_messages(trimmed_messages[:-1])
+                # Keep a small buffer for API overhead.
+                target_user_tokens = max(500, token_limit - other_tokens - 300)
+                max_user_chars = target_user_tokens * ESTIMATED_CHARS_PER_TOKEN
+                original_content = str(trimmed_messages[last_idx].get("content", ""))
+                truncated_content = self._truncate_user_content(original_content, max_user_chars)
+
+                if truncated_content != original_content:
+                    trimmed_messages[last_idx] = {
+                        **trimmed_messages[last_idx],
+                        "content": truncated_content
+                    }
+                    truncated_latest_user = True
+                    logger.warning("Truncated latest user context to enforce model input token budget")
+                    estimated_tokens = self._estimate_tokens_from_messages(trimmed_messages)
+
+        return trimmed_messages, estimated_tokens, truncated_latest_user
+
+    def _is_input_limit_error(self, error: Exception) -> bool:
+        """Detect provider input-size errors for safe retry with stronger truncation."""
+        text = str(error).lower()
+        signals = [
+            "input length",
+            "input too long",
+            "maximum context",
+            "prompt is too long",
+            "too many tokens",
+            "invalid_request_error",
+            "context window",
+        ]
+        return any(sig in text for sig in signals)
     
     def query(
         self,
@@ -754,13 +972,76 @@ Please answer the user's query based on the comprehensive analysis report above.
                     fetched_data[signal_type] = signal_data[signal_type]
                     total_rows += len(signal_data[signal_type])
             
+            if not fetched_data and (from_date or to_date) and _query_implies_full_list_ignore_ui_dates(
+                user_message
+            ):
+                logger.info(
+                    "smart_query: zero rows in UI date window for a 'list all'-style query; "
+                    "retrying fetch without date filter (still subject to MAX_ROWS_TO_INCLUDE)"
+                )
+                fetched_data = {}
+                total_rows = 0
+                for signal_type in table_signal_types:
+                    if signal_type not in columns_by_signal_type:
+                        continue
+                    required_cols = columns_by_signal_type[signal_type]
+                    if not required_cols:
+                        continue
+                    logger.info(f"Fetching {signal_type} data (no date filter retry) with {len(required_cols)} columns...")
+                    col_indices = indices_by_signal_type.get(signal_type)
+                    indices_dict = {signal_type: col_indices} if col_indices else None
+                    signal_data = self.smart_data_fetcher.fetch_data(
+                        signal_types=[signal_type],
+                        required_columns=required_cols,
+                        assets=assets,
+                        functions=functions,
+                        from_date=None,
+                        to_date=None,
+                        limit_rows=MAX_ROWS_TO_INCLUDE,
+                        column_indices=indices_dict,
+                    )
+                    if signal_data and signal_type in signal_data:
+                        fetched_data[signal_type] = signal_data[signal_type]
+                        total_rows += len(signal_data[signal_type])
+
             if not fetched_data:
                 if from_date or to_date:
-                    logger.warning("No data fetched for explicit date range; skipping automatic expansion.")
-                    human_from = from_date or "start"
-                    human_to = to_date or "end"
-                    logger.warning(f"No data for interval {human_from} to {human_to}")
-                    return NO_DATA_MESSAGE, {"warning": "no_data", "from_date": from_date, "to_date": to_date}
+                    if _user_explicitly_mentions_date_window(user_message):
+                        logger.warning("No data fetched for explicit date range; skipping automatic expansion.")
+                        human_from = from_date or "start"
+                        human_to = to_date or "end"
+                        logger.warning(f"No data for interval {human_from} to {human_to}")
+                        return NO_DATA_MESSAGE, {"warning": "no_data", "from_date": from_date, "to_date": to_date}
+
+                    # Date range came from UI defaults, not explicit user intent.
+                    # Retry once without date filters to avoid false "no data" outcomes.
+                    logger.info(
+                        "No data in UI date window and user did not explicitly request dates; "
+                        "retrying without date filter."
+                    )
+                    fetched_data = {}
+                    total_rows = 0
+                    for signal_type in table_signal_types:
+                        if signal_type not in columns_by_signal_type:
+                            continue
+                        required_cols = columns_by_signal_type[signal_type]
+                        if not required_cols:
+                            continue
+                        col_indices = indices_by_signal_type.get(signal_type)
+                        indices_dict = {signal_type: col_indices} if col_indices else None
+                        signal_data = self.smart_data_fetcher.fetch_data(
+                            signal_types=[signal_type],
+                            required_columns=required_cols,
+                            assets=assets,
+                            functions=functions,
+                            from_date=None,
+                            to_date=None,
+                            limit_rows=MAX_ROWS_TO_INCLUDE,
+                            column_indices=indices_dict,
+                        )
+                        if signal_data and signal_type in signal_data:
+                            fetched_data[signal_type] = signal_data[signal_type]
+                            total_rows += len(signal_data[signal_type])
                 
                 logger.warning("No data fetched for the initial date range, trying to expand search...")
                 
@@ -925,6 +1206,591 @@ Please answer the user's query based on the comprehensive analysis report above.
             traceback.print_exc()
             return error_message, {"error": str(e)}
     
+    # ── Agentic orchestration helpers ───────────────────────────────────────────
+
+    def _get_router(self):
+        """Lazily initialise MasterRouter (avoids import overhead at startup)."""
+        if self._master_router is not None:
+            return self._master_router
+
+        from .agents.intent_classifier import IntentClassifier
+        from .agents.web_search_agent import WebSearchAgent
+        from .agents.llm_router import LLMRouter
+        from .agents.master_router import MasterRouter
+
+        classifier = IntentClassifier(
+            api_key=OPENAI_API_KEY,
+            openai_model="gpt-4o-mini",
+        )
+
+        llm_router = None
+        if OPENAI_API_KEY and LLM_ROUTER_ENABLED:
+            llm_router = LLMRouter(
+                api_key=OPENAI_API_KEY,
+                model=LLM_ROUTER_MODEL,
+            )
+        elif LLM_ROUTER_ENABLED:
+            logger.warning("LLMRouter disabled: OPENAI_API_KEY not set")
+
+        web_agent = None
+        if ENABLE_WEB_SEARCH and TAVILY_API_KEY:
+            web_agent = WebSearchAgent(
+                tavily_api_key=TAVILY_API_KEY,
+                openai_api_key=OPENAI_API_KEY,
+                max_results=WEB_SEARCH_MAX_RESULTS,
+                max_chars_per_result=WEB_SEARCH_MAX_CHARS_PER_RESULT,
+                min_relevance_score=WEB_SEARCH_MIN_RELEVANCE_SCORE,
+            )
+        else:
+            logger.info(
+                "WebSearchAgent not initialised: "
+                f"ENABLE_WEB_SEARCH={ENABLE_WEB_SEARCH}, "
+                f"TAVILY_API_KEY={'set' if TAVILY_API_KEY else 'missing'}"
+            )
+
+        self._master_router = MasterRouter(
+            classifier=classifier,
+            web_agent=web_agent,
+            enable_web_search=ENABLE_WEB_SEARCH,
+            llm_router=llm_router,
+            use_llm_router=LLM_ROUTER_ENABLED,
+        )
+        return self._master_router
+
+    # ── Parallel Hybrid helpers ──────────────────────────────────────────────
+
+    def _fetch_signal_data(
+        self,
+        user_message: str,
+        selected_signal_types: List[str],
+        assets: Optional[List[str]] = None,
+        from_date: Optional[str] = None,
+        to_date: Optional[str] = None,
+        functions: Optional[List[str]] = None,
+        auto_extract_tickers: bool = False,
+        signal_type_reasoning: Optional[str] = None,
+    ) -> Tuple[Dict, Dict]:
+        """
+        Run UnifiedExtractor (stage 1) + SmartDataFetcher (stage 2) and return
+        ``(fetched_data, extraction_metadata)`` with **no side effects** — no
+        history writes and no Claude call.
+
+        Behaviour matches ``smart_query`` stages 1–2 (column selection, ticker
+        extraction, date-range expansion for top/best queries, explicit-date
+        no-expansion rule).  Does **not** call ``query()`` for ``claude_report``;
+        the HYBRID caller must fall back to ``smart_query`` when that type is selected.
+
+        Parameters
+        ----------
+        user_message:
+            The (possibly enhanced) user message to extract from.
+        selected_signal_types:
+            Pre-selected signal types (from UI checkboxes).  If empty, the
+            UnifiedExtractor determines them.
+        assets / from_date / to_date / functions:
+            Passed through to SmartDataFetcher.
+        auto_extract_tickers:
+            When True and ``assets`` is None, use extracted tickers from unified
+            extraction (same as ``smart_query``).
+        signal_type_reasoning:
+            Optional UI reasoning; if empty and types were pre-selected, filled from extraction.
+
+        Returns
+        -------
+        (fetched_data, extraction_metadata)
+            fetched_data: dict mapping signal_type → DataFrame
+            extraction_metadata: dict with columns_by_signal_type, reasoning_by_signal_type, etc.
+        """
+        from datetime import datetime, timedelta
+        from .config import MAX_EXTRACTION_HISTORY_LENGTH, MAX_ROWS_TO_INCLUDE
+
+        NO_DATA_MESSAGE = (
+            "No Signal in the Specified date duration choosen, Please choose different date duration."
+        )
+
+        # STAGE 1 — Unified extraction
+        logger.info(
+            f"[FLOW 4/7 | Thread-B] InternalAgent Stage-1: UnifiedExtractor running  |  "
+            f"signal_types={selected_signal_types}"
+        )
+        conversation_history = self.history_manager.get_messages_for_api(
+            max_pairs=MAX_EXTRACTION_HISTORY_LENGTH
+        )
+        extraction_result = self.unified_extractor.extract_all(
+            user_message, conversation_history=conversation_history
+        )
+
+        if not extraction_result.get("success", False):
+            logger.error(
+                f"[FLOW 4/7 | Thread-B] InternalAgent Stage-1 FAILED: "
+                f"{extraction_result.get('error')}"
+            )
+            return {}, {"error": extraction_result.get("error", "Extraction failed")}
+
+        # Mirror smart_query: signal types + reasoning
+        if not selected_signal_types:
+            selected_signal_types = extraction_result.get("signal_types", [])
+            signal_type_reasoning = signal_type_reasoning or extraction_result.get(
+                "signal_types_reasoning", ""
+            )
+            logger.info(f"[_fetch_signal_data] Using AI-extracted signal types: {selected_signal_types}")
+        else:
+            logger.info(f"[_fetch_signal_data] Using provided signal types: {selected_signal_types}")
+            if not signal_type_reasoning:
+                signal_type_reasoning = extraction_result.get("signal_types_reasoning", "")
+
+        if functions is None:
+            functions = extraction_result.get("functions")
+            if functions:
+                logger.info(f"[_fetch_signal_data] Extracted functions: {functions}")
+            else:
+                logger.info("[_fetch_signal_data] No specific functions — will load ALL")
+
+        if assets is None and auto_extract_tickers:
+            assets = extraction_result.get("tickers")
+            if assets:
+                logger.info(
+                    f"[_fetch_signal_data] Extracted tickers: {assets[:10]}"
+                    f"{'...' if len(assets) > 10 else ''}"
+                )
+            else:
+                logger.info("[_fetch_signal_data] No specific tickers — will load ALL assets")
+
+        has_claude_report = "claude_report" in selected_signal_types
+        table_signal_types = [st for st in selected_signal_types if st != "claude_report"]
+
+        columns_data = extraction_result.get("columns", {})
+        columns_by_signal_type: Dict[str, List] = {}
+        reasoning_by_signal_type: Dict[str, str] = {}
+        indices_by_signal_type: Dict[str, List] = {}
+
+        for signal_type in selected_signal_types:
+            if signal_type == "claude_report":
+                continue
+            if signal_type in columns_data:
+                sd = columns_data[signal_type]
+                if isinstance(sd, dict):
+                    cols = sd.get("column_names", [])
+                    reasoning = sd.get("reasoning", "")
+                    indices = sd.get("column_indices", [])
+                    columns_by_signal_type[signal_type] = cols
+                    reasoning_by_signal_type[signal_type] = reasoning
+                    if indices:
+                        indices_by_signal_type[signal_type] = indices
+                    logger.info(f"[_fetch_signal_data] {signal_type.upper()}: {len(cols)} columns")
+
+        if not columns_by_signal_type and not has_claude_report:
+            logger.warning("[_fetch_signal_data] No columns selected for any signal type")
+            return {}, {
+                "warning": "no_columns",
+                "error": "Could not determine required columns for your query.",
+                "selected_signal_types": selected_signal_types,
+            }
+
+        # STAGE 2 — Data fetching (first pass — same dates as smart_query)
+        logger.info(
+            f"[FLOW 4/7 | Thread-B] InternalAgent Stage-2: SmartDataFetcher running  |  "
+            f"signal_types={table_signal_types}  "
+            f"assets={assets}  from={from_date}  to={to_date}"
+        )
+        fetched_data: Dict = {}
+        total_rows = 0
+
+        for signal_type in table_signal_types:
+            if signal_type not in columns_by_signal_type:
+                continue
+            required_cols = columns_by_signal_type[signal_type]
+            if not required_cols:
+                continue
+
+            col_indices = indices_by_signal_type.get(signal_type)
+            indices_dict = {signal_type: col_indices} if col_indices else None
+
+            signal_result = self.smart_data_fetcher.fetch_data(
+                signal_types=[signal_type],
+                required_columns=required_cols,
+                assets=assets,
+                functions=functions,
+                from_date=from_date,
+                to_date=to_date,
+                limit_rows=MAX_ROWS_TO_INCLUDE,
+                column_indices=indices_dict,
+            )
+            if signal_result and signal_type in signal_result:
+                fetched_data[signal_type] = signal_result[signal_type]
+                total_rows += len(signal_result[signal_type])
+
+        if not fetched_data and (from_date or to_date) and _query_implies_full_list_ignore_ui_dates(
+            user_message
+        ):
+            logger.info(
+                "[_fetch_signal_data] zero rows in UI window for 'list all'-style query; "
+                "retrying without date filter"
+            )
+            fetched_data = {}
+            total_rows = 0
+            for signal_type in table_signal_types:
+                if signal_type not in columns_by_signal_type:
+                    continue
+                required_cols = columns_by_signal_type[signal_type]
+                if not required_cols:
+                    continue
+                col_indices = indices_by_signal_type.get(signal_type)
+                indices_dict = {signal_type: col_indices} if col_indices else None
+                signal_result = self.smart_data_fetcher.fetch_data(
+                    signal_types=[signal_type],
+                    required_columns=required_cols,
+                    assets=assets,
+                    functions=functions,
+                    from_date=None,
+                    to_date=None,
+                    limit_rows=MAX_ROWS_TO_INCLUDE,
+                    column_indices=indices_dict,
+                )
+                if signal_result and signal_type in signal_result:
+                    fetched_data[signal_type] = signal_result[signal_type]
+                    total_rows += len(signal_result[signal_type])
+
+        # No rows: same rules as smart_query (explicit dates → no expansion)
+        if not fetched_data:
+            if from_date or to_date:
+                if _user_explicitly_mentions_date_window(user_message):
+                    logger.warning(
+                        "[_fetch_signal_data] No data for explicit date range; skipping expansion."
+                    )
+                    return {}, {
+                        "warning": "no_data",
+                        "no_data_message": NO_DATA_MESSAGE,
+                        "from_date": from_date,
+                        "to_date": to_date,
+                        "selected_signal_types": selected_signal_types,
+                        "columns_by_signal_type": columns_by_signal_type,
+                        "reasoning_by_signal_type": reasoning_by_signal_type,
+                        "functions": functions,
+                        "signal_types_reasoning": extraction_result.get("signal_types_reasoning", ""),
+                        "signal_type_reasoning": signal_type_reasoning or "",
+                    }
+
+                logger.info(
+                    "[_fetch_signal_data] No data in UI date window and user did not request dates; "
+                    "retrying without date filters."
+                )
+                for signal_type in table_signal_types:
+                    if signal_type not in columns_by_signal_type:
+                        continue
+                    required_cols = columns_by_signal_type[signal_type]
+                    if not required_cols:
+                        continue
+                    col_indices = indices_by_signal_type.get(signal_type)
+                    indices_dict = {signal_type: col_indices} if col_indices else None
+                    signal_result = self.smart_data_fetcher.fetch_data(
+                        signal_types=[signal_type],
+                        required_columns=required_cols,
+                        assets=assets,
+                        functions=functions,
+                        from_date=None,
+                        to_date=None,
+                        limit_rows=MAX_ROWS_TO_INCLUDE,
+                        column_indices=indices_dict,
+                    )
+                    if signal_result and signal_type in signal_result:
+                        fetched_data[signal_type] = signal_result[signal_type]
+                        total_rows += len(signal_result[signal_type])
+
+                if fetched_data:
+                    extraction_metadata = {
+                        "selected_signal_types": selected_signal_types,
+                        "columns_by_signal_type": columns_by_signal_type,
+                        "reasoning_by_signal_type": reasoning_by_signal_type,
+                        "functions": functions,
+                        "signal_types_reasoning": extraction_result.get("signal_types_reasoning", ""),
+                        "signal_type_reasoning": signal_type_reasoning or "",
+                        "rows_fetched": total_rows,
+                        "date_window_fallback_used": True,
+                    }
+                    logger.info(
+                        f"[_fetch_signal_data] Fallback without dates succeeded with {total_rows} rows"
+                    )
+                    return fetched_data, extraction_metadata
+
+            logger.warning("[_fetch_signal_data] No data for initial range; trying expand (top/best)...")
+            if any(
+                kw in user_message.lower()
+                for kw in ("top", "best", "highest", "lowest")
+            ):
+                expanded_from_date = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
+                expanded_to_date = datetime.now().strftime("%Y-%m-%d")
+                logger.info(
+                    f"[_fetch_signal_data] Expanded window: {expanded_from_date} → {expanded_to_date}"
+                )
+                for signal_type in selected_signal_types:
+                    if signal_type not in columns_by_signal_type:
+                        continue
+                    required_cols = columns_by_signal_type[signal_type]
+                    if not required_cols:
+                        continue
+                    col_indices = indices_by_signal_type.get(signal_type)
+                    indices_dict = {signal_type: col_indices} if col_indices else None
+                    signal_result = self.smart_data_fetcher.fetch_data(
+                        signal_types=[signal_type],
+                        required_columns=required_cols,
+                        assets=assets,
+                        functions=functions,
+                        from_date=expanded_from_date,
+                        to_date=expanded_to_date,
+                        limit_rows=MAX_ROWS_TO_INCLUDE,
+                        column_indices=indices_dict,
+                    )
+                    if signal_result and signal_type in signal_result:
+                        fetched_data[signal_type] = signal_result[signal_type]
+                        total_rows += len(signal_result[signal_type])
+
+            if not fetched_data:
+                logger.warning("[_fetch_signal_data] No data even after expanded range")
+                return {}, {
+                    "warning": "no_data",
+                    "no_data_message": NO_DATA_MESSAGE,
+                    "selected_signal_types": selected_signal_types,
+                    "columns_by_signal_type": columns_by_signal_type,
+                    "reasoning_by_signal_type": reasoning_by_signal_type,
+                    "functions": functions,
+                    "signal_types_reasoning": extraction_result.get("signal_types_reasoning", ""),
+                    "signal_type_reasoning": signal_type_reasoning or "",
+                }
+
+        extraction_metadata = {
+            "selected_signal_types": selected_signal_types,
+            "columns_by_signal_type": columns_by_signal_type,
+            "reasoning_by_signal_type": reasoning_by_signal_type,
+            "functions": functions,
+            "signal_types_reasoning": extraction_result.get("signal_types_reasoning", ""),
+            "signal_type_reasoning": signal_type_reasoning or "",
+            "rows_fetched": total_rows,
+        }
+
+        logger.info(
+            f"[_fetch_signal_data] Fetched {total_rows} rows across {len(fetched_data)} signal type(s)"
+        )
+        return fetched_data, extraction_metadata
+
+    # ── Memory & changelog helpers ───────────────────────────────────────────
+
+    def _register_all_prompts(self) -> None:
+        """
+        Auto-register every named prompt with the changelog on engine start-up.
+
+        Call this once during ``__init__``.  Each prompt is only written when
+        its content has actually changed since the last recorded version, so
+        this is safe to call on every restart.
+        """
+        from .agents import llm_router as _llm_router_mod
+        from .agents import web_search_agent as _web_search_mod
+        from .agents import intent_classifier as _intent_mod
+
+        prompts_to_track = {
+            "SYSTEM_PROMPT": (SYSTEM_PROMPT, "auto-detected on engine start-up"),
+        }
+        # Opportunistically track agent prompts if accessible as module constants
+        for attr, (mod, display) in {
+            "LLM_ROUTER_SYSTEM": (_llm_router_mod, "llm_router system prompt"),
+            "QUERY_GEN_PROMPT": (_web_search_mod, "web search query-gen prompt"),
+            "CLASSIFICATION_PROMPT": (_intent_mod, "intent classification prompt"),
+        }.items():
+            # Each agent module may use different internal attribute names
+            for candidate in (attr, f"_{attr}", attr.replace("PROMPT", "PROMPT").lower()):
+                val = getattr(mod, candidate, None) or getattr(mod, f"_{candidate}", None)
+                if val and isinstance(val, str):
+                    prompts_to_track[attr] = (val, display)
+                    break
+
+        for name, (content, reason) in prompts_to_track.items():
+            try:
+                self.prompt_changelog.auto_register(name, content, reason=reason)
+            except Exception as exc:
+                logger.warning(f"Prompt changelog registration failed for '{name}': {exc}")
+
+    def finalize_session(self, reason: str = "session ended") -> bool:
+        """
+        Extract a memory summary from the current session and persist it to
+        the rolling memory log.
+
+        Call this when the user explicitly ends a chat, closes a session,
+        or when the UI detects an extended idle period.  The method is
+        intentionally idempotent — calling it twice for the same session
+        just creates one duplicate entry with a fresh timestamp; guard at
+        the call-site if that matters.
+
+        Parameters
+        ----------
+        reason:
+            Brief annotation stored alongside the memory entry for traceability.
+
+        Returns
+        -------
+        bool
+            True if a memory entry was saved, False if the session was too
+            short or extraction failed.
+        """
+        conversation = self.history_manager.conversation_history
+        session_id = self.history_manager.session_id
+
+        extracted = extract_memory_from_conversation(
+            conversation=conversation,
+            session_id=session_id,
+            claude_client=self.claude_client,
+            claude_model=CLAUDE_MODEL,
+        )
+        if extracted is None:
+            logger.info(f"Session {session_id} too short or extraction failed — no memory saved.")
+            return False
+
+        self.memory_log.add_entry(**extracted)
+        logger.info(f"Memory finalised for session {session_id} ({reason})")
+        return True
+
+    def get_memory_stats(self) -> Dict[str, Any]:
+        """Return current memory store statistics for display in the UI."""
+        return self.memory_log.stats()
+
+    def get_prompt_changelog_summary(self) -> str:
+        """Return a human-readable changelog summary for all tracked prompts."""
+        return self.prompt_changelog.summary()
+
+    def rate_current_prompt(
+        self,
+        prompt_name: str,
+        score: float,
+        notes: str = "",
+    ) -> bool:
+        """
+        Attach a quality rating to the *currently active* version of *prompt_name*.
+
+        Designed to be called from the UI after a user rates a report or
+        flags a hallucination.  Score is on whatever scale you prefer (1–5
+        is the suggested default).
+        """
+        return self.prompt_changelog.record_quality(prompt_name, score=score, notes=notes)
+
+    def _answer_from_history(
+        self,
+        user_message: str,
+        metadata: Dict,
+    ) -> tuple:
+        """
+        Answer a conversational query using history only — no data fetch.
+        Adds the message to history and calls _simple_batch_query.
+        """
+        self.history_manager.add_message(
+            "user",
+            user_message,
+            self._prepare_user_metadata(metadata, user_message),
+        )
+        messages = self.history_manager.get_messages_for_api()
+        total_chars = sum(len(str(m.get("content", ""))) for m in messages)
+        estimated_tokens = total_chars // ESTIMATED_CHARS_PER_TOKEN
+
+        assistant_message, batch_meta = self._simple_batch_query(messages, estimated_tokens)
+
+        metadata.update({
+            "model": CLAUDE_MODEL,
+            "tokens_used": batch_meta["tokens_used"],
+            "finish_reason": batch_meta["finish_reason"],
+            "batch_processing_used": True,
+            "batch_count": batch_meta.get("batch_count", 1),
+            "batch_mode": batch_meta.get("batch_mode", "single"),
+        })
+        self.history_manager.add_message("assistant", assistant_message, metadata)
+        return assistant_message, metadata
+
+    def _answer_web_rag(
+        self,
+        user_message: str,
+        web_context: str,
+        metadata: Dict,
+    ) -> tuple:
+        """
+        Answer using only web search results — no internal CSV data.
+        Builds a Claude prompt from the web context block.
+        """
+        complete_message = (
+            f"User Query: {user_message}\n\n"
+            f"{web_context}\n\n"
+            "Please answer the user's question using the web search results above. "
+            "Cite sources with [Source N] tags where applicable."
+        )
+
+        self.history_manager.add_message(
+            "user",
+            complete_message,
+            self._prepare_user_metadata(metadata, user_message),
+        )
+        messages = self.history_manager.get_messages_for_api()
+        total_chars = sum(len(str(m.get("content", ""))) for m in messages)
+        estimated_tokens = total_chars // ESTIMATED_CHARS_PER_TOKEN
+
+        assistant_message, batch_meta = self._simple_batch_query(messages, estimated_tokens)
+
+        metadata.update({
+            "model": CLAUDE_MODEL,
+            "tokens_used": batch_meta["tokens_used"],
+            "finish_reason": batch_meta["finish_reason"],
+            "batch_processing_used": True,
+            "batch_count": batch_meta.get("batch_count", 1),
+            "batch_mode": batch_meta.get("batch_mode", "single"),
+        })
+        self.history_manager.add_message("assistant", assistant_message, metadata)
+        return assistant_message, metadata
+
+    def _answer_synthesized(
+        self,
+        user_message: str,
+        synthesized_prompt: str,
+        metadata: Dict,
+    ) -> tuple:
+        """
+        Perform the final Claude call using a pre-built synthesis prompt produced
+        by ``SynthesisAgent.build_prompt()``.
+
+        Mirrors ``_answer_web_rag`` but accepts an already-structured prompt that
+        includes both SOURCE A (signal data) and SOURCE B (web context) with
+        reconciliation instructions.  Writes to history and returns
+        ``(response_text, metadata)``.
+        """
+        self.history_manager.add_message(
+            "user",
+            synthesized_prompt,
+            self._prepare_user_metadata(metadata, user_message),
+        )
+        messages = self.history_manager.get_messages_for_api()
+        total_chars = sum(len(str(m.get("content", ""))) for m in messages)
+        estimated_tokens = total_chars // ESTIMATED_CHARS_PER_TOKEN
+
+        logger.info(
+            f"[FLOW 7/7] Calling Claude  |  "
+            f"model={CLAUDE_MODEL}  "
+            f"estimated_tokens={estimated_tokens}  "
+            f"history_messages={len(messages)}"
+        )
+        assistant_message, batch_meta = self._simple_batch_query(messages, estimated_tokens)
+        logger.info(
+            f"[FLOW 7/7] Claude response received  |  "
+            f"tokens_used={batch_meta.get('tokens_used', {}).get('total', '?')}  "
+            f"finish_reason={batch_meta.get('finish_reason', '?')}  "
+            f"batches={batch_meta.get('batch_count', 1)}"
+        )
+
+        metadata.update({
+            "model": CLAUDE_MODEL,
+            "tokens_used": batch_meta["tokens_used"],
+            "finish_reason": batch_meta["finish_reason"],
+            "batch_processing_used": True,
+            "batch_count": batch_meta.get("batch_count", 1),
+            "batch_mode": batch_meta.get("batch_mode", "single"),
+            "input_type": "hybrid_synthesized",
+        })
+        self.history_manager.add_message("assistant", assistant_message, metadata)
+        return assistant_message, metadata
+
     def smart_followup_query(
         self,
         user_message: str,
@@ -962,11 +1828,206 @@ Please answer the user's query based on the comprehensive analysis report above.
         """
         try:
             from chatbot.config import MAX_HISTORY_LENGTH
-            
+            from .agents.master_router import (
+                ROUTE_CONVERSATIONAL, ROUTE_WEB_RAG, ROUTE_HYBRID, ROUTE_INTERNAL,
+            )
+
             logger.info("="*60)
             logger.info("SMART FOLLOW-UP QUERY - Dynamic fresh analysis per query")
             logger.info("="*60)
-            
+
+            # ── RouterV1: classify intent and decide pipeline ─────────────────
+            logger.info(
+                f"[FLOW 1/7] UserQuery → Router  |  "
+                f"query_preview='{user_message[:80]}{'...' if len(user_message) > 80 else ''}'"
+            )
+            router = self._get_router()
+            history_for_routing = self.history_manager.get_messages_for_api(
+                max_pairs=3, strip_data=True
+            )
+            decision = router.route(user_message, history=history_for_routing)
+
+            route_meta_base = {
+                "intent": decision.intent_result.primary_intent,
+                "intent_label": decision.intent_result.label,
+                "intent_confidence": decision.intent_result.confidence,
+                "intent_classified_by": decision.intent_result.classified_by,
+                "route": decision.route,
+                "web_search_used": decision.used_web_search,
+                "web_sources": (
+                    decision.web_search_result.sources
+                    if decision.used_web_search else []
+                ),
+                "llm_router_reasoning": getattr(decision, "llm_router_reasoning", None),
+            }
+
+            logger.info(
+                f"[FLOW 1/7] Router decision  |  "
+                f"route={decision.route}  "
+                f"intent={decision.intent_result.primary_intent}  "
+                f"confidence={decision.intent_result.confidence:.2f}  "
+                f"classified_by={decision.intent_result.classified_by}"
+            )
+
+            # ── CONVERSATIONAL: history-only, no data ─────────────────────────
+            if decision.route == ROUTE_CONVERSATIONAL:
+                logger.info("[ENGINE] CONVERSATIONAL route — skipping data fetch")
+                meta = {**route_meta_base, "input_type": "conversational"}
+                response, meta = self._answer_from_history(user_message, meta)
+                meta["input_type"] = "conversational"
+                return response, meta
+
+            # ── WEB_RAG: answer purely from Tavily results ────────────────────
+            if decision.route == ROUTE_WEB_RAG:
+                web_result = decision.web_search_result
+                if web_result and web_result.success:
+                    logger.info("[ENGINE] WEB_RAG route — answering from web search")
+                    meta = {
+                        **route_meta_base,
+                        "input_type": "web_rag",
+                        "web_search_queries": web_result.search_queries_used,
+                    }
+                    response, meta = self._answer_web_rag(
+                        user_message, web_result.formatted_context, meta
+                    )
+                    meta["input_type"] = "web_rag"
+                    return response, meta
+                else:
+                    # Web search unavailable — fall through to internal pipeline
+                    reason = (
+                        (web_result.error if web_result else None)
+                        or ("web_agent returned None — check TAVILY_API_KEY and ENABLE_WEB_SEARCH")
+                    )
+                    logger.warning(
+                        "[ENGINE] WEB_RAG route but web search unavailable — "
+                        f"falling back to INTERNAL. Reason: {reason}"
+                    )
+
+            # ── HYBRID: parallel web search + internal fetch ──────────────────
+            # claude_report uses ``query()``, not table fetch — keep legacy smart_query path.
+            hybrid_parallel_ok = (
+                PARALLEL_HYBRID_ENABLED
+                and not (selected_signal_types and "claude_report" in selected_signal_types)
+            )
+            if decision.route == ROUTE_HYBRID and hybrid_parallel_ok:
+                logger.info(
+                    f"[FLOW 2/7] Router → Orchestrator  |  "
+                    f"route=HYBRID  pending_queries="
+                    f"{getattr(decision, 'pending_web_search_queries', [])}"
+                )
+                from .agents.orchestrator import ParallelOrchestrator
+                from .agents.synthesis_agent import SynthesisAgent
+
+                # Build the enhanced user message with conversation context for the
+                # internal fetch so it has the same context awareness as before.
+                history_messages_for_hybrid = self.history_manager.get_messages_for_api(
+                    max_pairs=MAX_HISTORY_LENGTH
+                )
+                if history_messages_for_hybrid and len(history_messages_for_hybrid) >= 2:
+                    clean_history_hybrid = self._strip_data_from_history(history_messages_for_hybrid)
+                    conversation_context_hybrid = self._build_text_only_context(clean_history_hybrid)
+                    enhanced_user_message_hybrid = (
+                        f"CONVERSATION CONTEXT (for reference):\n{conversation_context_hybrid}\n\n"
+                        f"CURRENT QUESTION: {user_message}\n\n"
+                        "NOTE: Use the conversation context above to understand what we've "
+                        "discussed, but perform fresh analysis for this specific question."
+                    )
+                else:
+                    enhanced_user_message_hybrid = user_message
+
+                # Grab the web agent and the pending queries the router stored.
+                web_agent = self._get_router().web_agent
+                pending_queries = getattr(decision, "pending_web_search_queries", None) or []
+
+                orchestrator = ParallelOrchestrator()
+                orch_result = orchestrator.run(
+                    web_fn=lambda: (
+                        web_agent.run(user_message, pending_queries, "")
+                        if web_agent and web_agent.is_available
+                        else None
+                    ),
+                    internal_fn=lambda: self._fetch_signal_data(
+                        enhanced_user_message_hybrid,
+                        selected_signal_types,
+                        assets,
+                        from_date,
+                        to_date,
+                        functions,
+                        auto_extract_tickers=auto_extract_tickers,
+                        signal_type_reasoning=signal_type_reasoning,
+                    ),
+                    web_timeout=float(WEB_SEARCH_HYBRID_TIMEOUT_SECONDS),
+                    internal_timeout=float(INTERNAL_FETCH_TIMEOUT_SECONDS),
+                )
+
+                logger.info(
+                    f"[FLOW 5/7] OrchestratorResult collected  |  "
+                    f"web={'OK' if not orch_result.web_failed else 'FAILED'}  "
+                    f"internal={'OK' if not orch_result.internal_failed else 'FAILED'}  "
+                    f"elapsed={orch_result.elapsed_ms:.0f}ms"
+                )
+                if orch_result.web_error:
+                    logger.warning(f"[FLOW 5/7] Web branch error: {orch_result.web_error}")
+                if orch_result.internal_error:
+                    logger.warning(f"[FLOW 5/7] Internal branch error: {orch_result.internal_error}")
+
+                logger.info("[FLOW 6/7] OrchestratorResult → SynthesisAgent  |  building structured prompt")
+                synthesis = SynthesisAgent()
+                synthesized_prompt = synthesis.build_prompt(
+                    user_message=user_message,
+                    web_result=orch_result.web_result,
+                    signal_data=orch_result.signal_data,
+                    signal_metadata=orch_result.signal_metadata,
+                    web_failed=orch_result.web_failed,
+                    internal_failed=orch_result.internal_failed,
+                    web_error=orch_result.web_error,
+                    internal_error=orch_result.internal_error,
+                )
+                logger.info(
+                    f"[FLOW 6/7] SynthesisAgent prompt built  |  "
+                    f"prompt_chars={len(synthesized_prompt)}"
+                )
+
+                meta = {
+                    **route_meta_base,
+                    "input_type": "hybrid_synthesized",
+                    "followup_mode": "parallel_hybrid",
+                    "web_search_used": not orch_result.web_failed and orch_result.web_result is not None,
+                    "web_failed": orch_result.web_failed,
+                    "internal_failed": orch_result.internal_failed,
+                    "orchestrator_elapsed_ms": orch_result.elapsed_ms,
+                    "web_sources": (
+                        getattr(orch_result.web_result, "sources", [])
+                        if orch_result.web_result else []
+                    ),
+                }
+
+                logger.info("[FLOW 7/7] SynthesisAgent → Claude  |  sending synthesized prompt")
+                response, metadata = self._answer_synthesized(user_message, synthesized_prompt, meta)
+                metadata["conversation_context_used"] = True
+                logger.info(
+                    f"[FLOW 7/7] Claude response received  |  "
+                    f"tokens={metadata.get('tokens_used', {}).get('total', '?')}  "
+                    f"total_elapsed={orch_result.elapsed_ms:.0f}ms (orchestrator only)"
+                )
+                logger.info("="*60)
+                return response, metadata
+
+            # ── HYBRID (legacy sequential) or INTERNAL — existing pipeline ────
+            # Also when PARALLEL_HYBRID_ENABLED=false, claude_report selected, or INTERNAL.
+            if decision.route == ROUTE_HYBRID and not hybrid_parallel_ok:
+                logger.info(
+                    "[ENGINE] HYBRID using legacy sequential path  |  "
+                    f"parallel_disabled={not PARALLEL_HYBRID_ENABLED}  "
+                    f"claude_report={'claude_report' in (selected_signal_types or [])}"
+                )
+
+            web_additional_context = None
+            if decision.route == ROUTE_HYBRID and decision.used_web_search:
+                logger.info("[ENGINE] HYBRID route (legacy sequential) — merging web search with internal data")
+                web_additional_context = decision.web_search_result.formatted_context
+
+            # ── INTERNAL (or HYBRID legacy fallback) — existing pipeline ─────
             # Get last N exchanges from history (text only, no raw data)
             history_messages = self.history_manager.get_messages_for_api(max_pairs=MAX_HISTORY_LENGTH)
             
@@ -995,9 +2056,6 @@ Please answer the user's query based on the comprehensive analysis report above.
             logger.info("DYNAMIC ANALYSIS: Treating follow-up as fresh query with conversation context")
             logger.info("This allows AI to freely choose new signal types, functions, columns based on context")
             
-            # Treat this as a fresh smart_query but with conversation context
-            # This ensures full column selection + data fetching for each query
-            
             # Add conversation context to the user message
             enhanced_user_message = f"""CONVERSATION CONTEXT (for reference):
 {conversation_context}
@@ -1006,6 +2064,14 @@ CURRENT QUESTION: {user_message}
 
 NOTE: Use the conversation context above to understand what we've discussed, but perform fresh analysis for this specific question. You can choose different signal types, functions, or columns as needed."""
             
+            # Merge any web search context into additional_context for the smart_query call
+            merged_additional_context = additional_context or ""
+            if web_additional_context:
+                merged_additional_context = (
+                    (merged_additional_context + "\n\n" if merged_additional_context else "")
+                    + web_additional_context
+                )
+
             # Call smart_query which will do fresh signal type determination, column selection, and data fetching
             # Pass display_prompt_override so the stored user message shows only the current question in UI
             response, metadata = self.smart_query(
@@ -1015,17 +2081,20 @@ NOTE: Use the conversation context above to understand what we've discussed, but
                 from_date=from_date,
                 to_date=to_date,
                 functions=functions,
-                additional_context=additional_context,
+                additional_context=merged_additional_context if merged_additional_context else additional_context,
                 auto_extract_tickers=auto_extract_tickers,
                 signal_type_reasoning=signal_type_reasoning,
                 display_prompt_override=user_message,
             )
-            
+
             # Mark this as a followup query in metadata
             metadata["input_type"] = "smart_followup"
             metadata["followup_mode"] = "dynamic_fresh"
             metadata["conversation_context_used"] = True
             metadata["history_exchanges_used"] = MAX_HISTORY_LENGTH
+
+            # Attach routing metadata
+            metadata.update(route_meta_base)
             
             logger.info(f"Dynamic follow-up query completed with fresh analysis")
             logger.info("="*60)
@@ -1125,7 +2194,14 @@ NOTE: Use the conversation context above to understand what we've discussed, but
             elif role == "ASSISTANT":
                 context_parts.append(f"Previous Response: {content}")
         
-        return "\n\n".join(context_parts)
+        combined = "\n\n".join(context_parts)
+
+        # Keep follow-up context bounded to avoid unbounded token growth.
+        max_context_chars = max(4000, (MAX_INPUT_TOKENS_PER_CALL // 3) * ESTIMATED_CHARS_PER_TOKEN)
+        if len(combined) > max_context_chars:
+            combined = combined[-max_context_chars:]
+
+        return combined
     
     def query_with_csv_text(
         self,
@@ -1554,38 +2630,53 @@ Create a professional, well-structured response that reads as one cohesive analy
             # For non-ticker queries, we just make a single API call
             # These queries typically don't have the massive data volume of ticker-based queries
             logger.info(f"Processing non-ticker query with ~{estimated_tokens} tokens")
-            
-            # Trim history if needed to stay under token limit
-            trimmed_messages = list(messages)
-            trimmed_count = 0
-            
-            while estimated_tokens > MAX_INPUT_TOKENS_PER_CALL and len(trimmed_messages) > MIN_HISTORY_MESSAGES:
-                if len(trimmed_messages) > 2:
-                    removed_msg = trimmed_messages.pop(1)
-                    trimmed_count += 1
-                    logger.warning(f"Trimmed old message (role: {removed_msg.get('role', 'unknown')})")
-                    
-                    total_chars = sum(len(str(msg.get('content', ''))) for msg in trimmed_messages)
-                    estimated_tokens = total_chars // ESTIMATED_CHARS_PER_TOKEN
-                else:
-                    break
-            
-            if trimmed_count > 0:
-                logger.warning(f"Trimmed {trimmed_count} old messages to stay under token limit")
-            
-            # Make single API call with Claude
-            logger.info(f"Calling {CLAUDE_MODEL} with {len(trimmed_messages)} messages, ~{estimated_tokens} tokens")
-            
-            # Convert messages to Claude format
-            claude_messages = self._convert_to_claude_format(trimmed_messages)
-            
-            response = self.claude_client.messages.create(
-                model=CLAUDE_MODEL,
-                max_tokens=CLAUDE_MAX_TOKENS,
-                temperature=CLAUDE_TEMPERATURE,
-                system=claude_messages["system"],
-                messages=claude_messages["messages"]
+
+            # Fit payload to limit before sending.
+            trimmed_messages, estimated_tokens, truncated_latest_user = self._fit_messages_to_limit(
+                messages,
+                MAX_INPUT_TOKENS_PER_CALL,
             )
+
+            # Make single API call with Claude (with one guarded retry on input-limit errors).
+            logger.info(f"Calling {CLAUDE_MODEL} with {len(trimmed_messages)} messages, ~{estimated_tokens} tokens")
+
+            claude_messages = self._convert_to_claude_format(trimmed_messages)
+
+            try:
+                response = self.claude_client.messages.create(
+                    model=CLAUDE_MODEL,
+                    max_tokens=CLAUDE_MAX_TOKENS,
+                    temperature=CLAUDE_TEMPERATURE,
+                    system=claude_messages["system"],
+                    messages=claude_messages["messages"]
+                )
+            except Exception as first_error:
+                if not self._is_input_limit_error(first_error):
+                    raise
+
+                logger.warning(f"Input limit hit, retrying with stronger truncation: {first_error}")
+
+                retry_messages = list(trimmed_messages)
+                if retry_messages and retry_messages[-1].get("role") == "user":
+                    original = str(retry_messages[-1].get("content", ""))
+                    retry_messages[-1] = {
+                        **retry_messages[-1],
+                        "content": self._truncate_user_content(original, max(1200, int(len(original) * 0.7)))
+                    }
+
+                retry_messages, estimated_tokens, _ = self._fit_messages_to_limit(
+                    retry_messages,
+                    max(2000, int(MAX_INPUT_TOKENS_PER_CALL * 0.9)),
+                )
+
+                claude_messages = self._convert_to_claude_format(retry_messages)
+                response = self.claude_client.messages.create(
+                    model=CLAUDE_MODEL,
+                    max_tokens=CLAUDE_MAX_TOKENS,
+                    temperature=CLAUDE_TEMPERATURE,
+                    system=claude_messages["system"],
+                    messages=claude_messages["messages"]
+                )
             
             assistant_message = response.content[0].text
             
@@ -1598,7 +2689,8 @@ Create a professional, well-structured response that reads as one cohesive analy
                 "finish_reason": response.stop_reason,
                 "batch_count": 1,
                 "batch_mode": "single",
-                "model": CLAUDE_MODEL
+                "model": CLAUDE_MODEL,
+                "context_truncated": truncated_latest_user
             }
             
             logger.info(f"Simple batch completed: {metadata['tokens_used']['total']} tokens")

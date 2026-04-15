@@ -361,21 +361,14 @@ class SmartDataFetcher:
             if 'Function' in df.columns and functions:
                 df = df[df['Function'].isin(functions)]
 
-            # Extract and filter by signal date if needed
+            # Extract and filter by the most relevant date column for this signal type
             if from_date or to_date:
                 logger.info(f"Filtering {signal_type} by date range: {from_date} to {to_date}")
                 logger.info(f"DataFrame shape before date filtering: {df.shape}")
-                if symbol_col in df.columns:
-                    # Extract date from "Symbol, Signal, Signal Date/Price[$]" column
-                    # Format: "SYMBOL, Long/Short, YYYY-MM-DD (Price: X.XX)"
-                    import re
-                    def extract_date(text):
-                        if pd.isna(text):
-                            return None
-                        match = re.search(r'(\d{4}-\d{2}-\d{2})', str(text))
-                        return match.group(1) if match else None
-                    
-                    df['_extracted_date'] = df[symbol_col].apply(extract_date)
+                date_source = self._get_date_source_column(signal_type, df.columns.tolist())
+                if date_source:
+                    logger.info(f"Using date source column for {signal_type}: {date_source}")
+                    df['_extracted_date'] = self._extract_date_series(df[date_source], date_source)
                     logger.info(f"Sample extracted dates: {df['_extracted_date'].head(5).tolist()}")
                     df['_extracted_date'] = pd.to_datetime(df['_extracted_date'], errors='coerce')
 
@@ -390,8 +383,12 @@ class SmartDataFetcher:
                         logger.info(f"Filtering for dates <= {to_date_obj}")
                         df = df[df['_extracted_date'] <= to_date_obj]
                         logger.info(f"Rows after to_date filter: {len(df)}")
-                    
+
                     df = df.drop(columns=['_extracted_date'])
+                else:
+                    logger.warning(
+                        f"No suitable date source column found for {signal_type}; skipping date filter"
+                    )
                 logger.info(f"DataFrame shape after date filtering: {df.shape}")
 
             # Apply column selection - use indices if provided for 100% accuracy
@@ -441,6 +438,50 @@ class SmartDataFetcher:
         except Exception as e:
             logger.error(f"Error reading consolidated CSV {csv_path}: {e}")
             return pd.DataFrame()
+
+    def _get_date_source_column(self, signal_type: str, columns: List[str]) -> Optional[str]:
+        """
+        Choose the best source column for date filtering by signal type.
+
+        Priority:
+        - entry: signal date column
+        - exit: exit date column
+        - portfolio_target_achieved: target exit date, then exit date, then signal date
+        """
+        if signal_type == "entry":
+            candidates = [
+                "Symbol, Signal, Signal Date/Price[$]",
+            ]
+        elif signal_type == "exit":
+            candidates = [
+                "Exit Signal Date/Price[$]",
+                "Symbol, Signal, Signal Date/Price[$]",
+            ]
+        elif signal_type == "portfolio_target_achieved":
+            candidates = [
+                "Backtested Target Exit Date",
+                "Exit Signal Date/Price[$]",
+                "Symbol, Signal, Signal Date/Price[$]",
+            ]
+        else:
+            candidates = [
+                "Symbol, Signal, Signal Date/Price[$]",
+            ]
+
+        for candidate in candidates:
+            if candidate in columns:
+                return candidate
+        return None
+
+    def _extract_date_series(self, series: pd.Series, source_column: str) -> pd.Series:
+        """
+        Extract YYYY-MM-DD date strings from date-bearing text columns.
+        """
+        if source_column == "Backtested Target Exit Date":
+            # This column may already be a plain date or contain text; regex works for both.
+            return series.astype(str).str.extract(r'(\d{4}-\d{2}-\d{2})', expand=False)
+
+        return series.astype(str).str.extract(r'(\d{4}-\d{2}-\d{2})', expand=False)
 
     def _fetch_breadth_data_consolidated(
         self,

@@ -17,6 +17,7 @@ sys.path.insert(0, str(project_root))
 from chatbot import ChatbotEngine, SessionManager
 from chatbot.signal_type_selector import SIGNAL_TYPE_DESCRIPTIONS, DEFAULT_SIGNAL_TYPES
 from chatbot.config import MAX_CHATS_DISPLAY
+from chatbot.agents.intent_classifier import INTENT_LABELS
 
 logger = logging.getLogger(__name__)
 
@@ -190,6 +191,57 @@ def apply_table_styling():
     }
     </style>
     """, unsafe_allow_html=True)
+
+
+def render_route_badge(metadata: dict):
+    """Render intent badge, route label, and web sources from response metadata."""
+    intent = metadata.get("intent")
+    route = metadata.get("route")
+    web_sources = metadata.get("web_sources", [])
+    confidence = metadata.get("intent_confidence", 0.0)
+
+    if not intent:
+        return
+
+    label = INTENT_LABELS.get(intent, intent)
+
+    # Route colour mapping
+    route_colours = {
+        "INTERNAL":       "#1f77b4",
+        "WEB_RAG":        "#d62728",
+        "HYBRID":         "#9467bd",
+        "CONVERSATIONAL": "#7f7f7f",
+    }
+    colour = route_colours.get(route, "#1f77b4")
+    route_label = {
+        "INTERNAL":       "📊 Internal",
+        "WEB_RAG":        "🌍 Web RAG",
+        "HYBRID":         "🔗 Hybrid",
+        "CONVERSATIONAL": "💬 History",
+    }.get(route, route or "")
+
+    badge_html = (
+        f'<span style="'
+        f'background:{colour};color:#fff;padding:2px 8px;border-radius:4px;'
+        f'font-size:0.78em;font-weight:600;margin-right:6px;">'
+        f'{label}</span>'
+        f'<span style="'
+        f'background:#444;color:#eee;padding:2px 8px;border-radius:4px;'
+        f'font-size:0.78em;margin-right:6px;">'
+        f'{route_label}</span>'
+        f'<span style="color:#888;font-size:0.75em;">conf {confidence:.0%}</span>'
+    )
+    st.markdown(badge_html, unsafe_allow_html=True)
+
+    reasoning = metadata.get("llm_router_reasoning")
+    if reasoning:
+        with st.expander("Why this route? (LLM router)", expanded=False):
+            st.markdown(reasoning)
+
+    if web_sources:
+        with st.expander(f"🌐 Web Sources ({len(web_sources)})", expanded=False):
+            for i, url in enumerate(web_sources, 1):
+                st.markdown(f"[Source {i}]({url})", unsafe_allow_html=False)
 
 
 def display_styled_dataframe(df, height=400, key_suffix=""):
@@ -725,7 +777,41 @@ def render_chatbot_page():
     
     # --- SIDEBAR QUERY CONFIGURATION ---
     st.sidebar.header("📊 Query Configuration")
-    
+
+    # Web Search toggle
+    st.sidebar.subheader("🌐 Web Search")
+    web_search_enabled = st.sidebar.toggle(
+        "Enable Web Search (Tavily)",
+        value=st.session_state.get("web_search_enabled", True),
+        help=(
+            "When enabled, the chatbot can search the web for live market news, "
+            "earnings, and macro data. Requires TAVILY_API_KEY in your .env or secrets.toml."
+        ),
+    )
+    st.session_state["web_search_enabled"] = web_search_enabled
+    if web_search_enabled:
+        st.sidebar.caption("🟢 Web search active — news/macro queries will use Tavily.")
+    else:
+        st.sidebar.caption("🔴 Web search disabled — all queries use internal data only.")
+
+    # Propagate toggle to engine config at runtime
+    import chatbot.config as _cfg
+    _cfg.ENABLE_WEB_SEARCH = web_search_enabled
+
+    llm_router_enabled = st.sidebar.toggle(
+        "LLM router (web vs internal)",
+        value=st.session_state.get("llm_router_enabled", True),
+        help=(
+            "Uses gpt-4o-mini to decide if each question needs internal signal data, "
+            "web search (Tavily), both, or chat-only. Turn off to use keyword-based routing only."
+        ),
+    )
+    st.session_state["llm_router_enabled"] = llm_router_enabled
+    _cfg.LLM_ROUTER_ENABLED = llm_router_enabled
+
+    # Reset cached router so toggles take effect
+    chatbot._master_router = None
+
     # Auto-extraction is always enabled (no manual selection)
     use_auto_extract_tickers = True
     selected_tickers = None
@@ -1047,8 +1133,13 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
 
                     # Show metadata
                     msg_metadata = message.get('metadata', {})
+
+                    # Intent + route badge (shown for all routed responses)
+                    if msg_metadata.get("intent"):
+                        render_route_badge(msg_metadata)
+
                     # Check if it's a smart query or smart followup
-                    if msg_metadata.get('input_type') in ['smart_query', 'smart_followup']:
+                    if msg_metadata.get('input_type') in ['smart_query', 'smart_followup', 'web_rag', 'conversational']:
                         with st.expander("📊 Smart Query Details", expanded=False):
                             signal_types_meta = msg_metadata.get('selected_signal_types', [])
                             signal_reason_meta = msg_metadata.get('signal_type_reasoning', '')
@@ -1212,7 +1303,11 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
                         st.markdown(f"**AI Signal Type Selection:** {selection_text}")
                         if ai_reason:
                             st.caption(f"💡 {ai_reason}")
-                    
+
+                    # Intent + route badge
+                    if metadata.get("intent"):
+                        render_route_badge(metadata)
+
                     # Display response
                     st.markdown(response)
 

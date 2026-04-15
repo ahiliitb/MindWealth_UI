@@ -38,3 +38,4 @@ urllib3==2.5.0
 openai==2.3.0
 anthropic==0.43.0
 python-dotenv==1.0.0
+tavily-python
