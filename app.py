@@ -14,11 +14,12 @@ from src.pages import (
     render_chatbot_page,
     create_trade_details_page,
     create_f_stack_page,
-    create_all_data_page
+    create_all_data_page,
+    create_levels_altitude_page
 )
 from src.pages.monitored_trades_page import create_monitored_trades_page
 from src.pages.horizontal_page import create_horizontal_page
-from src.utils import discover_csv_files
+from src.utils import discover_csv_files, get_latest_csv_file
 
 # Set page config
 st.set_page_config(
@@ -122,6 +123,8 @@ st.markdown("""
 
 def main():
     """Main application entry point"""
+    horizontal_new_high_file = None
+
     # Add refresh button at the top
     col1, col2 = st.columns([10, 1])
     with col1:
@@ -150,6 +153,9 @@ def main():
             "Claude Shortlisted Signal": "text_files",
             "Trade Details": "trade_details",
         }
+        horizontal_new_high_file = get_latest_csv_file("horizontal_new_high_report.csv")
+        if horizontal_new_high_file:
+            page_options["Horizontal & New High Report"] = "levels_new_high_report"
         page_options.update(csv_files)
 
         # Get current page selection (default to first option if not set)
@@ -194,14 +200,14 @@ def main():
         create_text_file_page()
     elif page == "Trade Details":
         create_trade_details_page()
+    elif page == "Horizontal & New High Report":
+        create_levels_altitude_page(horizontal_new_high_file, page)
     else:
         # Create analysis page for CSV files
         if page in page_options:
             csv_file = page_options[page]
             if csv_file and csv_file not in ["text_files", "virtual_trading", "chatbot"]:
-                if page == 'Horizontal':
-                    create_horizontal_page(csv_file, page)
-                elif page == 'F-Stack':
+                if page == 'F-Stack':
                     create_f_stack_page(csv_file, page)
                 else:
                     create_analysis_page(csv_file, page)

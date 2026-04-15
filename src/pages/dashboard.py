@@ -4,7 +4,7 @@ Dashboard page for MindWealth Trading Strategy Analysis
 
 import streamlit as st
 
-from ..utils.file_discovery import discover_csv_files
+from ..utils.file_discovery import discover_csv_files, get_latest_csv_file
 
 
 def create_top_signals_dashboard():
@@ -51,18 +51,24 @@ def create_top_signals_dashboard():
     
     # Get list of available CSV files
     csv_files = discover_csv_files()
+    horizontal_new_high_file = get_latest_csv_file("horizontal_new_high_report.csv")
     
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("**Model Function Strategies:**")
         strategy_pages = [
-            "Band Matrix", "DeltaDrift", "Fractal Track", "BaselineDiverge",
-            "Altitude Alpha", "Oscillator Delta", "SigmaShell", "PulseGauge",
-            "TrendPulse", "Signal Breadth Indicator (SBI)"
+            "All Signal Report",
+            "Horizontal & New High Report",
+            "Signal Breadth Indicator (SBI)"
         ]
         for page in strategy_pages:
-            if page in csv_files:
+            if page == "Horizontal & New High Report":
+                is_available = horizontal_new_high_file is not None
+            else:
+                is_available = page in csv_files
+
+            if is_available:
                 st.markdown(f"✅ {page}")
             else:
                 st.markdown(f"❌ {page} (No signal data)")
@@ -70,8 +76,8 @@ def create_top_signals_dashboard():
     with col2:
         st.markdown("**Signal & Performance Pages:**")
         signal_pages = [
-            "Outstanding Signals", "Portfolio Risk Management", "Outstanding Signals Exit",
-            "New Signals", "Latest Performance", "Forward Testing Performance"
+            "Outstanding Signals", "Portfolio Risk Management",
+            "New Signals", "Combined Performance Report"
         ]
         for page in signal_pages:
             if page in csv_files:

@@ -11,11 +11,9 @@ from datetime import datetime, timedelta
 from .file_discovery import detect_csv_structure
 from ..config_paths import STOCK_DATA_DIR
 from ..parsers import (
-    parse_bollinger_band, parse_distance, parse_fib_ret, parse_general_divergence,
-    parse_new_high, parse_stochastic_divergence, parse_sigma, parse_sentiment,
-    parse_trendline, parse_outstanding_signal, parse_outstanding_exit_signal,
-    parse_new_signal, parse_target_signals, parse_breadth, parse_f_stack_analyzer,
-    parse_latest_performance, parse_forward_backtesting, parse_signal_csv
+    parse_outstanding_signal, parse_new_signal, parse_target_signals,
+    parse_breadth, parse_f_stack_analyzer,
+    parse_combined_performance_report, parse_signal_csv
 )
 
 
@@ -33,24 +31,13 @@ def load_data_from_file(file_path, page_name="Unknown"):
         
         # Parse based on detected structure using specific parsers
         parser_mapping = {
-            'bollinger_band': parse_bollinger_band,
-            'distance': parse_distance,
-            'fib_ret': parse_fib_ret,
-            'general_divergence': parse_general_divergence,
-            'new_high': parse_new_high,
-            'stochastic_divergence': parse_stochastic_divergence,
-            'sigma': parse_sigma,
-            'sentiment': parse_sentiment,
-            'trendline': parse_trendline,
+            'all_signal': parse_outstanding_signal,
             'breadth': parse_breadth,
             'outstanding_signal': parse_outstanding_signal,
-            'outstanding_exit_signal': parse_outstanding_exit_signal,
             'new_signal': parse_new_signal,
             'target_signal': parse_target_signals,
             'f_stack_analyzer': parse_f_stack_analyzer,
-            'latest_performance': parse_latest_performance,
-            'forward_backtesting': parse_forward_backtesting,  # Also handles forward_testing.csv
-            'forward_testing': parse_forward_backtesting  # Direct mapping for forward_testing.csv (same as latest_performance structure)
+            'combined_performance_report': parse_combined_performance_report,
         }
         
         # Fallback: if detection failed but filename matches known patterns, use appropriate parser
@@ -64,14 +51,8 @@ def load_data_from_file(file_path, page_name="Unknown"):
                 if len(parts) > 1:
                     base_filename = parts[1]
             
-            # Direct filename check for forward_testing.csv
-            if 'forward_testing.csv' in base_filename.lower():
-                csv_type = 'forward_testing'
-            elif 'latest_performance.csv' in base_filename.lower():
-                csv_type = 'latest_performance'
-            elif 'forward_backtesting.csv' in base_filename.lower():
-                csv_type = 'forward_backtesting'
-        
+            if 'combined_performance_report.csv' in base_filename.lower():
+                csv_type = 'combined_performance_report'
         if csv_type in parser_mapping:
             return parser_mapping[csv_type](df)
         else:

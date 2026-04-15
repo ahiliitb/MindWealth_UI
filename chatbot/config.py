@@ -130,6 +130,7 @@ LLM_ROUTER_ENABLED = os.getenv("LLM_ROUTER_ENABLED", "true").lower() == "true"
 LLM_ROUTER_MODEL = os.getenv("LLM_ROUTER_MODEL", "gpt-4o-mini")
 CLAUDE_MAX_TOKENS = int(os.getenv("CLAUDE_MAX_TOKENS", "6000"))
 CLAUDE_TEMPERATURE = float(os.getenv("CLAUDE_TEMPERATURE", "0.2"))
+CLAUDE_INPUT_TRUNCATION_TARGET_RATIO = float(os.getenv("CLAUDE_INPUT_TRUNCATION_TARGET_RATIO", "0.75"))
 
 # All other config from .env file (DEPRECATED OpenAI settings kept for backward compatibility)
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.2")  # DEPRECATED - using Claude now

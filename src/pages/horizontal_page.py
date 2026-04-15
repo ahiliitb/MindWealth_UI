@@ -2,66 +2,34 @@
 Horizontal page: display Horizontal.csv data with cards and a candlestick + horizontal line, then table
 """
 
-import os
 import pandas as pd
 import streamlit as st
 import hashlib
 
-from ..utils.file_discovery import extract_date_from_filename
 from ..components.charts import create_horizontal_chart
 
 
-def create_horizontal_page(data_file: str, page_title: str):
-    """Render the Horizontal analysis page."""
-    # Info button at the top
-    if st.button("ℹ️ Info About Page", key=f"info_horizontal_{page_title}", help="Click to learn about this page"):
-        st.session_state[f'show_info_horizontal_{page_title}'] = not st.session_state.get(f'show_info_horizontal_{page_title}', False)
-    
-    if st.session_state.get(f'show_info_horizontal_{page_title}', False):
-        with st.expander("📖 Horizontal Analysis Information", expanded=True):
-            st.markdown("""
-            ### What is this page?
-            The Horizontal Analysis page displays horizontal support and resistance levels for different assets across various time intervals.
-            
-            ### Why is it used?
-            - **Level Identification**: Identify key horizontal support/resistance levels
-            - **Price Comparison**: Compare today price with identified horizontal levels
-            - **Technical Analysis**: Use horizontal levels for entry/exit decisions
-            - **Chart Visualization**: View interactive charts with horizontal level overlays
-            
-            ### How to use?
-            1. **Browse Cards**: Scroll through strategy cards showing horizontal levels for each symbol
-            2. **View Charts**: Click "📊 View Interactive Chart" to see candlestick chart with horizontal line
-            3. **Check Difference**: Review the percentage difference between today price and horizontal level
-            4. **Analyze Status**: See if price is above or below the horizontal level
-            5. **Compare Intervals**: Analyze horizontal levels across different time intervals
-            
-            ### Key Features:
-            - Horizontal support/resistance level identification
-            - Interactive candlestick charts
-            - Percentage difference calculation
-            - Multi-interval analysis
-            - Visual price vs level comparison
-            - Expandable detail cards
-            """)
-    
-    st.title(f"📊 {page_title}")
-    
-    # Display data fetch datetime at top of page (from JSON file)
-    from ..utils.helpers import display_data_fetch_info
-    display_data_fetch_info(location="header")
-
-    st.markdown("---")
-
-    try:
-        df = pd.read_csv(data_file)
-    except Exception as e:
-        st.error(f"Failed to read Horizontal CSV: {str(e)}")
-        return
-
+def render_horizontal_dataframe(df: pd.DataFrame, page_title: str):
+    """Render horizontal analysis cards/table from a dataframe."""
     if df.empty:
         st.info("No signal data available in Horizontal report.")
         return
+
+    df = df.copy()
+
+    # Normalize alternate column names used by combined reports
+    if 'Today price' in df.columns and "Today's Price" not in df.columns:
+        df["Today's Price"] = df['Today price']
+
+    horizontal_display_columns = [
+        'Report Type',
+        'Symbol',
+        'Interval',
+        'Latest Horizontal',
+        "Today's Price",
+        'Difference (%)',
+        'Type',
+    ]
 
     # Normalize expected columns
     expected_cols = ['Symbol', 'Interval', 'Latest Horizontal', 'Today\'s Price', 'Difference (%)']
@@ -85,6 +53,7 @@ def create_horizontal_page(data_file: str, page_title: str):
             if current_price is None:
                 current_price = row.get('Current Price', None)  # Fallback for old data
             difference = row.get('Difference (%)', None)
+            level_type = row.get('Type', 'No Information')
             
             # Create expandable card with title format similar to other strategy cards
             expander_title = f"🔍 {symbol} | {interval}"
@@ -126,6 +95,7 @@ def create_horizontal_page(data_file: str, page_title: str):
                 
                 with col3:
                     st.markdown("**📈 Horizontal Analysis**")
+                    st.write(f"**Type:** {level_type}")
                     if latest_horizontal is not None and current_price is not None:
                         try:
                             latest = float(latest_horizontal)
@@ -141,8 +111,8 @@ def create_horizontal_page(data_file: str, page_title: str):
 
     st.markdown("---")
     st.markdown("### 📋 Detailed Signal Data Table (Original CSV)")
-    # Exclude Signal Open Price - backend deduplication only, never display
-    display_df = df.drop(columns=['Signal Open Price']) if 'Signal Open Price' in df.columns else df
+    display_columns = [col for col in horizontal_display_columns if col in df.columns]
+    display_df = df[display_columns].copy() if display_columns else df.copy()
     # Ensure ALL columns get autosize (no width parameter = autosize)
     st.dataframe(
         display_df, 
@@ -155,5 +125,57 @@ def create_horizontal_page(data_file: str, page_title: str):
             ) for col in display_df.columns
         }
     )
+
+
+def create_horizontal_page(data_file: str, page_title: str, show_page_header: bool = True):
+    """Render the Horizontal analysis page."""
+    if show_page_header:
+        # Info button at the top
+        if st.button("ℹ️ Info About Page", key=f"info_horizontal_{page_title}", help="Click to learn about this page"):
+            st.session_state[f'show_info_horizontal_{page_title}'] = not st.session_state.get(f'show_info_horizontal_{page_title}', False)
+        
+        if st.session_state.get(f'show_info_horizontal_{page_title}', False):
+            with st.expander("📖 Horizontal Analysis Information", expanded=True):
+                st.markdown("""
+                ### What is this page?
+                The Horizontal Analysis page displays horizontal support and resistance levels for different assets across various time intervals.
+                
+                ### Why is it used?
+                - **Level Identification**: Identify key horizontal support/resistance levels
+                - **Price Comparison**: Compare today price with identified horizontal levels
+                - **Technical Analysis**: Use horizontal levels for entry/exit decisions
+                - **Chart Visualization**: View interactive charts with horizontal level overlays
+                
+                ### How to use?
+                1. **Browse Cards**: Scroll through strategy cards showing horizontal levels for each symbol
+                2. **View Charts**: Click "📊 View Interactive Chart" to see candlestick chart with horizontal line
+                3. **Check Difference**: Review the percentage difference between today price and horizontal level
+                4. **Analyze Status**: See if price is above or below the horizontal level
+                5. **Compare Intervals**: Analyze horizontal levels across different time intervals
+                
+                ### Key Features:
+                - Horizontal support/resistance level identification
+                - Interactive candlestick charts
+                - Percentage difference calculation
+                - Multi-interval analysis
+                - Visual price vs level comparison
+                - Expandable detail cards
+                """)
+        
+        st.title(f"📊 {page_title}")
+        
+        # Display data fetch datetime at top of page (from JSON file)
+        from ..utils.helpers import display_data_fetch_info
+        display_data_fetch_info(location="header")
+
+        st.markdown("---")
+
+    try:
+        df = pd.read_csv(data_file)
+    except Exception as e:
+        st.error(f"Failed to read Horizontal CSV: {str(e)}")
+        return
+
+    render_horizontal_dataframe(df, page_title)
 
 

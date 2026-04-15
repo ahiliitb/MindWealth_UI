@@ -5,7 +5,7 @@ UI Card Components for displaying trading strategy information
 import streamlit as st
 import pandas as pd
 
-from .charts import create_interactive_chart, create_divergence_chart, create_bollinger_band_chart, create_outstanding_signal_chart, create_outstanding_exit_signal_chart
+from .charts import create_interactive_chart, create_outstanding_signal_chart
 from ..utils.helpers import format_days
 
 
@@ -238,9 +238,7 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                 show_chart = False
                 # List of pages that should have charts
                 chart_enabled_pages = [
-                    "Band Matrix", "DeltaDrift", "Fractal Track", "BaselineDiverge",
-                    "Altitude Alpha", "Oscillator Delta", "SigmaShell", "PulseGauge",
-                    "TrendPulse", "Outstanding Signals", "Outstanding Signals Exit", "New Signals", "Claude Signals"
+                    "All Signal Report", "Outstanding Signals", "New Signals", "Claude Signals", "New High"
                 ]
                 
                 # Create unique identifier for buttons (needed for both chart and add to monitored)
@@ -355,21 +353,9 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                 if show_chart and st.session_state.get(chart_state_key, False):
                     st.markdown("---")
                     # Route to appropriate chart based on page type
-                    if page_name == 'Outstanding Signals Exit':
-                        # Fetch original signal data and display chart with exit marker
-                        create_outstanding_exit_signal_chart(row, raw_data)
-                    elif page_name in ['Outstanding Signals', 'New Signals', 'Claude Signals']:
-                        # For New Signals, Outstanding Signals, and Claude Signals, fetch original data from function CSVs
+                    if page_name in ['All Signal Report', 'Outstanding Signals', 'New Signals', 'Claude Signals']:
+                        # For mixed detailed-signal pages, fetch original data from function CSVs
                         create_outstanding_signal_chart(row, raw_data)
-                    elif page_name == 'Oscillator Delta':
-                        # Divergence chart with divergence line
-                        create_divergence_chart(row, raw_data)
-                    elif page_name == 'Band Matrix':
-                        # Bollinger Bands chart with BB overlay
-                        create_bollinger_band_chart(row, raw_data)
-                    elif page_name in ['Fractal Track', 'TrendPulse']:
-                        # Interactive chart with reference lines (Fibonacci for Fractal Track, TrendPulse line for TrendPulse)
-                        create_interactive_chart(row, raw_data)
                     else:
                         # Simple candlestick chart with buy/sell marker for all other pages
                         create_interactive_chart(row, raw_data)
@@ -425,8 +411,8 @@ def display_strategy_cards_page(df, page_name="Unknown", tab_context=""):
                     else:
                         st.write(f"**Exit Date & Price:** {raw_data.get('Exit Signal Date/Price[$]', 'N/A')}")
                     
-                    # Add divergence information for Oscillator Delta and Outstanding Signals
-                    if page_name in ['Oscillator Delta', 'Outstanding Signals']:
+                    # Show divergence details for mixed detailed-signal pages when available
+                    if page_name in ['All Signal Report', 'Outstanding Signals']:
                         divergence_info = raw_data.get('Divergence Start/End (Date and Price [$])', '')
                         if divergence_info and '/' in str(divergence_info):
                             try:

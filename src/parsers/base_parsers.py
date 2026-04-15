@@ -342,6 +342,7 @@ def parse_performance_csv(df):
             avg_backtested_holding = 0
         
         processed_data.append({
+            'Function': row.get('Function', 'Unknown'),
             'Strategy': row.get('Strategy', 'Unknown'),
             'Interval': row.get('Interval', 'Unknown'),
             'Signal_Type': row.get('Signal Type', 'Unknown'),

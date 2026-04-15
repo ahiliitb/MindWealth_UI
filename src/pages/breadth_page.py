@@ -12,6 +12,17 @@ from constant import BREADTH_SIGNAL_STORE_CSV_PATH_US
 from ..utils.file_discovery import extract_date_from_filename
 
 
+def _breadth_entry_csv_path(data_file):
+    """Companion file: YYYY-MM-DD_breadth_entry.csv next to YYYY-MM-DD_breadth.csv, or breadth_entry.csv next to breadth.csv."""
+    dirname = os.path.dirname(data_file)
+    basename = os.path.basename(data_file)
+    if basename == "breadth.csv":
+        return os.path.join(dirname, "breadth_entry.csv")
+    if basename.endswith("_breadth.csv"):
+        return os.path.join(dirname, basename.replace("_breadth.csv", "_breadth_entry.csv"))
+    return None
+
+
 def create_breadth_page(data_file, page_title):
     """Create a specialized page for breadth signal data"""
     # Info button at the top
@@ -165,7 +176,29 @@ def create_breadth_page(data_file, page_title):
         st.warning(f"Unable to render SBI graph: {e}")
 
     st.markdown("---")
-    
+
+    # Optional companion: breadth entry rows (e.g. BreadthIndicator) — above the main breadth CSV table
+    entry_path = _breadth_entry_csv_path(data_file)
+    if entry_path and os.path.isfile(entry_path):
+        st.markdown("### 📌 Breadth Entry (Indicator)")
+        try:
+            entry_df = pd.read_csv(entry_path, index_col=False)
+            if not entry_df.empty:
+                st.dataframe(
+                    entry_df,
+                    use_container_width=True,
+                    height=min(400, max(120, 48 + 35 * len(entry_df))),
+                    column_config={
+                        col: st.column_config.TextColumn(col, help=f"Breadth entry column: {col}")
+                        for col in entry_df.columns
+                    },
+                )
+            else:
+                st.caption("Breadth entry file is empty.")
+        except Exception as e:
+            st.warning(f"Unable to load breadth entry file ({entry_path}): {e}")
+        st.markdown("---")
+
     # Data table - Original CSV format
     st.markdown("### 📋 Detailed Signal Data Table (Original CSV Format)")
     

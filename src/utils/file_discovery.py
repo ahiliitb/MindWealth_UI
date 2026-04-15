@@ -48,74 +48,72 @@ def detect_csv_structure(file_path):
     
     # Map filenames to their specific parsers
     file_mapping = {
-        'bollinger_band.csv': 'bollinger_band',
-        'Distance.csv': 'distance',
-        'Fib-Ret.csv': 'fib_ret',
-        'General-Divergence.csv': 'general_divergence',
-        'new_high.csv': 'new_high',
-        'Stochastic-Divergence.csv': 'stochastic_divergence',
-        'sigma.csv': 'sigma',
-        'sentiment.csv': 'sentiment',
-        'Trendline.csv': 'trendline',
+        'all_signal.csv': 'all_signal',
         'breadth.csv': 'breadth',
         'outstanding_signal.csv': 'outstanding_signal',
-        'outstanding_exit_signal.csv': 'outstanding_exit_signal',
         'new_signal.csv': 'new_signal',
         'target_signal.csv': 'target_signal',
-        'latest_performance.csv': 'latest_performance',
-        'forward_backtesting.csv': 'forward_backtesting',
-        'forward_testing.csv': 'forward_backtesting',  # Use same parser as forward_backtesting
+        'combined_performance_report.csv': 'combined_performance_report',
         'F-Stack-Analyzer.csv': 'f_stack_analyzer'
     }
     
     return file_mapping.get(base_filename, 'unknown')
 
 
+def get_latest_csv_file(base_filename, trade_store_path="./trade_store/US"):
+    """Return the latest matching CSV for a base filename, preferring dated files."""
+    if not os.path.exists(trade_store_path):
+        return None
+
+    csv_pattern = os.path.join(trade_store_path, "*.csv")
+    selected_file = None
+    selected_date = None
+
+    for file_path in glob.glob(csv_pattern):
+        filename = os.path.basename(file_path)
+        if get_base_filename(filename) != base_filename:
+            continue
+
+        current_date = extract_date_from_filename(filename)
+
+        if selected_file is None:
+            selected_file = file_path
+            selected_date = current_date
+            continue
+
+        if current_date and selected_date:
+            if current_date > selected_date:
+                selected_file = file_path
+                selected_date = current_date
+        elif current_date and not selected_date:
+            selected_file = file_path
+            selected_date = current_date
+
+    return selected_file
+
+
 def discover_csv_files():
     """Dynamically discover all CSV files in the trade_store/US directory (handles dated filenames)"""
     # Define the specific order for page names
     ordered_pages = [
-        'Band Matrix',
-        'DeltaDrift', 
-        'Fractal Track',
-        'BaselineDiverge',
-        'Altitude Alpha',
-        'Oscillator Delta',
-        'SigmaShell',
-        'PulseGauge',
-        'TrendPulse',
+        'All Signal Report',
         'Signal Breadth Indicator (SBI)',
         'Outstanding Signals',
         'Portfolio Risk Management',
-        'Outstanding Signals Exit',
         'New Signals',
-        'Latest Performance',
-        'Forward Testing Performance',
-        'F-Stack',
-        'Horizontal'
+        'Combined Performance Report',
+        'F-Stack'
     ]
     
     # Map base file names (without date) to model function names
     base_name_mapping = {
-        'bollinger_band.csv': 'Band Matrix',
-        'Distance.csv': 'DeltaDrift',
-        'Fib-Ret.csv': 'Fractal Track',
-        'General-Divergence.csv': 'BaselineDiverge',
-        'new_high.csv': 'Altitude Alpha',
-        'Stochastic-Divergence.csv': 'Oscillator Delta',
-        'sigma.csv': 'SigmaShell',
-        'sentiment.csv': 'PulseGauge',
-        'Trendline.csv': 'TrendPulse',
+        'all_signal.csv': 'All Signal Report',
         'breadth.csv': 'Signal Breadth Indicator (SBI)',
         'outstanding_signal.csv': 'Outstanding Signals',
-        'outstanding_exit_signal.csv': 'Outstanding Signals Exit',
         'new_signal.csv': 'New Signals',
-        'latest_performance.csv': 'Latest Performance',
-        'forward_backtesting.csv': 'Forward Testing Performance',
-        'forward_testing.csv': 'Forward Testing Performance',  # Alternative filename
+        'combined_performance_report.csv': 'Combined Performance Report',
         'target_signal.csv': 'Portfolio Risk Management',
-        'F-Stack-Analyzer.csv': 'F-Stack',
-        'Horizontal.csv': 'Horizontal'
+        'F-Stack-Analyzer.csv': 'F-Stack'
     }
     
     csv_files = {}
@@ -128,11 +126,7 @@ def discover_csv_files():
         
         # Create a mapping from base filename to filepath
         # If multiple dated versions exist, prefer the most recent
-        # For forward_testing.csv and latest_performance.csv, ONLY use non-dated versions
         file_mapping = {}
-        
-        # Files that MUST use non-dated versions only
-        non_dated_only_files = ['latest_performance.csv', 'forward_testing.csv']
         
         for file_path in csv_file_paths:
             filename = os.path.basename(file_path)
@@ -140,36 +134,21 @@ def discover_csv_files():
             
             if base_filename in base_name_mapping:
                 current_date = extract_date_from_filename(filename)
-                
-                # For forward_testing.csv and latest_performance.csv, skip any dated versions
-                if base_filename in non_dated_only_files:
-                    if current_date:
-                        # Skip dated versions of these files
-                        continue
-                
+
                 # If we haven't seen this base file, add it
                 if base_filename not in file_mapping:
                     file_mapping[base_filename] = file_path
                 else:
                     existing_date = extract_date_from_filename(os.path.basename(file_mapping[base_filename]))
-                    
-                    # For forward_testing.csv and latest_performance.csv, only keep non-dated
-                    if base_filename in non_dated_only_files:
-                        # If existing is dated and current is not, replace it
-                        if existing_date and not current_date:
+
+                    # Prefer dated files over non-dated and latest dated among duplicates
+                    if current_date and existing_date:
+                        if current_date > existing_date:
                             file_mapping[base_filename] = file_path
-                        # If both are non-dated, keep first one found
-                        # If current is dated, skip it (already handled above)
-                    else:
-                        # For other files, prefer dated versions (existing logic)
-                        if current_date and existing_date:
-                            if current_date > existing_date:
-                                file_mapping[base_filename] = file_path
-                        elif current_date and not existing_date:
-                            # Prefer dated file over non-dated
-                            file_mapping[base_filename] = file_path
-                        # If both are dated and current is older, keep existing
-                        # If both are non-dated, keep first one found
+                    elif current_date and not existing_date:
+                        file_mapping[base_filename] = file_path
+                    # If both are dated and current is older, keep existing
+                    # If both are non-dated, keep first one found
         
         # Add files in the specified order
         for page_name in ordered_pages:
@@ -179,13 +158,8 @@ def discover_csv_files():
                 if mapped_name == page_name and base_name in file_mapping:
                     candidates.append(base_name)
             
-            # If multiple candidates, prefer specific ones (e.g., forward_testing.csv over forward_backtesting.csv)
             if candidates:
-                # Prefer forward_testing.csv if both exist
-                if 'forward_testing.csv' in candidates:
-                    selected_base = 'forward_testing.csv'
-                else:
-                    selected_base = candidates[0]  # Use first found
+                selected_base = candidates[0]
                 csv_files[page_name] = file_mapping[selected_base]
     
     india_trade_store_path = "./trade_store/INDIA"

@@ -13,7 +13,7 @@ from .performance_page import create_performance_summary_page
 from .breadth_page import create_breadth_page
 
 
-def create_analysis_page(data_file, page_title):
+def create_analysis_page(data_file, page_title, show_page_header=True):
     """Create an analysis page similar to Signal Analysis for any CSV file"""
     # Load data first to check page type before displaying title
     df = load_data_from_file(f'{data_file}', page_title)
@@ -32,45 +32,46 @@ def create_analysis_page(data_file, page_title):
         create_performance_summary_page(data_file, page_title)
         return
     
-    # Info button at the top
-    if st.button("ℹ️ Info About Page", key=f"info_analysis_{page_title}", help="Click to learn about this page"):
-        st.session_state[f'show_info_analysis_{page_title}'] = not st.session_state.get(f'show_info_analysis_{page_title}', False)
-    
-    if st.session_state.get(f'show_info_analysis_{page_title}', False):
-        with st.expander("📖 Analysis Page Information", expanded=True):
-            st.markdown("""
-            ### What is this page?
-            The Analysis Page provides detailed insights into trading signal data and strategy performance for specific CSV signal data files.
-            
-            ### Why is it used?
-            - **Signal Analysis**: Analyze trading signal data with detailed metrics
-            - **Performance Tracking**: Track the performance of different strategies
-            - **Position Management**: View and filter long and short positions separately
-            - **Strategy Comparison**: Compare different functions and intervals
-            
-            ### How to use?
-            1. **Select Filters**: Use the sidebar to filter by functions, symbols, and intervals
-            2. **Choose Position Type**: Switch between ALL, Long, or Short positions using the tabs
-            3. **View Cards**: Scroll through strategy cards for detailed signal information
-            4. **Analyze Signals**: Review the signal data table at the bottom for comprehensive details
-            5. **Use Quick Filters**: Click "All" or "None" buttons for quick selection
-            
-            ### Key Features:
-            - Multi-tab interface for different position types
-            - Advanced filtering by function, symbol, and interval
-            - Visual cards with expandable details
-            - Interactive signal data tables
-            - Real-time win rate and performance metrics
-            """)
-    
-    # Display title
-    st.title(f"📈 {page_title}")
-    
-    # Display data fetch datetime at top of page (from JSON file)
-    from ..utils.helpers import display_data_fetch_info
-    display_data_fetch_info(location="header")
-    
-    st.markdown("---")
+    if show_page_header:
+        # Info button at the top
+        if st.button("ℹ️ Info About Page", key=f"info_analysis_{page_title}", help="Click to learn about this page"):
+            st.session_state[f'show_info_analysis_{page_title}'] = not st.session_state.get(f'show_info_analysis_{page_title}', False)
+        
+        if st.session_state.get(f'show_info_analysis_{page_title}', False):
+            with st.expander("📖 Analysis Page Information", expanded=True):
+                st.markdown("""
+                ### What is this page?
+                The Analysis Page provides detailed insights into trading signal data and strategy performance for specific CSV signal data files.
+                
+                ### Why is it used?
+                - **Signal Analysis**: Analyze trading signal data with detailed metrics
+                - **Performance Tracking**: Track the performance of different strategies
+                - **Position Management**: View and filter long and short positions separately
+                - **Strategy Comparison**: Compare different functions and intervals
+                
+                ### How to use?
+                1. **Select Filters**: Use the sidebar to filter by functions, symbols, and intervals
+                2. **Choose Position Type**: Switch between ALL, Long, or Short positions using the tabs
+                3. **View Cards**: Scroll through strategy cards for detailed signal information
+                4. **Analyze Signals**: Review the signal data table at the bottom for comprehensive details
+                5. **Use Quick Filters**: Click "All" or "None" buttons for quick selection
+                
+                ### Key Features:
+                - Multi-tab interface for different position types
+                - Advanced filtering by function, symbol, and interval
+                - Visual cards with expandable details
+                - Interactive signal data tables
+                - Real-time win rate and performance metrics
+                """)
+        
+        # Display title
+        st.title(f"📈 {page_title}")
+        
+        # Display data fetch datetime at top of page (from JSON file)
+        from ..utils.helpers import display_data_fetch_info
+        display_data_fetch_info(location="header")
+        
+        st.markdown("---")
     
     # Add interval and position type extraction
     def extract_interval(row):

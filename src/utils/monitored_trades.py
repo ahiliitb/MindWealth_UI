@@ -166,14 +166,21 @@ def get_latest_price_from_stock_data(symbol: str) -> Tuple[Optional[float], Opti
         
         # Convert date column to datetime
         df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
-        df = df.sort_values(date_col, ascending=False)
+        df = df.dropna(subset=[date_col]).sort_values(date_col, ascending=False)
+        if df.empty:
+            return None, None
         
         # Get the latest row
         latest_row = df.iloc[0]
         
-        # Find Close or Price column
+        # Prefer Close (matches current stock_data CSVs), then Adj Close, then generic Price.
         price = None
-        for col in ['Close', 'close', 'Price', 'price', 'Adj Close', 'Adj Close']:
+        preferred_cols = [
+            'Close', 'close',
+            'Adj Close', 'Adj close', 'adj close', 'Adj_Close', 'adj_close',
+            'Price', 'price',
+        ]
+        for col in preferred_cols:
             if col in df.columns:
                 price = latest_row[col]
                 break
@@ -193,11 +200,10 @@ def get_latest_price_from_stock_data(symbol: str) -> Tuple[Optional[float], Opti
                 date_str = str(date_str)
         
         if price is not None:
-            try:
-                price = float(price)
-                return price, date_str
-            except:
-                return None, None
+            price = pd.to_numeric(price, errors='coerce')
+            if pd.notna(price):
+                return float(price), date_str
+            return None, None
         
         return None, None
     except Exception as e:
@@ -207,11 +213,13 @@ def get_latest_price_from_stock_data(symbol: str) -> Tuple[Optional[float], Opti
 
 def calculate_price_change_percentage(current_price, signal_price, signal_type):
     """Calculate percentage change between today price and signal price"""
-    if not current_price or not signal_price or signal_price == 0:
+    current_price = pd.to_numeric(current_price, errors='coerce')
+    signal_price = pd.to_numeric(signal_price, errors='coerce')
+    if pd.isna(current_price) or pd.isna(signal_price) or signal_price == 0:
         return "0.0% below"
     
     try:
-        change_pct = ((current_price - signal_price) / signal_price) * 100
+        change_pct = ((float(current_price) - float(signal_price)) / float(signal_price)) * 100
         
         # For short positions, invert the percentage
         if str(signal_type).upper() == 'SHORT':
@@ -238,11 +246,13 @@ def calculate_holding_period(signal_date, current_date):
 
 def calculate_mark_to_market(current_price, signal_price, signal_type):
     """Calculate mark to market percentage"""
-    if not current_price or not signal_price or signal_price == 0:
+    current_price = pd.to_numeric(current_price, errors='coerce')
+    signal_price = pd.to_numeric(signal_price, errors='coerce')
+    if pd.isna(current_price) or pd.isna(signal_price) or signal_price == 0:
         return "0.0%"
     
     try:
-        change_pct = ((current_price - signal_price) / signal_price) * 100
+        change_pct = ((float(current_price) - float(signal_price)) / float(signal_price)) * 100
         
         # For short positions, invert the percentage
         if str(signal_type).upper() == 'SHORT':

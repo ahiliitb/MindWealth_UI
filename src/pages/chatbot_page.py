@@ -282,6 +282,22 @@ def display_styled_dataframe(df, height=400, key_suffix=""):
     )
 
 
+def show_input_limit_notice(metadata: Optional[dict]) -> None:
+    """Show when request content had to be reduced before calling Claude."""
+    if not metadata:
+        return
+
+    notices = []
+    history_trimmed = metadata.get("history_trimmed_count", 0)
+    if history_trimmed:
+        notices.append(f"trimmed {history_trimmed} older message(s)")
+    if metadata.get("input_truncated"):
+        notices.append("truncated the latest request to stay within Claude input budget")
+
+    if notices:
+        st.caption(f"Input safeguard applied: {', '.join(notices)}.")
+
+
 def _coerce_to_dataframe(data: Any) -> Optional[pd.DataFrame]:
     """Best-effort conversion of legacy signal tables to pandas DataFrame."""
     if data is None:
@@ -552,6 +568,7 @@ def render_chatbot_page():
                     
                     # Display response
                     st.markdown(response)
+                    show_input_limit_notice(metadata)
 
                     # Display Smart Query Details with signals
                     if metadata.get('input_type') in ['smart_query', 'smart_followup'] or metadata.get('selected_signal_types'):
@@ -647,6 +664,7 @@ def render_chatbot_page():
                     
                     # Display response
                     st.markdown(response)
+                    show_input_limit_notice(metadata)
 
                     # Display Smart Query Details with signals
                     with st.expander("📊 Smart Query Details", expanded=False):
@@ -739,6 +757,7 @@ def render_chatbot_page():
                     
                     # Display response
                     st.markdown(response)
+                    show_input_limit_notice(metadata)
                     
                     # Display full signal tables if available
                     full_signal_tables = metadata.get('full_signal_tables', {})
@@ -1130,6 +1149,7 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
             else:
                 with st.chat_message("assistant"):
                     st.markdown(message['content'])
+                    show_input_limit_notice(message.get('metadata'))
 
                     # Show metadata
                     msg_metadata = message.get('metadata', {})
@@ -1310,6 +1330,7 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
 
                     # Display response
                     st.markdown(response)
+                    show_input_limit_notice(metadata)
 
                     # Display Smart Query Details with signals
                     with st.expander("📊 Smart Query Details", expanded=False):
