@@ -4,9 +4,10 @@ Main chatbot engine for processing queries and generating responses.
 
 import logging
 import re
-from typing import List, Dict, Optional, Tuple, Any
-from anthropic import Anthropic
 import time
+from datetime import datetime
+from typing import List, Dict, Optional, Tuple, Any, Callable
+from anthropic import Anthropic
 
 from .config import (
     CLAUDE_API_KEY,
@@ -1864,6 +1865,22 @@ Please answer the user's query based on the comprehensive analysis report above.
         self.history_manager.add_message("assistant", assistant_message, metadata)
         return assistant_message, metadata
 
+    def _persist_flow_trace(self, metadata: Optional[Dict[str, Any]], flow_trace: List[Dict[str, str]]) -> None:
+        """
+        Attach flow_trace to the latest response metadata and flush session JSON.
+
+        ``_answer_*`` / ``smart_query`` call ``add_message`` (which saves) before the
+        caller appends routing + flow_trace; without a second save the UI would lose
+        flow_trace after reload, and in-memory last message metadata could be stale on disk.
+        """
+        if not metadata:
+            return
+        metadata["flow_trace"] = list(flow_trace)
+        try:
+            self.history_manager.save_history()
+        except Exception as exc:
+            logger.warning("Could not persist flow_trace to session file: %s", exc)
+
     def smart_followup_query(
         self,
         user_message: str,
@@ -1874,7 +1891,8 @@ Please answer the user's query based on the comprehensive analysis report above.
         functions: Optional[List[str]] = None,
         additional_context: Optional[str] = None,
         auto_extract_tickers: bool = False,
-        signal_type_reasoning: Optional[str] = None
+        signal_type_reasoning: Optional[str] = None,
+        on_flow_step: Optional[Callable[[str, str], None]] = None,
     ) -> Tuple[str, Dict]:
         """
         Process a follow-up query with dynamic, fresh analysis for each query.
@@ -1895,6 +1913,8 @@ Please answer the user's query based on the comprehensive analysis report above.
             additional_context: Any additional text context to include
             auto_extract_tickers: If True and assets=None, use GPT to extract asset names
             signal_type_reasoning: Optional explanation for pre-selected signal types
+            on_flow_step: Optional callback ``(stage, detail)`` invoked after each pipeline
+                step (for Streamlit live progress, logging, etc.).
             
         Returns:
             Tuple of (response_text, metadata_dict)
@@ -1905,6 +1925,21 @@ Please answer the user's query based on the comprehensive analysis report above.
                 ROUTE_CONVERSATIONAL, ROUTE_WEB_RAG, ROUTE_HYBRID, ROUTE_INTERNAL,
             )
 
+            flow_trace: List[Dict[str, str]] = []
+
+            def add_flow_step(stage: str, detail: str) -> None:
+                """Collect concise architecture flow steps for UI visibility."""
+                flow_trace.append({
+                    "stage": stage,
+                    "detail": detail,
+                    "timestamp": datetime.now().strftime("%H:%M:%S"),
+                })
+                if on_flow_step:
+                    try:
+                        on_flow_step(stage, detail)
+                    except Exception:
+                        logger.debug("on_flow_step callback raised", exc_info=True)
+
             logger.info("="*60)
             logger.info("SMART FOLLOW-UP QUERY - Dynamic fresh analysis per query")
             logger.info("="*60)
@@ -1914,6 +1949,7 @@ Please answer the user's query based on the comprehensive analysis report above.
                 f"[FLOW 1/7] UserQuery → Router  |  "
                 f"query_preview='{user_message[:80]}{'...' if len(user_message) > 80 else ''}'"
             )
+            add_flow_step("Router", "Analyzing user query intent and selecting route")
             router = self._get_router()
             history_for_routing = self.history_manager.get_messages_for_api(
                 max_pairs=3, strip_data=True
@@ -1941,18 +1977,25 @@ Please answer the user's query based on the comprehensive analysis report above.
                 f"confidence={decision.intent_result.confidence:.2f}  "
                 f"classified_by={decision.intent_result.classified_by}"
             )
+            add_flow_step(
+                "Route Selected",
+                f"{decision.route} (intent={decision.intent_result.primary_intent}, conf={decision.intent_result.confidence:.2f})",
+            )
 
             # ── CONVERSATIONAL: history-only, no data ─────────────────────────
             if decision.route == ROUTE_CONVERSATIONAL:
                 logger.info("[ENGINE] CONVERSATIONAL route — skipping data fetch")
                 meta = {**route_meta_base, "input_type": "conversational"}
+                add_flow_step("Conversation Mode", "Using conversation history only (no web/internal data fetch)")
                 response, meta = self._answer_from_history(user_message, meta)
                 meta["input_type"] = "conversational"
+                self._persist_flow_trace(meta, flow_trace)
                 return response, meta
 
             # ── WEB_RAG: answer purely from Tavily results ────────────────────
             if decision.route == ROUTE_WEB_RAG:
                 web_result = decision.web_search_result
+                add_flow_step("Web Search", "Executing web-only retrieval (Tavily)")
                 if web_result and web_result.success:
                     logger.info("[ENGINE] WEB_RAG route — answering from web search")
                     meta = {
@@ -1964,6 +2007,8 @@ Please answer the user's query based on the comprehensive analysis report above.
                         user_message, web_result.formatted_context, meta
                     )
                     meta["input_type"] = "web_rag"
+                    add_flow_step("Response Generation", "Generated response from web context")
+                    self._persist_flow_trace(meta, flow_trace)
                     return response, meta
                 else:
                     # Web search unavailable — fall through to internal pipeline
@@ -1975,6 +2020,7 @@ Please answer the user's query based on the comprehensive analysis report above.
                         "[ENGINE] WEB_RAG route but web search unavailable — "
                         f"falling back to INTERNAL. Reason: {reason}"
                     )
+                    add_flow_step("Web Search Fallback", f"Web unavailable; switching to internal path ({reason})")
 
             # ── HYBRID: parallel web search + internal fetch ──────────────────
             # claude_report uses ``query()``, not table fetch — keep legacy smart_query path.
@@ -1988,6 +2034,7 @@ Please answer the user's query based on the comprehensive analysis report above.
                     f"route=HYBRID  pending_queries="
                     f"{getattr(decision, 'pending_web_search_queries', [])}"
                 )
+                add_flow_step("Hybrid Orchestrator", "Starting parallel web search + internal signal fetch")
                 from .agents.orchestrator import ParallelOrchestrator
                 from .agents.synthesis_agent import SynthesisAgent
 
@@ -2032,6 +2079,10 @@ Please answer the user's query based on the comprehensive analysis report above.
                     web_timeout=float(WEB_SEARCH_HYBRID_TIMEOUT_SECONDS),
                     internal_timeout=float(INTERNAL_FETCH_TIMEOUT_SECONDS),
                 )
+                add_flow_step(
+                    "Parallel Branches Complete",
+                    f"web={'ok' if not orch_result.web_failed else 'failed'}, internal={'ok' if not orch_result.internal_failed else 'failed'}",
+                )
 
                 logger.info(
                     f"[FLOW 5/7] OrchestratorResult collected  |  "
@@ -2045,6 +2096,7 @@ Please answer the user's query based on the comprehensive analysis report above.
                     logger.warning(f"[FLOW 5/7] Internal branch error: {orch_result.internal_error}")
 
                 logger.info("[FLOW 6/7] OrchestratorResult → SynthesisAgent  |  building structured prompt")
+                add_flow_step("Synthesis", "Combining web and internal outputs into unified prompt")
                 synthesis = SynthesisAgent()
                 synthesized_prompt = synthesis.build_prompt(
                     user_message=user_message,
@@ -2076,8 +2128,10 @@ Please answer the user's query based on the comprehensive analysis report above.
                 }
 
                 logger.info("[FLOW 7/7] SynthesisAgent → Claude  |  sending synthesized prompt")
+                add_flow_step("Response Generation", "Querying Claude with synthesized hybrid context")
                 response, metadata = self._answer_synthesized(user_message, synthesized_prompt, meta)
                 metadata["conversation_context_used"] = True
+                self._persist_flow_trace(metadata, flow_trace)
                 logger.info(
                     f"[FLOW 7/7] Claude response received  |  "
                     f"tokens={metadata.get('tokens_used', {}).get('total', '?')}  "
@@ -2094,11 +2148,15 @@ Please answer the user's query based on the comprehensive analysis report above.
                     f"parallel_disabled={not PARALLEL_HYBRID_ENABLED}  "
                     f"claude_report={'claude_report' in (selected_signal_types or [])}"
                 )
+                add_flow_step("Hybrid (Sequential)", "Using legacy hybrid path (no parallel orchestrator)")
 
             web_additional_context = None
             if decision.route == ROUTE_HYBRID and decision.used_web_search:
                 logger.info("[ENGINE] HYBRID route (legacy sequential) — merging web search with internal data")
                 web_additional_context = decision.web_search_result.formatted_context
+                add_flow_step("Web Search", "Web results gathered and merged into internal analysis context")
+            elif decision.route == ROUTE_INTERNAL:
+                add_flow_step("Internal Search", "Using internal signal data pipeline")
 
             # ── INTERNAL (or HYBRID legacy fallback) — existing pipeline ─────
             # Get last N exchanges from history (text only, no raw data)
@@ -2106,7 +2164,8 @@ Please answer the user's query based on the comprehensive analysis report above.
             
             if not history_messages or len(history_messages) < 2:
                 logger.warning("No previous context found - treating as new query")
-                return self.smart_query(
+                add_flow_step("Context Handling", "No prior context found; running fresh internal smart query")
+                response, metadata = self.smart_query(
                     user_message=user_message,
                     selected_signal_types=selected_signal_types,
                     assets=assets,
@@ -2117,6 +2176,15 @@ Please answer the user's query based on the comprehensive analysis report above.
                     auto_extract_tickers=auto_extract_tickers,
                     signal_type_reasoning=signal_type_reasoning
                 )
+                metadata.update(route_meta_base)
+                metadata["input_type"] = "smart_followup"
+                metadata["followup_mode"] = "dynamic_fresh"
+                metadata["conversation_context_used"] = False
+                metadata["history_exchanges_used"] = 0
+                add_flow_step("Internal Data Query", "Fetched internal signal data (selector + columns + date filters)")
+                add_flow_step("Response Generation", "Generated final response from internal analysis")
+                self._persist_flow_trace(metadata, flow_trace)
+                return response, metadata
             
             logger.info(f"Retrieved {len(history_messages)} messages from history for context")
             
@@ -2125,6 +2193,7 @@ Please answer the user's query based on the comprehensive analysis report above.
             
             # Build conversation context (text-only history)
             conversation_context = self._build_text_only_context(clean_history)
+            add_flow_step("Context Handling", "Loaded prior conversation context for follow-up reasoning")
             
             logger.info("DYNAMIC ANALYSIS: Treating follow-up as fresh query with conversation context")
             logger.info("This allows AI to freely choose new signal types, functions, columns based on context")
@@ -2165,9 +2234,12 @@ NOTE: Use the conversation context above to understand what we've discussed, but
             metadata["followup_mode"] = "dynamic_fresh"
             metadata["conversation_context_used"] = True
             metadata["history_exchanges_used"] = MAX_HISTORY_LENGTH
+            add_flow_step("Internal Data Query", "Fetched internal signal data (selector + columns + date filters)")
+            add_flow_step("Response Generation", "Generated final response from internal analysis")
 
             # Attach routing metadata
             metadata.update(route_meta_base)
+            self._persist_flow_trace(metadata, flow_trace)
             
             logger.info(f"Dynamic follow-up query completed with fresh analysis")
             logger.info("="*60)
@@ -2738,7 +2810,7 @@ Create a professional, well-structured response that reads as one cohesive analy
                 "batch_count": 1,
                 "batch_mode": "single",
                 "model": CLAUDE_MODEL,
-                "context_truncated": truncated_latest_user,
+                "context_truncated": budget_info["truncated_latest_content"],
                 "input_truncated": budget_info["truncated_latest_content"],
                 "history_trimmed_count": budget_info["trimmed_history_count"]
             }

@@ -244,6 +244,63 @@ def render_route_badge(metadata: dict):
                 st.markdown(f"[Source {i}]({url})", unsafe_allow_html=False)
 
 
+def run_smart_followup_with_progress(
+    chatbot: Any,
+    *,
+    status_title: str = "Analyzing your query…",
+    status_caption: str = "Pipeline progress (updates while the engine runs):",
+    **followup_kwargs: Any,
+) -> tuple:
+    """
+    Run ``smart_followup_query`` with live Streamlit updates.
+
+    ``st.spinner`` does not flush intermediate UI; ``st.status`` does, so users
+    see router / web / internal steps instead of a frozen loading line.
+    """
+    if hasattr(st, "status"):
+        with st.status(status_title, expanded=True) as status:
+            st.caption(status_caption)
+
+            def _live(stage: str, detail: str) -> None:
+                st.markdown(f"**{stage}** — {detail}")
+
+            try:
+                result = chatbot.smart_followup_query(
+                    **followup_kwargs,
+                    on_flow_step=_live,
+                )
+                status.update(label="Done", state="complete")
+                return result
+            except Exception:
+                status.update(label="Error", state="error")
+                raise
+
+    with st.spinner("🤔 Analyzing your query with conversation context..."):
+        return chatbot.smart_followup_query(**followup_kwargs)
+
+
+def render_flow_trace(metadata: Optional[dict]) -> None:
+    """Render concise architecture/thinking flow steps for a response."""
+    if not metadata:
+        return
+
+    flow_steps = metadata.get("flow_trace") or []
+    if not flow_steps:
+        return
+
+    # One-line summary so the trace is visible without opening an expander
+    summary = " → ".join(str(s.get("stage", "?")) for s in flow_steps)
+    st.markdown(f"🧭 **Pipeline:** {summary}")
+
+    with st.expander("🧭 Flow trace (detail)", expanded=True):
+        for idx, step in enumerate(flow_steps, 1):
+            stage = step.get("stage", "Stage")
+            detail = step.get("detail", "")
+            ts = step.get("timestamp")
+            prefix = f"`{ts}` " if ts else ""
+            st.markdown(f"{idx}. **{stage}** — {prefix}{detail}")
+
+
 def display_styled_dataframe(df, height=400, key_suffix=""):
     """Display dataframe with enhanced styling and larger fonts."""
     # Exclude Signal Open Price - backend deduplication only, never display
@@ -552,60 +609,63 @@ def render_chatbot_page():
             st.markdown(f"**AI Signal Type Selection:** {selection_text}")
             if ai_reason:
                 st.caption(f"💡 {ai_reason}")
-            with st.spinner("🤔 Running deep dive analysis..."):
-                try:
-                    # Use smart_followup_query to send the analysis prompt
-                    response, metadata = chatbot.smart_followup_query(
-                        user_message=analysis_prompt,
-                        selected_signal_types=selected_signal_types,
-                        assets=[analysis_asset],  # Use the selected asset
-                        from_date=analysis_from_date.strftime('%Y-%m-%d'),
-                        to_date=analysis_to_date.strftime('%Y-%m-%d'),
-                        functions=None,  # Auto-extract functions
-                        auto_extract_tickers=False,  # We're providing the asset
-                        signal_type_reasoning=ai_reason
-                    )
-                    
-                    # Display response
-                    st.markdown(response)
-                    show_input_limit_notice(metadata)
+            try:
+                response, metadata = run_smart_followup_with_progress(
+                    chatbot,
+                    status_title="Running deep dive analysis…",
+                    user_message=analysis_prompt,
+                    selected_signal_types=selected_signal_types,
+                    assets=[analysis_asset],  # Use the selected asset
+                    from_date=analysis_from_date.strftime('%Y-%m-%d'),
+                    to_date=analysis_to_date.strftime('%Y-%m-%d'),
+                    functions=None,  # Auto-extract functions
+                    auto_extract_tickers=False,  # We're providing the asset
+                    signal_type_reasoning=ai_reason,
+                )
 
-                    # Display Smart Query Details with signals
-                    if metadata.get('input_type') in ['smart_query', 'smart_followup'] or metadata.get('selected_signal_types'):
-                        with st.expander("📊 Smart Query Details", expanded=False):
-                            # Show signal types and reasoning
-                            signal_types_meta = metadata.get('selected_signal_types', selected_signal_types)
-                            if signal_types_meta:
-                                st.markdown(f"**AI Signal Types:** {', '.join(get_signal_type_label(sig) for sig in signal_types_meta)}")
-                                if ai_reason:
-                                    st.caption(f"💡 {ai_reason}")
+                # Display response
+                st.markdown(response)
+                show_input_limit_notice(metadata)
+                if metadata.get("intent"):
+                    render_route_badge(metadata)
+                render_flow_trace(metadata)
 
-                            # Display full signal tables if available
-                            full_signal_tables = metadata.get('full_signal_tables', {})
-                            if full_signal_tables:
-                                st.markdown("---")
-                                st.subheader("📊 Complete Signal Data Used in Analysis")
+                # Display Smart Query Details with signals
+                if metadata.get('input_type') in ['smart_query', 'smart_followup'] or metadata.get('selected_signal_types'):
+                    with st.expander("📊 Smart Query Details", expanded=False):
+                        # Show signal types and reasoning
+                        signal_types_meta = metadata.get('selected_signal_types', selected_signal_types)
+                        if signal_types_meta:
+                            st.markdown(f"**AI Signal Types:** {', '.join(get_signal_type_label(sig) for sig in signal_types_meta)}")
+                            if ai_reason:
+                                st.caption(f"💡 {ai_reason}")
 
-                                for signal_type, signal_df in full_signal_tables.items():
-                                    if not signal_df.empty:
-                                        st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)} Signals** ({len(signal_df)} records)")
-                                        display_styled_dataframe(
-                                            signal_df,
-                                            height=min(400, (len(signal_df) + 1) * 40),
-                                            key_suffix=f"analysis_{signal_type}"
-                                        )
-                    
-                    # Add to history
-                    st.session_state.chat_history.append({
-                        'role': 'assistant',
-                        'content': response,
-                        'metadata': metadata
-                    })
-                    
-                except Exception as e:
-                    st.error(f"❌ Error during analysis: {str(e)}")
-                    import traceback
-                    st.code(traceback.format_exc())
+                        # Display full signal tables if available
+                        full_signal_tables = metadata.get('full_signal_tables', {})
+                        if full_signal_tables:
+                            st.markdown("---")
+                            st.subheader("📊 Complete Signal Data Used in Analysis")
+
+                            for signal_type, signal_df in full_signal_tables.items():
+                                if not signal_df.empty:
+                                    st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)} Signals** ({len(signal_df)} records)")
+                                    display_styled_dataframe(
+                                        signal_df,
+                                        height=min(400, (len(signal_df) + 1) * 40),
+                                        key_suffix=f"analysis_{signal_type}"
+                                    )
+
+                # Add to history
+                st.session_state.chat_history.append({
+                    'role': 'assistant',
+                    'content': response,
+                    'metadata': metadata
+                })
+
+            except Exception as e:
+                st.error(f"❌ Error during analysis: {str(e)}")
+                import traceback
+                st.code(traceback.format_exc())
         
         # Rerun to update chat display
         st.rerun()
@@ -647,58 +707,60 @@ def render_chatbot_page():
             selection_text = ", ".join(get_signal_type_label(sig) for sig in selected_signal_types)
             st.markdown(f"**AI Signal Type Selection:** {selection_text}")
             st.caption(f"💡 {ai_reason}")
-            with st.spinner("🔍 Finding high-quality entry signals..."):
-                try:
-                    # Use smart_followup_query to send the insights prompt
-                    # No specific assets - analyze all assets
-                    response, metadata = chatbot.smart_followup_query(
-                        user_message=insights_prompt,
-                        selected_signal_types=selected_signal_types,
-                        assets=None,  # Analyze all assets
-                        from_date=insights_from_date.strftime('%Y-%m-%d'),
-                        to_date=insights_to_date.strftime('%Y-%m-%d'),
-                        functions=None,  # Auto-extract functions
-                        auto_extract_tickers=True,  # Auto-extract from all assets
-                        signal_type_reasoning=ai_reason
-                    )
-                    
-                    # Display response
-                    st.markdown(response)
-                    show_input_limit_notice(metadata)
+            try:
+                response, metadata = run_smart_followup_with_progress(
+                    chatbot,
+                    status_title="Finding high-quality entry signals…",
+                    user_message=insights_prompt,
+                    selected_signal_types=selected_signal_types,
+                    assets=None,  # Analyze all assets
+                    from_date=insights_from_date.strftime('%Y-%m-%d'),
+                    to_date=insights_to_date.strftime('%Y-%m-%d'),
+                    functions=None,  # Auto-extract functions
+                    auto_extract_tickers=True,  # Auto-extract from all assets
+                    signal_type_reasoning=ai_reason,
+                )
 
-                    # Display Smart Query Details with signals
-                    with st.expander("📊 Smart Query Details", expanded=False):
-                        # Show signal types and reasoning
-                        st.markdown(f"**AI Signal Types:** {get_signal_type_label(selected_signal_types[0])}")
-                        if ai_reason:
-                            st.caption(f"💡 {ai_reason}")
+                # Display response
+                st.markdown(response)
+                show_input_limit_notice(metadata)
+                if metadata.get("intent"):
+                    render_route_badge(metadata)
+                render_flow_trace(metadata)
 
-                        # Display full signal tables if available
-                        full_signal_tables = metadata.get('full_signal_tables', {})
-                        if full_signal_tables:
-                            st.markdown("---")
-                            st.subheader("📊 Complete Signal Data Used in Analysis")
+                # Display Smart Query Details with signals
+                with st.expander("📊 Smart Query Details", expanded=False):
+                    # Show signal types and reasoning
+                    st.markdown(f"**AI Signal Types:** {get_signal_type_label(selected_signal_types[0])}")
+                    if ai_reason:
+                        st.caption(f"💡 {ai_reason}")
 
-                            for signal_type, signal_df in full_signal_tables.items():
-                                if not signal_df.empty:
-                                    st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)} Signals** ({len(signal_df)} records)")
-                                    display_styled_dataframe(
-                                        signal_df,
-                                        height=min(400, (len(signal_df) + 1) * 40),
-                                        key_suffix=f"insights_{signal_type}"
-                                    )
-                    
-                    # Add to history
-                    st.session_state.chat_history.append({
-                        'role': 'assistant',
-                        'content': response,
-                        'metadata': metadata
-                    })
-                    
-                except Exception as e:
-                    st.error(f"❌ Error during signal insights analysis: {str(e)}")
-                    import traceback
-                    st.code(traceback.format_exc())
+                    # Display full signal tables if available
+                    full_signal_tables = metadata.get('full_signal_tables', {})
+                    if full_signal_tables:
+                        st.markdown("---")
+                        st.subheader("📊 Complete Signal Data Used in Analysis")
+
+                        for signal_type, signal_df in full_signal_tables.items():
+                            if not signal_df.empty:
+                                st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)} Signals** ({len(signal_df)} records)")
+                                display_styled_dataframe(
+                                    signal_df,
+                                    height=min(400, (len(signal_df) + 1) * 40),
+                                    key_suffix=f"insights_{signal_type}"
+                                )
+
+                # Add to history
+                st.session_state.chat_history.append({
+                    'role': 'assistant',
+                    'content': response,
+                    'metadata': metadata
+                })
+
+            except Exception as e:
+                st.error(f"❌ Error during signal insights analysis: {str(e)}")
+                import traceback
+                st.code(traceback.format_exc())
         
         # Rerun to update chat display
         st.rerun()
@@ -740,50 +802,52 @@ def render_chatbot_page():
             selection_text = ", ".join(get_signal_type_label(sig) for sig in selected_signal_types)
             st.markdown(f"**AI Signal Type Selection:** {selection_text}")
             st.caption(f"💡 {ai_reason}")
-            with st.spinner("📊 Analyzing breadth signal data and calculating percentiles..."):
-                try:
-                    # Use smart_followup_query to send the breadth analysis prompt
-                    # No specific assets - analyze all breadth signal data
-                    response, metadata = chatbot.smart_followup_query(
-                        user_message=breadth_prompt,
-                        selected_signal_types=selected_signal_types,
-                        assets=None,  # Breadth is market-wide, no specific assets
-                        from_date=breadth_from_date.strftime('%Y-%m-%d'),
-                        to_date=breadth_to_date.strftime('%Y-%m-%d'),
-                        functions=None,  # Auto-extract functions
-                        auto_extract_tickers=False,  # Breadth doesn't use tickers
-                        signal_type_reasoning=ai_reason
-                    )
-                    
-                    # Display response
-                    st.markdown(response)
-                    show_input_limit_notice(metadata)
-                    
-                    # Display full signal tables if available
-                    full_signal_tables = metadata.get('full_signal_tables', {})
-                    if full_signal_tables:
-                        st.markdown("### 📊 Complete Breadth Signal Data Used in Analysis")
-                        
-                        for signal_type, signal_df in full_signal_tables.items():
-                            if not signal_df.empty:
-                                st.markdown(f"#### {get_signal_type_label(signal_type, uppercase=True)} Signals ({len(signal_df)} records)")
-                                display_styled_dataframe(
-                                    signal_df, 
-                                    height=min(400, (len(signal_df) + 1) * 40),
-                                    key_suffix=f"breadth_{signal_type}"
-                                )
-                    
-                    # Add to history
-                    st.session_state.chat_history.append({
-                        'role': 'assistant',
-                        'content': response,
-                        'metadata': metadata
-                    })
-                    
-                except Exception as e:
-                    st.error(f"❌ Error during breadth analysis: {str(e)}")
-                    import traceback
-                    st.code(traceback.format_exc())
+            try:
+                response, metadata = run_smart_followup_with_progress(
+                    chatbot,
+                    status_title="Analyzing breadth signal data…",
+                    user_message=breadth_prompt,
+                    selected_signal_types=selected_signal_types,
+                    assets=None,  # Breadth is market-wide, no specific assets
+                    from_date=breadth_from_date.strftime('%Y-%m-%d'),
+                    to_date=breadth_to_date.strftime('%Y-%m-%d'),
+                    functions=None,  # Auto-extract functions
+                    auto_extract_tickers=False,  # Breadth doesn't use tickers
+                    signal_type_reasoning=ai_reason,
+                )
+
+                # Display response
+                st.markdown(response)
+                show_input_limit_notice(metadata)
+                if metadata.get("intent"):
+                    render_route_badge(metadata)
+                render_flow_trace(metadata)
+
+                # Display full signal tables if available
+                full_signal_tables = metadata.get('full_signal_tables', {})
+                if full_signal_tables:
+                    st.markdown("### 📊 Complete Breadth Signal Data Used in Analysis")
+
+                    for signal_type, signal_df in full_signal_tables.items():
+                        if not signal_df.empty:
+                            st.markdown(f"#### {get_signal_type_label(signal_type, uppercase=True)} Signals ({len(signal_df)} records)")
+                            display_styled_dataframe(
+                                signal_df,
+                                height=min(400, (len(signal_df) + 1) * 40),
+                                key_suffix=f"breadth_{signal_type}"
+                            )
+
+                # Add to history
+                st.session_state.chat_history.append({
+                    'role': 'assistant',
+                    'content': response,
+                    'metadata': metadata
+                })
+
+            except Exception as e:
+                st.error(f"❌ Error during breadth analysis: {str(e)}")
+                import traceback
+                st.code(traceback.format_exc())
         
         # Rerun to update chat display
         st.rerun()
@@ -1157,6 +1221,8 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
                     # Intent + route badge (shown for all routed responses)
                     if msg_metadata.get("intent"):
                         render_route_badge(msg_metadata)
+                    # Flow trace below the answer so it stays on-screen after long replies
+                    render_flow_trace(msg_metadata)
 
                     # Check if it's a smart query or smart followup
                     if msg_metadata.get('input_type') in ['smart_query', 'smart_followup', 'web_rag', 'conversational']:
@@ -1293,122 +1359,123 @@ Date Range: {from_date.strftime('%Y-%m-%d')} to {to_date.strftime('%Y-%m-%d')}""
         
         # Get AI response
         with st.chat_message("assistant"):
-            with st.spinner("🤔 Analyzing your query with conversation context..."):
-                try:
-                    # Always use smart follow-up query to maintain conversation context (like ChatGPT)
-                    # Pass empty list for selected_signal_types to let AI determine them
-                    response, metadata = chatbot.smart_followup_query(
-                        user_message=user_input,
-                        selected_signal_types=[],  # Let AI determine signal types
-                        assets=selected_tickers if not use_auto_extract_tickers else None,
-                        from_date=from_date.strftime('%Y-%m-%d'),
-                        to_date=to_date.strftime('%Y-%m-%d'),
-                        functions=selected_functions if not use_auto_extract else None,
-                        auto_extract_tickers=use_auto_extract_tickers,
-                        signal_type_reasoning=None  # Will be determined by AI
-                    )
-                    
-                    # Get AI-determined signal types from metadata
-                    ai_selected_signal_types = metadata.get('selected_signal_types', [])
-                    ai_reason = metadata.get('signal_type_reasoning', '')
-                    
-                    # Update session state with AI-determined signal types
-                    if ai_selected_signal_types:
-                        st.session_state.last_signal_types = ai_selected_signal_types
-                        st.session_state.last_signal_reason = ai_reason
-                    
-                    # Display AI signal type selection at the top
-                    if ai_selected_signal_types:
-                        selection_text = ", ".join(get_signal_type_label(sig) for sig in ai_selected_signal_types)
-                        st.markdown(f"**AI Signal Type Selection:** {selection_text}")
-                        if ai_reason:
-                            st.caption(f"💡 {ai_reason}")
+            try:
+                # Live pipeline steps (st.spinner does not refresh until the call returns)
+                response, metadata = run_smart_followup_with_progress(
+                    chatbot,
+                    status_title="Analyzing your query with conversation context…",
+                    user_message=user_input,
+                    selected_signal_types=[],  # Let AI determine signal types
+                    assets=selected_tickers if not use_auto_extract_tickers else None,
+                    from_date=from_date.strftime('%Y-%m-%d'),
+                    to_date=to_date.strftime('%Y-%m-%d'),
+                    functions=selected_functions if not use_auto_extract else None,
+                    auto_extract_tickers=use_auto_extract_tickers,
+                    signal_type_reasoning=None,  # Will be determined by AI
+                )
 
-                    # Intent + route badge
-                    if metadata.get("intent"):
-                        render_route_badge(metadata)
+                # Get AI-determined signal types from metadata
+                ai_selected_signal_types = metadata.get('selected_signal_types', [])
+                ai_reason = metadata.get('signal_type_reasoning', '')
 
-                    # Display response
-                    st.markdown(response)
-                    show_input_limit_notice(metadata)
+                # Update session state with AI-determined signal types
+                if ai_selected_signal_types:
+                    st.session_state.last_signal_types = ai_selected_signal_types
+                    st.session_state.last_signal_reason = ai_reason
 
-                    # Display Smart Query Details with signals
-                    with st.expander("📊 Smart Query Details", expanded=False):
-                        # Show signal types and reasoning
-                        st.markdown(f"**AI Signal Types:** {', '.join(get_signal_type_label(sig) for sig in selected_signal_types)}")
-                        if ai_reason:
-                            st.caption(f"💡 {ai_reason}")
+                # Display AI signal type selection at the top
+                if ai_selected_signal_types:
+                    selection_text = ", ".join(get_signal_type_label(sig) for sig in ai_selected_signal_types)
+                    st.markdown(f"**AI Signal Type Selection:** {selection_text}")
+                    if ai_reason:
+                        st.caption(f"💡 {ai_reason}")
 
-                        # Display full signal tables if available
-                        full_signal_tables = metadata.get('full_signal_tables', {})
-                        if full_signal_tables:
-                            st.markdown("---")
-                            st.subheader("📊 Complete Signal Data Used in Analysis")
+                # Intent + route badge
+                if metadata.get("intent"):
+                    render_route_badge(metadata)
 
-                            for signal_type, signal_df in full_signal_tables.items():
-                                if not signal_df.empty:
-                                    st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)} Signals** ({len(signal_df)} records)")
-                                    display_styled_dataframe(
-                                        signal_df,
-                                        height=min(400, (len(signal_df) + 1) * 40),
-                                        key_suffix=f"smart_{signal_type}"
-                                    )
+                # Display response first; flow trace below so it is visible after long answers
+                st.markdown(response)
+                show_input_limit_notice(metadata)
+                render_flow_trace(metadata)
 
-                    # Show smart query metadata
-                    input_type = metadata.get('input_type', '')
+                # Display Smart Query Details with signals
+                with st.expander("📊 Smart Query Details", expanded=False):
+                    # Show signal types and reasoning
+                    st.markdown(f"**AI Signal Types:** {', '.join(get_signal_type_label(sig) for sig in selected_signal_types)}")
+                    if ai_reason:
+                        st.caption(f"💡 {ai_reason}")
 
-                    if input_type in ['smart_query', 'smart_followup']:
-                        selection_list = metadata.get('selected_signal_types', [])
-                        selection_reason = metadata.get('signal_type_reasoning', '')
-                        if selection_list:
-                            st.markdown(f"**AI Signal Types:** {', '.join(get_signal_type_label(sig) for sig in selection_list)}")
-                            if selection_reason:
-                                st.caption(f"💡 {selection_reason}")
-                        # Show column selection per signal type
-                        st.subheader("🎯 Column Selection by Signal Type")
+                    # Display full signal tables if available
+                    full_signal_tables = metadata.get('full_signal_tables', {})
+                    if full_signal_tables:
+                        st.markdown("---")
+                        st.subheader("📊 Complete Signal Data Used in Analysis")
 
-                        columns_by_type = metadata.get('columns_by_signal_type', {})
-                        reasoning_by_type = metadata.get('reasoning_by_signal_type', {})
+                        for signal_type, signal_df in full_signal_tables.items():
+                            if not signal_df.empty:
+                                st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)} Signals** ({len(signal_df)} records)")
+                                display_styled_dataframe(
+                                    signal_df,
+                                    height=min(400, (len(signal_df) + 1) * 40),
+                                    key_suffix=f"smart_{signal_type}"
+                                )
 
-                        for signal_type in metadata.get('selected_signal_types', []):
-                            if signal_type in columns_by_type:
-                                cols = columns_by_type[signal_type]
-                                reasoning = reasoning_by_type.get(signal_type, '')
+                # Show smart query metadata
+                input_type = metadata.get('input_type', '')
 
-                                # Simple display - same for all queries
-                                st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)}** ({len(cols)} columns)")
-                                st.caption(f"💡 {reasoning}")
+                if input_type in ['smart_query', 'smart_followup']:
+                    selection_list = metadata.get('selected_signal_types', [])
+                    selection_reason = metadata.get('signal_type_reasoning', '')
+                    if selection_list:
+                        st.markdown(f"**AI Signal Types:** {', '.join(get_signal_type_label(sig) for sig in selection_list)}")
+                        if selection_reason:
+                            st.caption(f"💡 {selection_reason}")
+                    # Show column selection per signal type
+                    st.subheader("🎯 Column Selection by Signal Type")
 
-                                with st.expander(f"View {signal_type} columns"):
-                                    for col in cols:
-                                        st.text(f"  • {col}")
+                    columns_by_type = metadata.get('columns_by_signal_type', {})
+                    reasoning_by_type = metadata.get('reasoning_by_signal_type', {})
 
-                        # Show signal data statistics - same format for all queries
-                        col1, col2, col3 = st.columns(3)
+                    for signal_type in metadata.get('selected_signal_types', []):
+                        if signal_type in columns_by_type:
+                            cols = columns_by_type[signal_type]
+                            reasoning = reasoning_by_type.get(signal_type, '')
 
-                        with col1:
-                            st.metric("Rows Fetched", metadata.get('rows_fetched', 0))
-                        with col2:
-                            signal_types_count = len(metadata.get('signal_types_with_data', metadata.get('selected_signal_types', [])))
-                            st.metric("Signal Types", signal_types_count)
-                        with col3:
-                            total_tokens = metadata.get('tokens_used', {}).get('total', 0)
-                            st.metric("Tokens Used", f"{total_tokens:,}")
+                            # Simple display - same for all queries
+                            st.markdown(f"**{get_signal_type_label(signal_type, uppercase=True)}** ({len(cols)} columns)")
+                            st.caption(f"💡 {reasoning}")
 
-                    # Add to history
-                    st.session_state.chat_history.append({
-                        'role': 'assistant',
-                        'content': response,
-                        'metadata': metadata
-                    })
-                    
-                    # Rerun to update chat display
-                    st.rerun()
-                    
-                except Exception as e:
-                    st.error(f"❌ Error: {str(e)}")
-                    import traceback
-                    st.code(traceback.format_exc())
+                            with st.expander(f"View {signal_type} columns"):
+                                for col in cols:
+                                    st.text(f"  • {col}")
+
+                    # Show signal data statistics - same format for all queries
+                    col1, col2, col3 = st.columns(3)
+
+                    with col1:
+                        st.metric("Rows Fetched", metadata.get('rows_fetched', 0))
+                    with col2:
+                        signal_types_count = len(metadata.get('signal_types_with_data', metadata.get('selected_signal_types', [])))
+                        st.metric("Signal Types", signal_types_count)
+                    with col3:
+                        total_tokens = metadata.get('tokens_used', {}).get('total', 0)
+                        st.metric("Tokens Used", f"{total_tokens:,}")
+
+                # Add to history
+                st.session_state.chat_history.append({
+                    'role': 'assistant',
+                    'content': response,
+                    'metadata': metadata
+                })
+
+                # Rerun to update chat display
+                st.rerun()
+
+            except Exception as e:
+                st.error(f"❌ Error: {str(e)}")
+                import traceback
+                st.code(traceback.format_exc())
     
     # Footer
     st.markdown("---")
