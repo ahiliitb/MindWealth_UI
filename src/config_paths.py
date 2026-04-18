@@ -37,5 +37,4 @@ CHATBOT_TARGET_CSV = CHATBOT_DATA_DIR / TARGET_CSV_NAME
 CHATBOT_BREADTH_CSV = CHATBOT_DATA_DIR / BREADTH_CSV_NAME
 
 # Create necessary directories if they don't exist
-HISTORY_DIR.mkdir(parents=True, exist_ok=True)
-CHATBOT_DATA_DIR.mkdir(parents=True, exist_ok=True)
+HISTORY_DIR.mkdir(parents=True, exist_ok=True)CHATBOT_DATA_DIR.mkdir(parents=True, exist_ok=True)
